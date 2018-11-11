@@ -22,10 +22,10 @@ public class Conference
 	private Date startDate;
 	/*Last day of conference*/
 	private Date endDate;
-	/*Shown papers*/
-	private Set<Paper> papers = new HashSet<Paper>();
 	/*Authors that talked*/
 	private Set<Author> authors = new HashSet<Author>();
+	/*Shown papers*/
+	private Set<Paper> papers = new HashSet<Paper>();
 	//TODO: Workshops? Other data?
 
 	/**
@@ -89,17 +89,6 @@ public class Conference
 	}
 
 	/**
-	 * Gets the papers that were shown at this conference
-	 * @return The papers that were shown at this conference
-	 */
-	@ManyToMany
-	@Column(name="papers")
-	public Set<Paper> getPapers()
-	{
-		return papers;
-	}
-
-	/**
 	 * Gets the authors that talked at this conference
 	 * @return The authors that talked at this conference
 	 */
@@ -108,5 +97,16 @@ public class Conference
 	public Set<Author> getAuthors()
 	{
 		return authors;
+	}
+
+	/**
+	 * Gets the papers that were shown at this conference
+	 * @return The papers that were shown at this conference
+	 */
+	@ManyToMany
+	@Column(name="papers")
+	public Set<Paper> getPapers()
+	{
+		return papers;
 	}
 }
