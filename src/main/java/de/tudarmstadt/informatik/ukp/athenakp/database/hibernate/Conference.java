@@ -8,6 +8,8 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 @Entity
 @Table(name="conference")
@@ -27,6 +29,8 @@ public class Conference
 	 * Gets the date of the day this conference started
 	 * @return The date of the day this conference started
 	 */
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name="start_date")
 	public Date getStartDate()
 	{
 		return startDate;
@@ -45,6 +49,8 @@ public class Conference
 	 * Gets the date of the day this conference ended
 	 * @return The date of the day this conference ended
 	 */
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name="end_date")
 	public Date getEndDate()
 	{
 		return endDate;
