@@ -6,6 +6,7 @@ import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -15,6 +16,8 @@ import javax.persistence.TemporalType;
 @Table(name="conference")
 public class Conference
 {
+	/*Name of conference*/
+	private String name;
 	/*First day of conference*/
 	private Date startDate;
 	/*Last day of conference*/
@@ -24,6 +27,26 @@ public class Conference
 	/*Authors that talked*/
 	private Set<Author> authors = new HashSet<Author>();
 	//TODO: Workshops? Other data?
+
+	/**
+	 * Gets the name of this conference
+	 * @return The name of this conference
+	 */
+	@Id
+	@Column(name="name")
+	public String getName()
+	{
+		return name;
+	}
+
+	/**
+	 * Sets the name of this conference
+	 * @param name The new name
+	 */
+	public void setName(String name)
+	{
+		this.name = name;
+	}
 
 	/**
 	 * Gets the date of the day this conference started
