@@ -43,4 +43,8 @@ bin
 
 # IntelliJ IDEA
 .idea
-bpathenakp.iml
+.idea/
+*.iml
+
+# linux files
+.directory
