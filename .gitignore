@@ -40,3 +40,7 @@ bin
 .project
 .classpath
 .settings
+
+# IntelliJ IDEA
+.idea
+bpathenakp.iml
