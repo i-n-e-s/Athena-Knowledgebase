@@ -1,14 +1,10 @@
 package de.tudarmstadt.informatik.ukp.athenakp.database.hibernate;
 
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.ManyToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 import org.hibernate.annotations.GenericGenerator;
 
@@ -21,9 +17,15 @@ public class Author
 	/*Author's name*/
 	private String name;
 	/*Work place, so to say*/
-	private String university; //TODO: Make this its own entity?
+	private Institution institute;
 	/*Written papers*/
 	private Set<Paper> papers = new HashSet<>();
+	/*Authors, this Author has collaborated with*/
+	private Set<Author> coAuthors;
+	/*Papers this Author has quoted*/
+	private Set<Paper> quotations;
+	/*Birthdate of the Author*/
+	private Date birthDate;
 
 	/**
 	 * Gets the unique id of this author
@@ -71,18 +73,18 @@ public class Author
 	 * @return The university that this author works at
 	 */
 	@Column(name="university")
-	public String getUniversity()
+	public Institution getInstitute()
 	{
-		return university;
+		return institute;
 	}
 
 	/**
-	 * Sets this author's university
-	 * @param university The new university
+	 * Sets this author's Institute
+	 * @param institute The new institute
 	 */
-	public void setUniversity(String university)
+	public void setInstitute(Institution institute)
 	{
-		this.university = university;
+		this.institute = institute;
 	}
 
 	/**
@@ -95,4 +97,50 @@ public class Author
 	{
 		return papers;
 	}
+
+	/**
+	 * Gets the papers that this author has quoted
+	 * @return The papers that this author has quoted
+	 */
+	@ManyToMany
+	@Column(name="quotations")
+	public Set<Paper> getQuotations()
+	{
+		return quotations;
+	}
+
+	/**
+	 * Gets the authors, this one has collaborated with
+	 * @return The authors, this one has collaborated with
+	 */
+	@ManyToMany
+	@Column(name="coAuthors")
+	public Set<Author> getCoAuthors()
+	{
+		return coAuthors;
+	}
+
+
+
+	/**
+	 * Gets the author's birthdate
+	 * @return This author's birth date
+	 */
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name="birth_date")
+	public Date getBirthDate()
+	{
+		return birthDate;
+	}
+
+	/**
+	 * Sets the author's birthdate
+	 * @param birthDate This author's new birth date
+	 */
+	public void setBirthDate(Date birthDate)
+	{
+		this.birthDate = birthDate;
+	}
+
+
 }
