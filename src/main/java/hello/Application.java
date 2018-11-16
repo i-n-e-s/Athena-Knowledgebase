@@ -1,7 +1,7 @@
 package hello;
 
 import de.tudarmstadt.informatik.ukp.athenakp.database.access.PersonCommonAccess;
-import de.tudarmstadt.informatik.ukp.athenakp.database.hibernate.PersonHibernateAccess;
+import de.tudarmstadt.informatik.ukp.athenakp.database.access.PersonHibernateAccess;
 import de.tudarmstadt.informatik.ukp.athenakp.database.models.Person;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

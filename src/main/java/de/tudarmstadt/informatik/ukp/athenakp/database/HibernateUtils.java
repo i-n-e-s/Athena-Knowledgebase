@@ -1,4 +1,4 @@
-package de.tudarmstadt.informatik.ukp.athenakp.database.hibernate;
+package de.tudarmstadt.informatik.ukp.athenakp.database;
 
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.Metadata;

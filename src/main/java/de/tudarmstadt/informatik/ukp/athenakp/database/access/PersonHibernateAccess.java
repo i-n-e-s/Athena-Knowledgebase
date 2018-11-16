@@ -1,7 +1,6 @@
-package de.tudarmstadt.informatik.ukp.athenakp.database.hibernate;
+package de.tudarmstadt.informatik.ukp.athenakp.database.access;
 
-import de.tudarmstadt.informatik.ukp.athenakp.database.access.CommonAccess;
-import de.tudarmstadt.informatik.ukp.athenakp.database.access.PersonCommonAccess;
+import de.tudarmstadt.informatik.ukp.athenakp.database.HibernateUtils;
 import de.tudarmstadt.informatik.ukp.athenakp.database.models.Person;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
