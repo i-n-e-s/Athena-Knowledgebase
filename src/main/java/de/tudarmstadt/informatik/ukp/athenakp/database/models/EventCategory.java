@@ -1,6 +1,6 @@
 package de.tudarmstadt.informatik.ukp.athenakp.database.models;
 
-public enum EventCategorie {
+public enum EventCategory {
     TUTORIAL,
     MEETING,
     SOCIAL,

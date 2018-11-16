@@ -24,8 +24,8 @@ public class Event {
     private String shortDescription;
     /* Attendees */
     //private Set<Person> attendees;      //TODO Hibernatemäßige Setter für alle Set<> oder List<> fehlen
-    /* Categorie */
-    private EventCategorie categorie;   //TODO Hibernatemäßige Getter/Setter für diese ENUM implementieren
+	/* Category */
+	private EventCategory category;   //TODO Hibernatemäßige Getter/Setter für diese ENUM implementieren
 
 
     /**
