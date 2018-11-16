@@ -35,9 +35,9 @@ public class Paper
 	@Column(name = "pdfFileSize")
 	private int pdfFileSize;
 
-//	Removed all code concerning quotations and alike. Too time consuming right now.
+	//	Removed all code concerning quotations and alike. Too time consuming right now.
 
-//	TODO: Metadata?
+	//	TODO: Metadata?
 
 	/**
 	 * Get this paper's ID

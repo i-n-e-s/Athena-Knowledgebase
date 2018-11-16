@@ -27,7 +27,6 @@ import javax.persistence.TemporalType;
 @DiscriminatorColumn(name = "type", discriminatorType = DiscriminatorType.STRING)
 @DiscriminatorValue(value = "person")
 public class Person {
-
 	/*Unique id*/
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -55,13 +54,11 @@ public class Person {
 	@Column(name = "obit")
 	private Date obit;
 
-
 	/*The person's institution, eg. an university or a company*/
 	//@Column(name = "institution")
 	@ManyToOne
 	@JoinColumn(name = "institutionID")
 	private Institution institution;
-
 
 	/**
 	 * Gets the unique id of the person.
@@ -129,7 +126,6 @@ public class Person {
 		this.middleName = middleName;
 	}
 
-
 	/**
 	 * Gets the person's last name.
 	 * @return Gets the person's last name.
@@ -179,7 +175,7 @@ public class Person {
 	}
 
 	/**
-	 * Gets the person's institution .
+	 * Gets the person's institution.
 	 * @return The person's institution
 	 */
 	public Institution getInstitution() {

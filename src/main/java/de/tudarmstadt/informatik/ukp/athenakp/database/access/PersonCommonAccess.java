@@ -1,6 +1,5 @@
 package de.tudarmstadt.informatik.ukp.athenakp.database.access;
 
-import java.util.Date;
 import java.util.List;
 
 import de.tudarmstadt.informatik.ukp.athenakp.database.models.Person;
@@ -11,7 +10,7 @@ import de.tudarmstadt.informatik.ukp.athenakp.database.models.Person;
  *
  * @author Tristan Wettich
  */
-public interface PersonCommonAccess extends CommonAccess<Person> {
+public interface PersonCommonAccess extends ICommonAccess<Person> {
 
 	/**
 	 * Get all persons with specified person id.
@@ -50,17 +49,21 @@ public interface PersonCommonAccess extends CommonAccess<Person> {
 
 	/**
 	 * Get all persons with specified birthdate.
-	 * @param birthdate The person's birthdate.
+	 * @param year The person's birthdate year.
+	 * @param month The person's birthdate month.
+	 * @param day The person's birthdate day.
 	 * @return A List of all persons with the specified birthdate.
 	 */
-	public List<Person> getByBirthdate(Date birthdate);
+	public List<Person> getByBirthdate(Integer year, Integer month, Integer day);
 
 	/**
 	 * Get all persons with specified obit.
-	 * @param obit The person's obit.
+	 * @param year The person's birthdate year.
+	 * @param month The person's birthdate month.
+	 * @param day The person's birthdate day.
 	 * @return A List of all persons with the specified obit.
 	 */
-	public List<Person> getByObit(Date obit);
+	public List<Person> getByObit(Integer year, Integer month, Integer day);
 
 	/**
 	 * Get all persons with specified institution's id.
