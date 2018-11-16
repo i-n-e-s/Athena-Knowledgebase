@@ -1,4 +1,4 @@
-package hello;
+package de.tudarmstadt.informatik.ukp.athenakp;
 
 import de.tudarmstadt.informatik.ukp.athenakp.database.access.PersonCommonAccess;
 import de.tudarmstadt.informatik.ukp.athenakp.database.access.PersonHibernateAccess;

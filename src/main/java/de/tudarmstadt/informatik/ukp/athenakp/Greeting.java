@@ -1,4 +1,4 @@
-package hello;
+package de.tudarmstadt.informatik.ukp.athenakp;
 
 public class Greeting {
 
