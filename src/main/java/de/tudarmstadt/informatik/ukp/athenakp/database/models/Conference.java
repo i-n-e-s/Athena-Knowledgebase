@@ -17,14 +17,24 @@ import javax.persistence.TemporalType;
 public class Conference
 {
 	/*Name of conference*/
+	@Id
+	@Column(name="name")
 	private String name;
 	/*First day of conference*/
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name="start_date")
 	private Date startDate;
 	/*Last day of conference*/
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name="end_date")
 	private Date endDate;
 	/*Authors that talked*/
+	@ManyToMany
+	@Column(name="authors")
 	private Set<Author> authors = new HashSet<Author>();
 	/*Shown papers*/
+	@ManyToMany
+	@Column(name="papers")
 	private Set<Paper> papers = new HashSet<Paper>();
 	//TODO: Workshops? Other data?
 
@@ -32,8 +42,6 @@ public class Conference
 	 * Gets the name of this conference
 	 * @return The name of this conference
 	 */
-	@Id
-	@Column(name="name")
 	public String getName()
 	{
 		return name;
@@ -52,8 +60,6 @@ public class Conference
 	 * Gets the date of the day this conference started
 	 * @return The date of the day this conference started
 	 */
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name="start_date")
 	public Date getStartDate()
 	{
 		return startDate;
@@ -72,8 +78,6 @@ public class Conference
 	 * Gets the date of the day this conference ended
 	 * @return The date of the day this conference ended
 	 */
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name="end_date")
 	public Date getEndDate()
 	{
 		return endDate;
@@ -92,8 +96,6 @@ public class Conference
 	 * Gets the authors that talked at this conference
 	 * @return The authors that talked at this conference
 	 */
-	@ManyToMany
-	@Column(name="authors")
 	public Set<Author> getAuthors()
 	{
 		return authors;
@@ -103,8 +105,6 @@ public class Conference
 	 * Gets the papers that were shown at this conference
 	 * @return The papers that were shown at this conference
 	 */
-	@ManyToMany
-	@Column(name="papers")
 	public Set<Paper> getPapers()
 	{
 		return papers;

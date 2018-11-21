@@ -47,7 +47,6 @@ public class Institution {
 	 *
 	 * @return The name of this Institution
 	 */
-	@Column(name = "name", nullable = false)
 	public String getName() {
 		return name;
 	}

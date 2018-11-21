@@ -16,18 +16,29 @@ import org.hibernate.annotations.GenericGenerator;
 @Table(name="events")
 public class Event {
 	/*Unique id*/
+	@Id
+	@GeneratedValue(generator="increment")
+	@GenericGenerator(name="increment", strategy="increment")
+	@Column(name="id")
 	private long id;
 	/*Start time*/
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name="begin_date")
 	private Date begin;
 	/*End time*/
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name="end_date")
 	private Date end;
 	/*Host*/
 	//private Person host;                //TODO Person von Author abstrahieren
 	/* Place where this event happens */
+	@Column(name = "place")
 	private String place;
 	/* Title */
+	@Column(name = "title")
 	private String title;
 	/* Brief Description */
+	@Column(name = "short_description")
 	private String shortDescription;
 	/* Attendees */
 	//private Set<Person> attendees;      //TODO Hibernatemäßige Setter für alle Set<> oder List<> fehlen
@@ -39,10 +50,6 @@ public class Event {
 	 * Gets the unique id of this event
 	 * @return The unique id of this event
 	 */
-	@Id
-	@GeneratedValue(generator="increment")
-	@GenericGenerator(name="increment", strategy="increment")
-	@Column(name="id")
 	public long getId()
 	{
 		return id;
@@ -62,8 +69,6 @@ public class Event {
 	 * Gets the time this event begins
 	 * @return This event's begin time/date
 	 */
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name="begin_date")
 	public Date getBegin()
 	{
 		return begin;
@@ -82,8 +87,6 @@ public class Event {
 	 * Gets the time this event ends
 	 * @return This event's new end time/date
 	 */
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name="end_date")
 	public Date getEnd()
 	{
 		return end;
@@ -104,7 +107,6 @@ public class Event {
 	 *
 	 * @return The place where this event happens
 	 */
-	@Column(name = "place")
 	public String getPlace() {
 		return place;
 	}
@@ -123,7 +125,6 @@ public class Event {
 	 *
 	 * @return The title of this event
 	 */
-	@Column(name = "title")
 	public String getTitle() {
 		return title;
 	}
@@ -142,7 +143,6 @@ public class Event {
 	 *
 	 * @return A short description of the event
 	 */
-	@Column(name = "short_description")
 	public String getShortDescription() {
 		return shortDescription;
 	}
