@@ -7,7 +7,7 @@ import de.tudarmstadt.informatik.ukp.athenakp.database.models.Institution;
 /**
  * @author Daniel Lehmann
  */
-public interface InstitutionCommonAccess extends ICommonAccess<Institution>
+public interface InstitutionCommonAccess extends CommonAccess<Institution>
 {
 	/**
 	 * Get all institutions with specified institution id.

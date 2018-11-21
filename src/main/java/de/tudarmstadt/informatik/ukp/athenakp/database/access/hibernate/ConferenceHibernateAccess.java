@@ -1,4 +1,4 @@
-package de.tudarmstadt.informatik.ukp.athenakp.database.access;
+package de.tudarmstadt.informatik.ukp.athenakp.database.access.hibernate;
 
 import java.util.List;
 
@@ -7,6 +7,7 @@ import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 
 import de.tudarmstadt.informatik.ukp.athenakp.database.HibernateUtils;
+import de.tudarmstadt.informatik.ukp.athenakp.database.access.ConferenceCommonAccess;
 import de.tudarmstadt.informatik.ukp.athenakp.database.models.Conference;
 
 /**

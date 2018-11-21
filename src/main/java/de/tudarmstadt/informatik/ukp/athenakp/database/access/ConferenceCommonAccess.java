@@ -7,7 +7,7 @@ import de.tudarmstadt.informatik.ukp.athenakp.database.models.Conference;
 /**
  * @author Daniel Lehmann
  */
-public interface ConferenceCommonAccess extends ICommonAccess<Conference>
+public interface ConferenceCommonAccess extends CommonAccess<Conference>
 {
 	/**
 	 * Get all conferences with specified conference name.

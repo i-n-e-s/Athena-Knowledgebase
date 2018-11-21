@@ -6,11 +6,11 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import de.tudarmstadt.informatik.ukp.athenakp.database.access.InstitutionCommonAccess;
-import de.tudarmstadt.informatik.ukp.athenakp.database.access.InstitutionHibernateAccess;
 import de.tudarmstadt.informatik.ukp.athenakp.database.access.PaperCommonAccess;
-import de.tudarmstadt.informatik.ukp.athenakp.database.access.PaperHibernateAccess;
 import de.tudarmstadt.informatik.ukp.athenakp.database.access.PersonCommonAccess;
-import de.tudarmstadt.informatik.ukp.athenakp.database.access.PersonHibernateAccess;
+import de.tudarmstadt.informatik.ukp.athenakp.database.access.hibernate.InstitutionHibernateAccess;
+import de.tudarmstadt.informatik.ukp.athenakp.database.access.hibernate.PaperHibernateAccess;
+import de.tudarmstadt.informatik.ukp.athenakp.database.access.hibernate.PersonHibernateAccess;
 import de.tudarmstadt.informatik.ukp.athenakp.database.models.Institution;
 import de.tudarmstadt.informatik.ukp.athenakp.database.models.Paper;
 import de.tudarmstadt.informatik.ukp.athenakp.database.models.Person;

@@ -10,7 +10,7 @@ import de.tudarmstadt.informatik.ukp.athenakp.database.models.Person;
  *
  * @author Tristan Wettich
  */
-public interface PersonCommonAccess extends ICommonAccess<Person> {
+public interface PersonCommonAccess extends CommonAccess<Person> {
 
 	/**
 	 * Get all persons with specified person id.

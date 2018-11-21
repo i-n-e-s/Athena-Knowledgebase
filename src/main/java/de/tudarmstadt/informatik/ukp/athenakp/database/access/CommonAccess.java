@@ -9,7 +9,7 @@ import java.util.List;
  * @author Tristan Wettich
  * @param <T> The model-class and respective table to be accessed
  */
-public interface ICommonAccess<T> {
+public interface CommonAccess<T> {
 
 	/**
 	 * Add/save data in database.
