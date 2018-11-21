@@ -13,47 +13,39 @@ import de.tudarmstadt.informatik.ukp.athenakp.database.models.Paper;
 /**
  * @author Daniel Lehmann
  */
-public class PaperHibernateAccess implements PaperCommonAccess
-{
+public class PaperHibernateAccess implements PaperCommonAccess {
 	@Override
-	public List<Paper> getByPaperID(Long paperID)
-	{
+	public List<Paper> getByPaperID(Long paperID) {
 		return getBy("paperID", paperID);
 	}
 
 	@Override
-	public List<Paper> getByAuthor(String author) //TODO implement this
-	{
+	public List<Paper> getByAuthor(String author) { //TODO: implement this
 		return null;
 	}
 
 	@Override
-	public List<Paper> getByReleaseDate(Integer year, Integer month, Integer day)
-	{
+	public List<Paper> getByReleaseDate(Integer year, Integer month, Integer day) {
 		return getBy("releaseDate", HibernateUtils.toTimestamp(year, month, day));
 	}
 
 	@Override
-	public List<Paper> getByTopic(String topic)
-	{
+	public List<Paper> getByTopic(String topic) {
 		return getBy("topic", topic);
 	}
 
 	@Override
-	public List<Paper> getByTitle(String title)
-	{
+	public List<Paper> getByTitle(String title) {
 		return getBy("title", title);
 	}
 
 	@Override
-	public List<Paper> getByHref(String href)
-	{
+	public List<Paper> getByHref(String href) {
 		return getBy("href", href);
 	}
 
 	@Override
-	public List<Paper> getByPdfFileSize(Integer pdfFileSize)
-	{
+	public List<Paper> getByPdfFileSize(Integer pdfFileSize) {
 		return getBy("pdfFileSize", pdfFileSize);
 	}
 
@@ -63,8 +55,7 @@ public class PaperHibernateAccess implements PaperCommonAccess
 	 * @param value The value to restrict the selection to
 	 * @return A List of all persons with the given restriction
 	 */
-	private List<Paper> getBy(String name, Object value)
-	{
+	private List<Paper> getBy(String name, Object value) {
 		Session session = HibernateUtils.getSessionFactory().openSession();
 		Criteria criteria = session.createCriteria(Paper.class);
 		List<Paper> result;
@@ -76,8 +67,7 @@ public class PaperHibernateAccess implements PaperCommonAccess
 	}
 
 	@Override
-	public void add(Paper data)
-	{
+	public void add(Paper data) {
 		Session session = HibernateUtils.getSessionFactory().openSession();
 
 		session.beginTransaction();
@@ -87,8 +77,7 @@ public class PaperHibernateAccess implements PaperCommonAccess
 	}
 
 	@Override
-	public void update(Paper data)
-	{
+	public void update(Paper data) {
 		Session session = HibernateUtils.getSessionFactory().openSession();
 
 		session.beginTransaction();
@@ -98,8 +87,7 @@ public class PaperHibernateAccess implements PaperCommonAccess
 	}
 
 	@Override
-	public void delete(Paper data)
-	{
+	public void delete(Paper data) {
 		Session session = HibernateUtils.getSessionFactory().openSession();
 
 		session.beginTransaction();
@@ -109,8 +97,7 @@ public class PaperHibernateAccess implements PaperCommonAccess
 	}
 
 	@Override
-	public List<Paper> get()
-	{
+	public List<Paper> get() {
 		Session session = HibernateUtils.getSessionFactory().openSession();
 		List<Paper> result = session.createCriteria(Paper.class).list();
 

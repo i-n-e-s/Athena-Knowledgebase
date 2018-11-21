@@ -14,49 +14,41 @@ import de.tudarmstadt.informatik.ukp.athenakp.database.models.Paper;
  */
 @RestController
 @RequestMapping("/papers")
-public class PaperController
-{
+public class PaperController {
 	private final PaperHibernateAccess access = new PaperHibernateAccess();
 
 	@RequestMapping("/byPaperID/{value}")
-	public List<Paper> byPaperID(@PathVariable("value")Long value)
-	{
+	public List<Paper> byPaperID(@PathVariable("value")Long value) {
 		return access.getByPaperID(value);
 	}
 
 	@RequestMapping("/byAuthor/{value}")
-	public List<Paper> byAuthor(@PathVariable("value")String value) //TODO implement this
-	{
+	public List<Paper> byAuthor(@PathVariable("value")String value) { //TODO implement this
 		return null;
 	}
 
 	@RequestMapping("/byReleaseDate/{year}/{month}/{day}")
-	public List<Paper> byReleaseDate(@PathVariable("year")Integer year, @PathVariable("month")Integer month, @PathVariable("day")Integer day)
-	{
+	public List<Paper> byReleaseDate(@PathVariable("year")Integer year, @PathVariable("month")Integer month, @PathVariable("day")Integer day) {
 		return access.getByReleaseDate(year, month, day);
 	}
 
 	@RequestMapping("/byTopic/{value}")
-	public List<Paper> byTopic(@PathVariable("value")String value)
-	{
+	public List<Paper> byTopic(@PathVariable("value")String value) {
 		return access.getByTopic(value);
 	}
 
 	@RequestMapping("/byTitle/{value}")
-	public List<Paper> byTitle(@PathVariable("value")String value)
-	{
+	public List<Paper> byTitle(@PathVariable("value")String value) {
 		return access.getByTitle(value);
 	}
 
 	@RequestMapping("/byHref/{value}")
-	public List<Paper> byHref(@PathVariable("value")String value)
-	{
+	public List<Paper> byHref(@PathVariable("value")String value) {
 		return access.getByHref(value);
 	}
 
 	@RequestMapping("/byPdfFileSize/{value}")
-	public List<Paper> byPdfFileSize(@PathVariable("value")Integer value)
-	{
+	public List<Paper> byPdfFileSize(@PathVariable("value")Integer value) {
 		return access.getByPdfFileSize(value);
 	}
 }

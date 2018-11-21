@@ -14,25 +14,21 @@ import de.tudarmstadt.informatik.ukp.athenakp.database.models.Institution;
  */
 @RestController
 @RequestMapping("/institutions")
-public class InstitutionController
-{
+public class InstitutionController {
 	private final InstitutionHibernateAccess access = new InstitutionHibernateAccess();
 
 	@RequestMapping("/byInstitutionID/{value}")
-	public List<Institution> byInstitutionID(@PathVariable("value")Long value)
-	{
+	public List<Institution> byInstitutionID(@PathVariable("value")Long value) {
 		return access.getByInstitutionID(value);
 	}
 
 	@RequestMapping("/byName/{value}")
-	public List<Institution> byName(@PathVariable("value")String value)
-	{
+	public List<Institution> byName(@PathVariable("value")String value) {
 		return access.getByName(value);
 	}
 
 	@RequestMapping("/byPerson/{value}")
-	public List<Institution> byPerson(@PathVariable("value")String value)
-	{
+	public List<Institution> byPerson(@PathVariable("value")String value) {
 		return access.getByPerson(value);
 	}
 }

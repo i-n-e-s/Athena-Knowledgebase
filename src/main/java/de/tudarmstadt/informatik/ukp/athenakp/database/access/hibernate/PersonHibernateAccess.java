@@ -21,8 +21,7 @@ public class PersonHibernateAccess implements PersonCommonAccess {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public List<Person> getByPersonID(Long personID)
-	{
+	public List<Person> getByPersonID(Long personID) {
 		return getBy("personID", personID);
 	}
 
@@ -30,8 +29,7 @@ public class PersonHibernateAccess implements PersonCommonAccess {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public List<Person> getByPrefix(String prefix)
-	{
+	public List<Person> getByPrefix(String prefix) {
 		return getBy("prefix", prefix);
 	}
 
@@ -39,8 +37,7 @@ public class PersonHibernateAccess implements PersonCommonAccess {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public List<Person> getByFirstName(String firstName)
-	{
+	public List<Person> getByFirstName(String firstName) {
 		return getBy("firstName", firstName);
 	}
 
@@ -48,8 +45,7 @@ public class PersonHibernateAccess implements PersonCommonAccess {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public List<Person> getByMiddleName(String middleName)
-	{
+	public List<Person> getByMiddleName(String middleName) {
 		return getBy("middleName", middleName);
 	}
 
@@ -57,8 +53,7 @@ public class PersonHibernateAccess implements PersonCommonAccess {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public List<Person> getByLastName(String lastName)
-	{
+	public List<Person> getByLastName(String lastName) {
 		return getBy("lastName", lastName);
 	}
 
@@ -66,8 +61,7 @@ public class PersonHibernateAccess implements PersonCommonAccess {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public List<Person> getByBirthdate(Integer year, Integer month, Integer day)
-	{
+	public List<Person> getByBirthdate(Integer year, Integer month, Integer day) {
 		return getBy("birthdate", HibernateUtils.toTimestamp(year, month, day));
 	}
 
@@ -75,8 +69,7 @@ public class PersonHibernateAccess implements PersonCommonAccess {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public List<Person> getByObit(Integer year, Integer month, Integer day)
-	{
+	public List<Person> getByObit(Integer year, Integer month, Integer day) {
 		return getBy("obit", HibernateUtils.toTimestamp(year, month, day));
 	}
 
@@ -84,8 +77,7 @@ public class PersonHibernateAccess implements PersonCommonAccess {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public List<Person> getByInstitutionID(String institutionID) //TODO implement this
-	{
+	public List<Person> getByInstitutionID(String institutionID) { //TODO implement this
 		return null;
 	}
 
@@ -95,8 +87,7 @@ public class PersonHibernateAccess implements PersonCommonAccess {
 	 * @param value The value to restrict the selection to
 	 * @return A List of all persons with the given restriction
 	 */
-	private List<Person> getBy(String name, Object value)
-	{
+	private List<Person> getBy(String name, Object value) {
 		Session session = HibernateUtils.getSessionFactory().openSession();
 		Criteria criteria = session.createCriteria(Person.class);
 		criteria.add(Restrictions.eq(name, value));

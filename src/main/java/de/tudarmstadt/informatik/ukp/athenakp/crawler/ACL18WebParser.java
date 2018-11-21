@@ -12,7 +12,7 @@ import org.jsoup.select.Elements;
 /**
  * A class, which holds the capability to return a List of all authors, which
  * wrote a paper in the frame of the ACL'18 conference
- * 
+ *
  * @author Jonas Hake
  */
 public class ACL18WebParser {
@@ -26,7 +26,7 @@ public class ACL18WebParser {
 	 * fetch the given website, and follows the Link, which contains 'Next' as long
 	 * there is a Link containing 'Next' The method returns a list of all visited
 	 * websites
-	 * 
+	 *
 	 * @param startURL the URL of the website, where the crawler starts
 	 * @return the list of visited websites in form of a Jsoup document
 	 */
@@ -58,7 +58,7 @@ public class ACL18WebParser {
 	 * extract all authors from a given List of webpages, which are in the ACL
 	 * search form(e.g. {@link here
 	 * https://aclanthology.coli.uni-saarland.de/catalog/facet/author?commit=facet.page%3D1&facet.page=1})
-	 * 
+	 *
 	 * @param a list of webpages
 	 * @return a list of names
 	 */
@@ -76,7 +76,7 @@ public class ACL18WebParser {
 
 	/**
 	 * Returns all Authors, which published in the year 2018
-	 * 
+	 *
 	 * @return a list of all authors
 	 */
 	public ArrayList<String> getAuthors() throws IOException {

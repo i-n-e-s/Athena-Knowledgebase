@@ -13,23 +13,19 @@ import de.tudarmstadt.informatik.ukp.athenakp.database.models.Institution;
 /**
  * @author Daniel Lehmann
  */
-public class InstitutionHibernateAccess implements InstitutionCommonAccess
-{
+public class InstitutionHibernateAccess implements InstitutionCommonAccess {
 	@Override
-	public List<Institution> getByInstitutionID(Long institutionID)
-	{
+	public List<Institution> getByInstitutionID(Long institutionID) {
 		return getBy("institutionID", institutionID);
 	}
 
 	@Override
-	public List<Institution> getByName(String name)
-	{
+	public List<Institution> getByName(String name) {
 		return getBy("name", name);
 	}
 
 	@Override
-	public List<Institution> getByPerson(String person) //TODO: implement
-	{
+	public List<Institution> getByPerson(String person) { //TODO: implement
 		return null;
 	}
 
@@ -39,8 +35,7 @@ public class InstitutionHibernateAccess implements InstitutionCommonAccess
 	 * @param value The value to restrict the selection to
 	 * @return A List of all persons with the given restriction
 	 */
-	private List<Institution> getBy(String name, Object value)
-	{
+	private List<Institution> getBy(String name, Object value) {
 		Session session = HibernateUtils.getSessionFactory().openSession();
 		Criteria criteria = session.createCriteria(Institution.class);
 		List<Institution> result;
@@ -52,8 +47,7 @@ public class InstitutionHibernateAccess implements InstitutionCommonAccess
 	}
 
 	@Override
-	public void add(Institution data)
-	{
+	public void add(Institution data) {
 		Session session = HibernateUtils.getSessionFactory().openSession();
 
 		session.beginTransaction();
@@ -63,8 +57,7 @@ public class InstitutionHibernateAccess implements InstitutionCommonAccess
 	}
 
 	@Override
-	public void update(Institution data)
-	{
+	public void update(Institution data) {
 		Session session = HibernateUtils.getSessionFactory().openSession();
 
 		session.beginTransaction();
@@ -74,8 +67,7 @@ public class InstitutionHibernateAccess implements InstitutionCommonAccess
 	}
 
 	@Override
-	public void delete(Institution data)
-	{
+	public void delete(Institution data) {
 		Session session = HibernateUtils.getSessionFactory().openSession();
 
 		session.beginTransaction();
@@ -85,8 +77,7 @@ public class InstitutionHibernateAccess implements InstitutionCommonAccess
 	}
 
 	@Override
-	public List<Institution> get()
-	{
+	public List<Institution> get() {
 		Session session = HibernateUtils.getSessionFactory().openSession();
 		List<Institution> result = session.createCriteria(Institution.class).list();
 
