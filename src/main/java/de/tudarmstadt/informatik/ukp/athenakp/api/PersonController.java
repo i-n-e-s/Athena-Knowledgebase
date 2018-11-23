@@ -1,12 +1,15 @@
 package de.tudarmstadt.informatik.ukp.athenakp.api;
 
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import de.tudarmstadt.informatik.ukp.athenakp.database.access.hibernate.PersonHibernateAccess;
+import de.tudarmstadt.informatik.ukp.athenakp.database.models.Author;
+import de.tudarmstadt.informatik.ukp.athenakp.database.models.Paper;
 import de.tudarmstadt.informatik.ukp.athenakp.database.models.Person;
 
 /**
@@ -25,6 +28,15 @@ public class PersonController {
 	@RequestMapping("/byPersonID/{value}")
 	public List<Person> byPersonID(@PathVariable("value")Long value) {
 		return access.getByPersonID(value);
+	}
+
+	@RequestMapping("/byPersonID/{value}/getPapers")
+	public Set<Paper> getAuthors(@PathVariable("value")Long value) {
+		List<Person> persons = byPersonID(value);
+
+		if(persons.size() > 0 && persons.get(0) instanceof Author)
+			return ((Author)persons.get(0)).getPapers();
+		else return null;
 	}
 
 	@RequestMapping("/byPrefix/{value}")

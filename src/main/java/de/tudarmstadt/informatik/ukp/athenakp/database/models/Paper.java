@@ -1,10 +1,13 @@
 package de.tudarmstadt.informatik.ukp.athenakp.database.models;
 
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -12,6 +15,8 @@ import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name="paper")
@@ -22,9 +27,10 @@ public class Paper {
 	@Column(name = "paperID", updatable = false, nullable = false)
 	private long paperID;
 
-	/*Paper's author*/
-	@ManyToMany(mappedBy = "papers")
-	private Set<Author> authors;
+	/*Paper's authors*/
+	@JsonIgnore //fixes infinite recursion
+	@ManyToMany(cascade = { CascadeType.ALL }, mappedBy = "papers", fetch = FetchType.EAGER)
+	private Set<Author> authors = new HashSet<>();
 	/*Release date*/
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "releaseDate")
@@ -68,6 +74,14 @@ public class Paper {
 	 */
 	public void setAuthors(Set<Author> authors) {
 		this.authors = authors;
+	}
+
+	/**
+	 * Adds an author to this paper's author list
+	 * @param a The author to add
+	 */
+	public void addAuthor(Author a) {
+		authors.add(a);
 	}
 
 	/**
