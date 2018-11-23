@@ -15,8 +15,7 @@ import javax.persistence.TemporalType;
 
 @Entity
 @Table(name="paper")
-public class Paper
-{
+public class Paper {
 	/*Identifier*/
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -59,8 +58,7 @@ public class Paper
 	 * Gets List of this paper's authors
 	 * @return List of this paper's authors
 	 */
-	public Set<Author> getAuthors()
-	{
+	public Set<Author> getAuthors() {
 		return authors;
 	}
 
@@ -68,8 +66,7 @@ public class Paper
 	 * Sets this paper's authors
 	 * @param authors The new author of this paper
 	 */
-	public void setAuthors(Set<Author> authors)
-	{
+	public void setAuthors(Set<Author> authors) {
 		this.authors = authors;
 	}
 
@@ -77,8 +74,7 @@ public class Paper
 	 * Gets this paper's release date
 	 * @return This paper's release date
 	 */
-	public Date getReleaseDate()
-	{
+	public Date getReleaseDate() {
 		return releaseDate;
 	}
 
@@ -86,11 +82,9 @@ public class Paper
 	 * Sets this paper's release date
 	 * @param releaseDate The new release date of this paper
 	 */
-	public void setReleaseDate(Date releaseDate)
-	{
+	public void setReleaseDate(Date releaseDate) {
 		this.releaseDate = releaseDate;
 	}
-
 
 	/**
 	 * Gets this papers topic
@@ -109,7 +103,6 @@ public class Paper
 	public void setTopic(String topic) {
 		this.topic = topic;
 	}
-
 
 	/**
 	 * Gets this papers title
@@ -137,6 +130,7 @@ public class Paper
 	public String getHref() {
 		return href;
 	}
+
 	/**
 	 * Sets the link to this papers PDF file
 	 *
@@ -154,6 +148,7 @@ public class Paper
 	public int getPdfFileSize() {
 		return pdfFileSize;
 	}
+
 	/**
 	 * Sets the filesize of this papers PDF file in Bytes
 	 *
@@ -162,5 +157,4 @@ public class Paper
 	public void setPdfFileSize(int pdfFileSize) {
 		this.pdfFileSize = pdfFileSize;
 	}
-
 }

@@ -28,8 +28,7 @@ public class Author extends Person {
 	 * Gets the papers this author has written
 	 * @return The papers this author has written
 	 */
-	public Set<Paper> getPapers()
-	{
+	public Set<Paper> getPapers() {
 		return papers;
 	}
 
