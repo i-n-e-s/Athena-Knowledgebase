@@ -55,6 +55,9 @@ public class Application {
 		pa.setReleaseDate(new Date(2018 - 1900, 11 - 1, 16));
 		pa.setTopic("The Life, the Universe and Everything");
 		pa.setTitle("42");
+		//		maybe add pa.setAuthors to Rumo in order to facilitate testing the interface or change Rumo to
+		//		Douglas Adams, a truly vital change
+		//		@author Julian Steitz
 
 		PaperCommonAccess paca = new PaperHibernateAccess();
 		paca.add(pa);
