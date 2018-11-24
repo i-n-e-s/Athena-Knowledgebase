@@ -15,6 +15,9 @@ import de.tudarmstadt.informatik.ukp.athenakp.database.models.Paper;
  * @author Daniel Lehmann
  */
 @RestController
+//	maybe flesh out documentation to mention one cannot call localhost:xxxx/byPersonID but instead has to call
+//	localhost:xxxx/papers/byPersonID. This seems obvious for everyone working on the project but might help people
+//	just starting out with Spring - I can relate.
 @RequestMapping("/papers")
 public class PaperController {
 	private final PaperHibernateAccess access = new PaperHibernateAccess();
