@@ -16,6 +16,11 @@ import de.tudarmstadt.informatik.ukp.athenakp.database.models.Conference;
 public class ConferenceController {
 	private final ConferenceHibernateAccess access = new ConferenceHibernateAccess();
 
+	@RequestMapping("") //default
+	public List<Conference> getAllConferences() {
+		return access.get();
+	}
+
 	@RequestMapping("/byName/{value}")
 	public List<Conference> byName(@PathVariable("value")String value) {
 		return access.getByName(value);
