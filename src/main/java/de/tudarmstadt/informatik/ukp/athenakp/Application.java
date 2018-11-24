@@ -42,7 +42,9 @@ public class Application {
 		//		this might also fix the localhost:8080/persons answer birthdate	"3910-11-09T23:00:00.000+0000" for Rumo
         //      @author Julian Steitz
 		p2.setBirthdate(new Date(1970 - 1900, 1 - 1, 1));
-		p2.setObit(new Date(2038 - 1900, 1 - 1, 19));
+		//		the incorrect date is just because tristan didn't subtract 1900 when setting up Rumpo's data. i am not sure if the
+		//		alternatives proposed in the linked stackoverflow thread will work with hibernate, gotta test that
+		//		-Daniel
 		//				p2.setInstitution(i); FIXME if a person has this, a query with a result containing this person will result in an error
 
 		//		pa to dummypaper?
@@ -70,8 +72,8 @@ public class Application {
 		// 		maybe check if the entry already exists. Otherwise duplicates could arise
 		//		@author Julian Steitz
 		InstitutionCommonAccess ica = new InstitutionHibernateAccess();
-		ica.add(i);
-		PersonCommonAccess pca = new PersonHibernateAccess();
+		//		every institution, paper, person has an id. for dummy data, it's not that bad if there are duplicate names etc, they still have a unique id.
+		//		-Daniel
 		pca.add(p);
 		pca.add(p2);
 		PaperCommonAccess paca = new PaperHibernateAccess();
