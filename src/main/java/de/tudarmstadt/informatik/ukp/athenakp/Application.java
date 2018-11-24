@@ -24,6 +24,9 @@ public class Application {
 		Institution i = new Institution();
 		i.setName("Black Mesa");
 
+		//		I got confused because mainly because I am daft, but also because "p" variable names are maybe not ideal
+		//		maybe call p "dummyauthor"
+		//		@author Julian Steitz
 		Author p = new Author();
 		p.setFirstName("Rumpo");
 		p.setLastName("Derpel");
@@ -42,15 +45,13 @@ public class Application {
 		p2.setObit(new Date(2038 - 1900, 1 - 1, 19));
 		//				p2.setInstitution(i); FIXME if a person has this, a query with a result containing this person will result in an error
 
+		//		pa to dummypaper?
 		Paper pa = new Paper();
 		pa.setHref("https://example.org");
 		pa.setPdfFileSize(123456);
 		pa.setReleaseDate(new Date(2018 - 1900, 11 - 1, 16));
 		pa.setTopic("The Life, the Universe and Everything");
 		pa.setTitle("42");
-		//		maybe add pa.setAuthors to Rumo in order to facilitate testing the interface or change Rumo to
-		//		Douglas Adams, a truly vital change
-		//		@author Julian Steitz
 
 		Paper pa2 = new Paper();
 		pa2.setHref("https://example.org");
@@ -66,6 +67,8 @@ public class Application {
 		p.addPaper(pa2);
 		p2.addPaper(pa);
 
+		// 		maybe check if the entry already exists. Otherwise duplicates could arise
+		//		@author Julian Steitz
 		InstitutionCommonAccess ica = new InstitutionHibernateAccess();
 		ica.add(i);
 		PersonCommonAccess pca = new PersonHibernateAccess();
