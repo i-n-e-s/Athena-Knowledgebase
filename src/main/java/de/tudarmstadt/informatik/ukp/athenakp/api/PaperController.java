@@ -19,6 +19,11 @@ import de.tudarmstadt.informatik.ukp.athenakp.database.models.Paper;
 public class PaperController {
 	private final PaperHibernateAccess access = new PaperHibernateAccess();
 
+	@RequestMapping("") //default
+	public List<Paper> getAllPapers() {
+		return access.get();
+	}
+
 	@RequestMapping("/byPaperID/{value}")
 	public List<Paper> byPaperID(@PathVariable("value")Long value) {
 		return access.getByPaperID(value);
