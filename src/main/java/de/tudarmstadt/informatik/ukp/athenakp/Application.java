@@ -40,6 +40,7 @@ public class Application {
 		//		Date seems to be deprecated and its time segment can cause problems (does for me) if ignored
 		//		https://stackoverflow.com/a/21598394 shows alternatives that could be useful (e.g. java.time)
 		//		this might also fix the localhost:8080/persons answer birthdate	"3910-11-09T23:00:00.000+0000" for Rumo
+        //      @author Julian Steitz
 		p2.setBirthdate(new Date(1970 - 1900, 1 - 1, 1));
 		p2.setObit(new Date(2038 - 1900, 1 - 1, 19));
 		//				p2.setInstitution(i); FIXME if a person has this, a query with a result containing this person will result in an error
