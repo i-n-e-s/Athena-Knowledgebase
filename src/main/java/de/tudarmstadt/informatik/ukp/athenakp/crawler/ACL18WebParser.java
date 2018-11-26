@@ -1,9 +1,18 @@
 package de.tudarmstadt.informatik.ukp.athenakp.crawler;
 
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
+import de.tudarmstadt.informatik.ukp.athenakp.database.access.PaperCommonAccess;
+import de.tudarmstadt.informatik.ukp.athenakp.database.access.PersonCommonAccess;
+import de.tudarmstadt.informatik.ukp.athenakp.database.access.hibernate.PaperHibernateAccess;
+import de.tudarmstadt.informatik.ukp.athenakp.database.access.hibernate.PersonHibernateAccess;
+import de.tudarmstadt.informatik.ukp.athenakp.database.models.Author;
+import de.tudarmstadt.informatik.ukp.athenakp.database.models.Paper;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -164,5 +173,61 @@ public class ACL18WebParser {
 	 */
 	public ArrayList<ArrayList<String>> getPaperAuthor() throws IOException {
 		return extractPaperAuthor(fetchWebpages(startURLPaper));
+	}
+
+	/**Constructs Author and Paper Objects from getPaperAuthor() and adds them to the database
+	 * see its documentation for its makeup
+	 * @throws IOException if jsoup was interrupted in the scraping process (during getPaperAuthor())
+	 * @author Julian Steitz
+	 * TODO: implement saveandupdate in Common Access? Otherwise implement check if entry exist. Expensive?
+	 * TODO: recognise asian names and reverse name order? Or is that taken care of in the website? Check with Thomas
+	 */
+	public void storePapersandAuthors() throws IOException {
+		ArrayList<ArrayList<String>> listofPaperAuthor = getPaperAuthor();
+		PaperCommonAccess paperfiler = new PaperHibernateAccess();
+		PersonCommonAccess personfiler = new PersonHibernateAccess();
+
+		for (ArrayList<String> paperandauthors:listofPaperAuthor) {
+			// only one Paper per paperandauthors
+			Paper paper = new Paper();
+			// more elegant to do it in the if loop, but that screws with PaperID
+			paper.setTitle(paperandauthors.get(0));
+			// only one set of authors that worked on the paper
+			Set<Author> authorset = new HashSet<>();
+
+			for (String name : paperandauthors){
+				if (paperandauthors.indexOf(name) == 0){
+					break;
+				}
+				else{
+					Author author = new Author();
+					// makes the sane? assumption, that doubled last names "Schmidt Müller" are more common than
+					// doubled middle names
+					String[] splitname = name.split(" ", 3);
+					switch(splitname.length){
+
+						case 1: author.setLastName(splitname[0]);
+							break;
+						case 2: author.setFirstName(splitname[0]);
+							author.setLastName(splitname[1]);
+							break;
+						case 3: author.setFirstName(splitname[0]);
+							author.setMiddleName(splitname[1]);
+							author.setLastName(splitname[2]);
+							break;
+					}
+					// does not check for duplicates (between sets) since even authors can share the same name
+					//TODO: replace with paper.addAuthor after merge?
+					authorset.add(author);
+					personfiler.add(author);
+				}
+
+			}
+			// set author relation
+			paper.setAuthors(authorset);
+			// finally add the paper
+			// TODO: they contain an identifier (e.g. [C18-1021]) maybe add as a separate table to Papers? eg. Anthology
+			paperfiler.add(paper);
+		}
 	}
 }

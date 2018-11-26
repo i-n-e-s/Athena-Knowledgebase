@@ -1,7 +1,9 @@
 package de.tudarmstadt.informatik.ukp.athenakp;
 
+import java.io.IOException;
 import java.util.Date;
 
+import de.tudarmstadt.informatik.ukp.athenakp.crawler.ACL18WebParser;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
@@ -55,6 +57,13 @@ public class Application {
 		PaperCommonAccess paca = new PaperHibernateAccess();
 		paca.add(pa);
 
+		ACL18WebParser acl18WebParser = new ACL18WebParser();
+		try {
+			acl18WebParser.storePapersandAuthors();
+		}
+		catch (IOException e){
+			System.out.println("Jsoup broke:" + e.getCause());
+		}
 		//TODO add to database and if done, enable ConferenceController
 		//		Conference c = new Conference();
 		//		c.setStartDate(new Date(2017 - 1900, 8 - 1, 15));
