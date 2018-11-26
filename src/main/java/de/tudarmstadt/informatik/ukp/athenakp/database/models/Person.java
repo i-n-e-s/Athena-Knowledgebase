@@ -64,8 +64,7 @@ public class Person {
 	 * Gets the unique id of the person.
 	 * @return The unique id of the person
 	 */
-	public long getPersonID()
-	{
+	public long getPersonID() {
 		return personID;
 	}
 
@@ -73,8 +72,7 @@ public class Person {
 	 * Sets the person's id
 	 * @param id The new id
 	 */
-	public void setPersonID(long id)
-	{
+	public void setPersonID(long id) {
 		this.personID = id;
 	}
 

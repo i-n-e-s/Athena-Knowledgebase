@@ -13,9 +13,9 @@ import de.tudarmstadt.informatik.ukp.athenakp.database.access.PersonCommonAccess
 import de.tudarmstadt.informatik.ukp.athenakp.database.access.hibernate.InstitutionHibernateAccess;
 import de.tudarmstadt.informatik.ukp.athenakp.database.access.hibernate.PaperHibernateAccess;
 import de.tudarmstadt.informatik.ukp.athenakp.database.access.hibernate.PersonHibernateAccess;
+import de.tudarmstadt.informatik.ukp.athenakp.database.models.Author;
 import de.tudarmstadt.informatik.ukp.athenakp.database.models.Institution;
 import de.tudarmstadt.informatik.ukp.athenakp.database.models.Paper;
-import de.tudarmstadt.informatik.ukp.athenakp.database.models.Person;
 
 @SpringBootApplication
 public class Application {
@@ -23,39 +23,65 @@ public class Application {
 	public static void main(String[] args) {
 		SpringApplication.run(Application.class, args);
 
-		Institution i = new Institution();
-		i.setName("Black Mesa");
+		Institution dummyInstitution = new Institution();
+		dummyInstitution.setName("Black Mesa");
 
-		InstitutionCommonAccess ica = new InstitutionHibernateAccess();
-		ica.add(i);
+		Author dummyAuthor = new Author();
+		dummyAuthor.setFirstName("Rumpo");
+		dummyAuthor.setLastName("Derpel");
+		dummyAuthor.setBirthdate(new Date(2010, 10, 10));
 
-		Person p = new Person();
-		p.setFirstName("Rumpo");
-		p.setLastName("Derpel");
-		p.setBirthdate(new Date(2010, 10, 10));
+		Author dummyAuthor2 = new Author();
+		dummyAuthor2.setPrefix("Prof. Dr.");
+		dummyAuthor2.setFirstName("John");
+		dummyAuthor2.setMiddleName("T.");
+		dummyAuthor2.setLastName("Smith");
+		//		Date seems to be deprecated and its time segment can cause problems (does for me) if ignored
+		//		https://stackoverflow.com/a/21598394 shows alternatives that could be useful (e.g. java.time)
+		//		this might also fix the localhost:8080/persons answer birthdate	"3910-11-09T23:00:00.000+0000" for Rumo
+		//      @author Julian Steitz
 
-		Person p2 = new Person();
-		p2.setPrefix("Prof. Dr.");
-		p2.setFirstName("John");
-		p2.setMiddleName("T.");
-		p2.setLastName("Smith");
-		p2.setBirthdate(new Date(1970 - 1900, 1 - 1, 1));
-		p2.setObit(new Date(2038 - 1900, 1 - 1, 19));
+		//		the incorrect date is just because tristan didn't subtract 1900 when setting up Rumpo's data. i am not sure if the
+		//		alternatives proposed in the linked stackoverflow thread will work with hibernate, gotta test that
+		//		-Daniel
+		dummyAuthor2.setBirthdate(new Date(1970 - 1900, 1 - 1, 1));
+		dummyAuthor2.setObit(new Date(2038 - 1900, 1 - 1, 19));
 		//				p2.setInstitution(i); FIXME if a person has this, a query with a result containing this person will result in an error
 
-		PersonCommonAccess pca = new PersonHibernateAccess();
-		pca.add(p);
-		pca.add(p2);
+		Paper dummyPaper = new Paper();
+		dummyPaper.setHref("https://example.org");
+		dummyPaper.setPdfFileSize(123456);
+		dummyPaper.setReleaseDate(new Date(2018 - 1900, 11 - 1, 16));
+		dummyPaper.setTopic("The Life, the Universe and Everything");
+		dummyPaper.setTitle("42");
 
-		Paper pa = new Paper();
-		pa.setHref("https://example.org");
-		pa.setPdfFileSize(123456);
-		pa.setReleaseDate(new Date(2018 - 1900, 11 - 1, 16));
-		pa.setTopic("The Life, the Universe and Everything");
-		pa.setTitle("42");
+		Paper dummyPaper2 = new Paper();
+		dummyPaper2.setHref("https://example.org");
+		dummyPaper2.setPdfFileSize(654321);
+		dummyPaper2.setReleaseDate(new Date(2000 - 1900, 7 - 1, 29));
+		dummyPaper2.setTopic("Fiction");
+		dummyPaper2.setTitle("Why Hoverboards will exist by 2015");
 
-		PaperCommonAccess paca = new PaperHibernateAccess();
-		paca.add(pa);
+		dummyPaper.addAuthor(dummyAuthor);
+		dummyPaper.addAuthor(dummyAuthor2);
+		dummyPaper2.addAuthor(dummyAuthor2);
+		dummyAuthor.addPaper(dummyPaper);
+		dummyAuthor.addPaper(dummyPaper2);
+		dummyAuthor2.addPaper(dummyPaper);
+
+		// 		maybe check if the entry already exists. Otherwise duplicates could arise
+		//		@author Julian Steitz
+
+		//		every institution, paper, person has an id. for dummy data, it's not that bad if there are duplicate names etc, they still have a unique id
+		//		-Daniel
+		InstitutionCommonAccess institutionAccess = new InstitutionHibernateAccess();
+		institutionAccess.add(dummyInstitution);
+		PersonCommonAccess personAccess = new PersonHibernateAccess();
+		personAccess.add(dummyAuthor);
+		personAccess.add(dummyAuthor2);
+		PaperCommonAccess paperAccess = new PaperHibernateAccess();
+		paperAccess.add(dummyPaper);
+		paperAccess.add(dummyPaper2);
 
 		ACL18WebParser acl18WebParser = new ACL18WebParser();
 		try {
@@ -70,7 +96,7 @@ public class Application {
 		//		c.setEndDate(new Date(2017 - 1900, 9 - 1, 2));
 		//		c.setName("Conference of Nerds");
 		//
-		//		ConferenceCommonAccess cca = new ConferenceHibernateAccess();
-		//		cca.add(c);
+		//				ConferenceCommonAccess conferenceAccess = new ConferenceHibernateAccess();
+		//				conferenceAccess.add(dummyConference);
 	}
 }

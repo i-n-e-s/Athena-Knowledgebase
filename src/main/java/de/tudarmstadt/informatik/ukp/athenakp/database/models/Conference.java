@@ -14,8 +14,7 @@ import javax.persistence.TemporalType;
 
 @Entity
 @Table(name="conference")
-public class Conference
-{
+public class Conference {
 	/*Name of conference*/
 	@Id
 	@Column(name="name")
@@ -42,8 +41,7 @@ public class Conference
 	 * Gets the name of this conference
 	 * @return The name of this conference
 	 */
-	public String getName()
-	{
+	public String getName() {
 		return name;
 	}
 
@@ -51,8 +49,7 @@ public class Conference
 	 * Sets the name of this conference
 	 * @param name The new name
 	 */
-	public void setName(String name)
-	{
+	public void setName(String name) {
 		this.name = name;
 	}
 
@@ -60,8 +57,7 @@ public class Conference
 	 * Gets the date of the day this conference started
 	 * @return The date of the day this conference started
 	 */
-	public Date getStartDate()
-	{
+	public Date getStartDate() {
 		return startDate;
 	}
 
@@ -69,8 +65,7 @@ public class Conference
 	 * Sets the date of the day this conference started
 	 * @param startDate The new start date
 	 */
-	public void setStartDate(Date startDate)
-	{
+	public void setStartDate(Date startDate) {
 		this.startDate = startDate;
 	}
 
@@ -78,8 +73,7 @@ public class Conference
 	 * Gets the date of the day this conference ended
 	 * @return The date of the day this conference ended
 	 */
-	public Date getEndDate()
-	{
+	public Date getEndDate() {
 		return endDate;
 	}
 
@@ -87,8 +81,7 @@ public class Conference
 	 * Sets the date of the day this conference ended
 	 * @param endDate The new end date
 	 */
-	public void setEndDate(Date endDate)
-	{
+	public void setEndDate(Date endDate) {
 		this.endDate = endDate;
 	}
 
@@ -96,8 +89,7 @@ public class Conference
 	 * Gets the authors that talked at this conference
 	 * @return The authors that talked at this conference
 	 */
-	public Set<Author> getAuthors()
-	{
+	public Set<Author> getAuthors() {
 		return authors;
 	}
 
@@ -105,8 +97,7 @@ public class Conference
 	 * Gets the papers that were shown at this conference
 	 * @return The papers that were shown at this conference
 	 */
-	public Set<Paper> getPapers()
-	{
+	public Set<Paper> getPapers() {
 		return papers;
 	}
 }

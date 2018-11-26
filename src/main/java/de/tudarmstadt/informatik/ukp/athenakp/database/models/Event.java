@@ -45,13 +45,11 @@ public class Event {
 	/* Category */
 	private EventCategory category;   //TODO Hibernatemäßige Getter/Setter für diese ENUM implementieren
 
-
 	/**
 	 * Gets the unique id of this event
 	 * @return The unique id of this event
 	 */
-	public long getId()
-	{
+	public long getId() {
 		return id;
 	}
 
@@ -59,18 +57,15 @@ public class Event {
 	 * Sets this event's id
 	 * @param id The new id
 	 */
-	public void setId(long id)
-	{
+	public void setId(long id) {
 		this.id = id;
 	}
-
 
 	/**
 	 * Gets the time this event begins
 	 * @return This event's begin time/date
 	 */
-	public Date getBegin()
-	{
+	public Date getBegin() {
 		return begin;
 	}
 
@@ -78,8 +73,7 @@ public class Event {
 	 * Sets the time this event begins
 	 * @param begin The time this event begins
 	 */
-	public void setBegin(Date begin)
-	{
+	public void setBegin(Date begin) {
 		this.begin = begin;
 	}
 
@@ -87,8 +81,7 @@ public class Event {
 	 * Gets the time this event ends
 	 * @return This event's new end time/date
 	 */
-	public Date getEnd()
-	{
+	public Date getEnd() {
 		return end;
 	}
 
@@ -96,11 +89,9 @@ public class Event {
 	 * Sets the time this event ends
 	 * @param end the new time this event ends
 	 */
-	public void setEnd(Date end)
-	{
+	public void setEnd(Date end) {
 		this.end = end;
 	}
-
 
 	/**
 	 * Gets the place where this event happens
@@ -155,7 +146,6 @@ public class Event {
 	public void setShortDescription(String shortDescription) {
 		this.shortDescription = shortDescription;
 	}
-
 
 	/**
 	 * Gets the attendend persons of this event
