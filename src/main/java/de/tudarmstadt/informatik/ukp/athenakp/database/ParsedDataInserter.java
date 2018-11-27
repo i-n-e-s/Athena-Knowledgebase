@@ -27,7 +27,7 @@ public class ParsedDataInserter {
 		SpringApplication.run(Application.class, args);
 		ParsedDataInserter parsedDataInserter = new ParsedDataInserter();
 		try {
-			parsedDataInserter.aclStorePapersandAuthors();
+			parsedDataInserter.aclStorePapersAndAuthors();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -40,7 +40,7 @@ public class ParsedDataInserter {
 	 * TODO: implement saveandupdate in Common Access? Otherwise implement check if entry exist. Expensive?
 	 * TODO: recognise asian names and reverse name order? Or is that taken care of in the website? Check with Thomas
 	 */
-	private void aclStorePapersandAuthors() throws IOException {
+	private void aclStorePapersAndAuthors() throws IOException {
 		ACL18WebParser acl18WebParser = new ACL18WebParser();
 		System.out.println("Scraping, this can take a couple of minutes..");
 		ArrayList<ArrayList<String>> listOfPaperAuthor = acl18WebParser.getPaperAuthor();
