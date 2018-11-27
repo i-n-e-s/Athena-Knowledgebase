@@ -42,7 +42,7 @@ public class ACL18WebParser {
 		boolean nextSiteExist = true;
 		while (nextSiteExist) {
 			nextSiteExist = false;
-			// find the Link to the next page 
+			// find the Link to the next page
 			Elements links = docs.get(docs.size() - 1).select("a[href]");
 			List<String> linkTexts = links.eachText();
 			int idxOfLink = -1;
@@ -72,9 +72,9 @@ public class ACL18WebParser {
 	 */
 	private ArrayList<String> extractAuthors(ArrayList<Document> webpages) {
 		ArrayList<String> authors = new ArrayList<String>();
-		//extract the authors from all webpages
+		// extract the authors from all webpages
 		for (Document doc : webpages) {
-			Elements authorListElements = doc.select("li");//authors are the only <li> Elements on the Page
+			Elements authorListElements = doc.select("li");// authors are the only <li> Elements on the Page
 			for (Element elmnt : authorListElements) {
 				String tmp = elmnt.child(0).ownText();
 				authors.add(tmp);
@@ -84,51 +84,50 @@ public class ACL18WebParser {
 	}
 
 	/**
-	 * extract all papers from a given List of webpages, which are in the ACL
-	 * search form(e.g. {@link here
+	 * extract all papers from a given List of webpages, which are in the ACL search
+	 * form(e.g. {@link here
 	 * https://aclanthology.coli.uni-saarland.de/catalog/facet/author?commit=facet.page%3D1&facet.page=1})
 	 * 
 	 * @param a list of webpages
 	 * @return a list of names
 	 */
-	private ArrayList<String> extractPapers(ArrayList<Document> webpages){
+	private ArrayList<String> extractPapers(ArrayList<Document> webpages) {
 		ArrayList<String> paperList = new ArrayList<String>();
-		//extract the authors from all webpages
+		// extract the authors from all webpages
 		for (Document doc : webpages) {
-			Elements paperListElements = doc.select("h5.index_title");//papers are all <h5 class = "index_title">
+			Elements paperListElements = doc.select("h5.index_title");// papers are all <h5 class = "index_title">
 			for (Element elmnt : paperListElements) {
-				if(elmnt.text().contains("VOLUME"));//VOLUMES/Overview-Pdfs are also part of the search-result and removed here
-				else paperList.add(elmnt.text());
+				if (!elmnt.text().contains("VOLUME"))// VOLUMES/Overview-Pdfs are also part of the search-result and removed here
+					paperList.add(elmnt.text());
 			}
 		}
 		return paperList;
 	}
 
 	/**
-	 * extract all papers and Authors from a given List of webpages, which are in the ACL
-	 * search form(e.g. {@link here
+	 * extract all papers and Authors from a given List of webpages, which are in
+	 * the ACL search form(e.g. {@link here
 	 * https://aclanthology.coli.uni-saarland.de/catalog/facet/author?commit=facet.page%3D1&facet.page=1})
 	 * 
 	 * @param a list of webpages
 	 * @return a list of names
 	 */
-	private ArrayList<ArrayList<String>> extractPaperAuthor(ArrayList<Document> webpages){
+	private ArrayList<ArrayList<String>> extractPaperAuthor(ArrayList<Document> webpages) {
 		ArrayList<ArrayList<String>> paperList = new ArrayList<ArrayList<String>>();
 		for (Document doc : webpages) {
 			Elements paperListElements = doc.select("h5.index_title");
 			for (Element elmnt : paperListElements) {
-				ArrayList<String> paperAuthorList = new ArrayList<String>();
-				if(elmnt.text().contains("VOLUME"));//VOLUMES/Overview-PDFs are also part of the search-result and removed here
-				else {	
-					//add Paper Title 
+				ArrayList<String> paperAuthorList = new ArrayList<String>();// VOLUMES/Overview-PDFs are also part of the search-result and removed here
+				if (!elmnt.text().contains("VOLUME")) {
+					// add Paper Title
 					paperAuthorList.add(elmnt.text());
-					//find authors and add them to a list
+					// find authors and add them to a list
 					Elements authorElements = elmnt.parent().parent().children().select("span").select("a");
 					for (Element author : authorElements) {
 						paperAuthorList.add(author.text());
 					}
 					paperList.add(paperAuthorList);
-					;}
+				}
 			}
 		}
 		return paperList;
@@ -156,8 +155,8 @@ public class ACL18WebParser {
 
 	/**
 	 * 
-	 * Returns a List of List. Each Sublist represent a published Paper from ACL'18. 
-	 * The Sublists are in the Form: Title, Author1, Author2, ... 
+	 * Returns a List of List. Each Sublist represent a published Paper from ACL'18.
+	 * The Sublists are in the Form: Title, Author1, Author2, ...
 	 * 
 	 * @return A List of Lists of Papertitle and associated Author.
 	 * @throws IOException
