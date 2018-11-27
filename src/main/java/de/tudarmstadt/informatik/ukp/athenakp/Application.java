@@ -52,7 +52,7 @@ public class Application {
 		dummyPaper.setReleaseDate(new Date(2018 - 1900, 11 - 1, 16));
 		dummyPaper.setTopic("The Life, the Universe and Everything");
 		dummyPaper.setTitle("42");
-		dummyPaper.setAnthology("C2-PO");
+		dummyPaper.setAnthology("C2PO");
 
 		Paper dummyPaper2 = new Paper();
 		dummyPaper2.setHref("https://example.org");

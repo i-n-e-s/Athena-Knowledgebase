@@ -91,6 +91,7 @@ public class PaperController {
 	 *
 	 * @param value the corresponding anthology
 	 * @return All papers of the given anthology (currently only one) TODO: add wildcard search e.g. "CR-18"
+	 * TODO: fix: still broken "-" does not play well - probably only with the browser. If so, this is probably fine.
 	 */
 	@RequestMapping("/byAnthology/{value]")
 	public List<Paper> byAnthology(@PathVariable("value")String value) {
