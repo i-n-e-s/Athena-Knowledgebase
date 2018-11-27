@@ -88,6 +88,15 @@ public class PaperController {
 	}
 
 	/**
+	 *
+	 * @param value the corresponding anthology
+	 * @return All papers of the given anthology (currently only one) TODO: add wildcard search e.g. "CR-18"
+	 */
+	@RequestMapping("/byAnthology/{value]")
+	public List<Paper> byAnthology(@PathVariable("value")String value) {
+		return access.getByAnthology(value);
+	}
+	/**
 	 * @param value The paper's direct download link
 	 * @return All paper's with the given download link
 	 */

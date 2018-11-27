@@ -54,6 +54,7 @@ public class Application {
 		dummyPaper.setReleaseDate(new Date(2018 - 1900, 11 - 1, 16));
 		dummyPaper.setTopic("The Life, the Universe and Everything");
 		dummyPaper.setTitle("42");
+		dummyPaper.setAnthology("C2-PO");
 
 		Paper dummyPaper2 = new Paper();
 		dummyPaper2.setHref("https://example.org");
@@ -83,6 +84,7 @@ public class Application {
 		paperAccess.add(dummyPaper);
 		paperAccess.add(dummyPaper2);
 
+		// TODO: first implementation, should be factored out
 		ACL18WebParser acl18WebParser = new ACL18WebParser();
 		try {
 			acl18WebParser.storePapersandAuthors();

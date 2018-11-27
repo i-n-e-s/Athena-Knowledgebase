@@ -59,4 +59,11 @@ public interface PaperCommonAccess extends CommonAccess<Paper>
 	 * @return A List of all papers with the specified pdf's file size.
 	 */
 	public List<Paper> getByPdfFileSize(Integer pdfFileSize);
+
+	/**
+	 * Get all papers of an anthology
+	 * @param anthology the anthology the paper appeared in
+	 * @return A list of all papers that appeared in the anthology
+	 */
+	public List<Paper> getByAnthology(String anthology);
 }

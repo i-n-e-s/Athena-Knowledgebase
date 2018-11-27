@@ -49,6 +49,9 @@ public class PaperHibernateAccess implements PaperCommonAccess {
 		return getBy("pdfFileSize", pdfFileSize);
 	}
 
+	@Override
+	public List<Paper> getByAnthology(String anthology){ return getBy("anthology", anthology);}
+
 	/**
 	 * Common code used by all get methods above
 	 * @param name The name of the column to restrict
