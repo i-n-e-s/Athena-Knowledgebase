@@ -52,6 +52,7 @@ public class Application {
 		dummyPaper.setReleaseDate(new Date(2018 - 1900, 11 - 1, 16));
 		dummyPaper.setTopic("The Life, the Universe and Everything");
 		dummyPaper.setTitle("42");
+		dummyPaper.setAnthology("C2PO");
 
 		Paper dummyPaper2 = new Paper();
 		dummyPaper2.setHref("https://example.org");
@@ -80,12 +81,11 @@ public class Application {
 		PaperCommonAccess paperAccess = new PaperHibernateAccess();
 		paperAccess.add(dummyPaper);
 		paperAccess.add(dummyPaper2);
-
-		//		TODO add to database and if done, enable ConferenceController
-		//				Conference dummyConference = new Conference();
-		//				dummyConference.setStartDate(new Date(2017 - 1900, 8 - 1, 15));
-		//				dummyConference.setEndDate(new Date(2017 - 1900, 9 - 1, 2));
-		//				dummyConference.setName("Conference of Nerds");
+		//TODO add to database and if done, enable ConferenceController
+		//		Conference c = new Conference();
+		//		c.setStartDate(new Date(2017 - 1900, 8 - 1, 15));
+		//		c.setEndDate(new Date(2017 - 1900, 9 - 1, 2));
+		//		c.setName("Conference of Nerds");
 		//
 		//				ConferenceCommonAccess conferenceAccess = new ConferenceHibernateAccess();
 		//				conferenceAccess.add(dummyConference);

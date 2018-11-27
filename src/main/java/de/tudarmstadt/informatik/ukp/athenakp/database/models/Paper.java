@@ -47,6 +47,9 @@ public class Paper {
 	/*PDF filesize in Bytes*/
 	@Column(name = "pdfFileSize")
 	private int pdfFileSize;
+	/*anthology of paper as String*/
+	@Column (name = "anthology")
+	private String anthology;
 
 	//	Removed all code concerning quotations and alike. Too time consuming right now.
 
@@ -170,5 +173,21 @@ public class Paper {
 	 */
 	public void setPdfFileSize(int pdfFileSize) {
 		this.pdfFileSize = pdfFileSize;
+	}
+
+	/**
+	 * Gets the paper's anthology
+	 * @return the paper's anthology
+	 */
+	public String getAnthology() {
+		return anthology;
+	}
+
+	/**
+	 * Sets the paper's anthology
+	 * @param anthology anthology of the paper as String
+	 */
+	public void setAnthology(String anthology) {
+		this.anthology = anthology;
 	}
 }
