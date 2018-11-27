@@ -83,6 +83,8 @@ public class ParsedDataInserter {
                 // Both following statements seem necessary for the author_paper table but lead to Hibernate
                 // access returning an object (paper) as often as a relation in author_paper exists
                 // looking into the tables themselves, duplicate papers (even with the same PaperID) do not exist
+                // TODO: fix whatever causes the multiple Hibernate Accesses (returning the same object)
+                // TODO: when calling the API (my guess: paper_author relation)
                 // set paper - author relation
                 paper.addAuthor(author);
                 // set author - paper relation
