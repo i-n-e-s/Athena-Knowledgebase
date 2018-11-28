@@ -1,4 +1,4 @@
-package de.tudarmstadt.informatik.ukp.athenakp.database;
+package de.tudarmstadt.informatik.ukp.athenakp.database.hibernate;
 
 import java.sql.Timestamp;
 

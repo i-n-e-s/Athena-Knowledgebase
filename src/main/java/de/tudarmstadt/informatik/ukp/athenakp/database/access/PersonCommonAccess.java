@@ -14,7 +14,7 @@ public interface PersonCommonAccess extends CommonAccess<Person> {
 
 	/**
 	 * Get all persons with specified person id.
-	 * @param prefix The person's person id.
+	 * @param personID The person's person id.
 	 * @return A List of all persons with the specified person id.
 	 */
 	public List<Person> getByPersonID(Long personID);
