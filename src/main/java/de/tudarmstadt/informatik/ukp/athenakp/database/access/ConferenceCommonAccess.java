@@ -43,7 +43,7 @@ public interface ConferenceCommonAccess extends CommonAccess<Conference>
 
 	/**
 	 * Get all conferences with specified paper.
-	 * @param author The conference's paper.
+	 * @param paper The conference's paper.
 	 * @return A List of all conferences with the specified paper.
 	 */
 	public List<Conference> getByPaper(String paper);

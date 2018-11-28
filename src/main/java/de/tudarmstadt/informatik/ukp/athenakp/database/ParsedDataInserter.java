@@ -3,7 +3,7 @@ package de.tudarmstadt.informatik.ukp.athenakp.database;
 import de.tudarmstadt.informatik.ukp.athenakp.Application;
 import de.tudarmstadt.informatik.ukp.athenakp.crawler.ACL18WebParser;
 import de.tudarmstadt.informatik.ukp.athenakp.database.access.PaperCommonAccess;
-import de.tudarmstadt.informatik.ukp.athenakp.database.access.hibernate.PaperHibernateAccess;
+import de.tudarmstadt.informatik.ukp.athenakp.database.hibernate.PaperHibernateAccess;
 import de.tudarmstadt.informatik.ukp.athenakp.database.models.Author;
 import de.tudarmstadt.informatik.ukp.athenakp.database.models.Paper;
 

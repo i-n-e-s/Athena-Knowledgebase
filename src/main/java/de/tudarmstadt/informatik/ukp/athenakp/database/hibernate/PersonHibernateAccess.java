@@ -1,4 +1,4 @@
-package de.tudarmstadt.informatik.ukp.athenakp.database.access.hibernate;
+package de.tudarmstadt.informatik.ukp.athenakp.database.hibernate;
 
 import java.util.List;
 
@@ -6,7 +6,6 @@ import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 
-import de.tudarmstadt.informatik.ukp.athenakp.database.HibernateUtils;
 import de.tudarmstadt.informatik.ukp.athenakp.database.access.PersonCommonAccess;
 import de.tudarmstadt.informatik.ukp.athenakp.database.models.Person;
 

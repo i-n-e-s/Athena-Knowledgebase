@@ -11,7 +11,7 @@ public interface InstitutionCommonAccess extends CommonAccess<Institution>
 {
 	/**
 	 * Get all institutions with specified institution id.
-	 * @param name The institution's id.
+	 * @param id The institution's id.
 	 * @return A List of all institutions with the specified institution id.
 	 */
 	public List<Institution> getByInstitutionID(Long id);
@@ -25,7 +25,7 @@ public interface InstitutionCommonAccess extends CommonAccess<Institution>
 
 	/**
 	 * Get all institutions with institution person.
-	 * @param author The institution's person.
+	 * @param person The institution's person.
 	 * @return A List of all institutions with the specified person.
 	 */
 	public List<Institution> getByPerson(String person);

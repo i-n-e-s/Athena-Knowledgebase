@@ -5,7 +5,7 @@ import java.util.List;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import de.tudarmstadt.informatik.ukp.athenakp.database.access.hibernate.ConferenceHibernateAccess;
+import de.tudarmstadt.informatik.ukp.athenakp.database.hibernate.ConferenceHibernateAccess;
 import de.tudarmstadt.informatik.ukp.athenakp.database.models.Conference;
 
 /**
