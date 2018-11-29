@@ -1,6 +1,6 @@
 package de.tudarmstadt.informatik.ukp.athenakp.database.models;
 
-import java.util.Date;
+import java.time.ZonedDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -19,22 +19,20 @@ public class Conference {
 	@Id
 	@Column(name="name")
 	private String name;
-	/*First day of conference*/
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name="start_date")
-	private Date startDate;
-	/*Last day of conference*/
-	@Temporal(TemporalType.TIMESTAMP)
+	/*First day of conference can include time - timezoned*/
+	private ZonedDateTime startDate;
+	/*Last day of conference can include time - timezoned*/
 	@Column(name="end_date")
-	private Date endDate;
+	private ZonedDateTime endDate;
 	/*Authors that talked*/
-	@ManyToMany
+	/*@ManyToMany  TODO: fix, currently comes up with an error
 	@Column(name="authors")
-	private Set<Author> authors = new HashSet<Author>();
+	private Set<Author> authors = new HashSet<Author>();*/
 	/*Shown papers*/
-	@ManyToMany
+/*	@ManyToMany TODO: fix, currently comes up with an error (probably same as above) uncomment once the implementation
+	is of interest
 	@Column(name="papers")
-	private Set<Paper> papers = new HashSet<Paper>();
+	private Set<Paper> papers = new HashSet<Paper>();*/
 	//TODO: Workshops? Other data?
 
 	/**
@@ -57,7 +55,7 @@ public class Conference {
 	 * Gets the date of the day this conference started
 	 * @return The date of the day this conference started
 	 */
-	public Date getStartDate() {
+	public ZonedDateTime getStartDate() {
 		return startDate;
 	}
 
@@ -65,7 +63,7 @@ public class Conference {
 	 * Sets the date of the day this conference started
 	 * @param startDate The new start date
 	 */
-	public void setStartDate(Date startDate) {
+	public void setStartDate(ZonedDateTime startDate) {
 		this.startDate = startDate;
 	}
 
@@ -73,7 +71,7 @@ public class Conference {
 	 * Gets the date of the day this conference ended
 	 * @return The date of the day this conference ended
 	 */
-	public Date getEndDate() {
+	public ZonedDateTime getEndDate() {
 		return endDate;
 	}
 
@@ -81,23 +79,24 @@ public class Conference {
 	 * Sets the date of the day this conference ended
 	 * @param endDate The new end date
 	 */
-	public void setEndDate(Date endDate) {
+	public void setEndDate(ZonedDateTime endDate) {
 		this.endDate = endDate;
 	}
 
-	/**
+	/*
 	 * Gets the authors that talked at this conference
 	 * @return The authors that talked at this conference
-	 */
+	TODO: fix, see above at authors attribute
 	public Set<Author> getAuthors() {
 		return authors;
-	}
+	}*/
 
-	/**
+	/*
 	 * Gets the papers that were shown at this conference
 	 * @return The papers that were shown at this conference
+	 * TODO: implement then uncomment (see above)
 	 */
-	public Set<Paper> getPapers() {
+	/* public Set<Paper> getPapers() {
 		return papers;
-	}
+	}*/
 }
