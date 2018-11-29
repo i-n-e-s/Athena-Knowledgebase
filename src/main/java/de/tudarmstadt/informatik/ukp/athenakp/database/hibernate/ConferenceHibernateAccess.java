@@ -1,5 +1,6 @@
 package de.tudarmstadt.informatik.ukp.athenakp.database.hibernate;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.hibernate.Criteria;
@@ -20,12 +21,14 @@ public class ConferenceHibernateAccess implements ConferenceCommonAccess {
 
 	@Override
 	public List<Conference> getByStartDate(Integer year, Integer month, Integer day) {
-		return getBy("startDate", HibernateUtils.toTimestamp(year, month, day));
+		LocalDate localDate = LocalDate.of(year,month,day);
+		return getBy("startDate", localDate);
 	}
 
 	@Override
 	public List<Conference> getByEndDate(Integer year, Integer month, Integer day) {
-		return getBy("endDate", HibernateUtils.toTimestamp(year, month, day));
+		LocalDate localDate = LocalDate.of(year,month,day);
+		return getBy("endDate", localDate);
 	}
 
 	@Override
@@ -36,6 +39,16 @@ public class ConferenceHibernateAccess implements ConferenceCommonAccess {
 	@Override
 	public List<Conference> getByPaper(String paper) { //TODO: implement this
 		return null;
+	}
+
+	@Override
+	public List<Conference> getByCity(String city) {
+		return getBy("city", city);
+	}
+
+	@Override
+	public List<Conference> getByCountry(String country) {
+		return getBy("country", country);
 	}
 
 	/**

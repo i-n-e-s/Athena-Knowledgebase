@@ -82,9 +82,10 @@ public class Application {
 		paperAccess.add(dummyPaper);
 		paperAccess.add(dummyPaper2);
 
+		// is supposed to illustrate how handy .parse might be after scraping
 		Conference dummyConference = new Conference();
-		dummyConference.setStartDate(ZonedDateTime.parse("2012-06-30T12:30:40+01:00[Europe/Berlin]"));
-		dummyConference.setEndDate(ZonedDateTime.now());
+		dummyConference.setStartDate(LocalDate.parse("2012-06-30"));
+		dummyConference.setEndDate(LocalDate.now());
 //		dummyConference.setStartDate(new Date(2017 - 1900, 8 - 1, 15));
 //		dummyConference.setEndDate(new Date(2017 - 1900, 9 - 1, 2));
 		dummyConference.setName("Conference of Nerds");

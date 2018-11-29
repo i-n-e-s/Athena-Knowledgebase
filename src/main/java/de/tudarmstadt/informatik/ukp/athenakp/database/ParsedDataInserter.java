@@ -2,9 +2,12 @@ package de.tudarmstadt.informatik.ukp.athenakp.database;
 
 import de.tudarmstadt.informatik.ukp.athenakp.Application;
 import de.tudarmstadt.informatik.ukp.athenakp.crawler.ACL18WebParser;
+import de.tudarmstadt.informatik.ukp.athenakp.database.access.ConferenceCommonAccess;
 import de.tudarmstadt.informatik.ukp.athenakp.database.access.PaperCommonAccess;
+import de.tudarmstadt.informatik.ukp.athenakp.database.hibernate.ConferenceHibernateAccess;
 import de.tudarmstadt.informatik.ukp.athenakp.database.hibernate.PaperHibernateAccess;
 import de.tudarmstadt.informatik.ukp.athenakp.database.models.Author;
+import de.tudarmstadt.informatik.ukp.athenakp.database.models.Conference;
 import de.tudarmstadt.informatik.ukp.athenakp.database.models.Paper;
 
 import org.springframework.boot.SpringApplication;
@@ -26,11 +29,12 @@ public class ParsedDataInserter {
 	public static void main(String[] args) {
 		SpringApplication.run(Application.class, args);
 		ParsedDataInserter parsedDataInserter = new ParsedDataInserter();
-		try {
-			parsedDataInserter.aclStorePapersAndAuthors();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+//		try {
+//			parsedDataInserter.aclStorePapersAndAuthors();
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		}
+		parsedDataInserter.acl2018StoreConferenceInformation();
 	}
 
 	/**Constructs Author and Paper Objects from ACL18Webparser().getPaperAuthor() and adds them to the database
@@ -53,7 +57,7 @@ public class ParsedDataInserter {
 			// C18-1017 would be the anthology - we remove [] because the rest API dislikes the characters and they
 			// convey no meaning
 			String rawTitle = paperAndAuthors.get(0);
-			String[] splitRawTitle = rawTitle.split(" ", 2);
+			String[] splitRawTitle = rawTitle.split(", ", 2);
 			String paperTitle = splitRawTitle[1];
 			String anthology = splitRawTitle[0].replace("[", "").replace("]", "");
 			paper.setTitle(paperTitle);
@@ -79,6 +83,17 @@ public class ParsedDataInserter {
 			}
 			// adding the paper automatically adds the corresponding authors - realisation that took hours
 			paperFiler.add(paper);
+		}
+	}
+
+	private void acl2018StoreConferenceInformation() {
+		ACL18WebParser acl18WebParser = new ACL18WebParser();
+		ConferenceCommonAccess conferenceCommonAccess = new ConferenceHibernateAccess();
+		try {
+			Conference acl2018 = acl18WebParser.extractConferenceInformation();
+			conferenceCommonAccess.add(acl2018);
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 	}
 }

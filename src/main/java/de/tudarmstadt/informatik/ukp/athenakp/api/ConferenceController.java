@@ -10,7 +10,7 @@ import de.tudarmstadt.informatik.ukp.athenakp.database.hibernate.ConferenceHiber
 import de.tudarmstadt.informatik.ukp.athenakp.database.models.Conference;
 
 /**
- * Serves as a REST API definition for accessing conferences . Any mapping defined by a
+ * Serves as a REST API definition for accessing conferences. Any mapping defined by a
  * method in this class has to be prepended with "/conferences" since this class is annotated
  * with a RequestMapping.
  * @author Daniel Lehmann
@@ -35,6 +35,25 @@ public class ConferenceController {
 	@RequestMapping("/byName/{value}")
 	public List<Conference> byName(@PathVariable("value")String value) {
 		return access.getByName(value);
+	}
+
+	/**
+	 *
+	 * @param value The country the conference is in
+	 * @return	A List of conferences in the country
+	 */
+	@RequestMapping("/byCountry/{value}")
+	public List<Conference> byCountry(@PathVariable("value")String value) { return access.getByCountry(value);
+	}
+
+	/**
+	 * What about that share the same name? maybe disable or link with country?
+	 * TODO: how to combine queries e.g. limit by both country and city with the hibernate access /not filtering locally
+	 * @param value The city the conference is in
+	 * @return	A list of conferences in the city
+	 */
+	@RequestMapping("/byCity/{value}")
+	public List<Conference> byCity(@PathVariable("value")String value) { return access.getByCity(value);
 	}
 
 	/**

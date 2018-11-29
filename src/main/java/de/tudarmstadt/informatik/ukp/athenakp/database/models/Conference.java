@@ -1,16 +1,11 @@
 package de.tudarmstadt.informatik.ukp.athenakp.database.models;
 
-import java.time.ZonedDateTime;
-import java.util.HashSet;
-import java.util.Set;
+import java.time.LocalDate;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.ManyToMany;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 
 @Entity
 @Table(name="conference")
@@ -19,11 +14,18 @@ public class Conference {
 	@Id
 	@Column(name="name")
 	private String name;
-	/*First day of conference can include time - timezoned*/
-	private ZonedDateTime startDate;
-	/*Last day of conference can include time - timezoned*/
-	@Column(name="end_date")
-	private ZonedDateTime endDate;
+	/*First day of conference no need for the temporal annotation with java.time (indeed this would break it)*/
+	@Column (name="startDate")
+	private LocalDate startDate;
+	/*Last day of conference*/
+	@Column(name="endDate")
+	private LocalDate endDate;
+	@Column(name="country")
+	private String country;
+	@Column (name = "city")
+	private String city;
+	@Column(name = "address")
+	private String address;
 	/*Authors that talked*/
 	/*@ManyToMany  TODO: fix, currently comes up with an error
 	@Column(name="authors")
@@ -33,7 +35,7 @@ public class Conference {
 	is of interest
 	@Column(name="papers")
 	private Set<Paper> papers = new HashSet<Paper>();*/
-	//TODO: Workshops? Other data?
+	//TODO: Workshops? Other data? How about Duration? java.time would make that possible
 
 	/**
 	 * Gets the name of this conference
@@ -55,7 +57,7 @@ public class Conference {
 	 * Gets the date of the day this conference started
 	 * @return The date of the day this conference started
 	 */
-	public ZonedDateTime getStartDate() {
+	public LocalDate getStartDate() {
 		return startDate;
 	}
 
@@ -63,7 +65,7 @@ public class Conference {
 	 * Sets the date of the day this conference started
 	 * @param startDate The new start date
 	 */
-	public void setStartDate(ZonedDateTime startDate) {
+	public void setStartDate(LocalDate startDate) {
 		this.startDate = startDate;
 	}
 
@@ -71,7 +73,7 @@ public class Conference {
 	 * Gets the date of the day this conference ended
 	 * @return The date of the day this conference ended
 	 */
-	public ZonedDateTime getEndDate() {
+	public LocalDate getEndDate() {
 		return endDate;
 	}
 
@@ -79,8 +81,56 @@ public class Conference {
 	 * Sets the date of the day this conference ended
 	 * @param endDate The new end date
 	 */
-	public void setEndDate(ZonedDateTime endDate) {
+	public void setEndDate(LocalDate endDate) {
 		this.endDate = endDate;
+	}
+
+	/**
+	 * Gets the city the conference was hosted at
+	 * @return city The city the conference was hosted at
+	 */
+	public String getCity() {
+		return city;
+	}
+
+	/**
+	 * Sets the conference's city
+	 * @param city the conference's city
+	 */
+	public void setCity(String city) {
+		this.city = city;
+	}
+
+	/**
+	 * Gets the country the conference was hosted in
+	 * @return	the country the conference was hosted in
+	 */
+	public String getCountry() {
+		return country;
+	}
+
+	/**
+	 * Sets the country a conference was hosted in
+	 * @param country the country a conference was hosted in
+	 */
+	public void setCountry(String country) {
+		this.country = country;
+	}
+
+	/**
+	 * gets the building address the of the conference
+	 * @return the building address
+	 */
+	public String getAddress() {
+		return address;
+	}
+
+	/**
+	 * sets the conference's building address
+	 * @param address the conference's building address
+	 */
+	public void setAddress(String address) {
+		this.address = address;
 	}
 
 	/*

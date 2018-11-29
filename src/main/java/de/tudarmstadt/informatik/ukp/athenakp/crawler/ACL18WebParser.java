@@ -1,8 +1,10 @@
 package de.tudarmstadt.informatik.ukp.athenakp.crawler;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import de.tudarmstadt.informatik.ukp.athenakp.database.models.Conference;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -23,6 +25,9 @@ public class ACL18WebParser {
 
 	String startURLPaper = "https://aclanthology.coli.uni-saarland.de/catalog?per_page=100&range[publish_date][begin]=2018&range[publish_date][end]=&search_field=title";
 
+	String schedulePage = "https://acl2018.org/programme/schedule/";
+
+	String aboutPage = "https://acl2018.org/";
 	/**
 	 * fetch the given webpage, and follows the Link, which contains 'Next' as long
 	 * there is a Link containing 'Next' The method returns a list of all visited
@@ -131,7 +136,45 @@ public class ACL18WebParser {
 		}
 		return paperList;
 	}
+	public Conference extractConferenceInformation() throws IOException {
+		Conference currentConference = new Conference();
+		Document aboutPage = Jsoup.connect(this.aboutPage).get();
+		String conferenceName = aboutPage.select(".site-title a").text();
+		currentConference.setName(conferenceName);
+		CrawlerToolbelt crawlerToolbelt = new CrawlerToolbelt();
 
+/*		String conferenceStartTimeInformation = schedulePage.select(".day-wrapper:nth-child(1) " +
+				".overview-item:nth-child(1) .start-time").text();
+		String conferenceEndTimeInformation = schedulePage.select(".day-wrapper:nth-child(6) " +
+				".overview-item~ .overview-item+ .overview-item .start-time").text();
+
+		LocalTime conferenceStartTime = crawlerToolbelt.acl2018ConvertStringToTime(conferenceStartTimeInformation);
+		LocalTime conferenceEndTime = crawlerToolbelt.acl2018ConvertStringToTime(conferenceEndTimeInformation);*/
+
+		String dateAndLocationString = aboutPage.select(".sub-title-extra").text();
+		LocalDate conferenceStartDate = crawlerToolbelt.acl2018ConvertStringToDateRange(dateAndLocationString)[0];
+		LocalDate conferenceEndDate = crawlerToolbelt.acl2018ConvertStringToDateRange(dateAndLocationString)[1];
+		// Maybe we need to look at a timezone api? Probably not feasible to keep it free, which is why it is set as
+		// manual for now
+		// TODO: talk about timezones and how to handle them
+		// ZoneId timeZone = ZoneId.of("GMT+11");
+
+		currentConference.setStartDate(conferenceStartDate);
+		currentConference.setEndDate(conferenceEndDate);
+
+		String cityCountryInformation = aboutPage.select("p:nth-child(1) a:nth-child(1)").text();
+		System.out.println(cityCountryInformation);
+		String[] cityCountry = cityCountryInformation.split(", ");
+		String conferenceCity = cityCountry[0];
+		String conferenceCountry = cityCountry[1];
+		currentConference.setCity(conferenceCity);
+		currentConference.setCountry(conferenceCountry);
+
+		String conferenceAddress = aboutPage.select("p a+ a").text();
+		currentConference.setAddress(conferenceAddress);
+
+ 		return currentConference;
+	}
 	/**
 	 * Returns all Authors, which published in the year 2018
 	 *
