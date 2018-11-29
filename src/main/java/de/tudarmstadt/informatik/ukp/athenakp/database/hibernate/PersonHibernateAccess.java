@@ -36,24 +36,8 @@ public class PersonHibernateAccess implements PersonCommonAccess {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public List<Person> getByFirstName(String firstName) {
-		return getBy("firstName", firstName);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public List<Person> getByMiddleName(String middleName) {
-		return getBy("middleName", middleName);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public List<Person> getByLastName(String lastName) {
-		return getBy("lastName", lastName);
+	public List<Person> getByFullName(String fullName) {
+		return getBy("fullName", fullName);
 	}
 
 	/**

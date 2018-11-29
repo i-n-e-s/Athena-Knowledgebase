@@ -36,15 +36,9 @@ public class Person {
 	/*Prefixes like academic titles*/
 	@Column(name = "prefix")
 	private String prefix;
-	/*First name*/
-	@Column(name = "firstName", nullable = false)
-	private String firstName;
-	/*Middle name/s*/
-	@Column(name = "middleName")
-	private String middleName;
-	/*Last name*/
-	@Column(name = "lastName", nullable = false)
-	private String lastName;
+	/*Full Name*/
+	@Column(name = "fullName", nullable = false)
+	private String fullName;
 
 	/*Birthday and day of death*/
 	@Temporal(TemporalType.TIMESTAMP)
@@ -93,51 +87,19 @@ public class Person {
 	}
 
 	/**
-	 * Gets the person's first name.
-	 * @return Gets the person's first name.
+	 * Gets the person's full name.
+	 * @return Gets the person's full name.
 	 */
-	public String getFirstName() {
-		return firstName;
+	public String getFullName() {
+		return fullName;
 	}
 
 	/**
-	 * Sets the person's first name.
-	 * @param firstName The person's first name.
+	 * Sets the person's full name.
+	 * @param fullName The person's full name.
 	 */
-	public void setFirstName(String firstName) {
-		this.firstName = firstName;
-	}
-
-	/**
-	 * Gets the person's middle name(s).
-	 * @return Gets the person's middle name(s).
-	 */
-	public String getMiddleName() {
-		return middleName;
-	}
-
-	/**
-	 * Sets the person's first name(s).
-	 * @param middleName The person's middle name(s).
-	 */
-	public void setMiddleName(String middleName) {
-		this.middleName = middleName;
-	}
-
-	/**
-	 * Gets the person's last name.
-	 * @return Gets the person's last name.
-	 */
-	public String getLastName() {
-		return lastName;
-	}
-
-	/**
-	 * Sets the person's last name.
-	 * @param lastName The person's last name.
-	 */
-	public void setLastName(String lastName) {
-		this.lastName = lastName;
+	public void setFullName(String fullName) {
+		this.fullName = fullName;
 	}
 
 	/**

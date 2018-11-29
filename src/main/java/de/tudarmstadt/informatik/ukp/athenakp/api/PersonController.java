@@ -63,30 +63,12 @@ public class PersonController {
 	}
 
 	/**
-	 * @param value The first name of the person
-	 * @return All persons with the specified first name
+	 * @param value The full name of the person
+	 * @return All persons with the specified full name
 	 */
-	@RequestMapping("/byFirstName/{value}")
+	@RequestMapping("/byFullName/{value}")
 	public List<Person> byFirstName(@PathVariable("value")String value) {
-		return access.getByFirstName(value);
-	}
-
-	/**
-	 * @param value The middle name of the person
-	 * @return All persons with the specified middle name
-	 */
-	@RequestMapping("/byMiddleName/{value}")
-	public List<Person> byMiddleName(@PathVariable("value")String value) {
-		return access.getByMiddleName(value);
-	}
-
-	/**
-	 * @param value The last name of the person
-	 * @return All persons with the specified last name
-	 */
-	@RequestMapping("/byLastName/{value}")
-	public List<Person> byLastName(@PathVariable("value")String value) {
-		return access.getByLastName(value);
+		return access.getByFullName(value);
 	}
 
 	/**
