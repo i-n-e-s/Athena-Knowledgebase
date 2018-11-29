@@ -25,21 +25,19 @@ public class Application {
 		dummyInstitution.setName("Black Mesa");
 
 		Author dummyAuthor = new Author();
-		dummyAuthor.setFirstName("Rumpo");
-		dummyAuthor.setLastName("Derpel");
+		dummyAuthor.setFullName("Rumpo Derpel");
 		dummyAuthor.setBirthdate(new Date(2010, 10, 10));
 
 		Author dummyAuthor2 = new Author();
 		dummyAuthor2.setPrefix("Prof. Dr.");
-		dummyAuthor2.setFirstName("John");
-		dummyAuthor2.setMiddleName("T.");
-		dummyAuthor2.setLastName("Smith");
+		dummyAuthor2.setFullName("John T. Smith");
 		//		Date seems to be deprecated and its time segment can cause problems (does for me) if ignored
 		//		https://stackoverflow.com/a/21598394 shows alternatives that could be useful (e.g. java.time)
 		//		this might also fix the localhost:8080/persons answer birthdate	"3910-11-09T23:00:00.000+0000" for Rumo
 		//      @author Julian Steitz
 
-		//		the incorrect date is just because tristan didn't subtract 1900 when setting up Rumpo's data. i am not sure if the
+		//		the incorrect date is just because tristan didn't subtract 1900 when setting up Rumpo's data.
+		// 		i am not sure if the
 		//		alternatives proposed in the linked stackoverflow thread will work with hibernate, gotta test that
 		//		-Daniel
 		dummyAuthor2.setBirthdate(new Date(1970 - 1900, 1 - 1, 1));
@@ -71,7 +69,8 @@ public class Application {
 		// 		maybe check if the entry already exists. Otherwise duplicates could arise
 		//		@author Julian Steitz
 
-		//		every institution, paper, person has an id. for dummy data, it's not that bad if there are duplicate names etc, they still have a unique id
+		//		every institution, paper, person has an id. for dummy data, it's not that bad if there are
+		// 		duplicate names etc, they still have a unique id
 		//		-Daniel
 		InstitutionCommonAccess institutionAccess = new InstitutionHibernateAccess();
 		institutionAccess.add(dummyInstitution);

@@ -16,7 +16,7 @@ import java.util.ArrayList;
 
 @SpringBootApplication
 /*
-	a class which is meant to be run only once, which is why it is seperate from application. Starts Spring and adds
+	a class which is meant to be run only once, which is why it is separate from application. Starts Spring and adds
 	data to an sql Database via hibernate
 	contains methods which reformat ParserData into a hibernate digestible format
 	@author Julian Steitz
@@ -38,7 +38,6 @@ public class ParsedDataInserter {
 	 * @throws IOException if jsoup was interrupted in the scraping process (during getPaperAuthor())
 	 * @author Julian Steitz
 	 * TODO: implement saveandupdate in Common Access? Otherwise implement check if entry exist. Expensive?
-	 * TODO: recognise asian names and reverse name order? Or is that taken care of in the website? Check with Thomas
 	 */
 	private void aclStorePapersAndAuthors() throws IOException {
 		ACL18WebParser acl18WebParser = new ACL18WebParser();
@@ -62,27 +61,10 @@ public class ParsedDataInserter {
 			// we ignore the first entry, since it is a Paper's title
 			for (int i = 1; i < paperAndAuthors.size(); i++){
 				String authorName = paperAndAuthors.get(i);
-
-				// build author name
-				// makes the sane? assumption, that doubled last names "Schmidt Müller" are more common than
-				// doubled middle names
-                // TODO: Gruppendiskussion: wie handhaben wir Namen
-				String[] splitAuthorName = authorName.split(" ", 3);
 				Author author = new Author();
-				switch(splitAuthorName.length){
-				    // if the spit returned an empty array something was wrong with the given data and the author is
-                    // skipped and the paper is added regardless (just without the author)
-                    case 0: continue;
-					case 1: author.setLastName(splitAuthorName[0]);
-						break;
-					case 2: author.setFirstName(splitAuthorName[0]);
-						author.setLastName(splitAuthorName[1]);
-						break;
-					case 3: author.setFirstName(splitAuthorName[0]);
-						author.setMiddleName(splitAuthorName[1]);
-						author.setLastName(splitAuthorName[2]);
-						break;
-				}
+				// because acl2018 seems to not employ prefixes (e.g. Prof. Dr.), we do not need to scan them
+				// scanning them might make for a good user story
+				author.setFullName(authorName);
 				// Both following statements seem necessary for the author_paper table but lead to Hibernate
 				// access returning an object (paper) as often as a relation in author_paper exists
 				// looking into the tables themselves, duplicate papers (even with the same PaperID) do not exist

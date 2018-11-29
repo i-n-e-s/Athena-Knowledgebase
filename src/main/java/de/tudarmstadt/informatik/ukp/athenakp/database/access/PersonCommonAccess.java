@@ -27,25 +27,11 @@ public interface PersonCommonAccess extends CommonAccess<Person> {
 	public List<Person> getByPrefix(String prefix);
 
 	/**
-	 * Get all persons with specified last first name.
-	 * @param firstName The person's first name.
-	 * @return A List of all persons with the specified first name.
+	 * Get all persons with specified full Name.
+	 * @param fullName The person's full name.
+	 * @return A List of all persons with the specified full (complete) name.
 	 */
-	public List<Person> getByFirstName(String firstName);
-
-	/**
-	 * Get all persons with specified middle name.
-	 * @param middleName The person's middle name.
-	 * @return A List of all persons with the specified middle name.
-	 */
-	public List<Person> getByMiddleName(String middleName);
-
-	/**
-	 * Get all persons with specified last name.
-	 * @param lastName The person's last name.
-	 * @return A List of all persons with the specified last name.
-	 */
-	public List<Person> getByLastName(String lastName);
+	public List<Person> getByFullName(String fullName);
 
 	/**
 	 * Get all persons with specified birthdate.
