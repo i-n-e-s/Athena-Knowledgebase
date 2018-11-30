@@ -1,11 +1,12 @@
 package de.tudarmstadt.informatik.ukp.athenakp.database.models;
 
-import java.time.LocalDate;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.persistence.*;
 
 @Entity
 @Table(name="conference")
@@ -27,14 +28,15 @@ public class Conference {
 	@Column(name = "address")
 	private String address;
 	/*Authors that talked*/
-	/*@ManyToMany  TODO: fix, currently comes up with an error
+	@ManyToMany
+	@JsonIgnore
 	@Column(name="authors")
-	private Set<Author> authors = new HashSet<Author>();*/
+	private Set<Author> authors = new HashSet<Author>();
 	/*Shown papers*/
-/*	@ManyToMany TODO: fix, currently comes up with an error (probably same as above) uncomment once the implementation
-	is of interest
+	@ManyToMany
+	@JsonIgnore
 	@Column(name="papers")
-	private Set<Paper> papers = new HashSet<Paper>();*/
+	private Set<Paper> papers = new HashSet<Paper>();
 	//TODO: Workshops? Other data? How about Duration? java.time would make that possible
 
 	/**
@@ -118,7 +120,7 @@ public class Conference {
 	}
 
 	/**
-	 * gets the building address the of the conference
+	 * gets the building address of the conference
 	 * @return the building address
 	 */
 	public String getAddress() {

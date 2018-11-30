@@ -50,8 +50,7 @@ class CrawlerToolset {
 					daysMonthsYearAndLocation[1], daysMonthsYearAndLocation[2]);
 			return dateRange;
 		}catch (IndexOutOfBoundsException e){
-			System.err.println("invalid format. expected dateString to be 15-20 July 2018" +
-					"   Melbourne and got: " + dateString);
+			System.err.println("invalid format. expected dateString to be 15-20 July 2018 and got: " + dateString);
 			return dateRange;
 		}
 

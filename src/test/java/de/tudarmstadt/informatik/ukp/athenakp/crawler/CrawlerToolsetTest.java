@@ -37,7 +37,17 @@ public class CrawlerToolsetTest {
 
 		LocalDate convertedDate = crawlerToolset.stringToLocalDate(dayDescription, monthDescription, yearDescription);
 		assertEquals(correctDate, convertedDate);
+	}
+	@Test
+	public void testDateRange(){
+		LocalDate[] correctDateRange = new LocalDate[2];
+		correctDateRange[0] = LocalDate.of(2018,7,15);
+		correctDateRange[1] = LocalDate.of(2018,7,20);
 
+		String testString = "15-20 July 2018";
+		LocalDate[] toolsetDateRange = crawlerToolset.acl2018ConvertStringToDateRange(testString);
+		assertEquals(correctDateRange[0],toolsetDateRange[0]);
+		assertEquals(correctDateRange[1], toolsetDateRange[1]);
 
 	}
 }
