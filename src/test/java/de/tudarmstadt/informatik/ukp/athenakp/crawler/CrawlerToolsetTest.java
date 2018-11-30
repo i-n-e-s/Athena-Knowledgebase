@@ -50,4 +50,12 @@ public class CrawlerToolsetTest {
 		assertEquals(correctDateRange[1], toolsetDateRange[1]);
 
 	}
+	@Test
+	public void testInvalidDateRange(){
+		String testString = "garbladsa";
+		LocalDate[] toolsetDateRange = crawlerToolset.acl2018ConvertStringToDateRange(testString);
+		assertNull(toolsetDateRange[0]);
+		assertNull(toolsetDateRange[1]);
+
+	}
 }
