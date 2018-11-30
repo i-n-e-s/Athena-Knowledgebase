@@ -13,8 +13,10 @@ import de.tudarmstadt.informatik.ukp.athenakp.database.models.Paper;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.TimeZone;
 
 
 @SpringBootApplication
@@ -25,7 +27,14 @@ import java.util.ArrayList;
 	@author Julian Steitz
  */
 public class ParsedDataInserter {
-
+	// this makes it so everything written into the database is in UTC.
+	// from https://aboullaite.me/spring-boot-time-zone-configuration-using-hibernate/
+	// took me far too long to find
+	// TODO: look into application.yml ?
+	@PostConstruct
+	void started() {
+		TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
+	}
 	public static void main(String[] args) {
 		SpringApplication.run(Application.class, args);
 		ParsedDataInserter parsedDataInserter = new ParsedDataInserter();
