@@ -160,27 +160,30 @@ public class ACL18WebParser {
 		LocalTime conferenceStartTime = crawlerToolset.acl2018ConvertStringToTime(conferenceStartTimeInformation);
 		LocalTime conferenceEndTime = crawlerToolset.acl2018ConvertStringToTime(conferenceEndTimeInformation);*/
 
-		String dateAndLocationString = aboutPage.select(".sub-title-extra").text();
-		LocalDate conferenceStartDate = crawlerToolset.acl2018ConvertStringToDateRange(dateAndLocationString)[0];
-		LocalDate conferenceEndDate = crawlerToolset.acl2018ConvertStringToDateRange(dateAndLocationString)[1];
-		// Maybe we need to look at a timezone api? Probably not feasible to keep it free, which is why it is set as
-		// manual for now
-		// TODO: talk about timezones and how to handle them
-		// ZoneId timeZone = ZoneId.of("GMT+11");
 
-		currentConference.setStartDate(conferenceStartDate);
-		currentConference.setEndDate(conferenceEndDate);
 
 		String cityCountryInformation = aboutPage.select("p:nth-child(1) a:nth-child(1)").text();
 		try {
+			String dateAndLocationString = aboutPage.select(".sub-title-extra").text();
+			LocalDate conferenceStartDate = crawlerToolset.acl2018ConvertStringToDateRange(dateAndLocationString)[0];
+			LocalDate conferenceEndDate = crawlerToolset.acl2018ConvertStringToDateRange(dateAndLocationString)[1];
+			// Maybe we need to look at a timezone api? Probably not feasible to keep it free, which is why it is set as
+			// manual for now
+			// TODO: talk about timezones and how to handle them
+			// ZoneId timeZone = ZoneId.of("GMT+11");
+
+			currentConference.setStartDate(conferenceStartDate);
+			currentConference.setEndDate(conferenceEndDate);
+
 			String[] cityCountry = cityCountryInformation.split(", ");
 			String conferenceCity = cityCountry[0];
 			String conferenceCountry = cityCountry[1];
 			currentConference.setCity(conferenceCity);
 			currentConference.setCountry(conferenceCountry);
 		} catch (ArrayIndexOutOfBoundsException e) {
-			System.out.println("cityCountryInformation seems to not be in the correct format. " +
+			System.out.println("Information seems to not be in the correct format. " +
 					"Therefore it has not been set.");
+			e.printStackTrace();
 		}
 
 		String conferenceAddress = aboutPage.select("p a+ a").text();

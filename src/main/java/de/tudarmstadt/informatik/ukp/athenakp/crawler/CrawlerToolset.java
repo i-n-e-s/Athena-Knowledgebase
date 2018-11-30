@@ -12,6 +12,11 @@ import static java.lang.Integer.parseInt;
  */
 class CrawlerToolset {
 
+	/**Converts a time in String format to a LocalDate instance
+	 * @param timeString time in String format (e.g. 9:00 or 09:00)
+	 * @return corresponding LocalTime instance
+	 * @throws IndexOutOfBoundsException if the String was not in the expected format
+	 */
 	 LocalTime acl2018ConvertStringToTime(String timeString) throws IndexOutOfBoundsException{
 		String[] hoursAndMinutes = timeString.split(":", 2);
 		int startHours = parseInt(hoursAndMinutes[0]);
@@ -19,6 +24,12 @@ class CrawlerToolset {
 		return LocalTime.of(startHours, startMinutes);
 	}
 
+	/**
+	 * A method which constructs an Array holding the beginning and end of a conference or an event
+	 * @param dateString Date (day - day + months + year) in String format e.g. "15-20 July 2018")
+	 * @return an Array of LocalDates with two entries, the beginning and end of the date range
+	 * @throws IndexOutOfBoundsException if the String was not in the proper format
+	 */
 	LocalDate[] acl2018ConvertStringToDateRange(String dateString) throws IndexOutOfBoundsException{
 	 	String[] daysMonthsYearAndLocation = dateString.split(" ");
 	 	String daysRange = daysMonthsYearAndLocation[0];
@@ -29,6 +40,13 @@ class CrawlerToolset {
 	 	return dateRange;
 	}
 
+	/**
+	 * A method which converts day,month and year strings into a LocalDate
+	 * @param dayDescription day as String "11"
+	 * @param monthDescription month as String "July"
+	 * @param yearDescription year as String "2018"
+	 * @return LocalDate corresponding to the parameters
+	 */
 	LocalDate stringToLocalDate(String dayDescription, String monthDescription, String yearDescription){
 		int day = parseInt(dayDescription);
 		int year = parseInt(yearDescription);
