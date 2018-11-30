@@ -14,30 +14,46 @@ class CrawlerToolset {
 
 	/**Converts a time in String format to a LocalDate instance
 	 * @param timeString time in String format (e.g. 9:00 or 09:00)
-	 * @return corresponding LocalTime instance
-	 * @throws IndexOutOfBoundsException if the String was not in the expected format
+	 * @return corresponding LocalTime instance or null if the String was not in the expected format
 	 */
-	 LocalTime acl2018ConvertStringToTime(String timeString) throws IndexOutOfBoundsException{
+	 LocalTime acl2018ConvertStringToTime(String timeString){
 		String[] hoursAndMinutes = timeString.split(":", 2);
-		int startHours = parseInt(hoursAndMinutes[0]);
-		int startMinutes = parseInt(hoursAndMinutes[1]);
-		return LocalTime.of(startHours, startMinutes);
+		try{
+			int startHours = parseInt(hoursAndMinutes[0]);
+			int startMinutes = parseInt(hoursAndMinutes[1]);
+			return LocalTime.of(startHours, startMinutes);
+
+		}catch (IndexOutOfBoundsException | NumberFormatException e){
+			System.err.println("invalid Input, got: "+ timeString
+					+ "expected: 9:00 or 09:00");
+			return null;
+		}
 	}
 
 	/**
 	 * A method which constructs an Array holding the beginning and end of a conference or an event
 	 * @param dateString Date (day - day + months + year) in String format e.g. "15-20 July 2018")
-	 * @return an Array of LocalDates with two entries, the beginning and end of the date range
-	 * @throws IndexOutOfBoundsException if the String was not in the proper format
+	 * @return an Array of LocalDates with two entries, the beginning and end of the date range or an empty array if
+	 * dateString was in the wrong format
 	 */
-	LocalDate[] acl2018ConvertStringToDateRange(String dateString) throws IndexOutOfBoundsException{
-	 	String[] daysMonthsYearAndLocation = dateString.split(" ");
-	 	String daysRange = daysMonthsYearAndLocation[0];
-	 	String[] startAndEndDay = daysRange.split("-", 2);
+	LocalDate[] acl2018ConvertStringToDateRange(String dateString){
 		LocalDate[] dateRange = new LocalDate[2];
-		dateRange[0] = stringToLocalDate(startAndEndDay[0], daysMonthsYearAndLocation[1], daysMonthsYearAndLocation[2]);
-		dateRange[1] = stringToLocalDate(startAndEndDay[1], daysMonthsYearAndLocation[1], daysMonthsYearAndLocation[2]);
-	 	return dateRange;
+		try {
+			String[] daysMonthsYearAndLocation = dateString.split(" ");
+			String daysRange = daysMonthsYearAndLocation[0];
+			String[] startAndEndDay = daysRange.split("-", 2);
+
+			dateRange[0] = stringToLocalDate(startAndEndDay[0],
+					daysMonthsYearAndLocation[1], daysMonthsYearAndLocation[2]);
+			dateRange[1] = stringToLocalDate(startAndEndDay[1],
+					daysMonthsYearAndLocation[1], daysMonthsYearAndLocation[2]);
+			return dateRange;
+		}catch (IndexOutOfBoundsException e){
+			System.err.println("invalid format. expected dateString to be 15-20 July 2018" +
+					"   Melbourne and got: " + dateString);
+			return dateRange;
+		}
+
 	}
 
 	/**
