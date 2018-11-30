@@ -2,6 +2,7 @@ package de.tudarmstadt.informatik.ukp.athenakp.database.hibernate;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.TimeZone;
 
 import org.hibernate.Criteria;
 import org.hibernate.Session;
@@ -70,7 +71,8 @@ public class ConferenceHibernateAccess implements ConferenceCommonAccess {
 
 	@Override
 	public void add(Conference data) {
-		Session session = HibernateUtils.getSessionFactory().openSession();
+		Session session = HibernateUtils.getSessionFactory()
+				.withOptions().jdbcTimeZone( TimeZone.getTimeZone("UTC")).openSession();
 
 		session.beginTransaction();
 		session.save(data);
