@@ -9,6 +9,7 @@ import static java.lang.Integer.parseInt;
 /**
  * A class with methods that might be useful across a variety of conferences / scraping tasks
  * currently mostly focused on converting Strings to LocalDates and LocalTimes
+ * @author Julian Steitz
  */
 class CrawlerToolset {
 
@@ -25,7 +26,7 @@ class CrawlerToolset {
 
 		}catch (IndexOutOfBoundsException | NumberFormatException e){
 			System.err.println("invalid Input, got: "+ timeString
-					+ "expected: 9:00 or 09:00");
+					+ " expected: 9:00 or 09:00");
 			return null;
 		}
 	}

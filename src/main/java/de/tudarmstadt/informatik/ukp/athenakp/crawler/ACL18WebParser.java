@@ -143,6 +143,7 @@ public class ACL18WebParser {
 	 * if an IO Exception occurs, it returns an empty Conference instance
 	 * @return a Conference instance with its name, location and start and end date set
 	 * @throws IOException if Jsoup.connect fails
+	 * @author Julian Steitz
 	 */
 	public Conference getConferenceInformation() throws IOException {
 		Conference currentConference = new Conference();

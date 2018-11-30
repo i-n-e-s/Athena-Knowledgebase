@@ -23,9 +23,10 @@ public class CrawlerToolsetTest {
 		assertEquals(correctTime, crawlerTime);
 
 	}
-	@Test(expected = IndexOutOfBoundsException.class)
+	@Test
 	public void testSmallArray() {
-		crawlerToolset.acl2018ConvertStringToTime("9");
+		LocalTime crawlerTime = crawlerToolset.acl2018ConvertStringToTime("9");
+		assertNull(crawlerTime);
 	}
 	@Test
 	public void testStringToDate(){
