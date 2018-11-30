@@ -37,8 +37,10 @@ public class ParsedDataInserter {
 		parsedDataInserter.acl2018StoreConferenceInformation();
 	}
 
-	/**Constructs Author and Paper Objects from ACL18Webparser().getPaperAuthor() and adds them to the database
+	/**
+	 * Constructs Author and Paper Objects from ACL18Webparser().getPaperAuthor() and adds them to the database
 	 * see its documentation for its makeup
+	 *
 	 * @throws IOException if jsoup was interrupted in the scraping process (during getPaperAuthor())
 	 * @author Julian Steitz
 	 * TODO: implement saveandupdate in Common Access? Otherwise implement check if entry exist. Expensive?
@@ -50,7 +52,7 @@ public class ParsedDataInserter {
 		PaperCommonAccess paperFiler = new PaperHibernateAccess();
 		// PersonCommonAccess personfiler = new PersonHibernateAccess();
 
-		for (ArrayList<String> paperAndAuthors:listOfPaperAuthor) {
+		for (ArrayList<String> paperAndAuthors : listOfPaperAuthor) {
 			// only one Paper per paperandauthors
 			Paper paper = new Paper();
 			// clean up the titles in the form of [C18-1017] Simple Neologism Based Domain Independe...
@@ -63,7 +65,7 @@ public class ParsedDataInserter {
 			paper.setTitle(paperTitle);
 			paper.setAnthology(anthology);
 			// we ignore the first entry, since it is a Paper's title
-			for (int i = 1; i < paperAndAuthors.size(); i++){
+			for (int i = 1; i < paperAndAuthors.size(); i++) {
 				String authorName = paperAndAuthors.get(i);
 				Author author = new Author();
 				// because acl2018 seems to not employ prefixes (e.g. Prof. Dr.), we do not need to scan them
@@ -86,14 +88,13 @@ public class ParsedDataInserter {
 		}
 	}
 
+	/**
+	 * stores the acl2018 conference into the database
+	 */
 	private void acl2018StoreConferenceInformation() {
 		ACL18WebParser acl18WebParser = new ACL18WebParser();
 		ConferenceCommonAccess conferenceCommonAccess = new ConferenceHibernateAccess();
-		try {
-			Conference acl2018 = acl18WebParser.extractConferenceInformation();
-			conferenceCommonAccess.add(acl2018);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		Conference acl2018 = acl18WebParser.getConferenceInformation();
+		conferenceCommonAccess.add(acl2018);
 	}
 }

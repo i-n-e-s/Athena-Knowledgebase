@@ -6,7 +6,7 @@ import java.time.Month;
 
 import static java.lang.Integer.parseInt;
 
-class CrawlerToolbelt {
+class CrawlerToolset {
 
 	 LocalTime acl2018ConvertStringToTime(String timeString) throws IndexOutOfBoundsException{
 		String[] hoursAndMinutes = timeString.split(":", 2);

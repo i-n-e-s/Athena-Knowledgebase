@@ -1,0 +1,37 @@
+package de.tudarmstadt.informatik.ukp.athenakp.crawler;
+
+import de.tudarmstadt.informatik.ukp.athenakp.database.models.Conference;
+
+import org.junit.Assert;
+import org.junit.Test;
+
+import java.time.LocalDate;
+
+
+public class ACL18WebParserTest {
+	private ACL18WebParser acl18WebParser = new ACL18WebParser();
+	private Conference crawledConference = acl18WebParser.getConferenceInformation();
+
+
+	@Test
+	public void getConferenceName() {
+		Assert.assertEquals("ACL 2018",crawledConference.getName());
+	}
+	@Test
+	public void testConferenceDates(){
+		Assert.assertEquals(LocalDate.of(2018,7,15), crawledConference.getStartDate());
+		Assert.assertEquals(LocalDate.of(2018,7,20), crawledConference.getEndDate());
+	}
+	@Test
+	public void testConferenceAddress(){
+		Assert.assertEquals("Melbourne Convention and Exhibition Centre", crawledConference.getAddress());
+	}
+	@Test
+	public void testConferenceCountry(){
+		Assert.assertEquals("Australia", crawledConference.getCountry());
+	}
+	@Test
+	public void testConferenceCity(){
+		Assert.assertEquals("Melbourne", crawledConference.getCity());
+	}
+}
