@@ -94,7 +94,13 @@ public class ParsedDataInserter {
 	private void acl2018StoreConferenceInformation() {
 		ACL18WebParser acl18WebParser = new ACL18WebParser();
 		ConferenceCommonAccess conferenceCommonAccess = new ConferenceHibernateAccess();
-		Conference acl2018 = acl18WebParser.getConferenceInformation();
-		conferenceCommonAccess.add(acl2018);
+		try{
+			Conference acl2018 = acl18WebParser.getConferenceInformation();
+			conferenceCommonAccess.add(acl2018);
+		}
+		catch (IOException e){
+			e.printStackTrace();
+		}
+
 	}
 }

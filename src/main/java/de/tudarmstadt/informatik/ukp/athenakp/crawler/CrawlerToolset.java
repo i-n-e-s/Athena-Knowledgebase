@@ -6,6 +6,10 @@ import java.time.Month;
 
 import static java.lang.Integer.parseInt;
 
+/**
+ * A class with methods that might be useful across a variety of conferences / scraping tasks
+ * currently mostly focused on converting Strings to LocalDates and LocalTimes
+ */
 class CrawlerToolset {
 
 	 LocalTime acl2018ConvertStringToTime(String timeString) throws IndexOutOfBoundsException{

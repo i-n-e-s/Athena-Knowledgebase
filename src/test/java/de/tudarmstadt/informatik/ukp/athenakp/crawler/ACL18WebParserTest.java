@@ -5,6 +5,7 @@ import de.tudarmstadt.informatik.ukp.athenakp.database.models.Conference;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.io.IOException;
 import java.time.LocalDate;
 
 
@@ -12,9 +13,12 @@ public class ACL18WebParserTest {
 	private ACL18WebParser acl18WebParser = new ACL18WebParser();
 	private Conference crawledConference = acl18WebParser.getConferenceInformation();
 
+	public ACL18WebParserTest() throws IOException {
+	}
+
 
 	@Test
-	public void getConferenceName() {
+	public void getConferenceName() throws IOException {
 		Assert.assertEquals("ACL 2018",crawledConference.getName());
 	}
 	@Test
