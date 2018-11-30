@@ -71,8 +71,7 @@ public class ConferenceHibernateAccess implements ConferenceCommonAccess {
 
 	@Override
 	public void add(Conference data) {
-		Session session = HibernateUtils.getSessionFactory()
-				.withOptions().jdbcTimeZone( TimeZone.getTimeZone("UTC")).openSession();
+		Session session = HibernateUtils.getSessionFactory().openSession();
 
 		session.beginTransaction();
 		session.save(data);
