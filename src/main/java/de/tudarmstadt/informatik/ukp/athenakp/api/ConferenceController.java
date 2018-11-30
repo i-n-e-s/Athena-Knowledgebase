@@ -4,17 +4,18 @@ import java.util.List;
 
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import de.tudarmstadt.informatik.ukp.athenakp.database.hibernate.ConferenceHibernateAccess;
 import de.tudarmstadt.informatik.ukp.athenakp.database.models.Conference;
 
 /**
- * Serves as a REST API definition for accessing conferences . Any mapping defined by a
+ * Serves as a REST API definition for accessing conferences. Any mapping defined by a
  * method in this class has to be prepended with "/conferences" since this class is annotated
  * with a RequestMapping.
  * @author Daniel Lehmann
  */
-//@RestController disabled because conferences are not stored in the database yet
+@RestController
 @RequestMapping("/conferences")
 public class ConferenceController {
 	private final ConferenceHibernateAccess access = new ConferenceHibernateAccess();
@@ -34,6 +35,25 @@ public class ConferenceController {
 	@RequestMapping("/byName/{value}")
 	public List<Conference> byName(@PathVariable("value")String value) {
 		return access.getByName(value);
+	}
+
+	/**
+	 *
+	 * @param value The country the conference is in
+	 * @return	A List of conferences in the country
+	 */
+	@RequestMapping("/byCountry/{value}")
+	public List<Conference> byCountry(@PathVariable("value")String value) { return access.getByCountry(value);
+	}
+
+	/**
+	 * What about that share the same name? maybe disable or link with country?
+	 * TODO: how to combine queries e.g. limit by both country and city with the hibernate access /not filtering locally
+	 * @param value The city the conference is in
+	 * @return	A list of conferences in the city
+	 */
+	@RequestMapping("/byCity/{value}")
+	public List<Conference> byCity(@PathVariable("value")String value) { return access.getByCity(value);
 	}
 
 	/**

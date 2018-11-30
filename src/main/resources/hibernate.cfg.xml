@@ -8,7 +8,9 @@
 
         <!--Connection Properties-->
         <!--<property name="connection.driver_class">com.mysql.jdbc.Driver</property>-->
-        <property name="connection.url">jdbc:mysql://localhost:3306/athena</property>
+        <!--Adding serverTimezone=UTC and disabling useLegacyDatetimeCode, which can apparently cause problems when
+         server and application timzones differ, might help  ?serverTimezone=UTC&amp;useLegacyDatetimeCode=false-->
+        <property name="connection.url">jdbc:mysql://localhost:3306/athena?serverTimezone=UTC&amp;useLegacyDatetimeCode=false</property>
         <property name="connection.user">athena</property>
         <property name="connection.password">ihavesecurityissues</property>
 
@@ -23,6 +25,8 @@
         <mapping class="de.tudarmstadt.informatik.ukp.athenakp.database.models.Author" />
         <mapping class="de.tudarmstadt.informatik.ukp.athenakp.database.models.Institution" />
         <mapping class="de.tudarmstadt.informatik.ukp.athenakp.database.models.Paper" />
+        <mapping class="de.tudarmstadt.informatik.ukp.athenakp.database.models.Conference" />
+        <mapping class="de.tudarmstadt.informatik.ukp.athenakp.database.models.Event" />
         <!--<mapping class="/roseindia/Employee" />-->
 
     </session-factory>

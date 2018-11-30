@@ -47,4 +47,18 @@ public interface ConferenceCommonAccess extends CommonAccess<Conference>
 	 * @return A List of all conferences with the specified paper.
 	 */
 	public List<Conference> getByPaper(String paper);
+
+	/**
+	 * Get all conferences in the specified country
+	 * @param country The conference's country
+	 * @return A list of all conferences in the specified country
+	 */
+	public List<Conference> getByCountry(String country);
+
+	/**
+	 * Get all conferences in the specified city
+	 * @param city The conference's city
+	 * @return A list of all conferences in the specified city
+	 */
+	public List<Conference> getByCity(String city);
 }
