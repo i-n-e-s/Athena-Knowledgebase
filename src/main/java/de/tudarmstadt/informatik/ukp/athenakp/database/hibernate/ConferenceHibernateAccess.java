@@ -2,7 +2,6 @@ package de.tudarmstadt.informatik.ukp.athenakp.database.hibernate;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.TimeZone;
 
 import org.hibernate.Criteria;
 import org.hibernate.Session;
