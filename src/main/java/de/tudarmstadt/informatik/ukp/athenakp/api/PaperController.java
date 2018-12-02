@@ -52,6 +52,19 @@ public class PaperController {
 		else return null;
 	}
 
+	/**
+	 * @param value The paper ID
+	 * @return The Link to the pdf of this paper
+	 */
+	@RequestMapping("/byPaperID/{value}/href")
+	public String getHref(@PathVariable("value")Long value) {
+		List<Paper> papers = byPaperID(value);
+
+		if(papers.size() > 0)
+			return papers.get(0).getHref();
+		else return null;
+	}
+
 	//TODO: we probably don't need this anymore because of /person/byPersonID/{value}/getPapers
 	//	@RequestMapping("/byAuthor/{value}")
 	//	public List<Paper> byAuthor(@PathVariable("value")String value) { //TODO implement this
@@ -97,6 +110,7 @@ public class PaperController {
 	public List<Paper> byAnthology(@PathVariable("value")String value) {
 		return access.getByAnthology(value);
 	}
+
 	/**
 	 * @param value The paper's direct download link
 	 * @return All paper's with the given download link

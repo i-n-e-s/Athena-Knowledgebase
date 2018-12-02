@@ -1,5 +1,14 @@
 package de.tudarmstadt.informatik.ukp.athenakp.database;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.TimeZone;
+
+import javax.annotation.PostConstruct;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
 import de.tudarmstadt.informatik.ukp.athenakp.Application;
 import de.tudarmstadt.informatik.ukp.athenakp.crawler.ACL18WebParser;
 import de.tudarmstadt.informatik.ukp.athenakp.database.access.ConferenceCommonAccess;
@@ -9,14 +18,6 @@ import de.tudarmstadt.informatik.ukp.athenakp.database.hibernate.PaperHibernateA
 import de.tudarmstadt.informatik.ukp.athenakp.database.models.Author;
 import de.tudarmstadt.informatik.ukp.athenakp.database.models.Conference;
 import de.tudarmstadt.informatik.ukp.athenakp.database.models.Paper;
-
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-
-import javax.annotation.PostConstruct;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.TimeZone;
 
 
 @SpringBootApplication
@@ -38,12 +39,12 @@ public class ParsedDataInserter {
 	public static void main(String[] args) {
 		SpringApplication.run(Application.class, args);
 		ParsedDataInserter parsedDataInserter = new ParsedDataInserter();
-//		try {
-//			parsedDataInserter.aclStorePapersAndAuthors();
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//		}
-		parsedDataInserter.acl2018StoreConferenceInformation();
+		try {
+			parsedDataInserter.aclStorePapersAndAuthors();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		//		parsedDataInserter.acl2018StoreConferenceInformation();
 	}
 
 	/**
@@ -73,6 +74,7 @@ public class ParsedDataInserter {
 			String anthology = splitRawTitle[0].replace("[", "").replace("]", "");
 			paper.setTitle(paperTitle);
 			paper.setAnthology(anthology);
+			paper.setHref("http://aclweb.org/anthology/" + anthology); //wow that was easy
 			// we ignore the first entry, since it is a Paper's title
 			for (int i = 1; i < paperAndAuthors.size(); i++) {
 				String authorName = paperAndAuthors.get(i);
