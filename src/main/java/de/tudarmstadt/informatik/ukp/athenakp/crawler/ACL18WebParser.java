@@ -4,11 +4,13 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import de.tudarmstadt.informatik.ukp.athenakp.database.models.Conference;
+
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+
+import de.tudarmstadt.informatik.ukp.athenakp.database.models.Conference;
 
 /**
  * A class, which holds the capability to return a List of all authors, which
@@ -16,7 +18,7 @@ import org.jsoup.select.Elements;
  *
  * @author Jonas Hake
  */
-public class ACL18WebParser {
+public class ACL18WebParser extends AbstractCrawler{
 
 	private String startURLAuthors = "https://aclanthology.coli.uni-saarland.de/catalog/facet/author?"// get a list of all authors
 			+ "commit=facet.page=1&"// get first page of search
@@ -145,6 +147,7 @@ public class ACL18WebParser {
 	 * @throws IOException if Jsoup.connect fails
 	 * @author Julian Steitz
 	 */
+	@Override
 	public Conference getConferenceInformation() throws IOException {
 		Conference currentConference = new Conference();
 		Document aboutPage = Jsoup.connect(this.aboutPage).get();
@@ -190,6 +193,7 @@ public class ACL18WebParser {
 	 * @return a list of all authors
 	 * @throws IOException
 	 */
+	@Override
 	public ArrayList<String> getAuthors() throws IOException {
 		return extractAuthors(fetchWebpages(startURLAuthors));
 	}
@@ -200,6 +204,7 @@ public class ACL18WebParser {
 	 * @return a list of all paper titles
 	 * @throws IOException
 	 */
+	@Override
 	public ArrayList<String> getPaperTitles() throws IOException {
 		return extractPapers(fetchWebpages(startURLPaper));
 	}
