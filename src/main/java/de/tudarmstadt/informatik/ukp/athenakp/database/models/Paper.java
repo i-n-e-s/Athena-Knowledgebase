@@ -1,6 +1,6 @@
 package de.tudarmstadt.informatik.ukp.athenakp.database.models;
 
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -13,8 +13,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -32,9 +30,8 @@ public class Paper {
 	@ManyToMany(cascade = { CascadeType.ALL }, mappedBy = "papers", fetch = FetchType.EAGER)
 	private Set<Author> authors = new HashSet<>();
 	/*Release date*/
-	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "releaseDate")
-	private Date releaseDate;
+	private LocalDate releaseDate;
 	/*Topic of the paper*/
 	@Column(name = "topic")
 	private String topic;
@@ -91,7 +88,7 @@ public class Paper {
 	 * Gets this paper's release date
 	 * @return This paper's release date
 	 */
-	public Date getReleaseDate() {
+	public LocalDate getReleaseDate() {
 		return releaseDate;
 	}
 
@@ -99,7 +96,7 @@ public class Paper {
 	 * Sets this paper's release date
 	 * @param releaseDate The new release date of this paper
 	 */
-	public void setReleaseDate(Date releaseDate) {
+	public void setReleaseDate(LocalDate releaseDate) {
 		this.releaseDate = releaseDate;
 	}
 

@@ -10,6 +10,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import de.tudarmstadt.informatik.ukp.athenakp.crawler.CrawlerToolset.PaperStore;
 import de.tudarmstadt.informatik.ukp.athenakp.database.models.Conference;
 
 /**
@@ -41,9 +42,8 @@ public class ACL18WebParser {
 	}
 
 	/**
-	 * fetch the given webpage, and follows the Link, which contains 'Next' as long
-	 * there is a Link containing 'Next' The method returns a list of all visited
-	 * webpages
+	 * Fetches the given webpage, and follows the link, which contains 'Next' as long as
+	 * there is on. The method returns a list of all visited webpages
 	 *
 	 * Works only with a search site from aclanthology.coli.uni-saarland.de
 	 *
@@ -75,12 +75,13 @@ public class ACL18WebParser {
 				docs.add(nxtDoc);
 			}
 		}
+		System.out.println("Done fetching webpages.");
 		return docs;
 	}
 
 	/**
-	 * extract all authors from a given List of webpages, which are in the ACL
-	 * search form(e.g. {@link here
+	 * Extracts all authors from a given list of webpages, which are in the ACL
+	 * search form (e.g. {@link here
 	 * https://aclanthology.coli.uni-saarland.de/catalog/facet/author?commit=facet.page%3D1&facet.page=1})
 	 *
 	 * @param a list of webpages
@@ -100,8 +101,8 @@ public class ACL18WebParser {
 	}
 
 	/**
-	 * extract all papers from a given List of webpages, which are in the ACL search
-	 * form(e.g. {@link here
+	 * Extracts all papers from a given list of webpages, which are in the ACL search
+	 * form (e.g. {@link here
 	 * https://aclanthology.coli.uni-saarland.de/catalog/facet/author?commit=facet.page%3D1&facet.page=1})
 	 *
 	 * @param a list of webpages
@@ -121,8 +122,8 @@ public class ACL18WebParser {
 	}
 
 	/**
-	 * extract all papers and Authors from a given List of webpages, which are in
-	 * the ACL search form(e.g. {@link here
+	 * Extracts all papers and authors from a given list of webpages, which are in
+	 * the ACL search form (e.g. {@link here
 	 * https://aclanthology.coli.uni-saarland.de/catalog/facet/author?commit=facet.page%3D1&facet.page=1})
 	 *
 	 * @param a list of webpages
@@ -135,8 +136,12 @@ public class ACL18WebParser {
 			for (Element elmnt : paperListElements) {
 				ArrayList<String> paperAuthorList = new ArrayList<String>();// VOLUMES/Overview-PDFs are also part of the search-result and removed here
 				if (!elmnt.text().contains("VOLUME")) {
-					// add Paper Title
-					paperAuthorList.add(elmnt.text());
+					// add Paper info
+					PaperStore store = new PaperStore();
+
+					store.title = elmnt.text();
+					extractPaperRelease(elmnt, store);
+					paperAuthorList.add(store.toString());
 					// find authors and add them to a list
 					Elements authorElements = elmnt.parent().parent().children().select("span").select("a");
 					for (Element author : authorElements) {
@@ -147,6 +152,38 @@ public class ACL18WebParser {
 			}
 		}
 		return paperList;
+	}
+
+	/**
+	 * Extracts the release year + month of the given paper and stores it in the given PaperStore
+	 * @param paper The web element of the paper to get the release year+month of
+	 * @param store The {@link PaperStore} object to save the release year+month in
+	 */
+	private void extractPaperRelease(Element paper, PaperStore store) {
+		try {
+			Document doc = Jsoup.connect("https://aclanthology.coli.uni-saarland.de" + paper.select("a").attr("href")).get();
+			ArrayList<Element> data = doc.select(".dl-horizontal").get(0).children();
+
+			for(int i = 0; i < data.size(); i++) {
+				if(data.get(i).text().startsWith("Month")) {
+					store.month = data.get(i + 1).text();
+
+					if(store.month.contains("-")) //some papers have a release month of e.g. "October-November", assume the first month as the release month
+						store.month = store.month.split("-")[0];
+
+					store.month = "" + CrawlerToolset.getMonthIndex(store.month);
+
+					if(store.month.equals("-1"))
+						store.month = "1"; //resort to january if no month is found
+				}
+				else if(data.get(i).text().startsWith("Year")) {
+					store.year = data.get(i + 1).text().substring(0, 4); //hope that every year is given in 1234 format
+				}
+			}
+		}
+		catch(IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	/**
@@ -162,7 +199,6 @@ public class ACL18WebParser {
 		Document aboutPage = Jsoup.connect(this.aboutPage).get();
 		String conferenceName = aboutPage.select(".site-title a").text();
 		currentConference.setName(conferenceName);
-		CrawlerToolset crawlerToolset = new CrawlerToolset();
 
 		/*		Useful for people who want to incorporate exact times
 		String conferenceStartTimeInformation = schedulePage.select(".day-wrapper:nth-child(1) " +
@@ -175,8 +211,8 @@ public class ACL18WebParser {
 
 		String cityCountryInformation = aboutPage.select("p:nth-child(1) a:nth-child(1)").text();
 		String dateAndLocationString = aboutPage.select(".sub-title-extra").text();
-		LocalDate conferenceStartDate = crawlerToolset.acl2018ConvertStringToDateRange(dateAndLocationString)[0];
-		LocalDate conferenceEndDate = crawlerToolset.acl2018ConvertStringToDateRange(dateAndLocationString)[1];
+		LocalDate conferenceStartDate = CrawlerToolset.acl2018ConvertStringToDateRange(dateAndLocationString)[0];
+		LocalDate conferenceEndDate = CrawlerToolset.acl2018ConvertStringToDateRange(dateAndLocationString)[1];
 		// Maybe we need to look at a timezone api? Probably not feasible to keep it free, which is why it is set as
 		// manual for now
 		// TODO: talk about timezones and how to handle them

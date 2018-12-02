@@ -1,23 +1,23 @@
 package de.tudarmstadt.informatik.ukp.athenakp.crawler;
 
+import static java.lang.Integer.parseInt;
+
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.Month;
 
-import static java.lang.Integer.parseInt;
-
 /**
  * A class with methods that might be useful across a variety of conferences / scraping tasks
  * currently mostly focused on converting Strings to LocalDates and LocalTimes
- * @author Julian Steitz
+ * @author Julian Steitz, Daniel Lehmann
  */
-class CrawlerToolset {
+public class CrawlerToolset {
 
 	/**Converts a time in String format to a LocalDate instance
 	 * @param timeString time in String format (e.g. 9:00 or 09:00)
 	 * @return corresponding LocalTime instance or null if the String was not in the expected format
 	 */
-	 LocalTime acl2018ConvertStringToTime(String timeString){
+	public static LocalTime acl2018ConvertStringToTime(String timeString){
 		String[] hoursAndMinutes = timeString.split(":", 2);
 		try{
 			int startHours = parseInt(hoursAndMinutes[0]);
@@ -37,7 +37,7 @@ class CrawlerToolset {
 	 * @return an Array of LocalDates with two entries, the beginning and end of the date range or an empty array if
 	 * dateString was in the wrong format
 	 */
-	LocalDate[] acl2018ConvertStringToDateRange(String dateString){
+	public static LocalDate[] acl2018ConvertStringToDateRange(String dateString){
 		LocalDate[] dateRange = new LocalDate[2];
 		try {
 			String[] daysMonthsYearAndLocation = dateString.split(" ");
@@ -63,10 +63,43 @@ class CrawlerToolset {
 	 * @param yearDescription year as String "2018"
 	 * @return LocalDate corresponding to the parameters
 	 */
-	LocalDate stringToLocalDate(String dayDescription, String monthDescription, String yearDescription){
+	public static LocalDate stringToLocalDate(String dayDescription, String monthDescription, String yearDescription){
 		int day = parseInt(dayDescription);
 		int year = parseInt(yearDescription);
 		Month monthObject = Month.valueOf(monthDescription.toUpperCase());
 		return LocalDate.of(year, monthObject,day);
+	}
+
+	/**
+	 * Gets the number of the given month (e.g. April would be 4)
+	 * @param month The month in english
+	 * @return The month's index, -1 if the input is not a month
+	 */
+	public static int getMonthIndex(String month) {
+		String[] months = {"January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"};
+
+		for(int i = 0; i < months.length; i++) {
+			if(months[i].equalsIgnoreCase(month))
+				return i + 1;
+		}
+
+		return -1;
+	}
+
+	/**
+	 * Temporarily stores information about a paper
+	 * title: The complete title of the paper
+	 * year: The year the paper was released in
+	 * month: The month the paper was released in
+	 */
+	public static class PaperStore
+	{
+		public String title, year, month;
+
+		@Override
+		public String toString()
+		{
+			return title + ";;" + year + ";;" + month;
+		}
 	}
 }

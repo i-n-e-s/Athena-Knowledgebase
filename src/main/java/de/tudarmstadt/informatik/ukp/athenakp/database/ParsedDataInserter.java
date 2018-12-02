@@ -1,6 +1,7 @@
 package de.tudarmstadt.informatik.ukp.athenakp.database;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -93,13 +94,15 @@ public class ParsedDataInserter {
 			// clean up the titles in the form of [C18-1017] Simple Neologism Based Domain Independe...
 			// C18-1017 would be the anthology - we remove [] because the rest API dislikes the characters and they
 			// convey no meaning
-			String rawTitle = paperAndAuthors.get(0);
+			String rawStore = paperAndAuthors.get(0);
+			String[] storeSplit = rawStore.split(";;");
+			String rawTitle = storeSplit[0];
 			String[] splitRawTitle = rawTitle.split(" ", 2);
 			String paperTitle = splitRawTitle[1];
 			String anthology = splitRawTitle[0].replace("[", "").replace("]", "");
-			System.out.println(paperTitle);
 			paper.setTitle(paperTitle);
 			paper.setAnthology(anthology);
+			paper.setReleaseDate(LocalDate.of(Integer.parseInt(storeSplit[1]), Integer.parseInt(storeSplit[2]), 1));
 			// we ignore the first entry, since it is a Paper's title
 			for (int i = 1; i < paperAndAuthors.size(); i++) {
 				String authorName = paperAndAuthors.get(i);
