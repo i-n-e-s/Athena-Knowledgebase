@@ -39,7 +39,7 @@ public class Paper {
 	@Column(name = "topic")
 	private String topic;
 	/*Title of the paper*/
-	@Column(name = "title")
+	@Column(name = "title", columnDefinition = "VARCHAR(1000)") //fixes titles that are too long for being storable in the column
 	private String title;
 	/*URL to PDF*/
 	@Column(name = "href")

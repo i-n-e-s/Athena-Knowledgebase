@@ -1,5 +1,16 @@
 package de.tudarmstadt.informatik.ukp.athenakp.database;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.TimeZone;
+
+import javax.annotation.PostConstruct;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
 import de.tudarmstadt.informatik.ukp.athenakp.Application;
 import de.tudarmstadt.informatik.ukp.athenakp.crawler.ACL18WebParser;
 import de.tudarmstadt.informatik.ukp.athenakp.database.access.ConferenceCommonAccess;
@@ -9,14 +20,6 @@ import de.tudarmstadt.informatik.ukp.athenakp.database.hibernate.PaperHibernateA
 import de.tudarmstadt.informatik.ukp.athenakp.database.models.Author;
 import de.tudarmstadt.informatik.ukp.athenakp.database.models.Conference;
 import de.tudarmstadt.informatik.ukp.athenakp.database.models.Paper;
-
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-
-import javax.annotation.PostConstruct;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.TimeZone;
 
 
 @SpringBootApplication
@@ -38,25 +41,48 @@ public class ParsedDataInserter {
 	public static void main(String[] args) {
 		SpringApplication.run(Application.class, args);
 		ParsedDataInserter parsedDataInserter = new ParsedDataInserter();
-//		try {
-//			parsedDataInserter.aclStorePapersAndAuthors();
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//		}
-		parsedDataInserter.acl2018StoreConferenceInformation();
+
+		List<String> argList = Arrays.asList(args);
+		String beginYear = "2018", endYear = "2018";
+
+		for(String arg : argList) {
+			if(arg.startsWith("-beginYear=")) {
+				String year = arg.split("=")[1];
+
+				Integer.parseInt(year); //parse to make sure that it's a number
+				beginYear = year;
+			}
+			else if(arg.startsWith("-endYear=")) {
+				String year = arg.split("=")[1];
+
+				Integer.parseInt(year); //parse to make sure that it's a number
+				endYear = year;
+			}
+		}
+
+		System.out.printf("Scraping years %s through %s", beginYear, endYear);
+
+		try {
+			parsedDataInserter.aclStorePapersAndAuthors(beginYear, endYear);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		//		parsedDataInserter.acl2018StoreConferenceInformation();
 	}
 
 	/**
 	 * Constructs Author and Paper Objects from ACL18Webparser().getPaperAuthor() and adds them to the database
 	 * see its documentation for its makeup
 	 *
+	 * @param beginYear The first year to get data from
+	 * @param endYear The last year to get data from
 	 * @throws IOException if jsoup was interrupted in the scraping process (during getPaperAuthor())
-	 * @author Julian Steitz
+	 * @author Julian Steitz, Daniel Lehmann
 	 * TODO: implement saveandupdate in Common Access? Otherwise implement check if entry exist. Expensive?
 	 */
-	private void aclStorePapersAndAuthors() throws IOException {
-		ACL18WebParser acl18WebParser = new ACL18WebParser();
-		System.out.println("Scraping, this can take a couple of minutes..");
+	private void aclStorePapersAndAuthors(String beginYear, String endYear) throws IOException {
+		ACL18WebParser acl18WebParser = new ACL18WebParser(beginYear, endYear);
+		System.out.println(" - this can take a couple of minutes..");
 		ArrayList<ArrayList<String>> listOfPaperAuthor = acl18WebParser.getPaperAuthor();
 		PaperCommonAccess paperFiler = new PaperHibernateAccess();
 		// PersonCommonAccess personfiler = new PersonHibernateAccess();
@@ -68,9 +94,10 @@ public class ParsedDataInserter {
 			// C18-1017 would be the anthology - we remove [] because the rest API dislikes the characters and they
 			// convey no meaning
 			String rawTitle = paperAndAuthors.get(0);
-			String[] splitRawTitle = rawTitle.split(", ", 2);
+			String[] splitRawTitle = rawTitle.split(" ", 2);
 			String paperTitle = splitRawTitle[1];
 			String anthology = splitRawTitle[0].replace("[", "").replace("]", "");
+			System.out.println(paperTitle);
 			paper.setTitle(paperTitle);
 			paper.setAnthology(anthology);
 			// we ignore the first entry, since it is a Paper's title
@@ -98,10 +125,12 @@ public class ParsedDataInserter {
 	}
 
 	/**
-	 * stores the acl2018 conference into the database
+	 * Stores the acl2018 conference into the database
+	 * @param beginYear The first year to get data from
+	 * @param endYear The last year to get data from
 	 */
-	private void acl2018StoreConferenceInformation() {
-		ACL18WebParser acl18WebParser = new ACL18WebParser();
+	private void acl2018StoreConferenceInformation(String beginYear, String endYear) {
+		ACL18WebParser acl18WebParser = new ACL18WebParser(beginYear, endYear);
 		ConferenceCommonAccess conferenceCommonAccess = new ConferenceHibernateAccess();
 		try{
 			Conference acl2018 = acl18WebParser.getConferenceInformation();

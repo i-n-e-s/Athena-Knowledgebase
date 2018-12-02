@@ -4,37 +4,49 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import de.tudarmstadt.informatik.ukp.athenakp.database.models.Conference;
+
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import de.tudarmstadt.informatik.ukp.athenakp.database.models.Conference;
+
 /**
  * A class, which holds the capability to return a List of all authors, which
  * wrote a paper in the frame of the ACL'18 conference
  *
- * @author Jonas Hake
+ * @author Jonas Hake, Julian Steitz, Daniel Lehmann
  */
 public class ACL18WebParser {
 
-	private String startURLAuthors = "https://aclanthology.coli.uni-saarland.de/catalog/facet/author?"// get a list of all authors
-			+ "commit=facet.page=1&"// get first page of search
-			+ "facet.sort=index&" // sort author list alphabetically
-			+ "range[publish_date][begin]=2018&range[publish_date][end]=2018";// limits date of publishing
-
-	private String startURLPaper = "https://aclanthology.coli.uni-saarland.de/catalog?per_page=100&range[publish_date][begin]=2018&range[publish_date][end]=&search_field=title";
-
+	private String startURLAuthors;
+	private String startURLPaper;
 	private String schedulePage = "https://acl2018.org/programme/schedule/";
-
 	private String aboutPage = "https://acl2018.org/";
+
+	/**
+	 * Only parses in the given year range. If only one year is needed, use the same input for both
+	 * @param beginYear The first year to get data from
+	 * @param endYear The last year to get data from
+	 */
+	public ACL18WebParser(String beginYear, String endYear)
+	{
+		startURLAuthors = String.format("https://aclanthology.coli.uni-saarland.de/catalog/facet/author?"// get a list of all authors
+				+ "commit=facet.page=1&"// get first page of search
+				+ "facet.sort=index&" // sort author list alphabetically
+				+ "range[publish_date][begin]=%s&range[publish_date][end]=%s",// limits date of publishing
+				beginYear, endYear);
+		startURLPaper = String.format("https://aclanthology.coli.uni-saarland.de/catalog?per_page=100&range[publish_date][begin]=%s&range[publish_date][end]=%s&search_field=title", beginYear, endYear);
+	}
+
 	/**
 	 * fetch the given webpage, and follows the Link, which contains 'Next' as long
 	 * there is a Link containing 'Next' The method returns a list of all visited
 	 * webpages
-	 * 
+	 *
 	 * Works only with a search site from aclanthology.coli.uni-saarland.de
-	 * 
+	 *
 	 * @param startURL the URL of the webpage, where the crawler starts
 	 * @return the list of visited webpages in form of a Jsoup document
 	 * @throws IOException
@@ -91,7 +103,7 @@ public class ACL18WebParser {
 	 * extract all papers from a given List of webpages, which are in the ACL search
 	 * form(e.g. {@link here
 	 * https://aclanthology.coli.uni-saarland.de/catalog/facet/author?commit=facet.page%3D1&facet.page=1})
-	 * 
+	 *
 	 * @param a list of webpages
 	 * @return a list of names
 	 */
@@ -112,7 +124,7 @@ public class ACL18WebParser {
 	 * extract all papers and Authors from a given List of webpages, which are in
 	 * the ACL search form(e.g. {@link here
 	 * https://aclanthology.coli.uni-saarland.de/catalog/facet/author?commit=facet.page%3D1&facet.page=1})
-	 * 
+	 *
 	 * @param a list of webpages
 	 * @return a list of names
 	 */
@@ -152,7 +164,7 @@ public class ACL18WebParser {
 		currentConference.setName(conferenceName);
 		CrawlerToolset crawlerToolset = new CrawlerToolset();
 
-/*		Useful for people who want to incorporate exact times
+		/*		Useful for people who want to incorporate exact times
 		String conferenceStartTimeInformation = schedulePage.select(".day-wrapper:nth-child(1) " +
 				".overview-item:nth-child(1) .start-time").text();
 		String conferenceEndTimeInformation = schedulePage.select(".day-wrapper:nth-child(6) " +
@@ -205,10 +217,10 @@ public class ACL18WebParser {
 	}
 
 	/**
-	 * 
+	 *
 	 * Returns a List of List. Each Sublist represent a published Paper from ACL'18.
 	 * The Sublists are in the Form: Title, Author1, Author2, ...
-	 * 
+	 *
 	 * @return A List of Lists of Papertitle and associated Author.
 	 * @throws IOException
 	 */
