@@ -68,7 +68,7 @@ public class ParsedDataInserter {
 			// C18-1017 would be the anthology - we remove [] because the rest API dislikes the characters and they
 			// convey no meaning
 			String rawTitle = paperAndAuthors.get(0);
-			String[] splitRawTitle = rawTitle.split(", ", 2);
+			String[] splitRawTitle = rawTitle.split(" ", 2);
 			String paperTitle = splitRawTitle[1];
 			String anthology = splitRawTitle[0].replace("[", "").replace("]", "");
 			paper.setTitle(paperTitle);
