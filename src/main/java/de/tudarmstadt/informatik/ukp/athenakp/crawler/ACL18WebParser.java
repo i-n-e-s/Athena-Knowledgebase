@@ -4,6 +4,10 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -129,7 +133,7 @@ class ACL18WebParser extends AbstractCrawler{
 	 * @param a list of webpages
 	 * @return a list of names
 	 */
-	private ArrayList<ArrayList<String>> extractPaperAuthor(ArrayList<Document> webpages) {
+	private ArrayList<ArrayList<String>> extractPaperAuthor(List<Document> webpages) {
 		ArrayList<ArrayList<String>> paperList = new ArrayList<ArrayList<String>>();
 		for (Document doc : webpages) {
 			Elements paperListElements = doc.select("h5.index_title");
@@ -246,6 +250,31 @@ class ACL18WebParser extends AbstractCrawler{
 
 	@Override
 	public ArrayList<ArrayList<String>> getPaperAuthor() throws IOException {
-		return extractPaperAuthor(fetchWebpages(startURLPaper));
+		List<Document> webpages = fetchWebpages(startURLPaper);
+		int quarterSize = (int)Math.ceil(webpages.size() / 4);
+		List<Document> input1 = webpages.subList(0, quarterSize);
+		List<Document> input2 = webpages.subList(quarterSize, quarterSize * 2);
+		List<Document> input3 = webpages.subList(quarterSize * 2, quarterSize * 3);
+		List<Document> input4 = webpages.subList(quarterSize * 3, webpages.size());
+		ArrayList<ArrayList<String>> result = new ArrayList<>();
+		System.out.println("Starting 4 threads...");
+		ExecutorService executor = Executors.newFixedThreadPool(4);
+		Future<ArrayList<ArrayList<String>>> f1 = executor.submit(() -> {return extractPaperAuthor(input1);});
+		Future<ArrayList<ArrayList<String>>> f2 = executor.submit(() -> {return extractPaperAuthor(input2);});
+		Future<ArrayList<ArrayList<String>>> f3 = executor.submit(() -> {return extractPaperAuthor(input3);});
+		Future<ArrayList<ArrayList<String>>> f4 = executor.submit(() -> {return extractPaperAuthor(input4);});
+		System.out.println("Waiting for thread results...");
+
+		try {
+			result.addAll(f1.get());
+			result.addAll(f2.get());
+			result.addAll(f3.get());
+			result.addAll(f4.get());
+		}
+		catch(InterruptedException | ExecutionException e) {
+			e.printStackTrace();
+		}
+
+		return result;
 	}
 }
