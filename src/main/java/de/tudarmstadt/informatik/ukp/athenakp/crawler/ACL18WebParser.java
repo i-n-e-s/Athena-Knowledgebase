@@ -277,6 +277,7 @@ class ACL18WebParser extends AbstractCrawler{
 			e.printStackTrace();
 		}
 
+		executor.shutdown();
 		return result;
 	}
 }
