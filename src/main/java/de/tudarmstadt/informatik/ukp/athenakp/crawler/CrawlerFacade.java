@@ -9,7 +9,7 @@ import de.tudarmstadt.informatik.ukp.athenakp.database.models.Conference;
  *
  * This is a facade class to hide the classes, which scrape the data from the specific websites
  *
- * @author Jonas Hake
+ * @author Jonas Hake, Daniel Lehmann
  *
  */
 public class CrawlerFacade extends AbstractCrawler{
@@ -18,12 +18,14 @@ public class CrawlerFacade extends AbstractCrawler{
 
 	/**
 	 * @param conference a supported Conference, which should be scraped
+	 * @param beginYear The first year to get data from
+	 * @param endYear The last year to get data from
 	 */
-	public CrawlerFacade(SupportedConferences conference){
+	public CrawlerFacade(SupportedConferences conference, String beginYear, String endYear){
 		super();
 		switch(conference) {
 			case ACL:
-				crawler = new ACL18WebParser();
+				crawler = new ACL18WebParser(beginYear, endYear);
 				break;
 		}
 	}
