@@ -33,6 +33,16 @@ public interface PaperCommonAccess extends CommonAccess<Paper>
 	public List<Paper> getByReleaseDate(Integer year, Integer month, Integer day);
 
 	/**
+	 * Get all papers released in the specified release range.
+	 * @param year1 The start year to search for released papers
+	 * @param month1 The start month to search for released papers
+	 * @param year2 The end year to search for released papers
+	 * @param month2 The end month to search for released papers
+	 * @return A List of all papers released in the specified release range.
+	 */
+	public List<Paper> getByReleaseRange(Integer year1, Integer month1, Integer year2, Integer month2);
+
+	/**
 	 * Get all papers with specified topic.
 	 * @param topic The paper's topic.
 	 * @return A List of all papers with the specified topic.

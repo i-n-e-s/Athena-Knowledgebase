@@ -1,31 +1,31 @@
 package de.tudarmstadt.informatik.ukp.athenakp.crawler;
 
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
 
-import static org.junit.Assert.*;
+import org.junit.Test;
 
 public class CrawlerToolsetTest {
-	private CrawlerToolset crawlerToolset = new CrawlerToolset();
 	private LocalTime correctTime = LocalTime.of(9,0);
 
 	@Test
 	public void testConvertStringToTime() {
 
-		LocalTime crawlerTime = crawlerToolset.acl2018ConvertStringToTime("9:00");
+		LocalTime crawlerTime = CrawlerToolset.acl2018ConvertStringToTime("9:00");
 		assertEquals(correctTime, crawlerTime);
 	}
 	@Test
 	public void testZeroConvertStringToTime() {
-		LocalTime crawlerTime = crawlerToolset.acl2018ConvertStringToTime("09:00");
+		LocalTime crawlerTime = CrawlerToolset.acl2018ConvertStringToTime("09:00");
 		assertEquals(correctTime, crawlerTime);
 
 	}
 	@Test
 	public void testSmallArray() {
-		LocalTime crawlerTime = crawlerToolset.acl2018ConvertStringToTime("9");
+		LocalTime crawlerTime = CrawlerToolset.acl2018ConvertStringToTime("9");
 		assertNull(crawlerTime);
 	}
 	@Test
@@ -35,7 +35,7 @@ public class CrawlerToolsetTest {
 		String monthDescription = "July";
 		LocalDate correctDate = LocalDate.of(1990, 7, 12);
 
-		LocalDate convertedDate = crawlerToolset.stringToLocalDate(dayDescription, monthDescription, yearDescription);
+		LocalDate convertedDate = CrawlerToolset.stringToLocalDate(dayDescription, monthDescription, yearDescription);
 		assertEquals(correctDate, convertedDate);
 	}
 	@Test
@@ -45,7 +45,7 @@ public class CrawlerToolsetTest {
 		correctDateRange[1] = LocalDate.of(2018,7,20);
 
 		String testString = "15-20 July 2018";
-		LocalDate[] toolsetDateRange = crawlerToolset.acl2018ConvertStringToDateRange(testString);
+		LocalDate[] toolsetDateRange = CrawlerToolset.acl2018ConvertStringToDateRange(testString);
 		assertEquals(correctDateRange[0],toolsetDateRange[0]);
 		assertEquals(correctDateRange[1], toolsetDateRange[1]);
 
@@ -53,9 +53,20 @@ public class CrawlerToolsetTest {
 	@Test
 	public void testInvalidDateRange(){
 		String testString = "garbladsa";
-		LocalDate[] toolsetDateRange = crawlerToolset.acl2018ConvertStringToDateRange(testString);
+		LocalDate[] toolsetDateRange = CrawlerToolset.acl2018ConvertStringToDateRange(testString);
 		assertNull(toolsetDateRange[0]);
 		assertNull(toolsetDateRange[1]);
 
+	}
+	@Test
+	public void testMonthIndex() {
+		String[] months = {"January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"};
+
+		for(int i = 0; i < months.length; i++) {
+			assertEquals(i + 1, CrawlerToolset.getMonthIndex(months[i]));
+		}
+
+		//invalid input
+		assertEquals(-1, CrawlerToolset.getMonthIndex("fdsdfsfdsdfsdfsdfsfds"));
 	}
 }

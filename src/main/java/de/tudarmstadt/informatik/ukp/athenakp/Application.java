@@ -52,7 +52,7 @@ public class Application {
 		Paper dummyPaper = new Paper();
 		dummyPaper.setHref("https://example.org");
 		dummyPaper.setPdfFileSize(123456);
-		dummyPaper.setReleaseDate(new Date(2018 - 1900, 11 - 1, 16));
+		dummyPaper.setReleaseDate(LocalDate.of(2018, 11, 16));
 		dummyPaper.setTopic("The Life, the Universe and Everything");
 		dummyPaper.setTitle("42");
 		dummyPaper.setAnthology("C2PO");
@@ -60,7 +60,7 @@ public class Application {
 		Paper dummyPaper2 = new Paper();
 		dummyPaper2.setHref("https://example.org");
 		dummyPaper2.setPdfFileSize(654321);
-		dummyPaper2.setReleaseDate(new Date(2000 - 1900, 7 - 1, 29));
+		dummyPaper2.setReleaseDate(LocalDate.of(2000, 7, 29));
 		dummyPaper2.setTopic("Fiction");
 		dummyPaper2.setTitle("Why Hoverboards will exist by 2015");
 

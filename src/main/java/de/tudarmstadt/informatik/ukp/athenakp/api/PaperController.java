@@ -59,17 +59,11 @@ public class PaperController {
 	@RequestMapping("/byPaperID/{value}/href")
 	public String getHref(@PathVariable("value")Long value) {
 		List<Paper> papers = byPaperID(value);
-
+		
 		if(papers.size() > 0)
 			return papers.get(0).getHref();
 		else return null;
 	}
-
-	//TODO: we probably don't need this anymore because of /person/byPersonID/{value}/getPapers
-	//	@RequestMapping("/byAuthor/{value}")
-	//	public List<Paper> byAuthor(@PathVariable("value")String value) { //TODO implement this
-	//		return null;
-	//	}
 
 	/**
 	 * @param year The year in which the paper was released
@@ -80,6 +74,18 @@ public class PaperController {
 	@RequestMapping("/byReleaseDate/{year}/{month}/{day}")
 	public List<Paper> byReleaseDate(@PathVariable("year")Integer year, @PathVariable("month")Integer month, @PathVariable("day")Integer day) {
 		return access.getByReleaseDate(year, month, day);
+	}
+
+	/**
+	 * @param year1 The start year to search for released papers
+	 * @param month1 The start month to search for released papers
+	 * @param year2 The end year to search for released papers
+	 * @param month2 The end month to search for released papers
+	 * @return The papers with the specified release date, if existing
+	 */
+	@RequestMapping("/byReleaseRange/{year1}/{month1}/{year2}/{month2}")
+	public List<Paper> byReleaseRange(@PathVariable("year1")Integer year1, @PathVariable("month1")Integer month1, @PathVariable("year2")Integer year2, @PathVariable("month2")Integer month2) {
+		return access.getByReleaseRange(year1, month1, year2, month2);
 	}
 
 	/**

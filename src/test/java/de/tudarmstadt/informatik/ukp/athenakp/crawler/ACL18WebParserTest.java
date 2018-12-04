@@ -1,16 +1,16 @@
 package de.tudarmstadt.informatik.ukp.athenakp.crawler;
 
-import de.tudarmstadt.informatik.ukp.athenakp.database.models.Conference;
+import java.io.IOException;
+import java.time.LocalDate;
 
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.io.IOException;
-import java.time.LocalDate;
+import de.tudarmstadt.informatik.ukp.athenakp.database.models.Conference;
 
 
 public class ACL18WebParserTest {
-	private ACL18WebParser acl18WebParser = new ACL18WebParser();
+	private ACL18WebParser acl18WebParser = new ACL18WebParser("2018", "2018");
 	private Conference crawledConference = acl18WebParser.getConferenceInformation();
 
 	public ACL18WebParserTest() throws IOException {

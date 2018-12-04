@@ -1,6 +1,18 @@
 package de.tudarmstadt.informatik.ukp.athenakp.database;
 
 import java.io.IOException;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.TimeZone;
+
+import javax.annotation.PostConstruct;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.TimeZone;
 
@@ -40,8 +52,29 @@ public class ParsedDataInserter {
 	public static void main(String[] args) {
 		SpringApplication.run(Application.class, args);
 		ParsedDataInserter parsedDataInserter = new ParsedDataInserter();
+
+		List<String> argList = Arrays.asList(args);
+		String beginYear = "2018", endYear = "2018";
+
+		for(String arg : argList) {
+			if(arg.startsWith("-beginYear=")) {
+				String year = arg.split("=")[1];
+
+				Integer.parseInt(year); //parse to make sure that it's a number
+				beginYear = year;
+			}
+			else if(arg.startsWith("-endYear=")) {
+				String year = arg.split("=")[1];
+
+				Integer.parseInt(year); //parse to make sure that it's a number
+				endYear = year;
+			}
+		}
+
+		System.out.printf("Scraping years %s through %s", beginYear, endYear);
+
 		try {
-			parsedDataInserter.aclStorePapersAndAuthors();
+			parsedDataInserter.aclStorePapersAndAuthors(beginYear, endYear);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -52,14 +85,17 @@ public class ParsedDataInserter {
 	 * Constructs Author and Paper Objects from ACL18Webparser().getPaperAuthor() and adds them to the database
 	 * see its documentation for its makeup
 	 *
+	 * @param beginYear The first year to get data from
+	 * @param endYear The last year to get data from
 	 * @throws IOException if jsoup was interrupted in the scraping process (during getPaperAuthor())
-	 * @author Julian Steitz
+	 * @author Julian Steitz, Daniel Lehmann
 	 * TODO: implement saveandupdate in Common Access? Otherwise implement check if entry exist. Expensive?
 	 */
-	private void aclStorePapersAndAuthors() throws IOException {
-		CrawlerFacade acl18WebParser = new CrawlerFacade(SupportedConferences.ACL);
-		System.out.println("Scraping, this can take a couple of minutes..");
+	private void aclStorePapersAndAuthors(String beginYear, String endYear) throws IOException {
+		CrawlerFacade acl18WebParser = new CrawlerFacade(SupportedConferences.ACL, beginYear, endYear);
+		System.out.println(" - this can take a couple of minutes..");
 		ArrayList<ArrayList<String>> listOfPaperAuthor = acl18WebParser.getPaperAuthor();
+		System.out.println("Done scraping! Inserting data into database...");
 		PaperCommonAccess paperFiler = new PaperHibernateAccess();
 		// PersonCommonAccess personfiler = new PersonHibernateAccess();
 
@@ -69,12 +105,15 @@ public class ParsedDataInserter {
 			// clean up the titles in the form of [C18-1017] Simple Neologism Based Domain Independe...
 			// C18-1017 would be the anthology - we remove [] because the rest API dislikes the characters and they
 			// convey no meaning
-			String rawTitle = paperAndAuthors.get(0);
+			String rawStore = paperAndAuthors.get(0);
+			String[] storeSplit = rawStore.split(";;");
+			String rawTitle = storeSplit[0];
 			String[] splitRawTitle = rawTitle.split(" ", 2);
 			String paperTitle = splitRawTitle[1];
 			String anthology = splitRawTitle[0].replace("[", "").replace("]", "");
 			paper.setTitle(paperTitle);
 			paper.setAnthology(anthology);
+			paper.setReleaseDate(LocalDate.of(Integer.parseInt(storeSplit[1]), Integer.parseInt(storeSplit[2]), 1));
 			paper.setHref("http://aclweb.org/anthology/" + anthology); //wow that was easy
 			// we ignore the first entry, since it is a Paper's title
 			for (int i = 1; i < paperAndAuthors.size(); i++) {
@@ -101,10 +140,12 @@ public class ParsedDataInserter {
 	}
 
 	/**
-	 * stores the acl2018 conference into the database
+	 * Stores the acl2018 conference into the database
+	 * @param beginYear The first year to get data from
+	 * @param endYear The last year to get data from
 	 */
-	private void acl2018StoreConferenceInformation() {
-		CrawlerFacade acl18WebParser = new CrawlerFacade(SupportedConferences.ACL);
+	private void acl2018StoreConferenceInformation(String beginYear, String endYear) {
+		CrawlerFacade acl18WebParser = new CrawlerFacade(SupportedConferences.ACL, beginYear, endYear);
 		ConferenceCommonAccess conferenceCommonAccess = new ConferenceHibernateAccess();
 		try{
 			Conference acl2018 = acl18WebParser.getConferenceInformation();

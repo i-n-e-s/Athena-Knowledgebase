@@ -1,5 +1,6 @@
 package de.tudarmstadt.informatik.ukp.athenakp.database.hibernate;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.hibernate.Criteria;
@@ -24,8 +25,22 @@ public class PaperHibernateAccess implements PaperCommonAccess {
 	}
 
 	@Override
-	public List<Paper> getByReleaseDate(Integer year, Integer month, Integer day) {
-		return getBy("releaseDate", HibernateUtils.toTimestamp(year, month, day));
+	public List<Paper> getByReleaseDate(Integer year, Integer month, Integer day) { //TODO: do we need day still? papers seem to only be stored by release year/month
+		return getBy("releaseDate", LocalDate.of(year, month, day));
+	}
+
+	@Override
+	public List<Paper> getByReleaseRange(Integer year1, Integer month1, Integer year2, Integer month2) {
+		Session session = HibernateUtils.getSessionFactory().openSession();
+		Criteria criteria = session.createCriteria(Paper.class);
+		List<Paper> result;
+		LocalDate date1 = LocalDate.of(year1, month1, 1);
+		LocalDate date2 = LocalDate.of(year2, month2, 1); //papers are only stored by release year/month
+
+		criteria.add(Restrictions.between("releaseDate", date1, date2));
+		result = criteria.list();
+		session.close();
+		return result;
 	}
 
 	@Override
