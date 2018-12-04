@@ -7,6 +7,6 @@ package de.tudarmstadt.informatik.ukp.athenakp.crawler;
  * @author Jonas Hake
  *
  */
-enum SupportedConferences {
+public enum SupportedConferences {
 	ACL
 }

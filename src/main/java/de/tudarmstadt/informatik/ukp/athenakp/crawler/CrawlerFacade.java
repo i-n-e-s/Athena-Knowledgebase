@@ -44,6 +44,6 @@ public class CrawlerFacade extends AbstractCrawler{
 	
 	@Override
 	public Conference getConferenceInformation() throws IOException {
-		return null;
+		return crawler.getConferenceInformation();
 	}
 }
