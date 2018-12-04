@@ -86,6 +86,7 @@ public class ParsedDataInserter {
 		CrawlerFacade acl18WebParser = new CrawlerFacade(SupportedConferences.ACL, beginYear, endYear);
 		System.out.println(" - this can take a couple of minutes..");
 		ArrayList<ArrayList<String>> listOfPaperAuthor = acl18WebParser.getPaperAuthor();
+		System.out.println("Done scraping! Inserting data into database...");
 		PaperCommonAccess paperFiler = new PaperHibernateAccess();
 		// PersonCommonAccess personfiler = new PersonHibernateAccess();
 

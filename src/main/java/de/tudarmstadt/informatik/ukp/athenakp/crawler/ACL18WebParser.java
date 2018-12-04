@@ -250,14 +250,15 @@ class ACL18WebParser extends AbstractCrawler{
 
 	@Override
 	public ArrayList<ArrayList<String>> getPaperAuthor() throws IOException {
+		System.out.println("Fetching webpages...");
 		List<Document> webpages = fetchWebpages(startURLPaper);
+		System.out.println("Preparing data and starting 4 scraper threads...");
 		int quarterSize = (int)Math.ceil(webpages.size() / 4);
 		List<Document> input1 = webpages.subList(0, quarterSize);
 		List<Document> input2 = webpages.subList(quarterSize, quarterSize * 2);
 		List<Document> input3 = webpages.subList(quarterSize * 2, quarterSize * 3);
 		List<Document> input4 = webpages.subList(quarterSize * 3, webpages.size());
 		ArrayList<ArrayList<String>> result = new ArrayList<>();
-		System.out.println("Starting 4 threads...");
 		ExecutorService executor = Executors.newFixedThreadPool(4);
 		Future<ArrayList<ArrayList<String>>> f1 = executor.submit(() -> {return extractPaperAuthor(input1);});
 		Future<ArrayList<ArrayList<String>>> f2 = executor.submit(() -> {return extractPaperAuthor(input2);});
@@ -270,6 +271,7 @@ class ACL18WebParser extends AbstractCrawler{
 			result.addAll(f2.get());
 			result.addAll(f3.get());
 			result.addAll(f4.get());
+			System.out.println("Gathered all results!");
 		}
 		catch(InterruptedException | ExecutionException e) {
 			e.printStackTrace();
