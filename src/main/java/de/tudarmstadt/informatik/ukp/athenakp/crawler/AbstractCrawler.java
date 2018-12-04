@@ -7,42 +7,41 @@ import de.tudarmstadt.informatik.ukp.athenakp.database.models.Conference;
 
 /**
  *
- * This is the abstract base of the Crawler
+ * This is the abstract base of the crawler
  *
  * @author Jonas Hake
  *
  */
 abstract class AbstractCrawler {
 	/**
-	 * Returns all Authors, which published in the year 2018
+	 * Returns all authors who published in the year 2018
 	 *
-	 * @return a list of all authors, null when data not available
+	 * @return A list of all authors, null when data not available
 	 * @throws IOException if Jsoup.connect fails
 	 */
 	public abstract ArrayList<String> getAuthors() throws IOException;
 
 	/**
-	 * Returns all Papers, which were published in the year 2018
+	 * Returns all papers which were published in the year 2018
 	 *
-	 * @return a list of all paper titles, null when data not available
+	 * @return A list of all paper titles, null when data not available
 	 * @throws IOException if Jsoup.connect fails
 	 */
 	public abstract ArrayList<String> getPaperTitles() throws IOException;
 
 	/**
+	 * Returns a list of lists. Each sublist represents a published paper.
+	 * The sub lists are in the form: Title, Author1, Author2, ...
 	 *
-	 * Returns a List of List. Each Sublist represent a published Paper from ACL'18.
-	 * The Sublists are in the Form: Title, Author1, Author2, ...
-	 *
-	 * @return A List of Lists of Papertitle and associated Author, null when data not available
+	 * @return A list of lists of paper's titles and their associated author, null when data not available
 	 * @throws IOException if Jsoup.connect fails
 	 */
 	public abstract ArrayList<ArrayList<String>> getPaperAuthor() throws IOException;
+
 	/**
-	 * A method which returns a Conference instance with its name, location and start and end date set
-	 * scrapes the aboutPage of ACL2018 for its information and employs String conversion found in CrawlerToolset
-	 * if an IO Exception occurs, it returns an empty Conference instance
-	 * @return a Conference instance with its name, location and start and end date set, null when data not available
+	 * A method which returns a conference instance with its name, location, and start and end date set.
+	 * Scrapes an about page for its information and employs string conversion found in CrawlerToolset
+	 * @return A conference instance with its name, location, and start and end date set, null when data not available, an empty Conference instance if an IOException occurs
 	 * @throws IOException if Jsoup.connect fails
 	 * @author Julian Steitz
 	 */
