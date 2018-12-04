@@ -30,6 +30,7 @@ class ACL18WebParser extends AbstractCrawler{
 	private String schedulePage = "https://acl2018.org/programme/schedule/";
 
 	private String aboutPage = "https://acl2018.org/";
+
 	/**
 	 * fetch the given webpage, and follows the Link, which contains 'Next' as long
 	 * there is a Link containing 'Next' The method returns a list of all visited
@@ -68,6 +69,11 @@ class ACL18WebParser extends AbstractCrawler{
 		return docs;
 	}
 
+	@Override
+	public ArrayList<String> getAuthors() throws IOException {
+		return extractAuthors(fetchWebpages(startURLAuthors));
+	}
+
 	/**
 	 * extract all authors from a given List of webpages, which are in the ACL
 	 * search form(e.g. {@link here
@@ -89,6 +95,11 @@ class ACL18WebParser extends AbstractCrawler{
 		return authors;
 	}
 
+	@Override
+	public ArrayList<String> getPaperTitles() throws IOException {
+		return extractPapers(fetchWebpages(startURLPaper));
+	}
+
 	/**
 	 * extract all papers from a given List of webpages, which are in the ACL search
 	 * form(e.g. {@link here
@@ -108,6 +119,11 @@ class ACL18WebParser extends AbstractCrawler{
 			}
 		}
 		return paperList;
+	}
+
+	@Override
+	public ArrayList<ArrayList<String>> getPaperAuthor() throws IOException {
+		return extractPaperAuthor(fetchWebpages(startURLPaper));
 	}
 
 	/**
@@ -181,17 +197,9 @@ class ACL18WebParser extends AbstractCrawler{
 	}
 
 	@Override
-	public ArrayList<String> getAuthors() throws IOException {
-		return extractAuthors(fetchWebpages(startURLAuthors));
-	}
+	public ArrayList<ArrayList<String>> getTimetable() throws IOException {
+		ArrayList<ArrayList<String>> result = new ArrayList<>();
 
-	@Override
-	public ArrayList<String> getPaperTitles() throws IOException {
-		return extractPapers(fetchWebpages(startURLPaper));
-	}
-
-	@Override
-	public ArrayList<ArrayList<String>> getPaperAuthor() throws IOException {
-		return extractPaperAuthor(fetchWebpages(startURLPaper));
+		return result;
 	}
 }
