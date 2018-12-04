@@ -34,9 +34,9 @@ class ACL18WebParser extends AbstractCrawler{
 	 * fetch the given webpage, and follows the Link, which contains 'Next' as long
 	 * there is a Link containing 'Next' The method returns a list of all visited
 	 * webpages
-	 * 
+	 *
 	 * Works only with a search site from aclanthology.coli.uni-saarland.de
-	 * 
+	 *
 	 * @param startURL the URL of the webpage, where the crawler starts
 	 * @return the list of visited webpages in form of a Jsoup document
 	 * @throws IOException
@@ -93,7 +93,7 @@ class ACL18WebParser extends AbstractCrawler{
 	 * extract all papers from a given List of webpages, which are in the ACL search
 	 * form(e.g. {@link here
 	 * https://aclanthology.coli.uni-saarland.de/catalog/facet/author?commit=facet.page%3D1&facet.page=1})
-	 * 
+	 *
 	 * @param a list of webpages
 	 * @return a list of names
 	 */
@@ -114,7 +114,7 @@ class ACL18WebParser extends AbstractCrawler{
 	 * extract all papers and Authors from a given List of webpages, which are in
 	 * the ACL search form(e.g. {@link here
 	 * https://aclanthology.coli.uni-saarland.de/catalog/facet/author?commit=facet.page%3D1&facet.page=1})
-	 * 
+	 *
 	 * @param a list of webpages
 	 * @return a list of names
 	 */
@@ -147,7 +147,7 @@ class ACL18WebParser extends AbstractCrawler{
 		currentConference.setName(conferenceName);
 		CrawlerToolset crawlerToolset = new CrawlerToolset();
 
-/*		Useful for people who want to incorporate exact times
+		/*		Useful for people who want to incorporate exact times
 		String conferenceStartTimeInformation = schedulePage.select(".day-wrapper:nth-child(1) " +
 				".overview-item:nth-child(1) .start-time").text();
 		String conferenceEndTimeInformation = schedulePage.select(".day-wrapper:nth-child(6) " +
@@ -179,19 +179,17 @@ class ACL18WebParser extends AbstractCrawler{
 
 		return currentConference;
 	}
-	
+
 	@Override
 	public ArrayList<String> getAuthors() throws IOException {
 		return extractAuthors(fetchWebpages(startURLAuthors));
 	}
 
-	
 	@Override
 	public ArrayList<String> getPaperTitles() throws IOException {
 		return extractPapers(fetchWebpages(startURLPaper));
 	}
 
-	
 	@Override
 	public ArrayList<ArrayList<String>> getPaperAuthor() throws IOException {
 		return extractPaperAuthor(fetchWebpages(startURLPaper));
