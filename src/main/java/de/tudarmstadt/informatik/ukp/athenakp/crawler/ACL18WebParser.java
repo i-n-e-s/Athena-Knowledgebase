@@ -18,7 +18,7 @@ import de.tudarmstadt.informatik.ukp.athenakp.database.models.Conference;
  *
  * @author Jonas Hake
  */
-public class ACL18WebParser extends AbstractCrawler{
+class ACL18WebParser extends AbstractCrawler{
 
 	private String startURLAuthors = "https://aclanthology.coli.uni-saarland.de/catalog/facet/author?"// get a list of all authors
 			+ "commit=facet.page=1&"// get first page of search

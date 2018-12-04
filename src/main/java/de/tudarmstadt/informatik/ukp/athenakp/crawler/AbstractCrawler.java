@@ -12,12 +12,12 @@ import de.tudarmstadt.informatik.ukp.athenakp.database.models.Conference;
  * @author Jonas Hake
  *
  */
-public abstract class AbstractCrawler {
+abstract class AbstractCrawler {
 	/**
 	 * Returns all Authors, which published in the year 2018
 	 *
 	 * @return a list of all authors, null when data not available
-	 * @throws IOException
+	 * @throws IOException if Jsoup.connect fails
 	 */
 	public ArrayList<String> getAuthors() throws IOException {
 		return null;
@@ -27,7 +27,7 @@ public abstract class AbstractCrawler {
 	 * Returns all Papers, which were published in the year 2018
 	 *
 	 * @return a list of all paper titles, null when data not available
-	 * @throws IOException
+	 * @throws IOException if Jsoup.connect fails
 	 */
 	public ArrayList<String> getPaperTitles() throws IOException {
 		return null;
@@ -39,7 +39,7 @@ public abstract class AbstractCrawler {
 	 * The Sublists are in the Form: Title, Author1, Author2, ...
 	 * 
 	 * @return A List of Lists of Papertitle and associated Author, null when data not available
-	 * @throws IOException
+	 * @throws IOException if Jsoup.connect fails
 	 */
 	public ArrayList<ArrayList<String>> getPaperAuthor() throws IOException{
 		return null;
