@@ -4,11 +4,13 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import de.tudarmstadt.informatik.ukp.athenakp.database.models.Conference;
+
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+
+import de.tudarmstadt.informatik.ukp.athenakp.database.models.Conference;
 
 /**
  * A class, which holds the capability to return a List of all authors, which
@@ -16,7 +18,7 @@ import org.jsoup.select.Elements;
  *
  * @author Jonas Hake
  */
-public class ACL18WebParser {
+class ACL18WebParser extends AbstractCrawler{
 
 	private String startURLAuthors = "https://aclanthology.coli.uni-saarland.de/catalog/facet/author?"// get a list of all authors
 			+ "commit=facet.page=1&"// get first page of search
@@ -32,9 +34,9 @@ public class ACL18WebParser {
 	 * fetch the given webpage, and follows the Link, which contains 'Next' as long
 	 * there is a Link containing 'Next' The method returns a list of all visited
 	 * webpages
-	 * 
+	 *
 	 * Works only with a search site from aclanthology.coli.uni-saarland.de
-	 * 
+	 *
 	 * @param startURL the URL of the webpage, where the crawler starts
 	 * @return the list of visited webpages in form of a Jsoup document
 	 * @throws IOException
@@ -91,7 +93,7 @@ public class ACL18WebParser {
 	 * extract all papers from a given List of webpages, which are in the ACL search
 	 * form(e.g. {@link here
 	 * https://aclanthology.coli.uni-saarland.de/catalog/facet/author?commit=facet.page%3D1&facet.page=1})
-	 * 
+	 *
 	 * @param a list of webpages
 	 * @return a list of names
 	 */
@@ -112,7 +114,7 @@ public class ACL18WebParser {
 	 * extract all papers and Authors from a given List of webpages, which are in
 	 * the ACL search form(e.g. {@link here
 	 * https://aclanthology.coli.uni-saarland.de/catalog/facet/author?commit=facet.page%3D1&facet.page=1})
-	 * 
+	 *
 	 * @param a list of webpages
 	 * @return a list of names
 	 */
@@ -137,14 +139,7 @@ public class ACL18WebParser {
 		return paperList;
 	}
 
-	/**
-	 * A method which returns a Conference instance with its name, location and start and end date set
-	 * scrapes the aboutPage of ACL2018 for its information and employs String conversion found in CrawlerToolset
-	 * if an IO Exception occurs, it returns an empty Conference instance
-	 * @return a Conference instance with its name, location and start and end date set
-	 * @throws IOException if Jsoup.connect fails
-	 * @author Julian Steitz
-	 */
+	@Override
 	public Conference getConferenceInformation() throws IOException {
 		Conference currentConference = new Conference();
 		Document aboutPage = Jsoup.connect(this.aboutPage).get();
@@ -152,7 +147,7 @@ public class ACL18WebParser {
 		currentConference.setName(conferenceName);
 		CrawlerToolset crawlerToolset = new CrawlerToolset();
 
-/*		Useful for people who want to incorporate exact times
+		/*		Useful for people who want to incorporate exact times
 		String conferenceStartTimeInformation = schedulePage.select(".day-wrapper:nth-child(1) " +
 				".overview-item:nth-child(1) .start-time").text();
 		String conferenceEndTimeInformation = schedulePage.select(".day-wrapper:nth-child(6) " +
@@ -184,34 +179,18 @@ public class ACL18WebParser {
 
 		return currentConference;
 	}
-	/**
-	 * Returns all Authors, which published in the year 2018
-	 *
-	 * @return a list of all authors
-	 * @throws IOException
-	 */
+
+	@Override
 	public ArrayList<String> getAuthors() throws IOException {
 		return extractAuthors(fetchWebpages(startURLAuthors));
 	}
 
-	/**
-	 * Returns all Papers, which were published in the year 2018
-	 *
-	 * @return a list of all paper titles
-	 * @throws IOException
-	 */
+	@Override
 	public ArrayList<String> getPaperTitles() throws IOException {
 		return extractPapers(fetchWebpages(startURLPaper));
 	}
 
-	/**
-	 * 
-	 * Returns a List of List. Each Sublist represent a published Paper from ACL'18.
-	 * The Sublists are in the Form: Title, Author1, Author2, ...
-	 * 
-	 * @return A List of Lists of Papertitle and associated Author.
-	 * @throws IOException
-	 */
+	@Override
 	public ArrayList<ArrayList<String>> getPaperAuthor() throws IOException {
 		return extractPaperAuthor(fetchWebpages(startURLPaper));
 	}

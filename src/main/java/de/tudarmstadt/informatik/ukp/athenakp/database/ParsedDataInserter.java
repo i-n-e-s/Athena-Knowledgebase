@@ -10,7 +10,8 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import de.tudarmstadt.informatik.ukp.athenakp.Application;
-import de.tudarmstadt.informatik.ukp.athenakp.crawler.ACL18WebParser;
+import de.tudarmstadt.informatik.ukp.athenakp.crawler.CrawlerFacade;
+import de.tudarmstadt.informatik.ukp.athenakp.crawler.SupportedConferences;
 import de.tudarmstadt.informatik.ukp.athenakp.database.access.ConferenceCommonAccess;
 import de.tudarmstadt.informatik.ukp.athenakp.database.access.PaperCommonAccess;
 import de.tudarmstadt.informatik.ukp.athenakp.database.hibernate.ConferenceHibernateAccess;
@@ -56,7 +57,7 @@ public class ParsedDataInserter {
 	 * TODO: implement saveandupdate in Common Access? Otherwise implement check if entry exist. Expensive?
 	 */
 	private void aclStorePapersAndAuthors() throws IOException {
-		ACL18WebParser acl18WebParser = new ACL18WebParser();
+		CrawlerFacade acl18WebParser = new CrawlerFacade(SupportedConferences.ACL);
 		System.out.println("Scraping, this can take a couple of minutes..");
 		ArrayList<ArrayList<String>> listOfPaperAuthor = acl18WebParser.getPaperAuthor();
 		PaperCommonAccess paperFiler = new PaperHibernateAccess();
@@ -103,7 +104,7 @@ public class ParsedDataInserter {
 	 * stores the acl2018 conference into the database
 	 */
 	private void acl2018StoreConferenceInformation() {
-		ACL18WebParser acl18WebParser = new ACL18WebParser();
+		CrawlerFacade acl18WebParser = new CrawlerFacade(SupportedConferences.ACL);
 		ConferenceCommonAccess conferenceCommonAccess = new ConferenceHibernateAccess();
 		try{
 			Conference acl2018 = acl18WebParser.getConferenceInformation();
