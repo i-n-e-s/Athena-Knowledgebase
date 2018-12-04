@@ -53,6 +53,19 @@ public class PaperController {
 	}
 
 	/**
+	 * @param value The paper ID
+	 * @return The Link to the pdf of this paper
+	 */
+	@RequestMapping("/byPaperID/{value}/href")
+	public String getHref(@PathVariable("value")Long value) {
+
+		List<Paper> papers = byPaperID(value);
+		if(papers.size() > 0)
+			return papers.get(0).getHref();
+		else return null;
+	}
+
+	/**
 	 * @param year The year in which the paper was released
 	 * @param month The month in which the paper was released
 	 * @param day The day on which the paper was released
@@ -103,6 +116,7 @@ public class PaperController {
 	public List<Paper> byAnthology(@PathVariable("value")String value) {
 		return access.getByAnthology(value);
 	}
+
 	/**
 	 * @param value The paper's direct download link
 	 * @return All paper's with the given download link

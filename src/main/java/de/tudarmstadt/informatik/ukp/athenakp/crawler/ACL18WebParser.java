@@ -19,7 +19,7 @@ import de.tudarmstadt.informatik.ukp.athenakp.database.models.Conference;
  *
  * @author Jonas Hake, Julian Steitz, Daniel Lehmann
  */
-public class ACL18WebParser {
+class ACL18WebParser extends AbstractCrawler{
 
 	private String startURLAuthors;
 	private String startURLPaper;
@@ -43,7 +43,7 @@ public class ACL18WebParser {
 
 	/**
 	 * Fetches the given webpage, and follows the link, which contains 'Next' as long as
-	 * there is on. The method returns a list of all visited webpages
+	 * there is one. The method returns a list of all visited webpages
 	 *
 	 * Works only with a search site from aclanthology.coli.uni-saarland.de
 	 *
@@ -194,6 +194,7 @@ public class ACL18WebParser {
 	 * @throws IOException if Jsoup.connect fails
 	 * @author Julian Steitz
 	 */
+	@Override
 	public Conference getConferenceInformation() throws IOException {
 		Conference currentConference = new Conference();
 		Document aboutPage = Jsoup.connect(this.aboutPage).get();
@@ -232,34 +233,18 @@ public class ACL18WebParser {
 
 		return currentConference;
 	}
-	/**
-	 * Returns all Authors, which published in the year 2018
-	 *
-	 * @return a list of all authors
-	 * @throws IOException
-	 */
+
+	@Override
 	public ArrayList<String> getAuthors() throws IOException {
 		return extractAuthors(fetchWebpages(startURLAuthors));
 	}
 
-	/**
-	 * Returns all Papers, which were published in the year 2018
-	 *
-	 * @return a list of all paper titles
-	 * @throws IOException
-	 */
+	@Override
 	public ArrayList<String> getPaperTitles() throws IOException {
 		return extractPapers(fetchWebpages(startURLPaper));
 	}
 
-	/**
-	 *
-	 * Returns a List of List. Each Sublist represent a published Paper from ACL'18.
-	 * The Sublists are in the Form: Title, Author1, Author2, ...
-	 *
-	 * @return A List of Lists of Papertitle and associated Author.
-	 * @throws IOException
-	 */
+	@Override
 	public ArrayList<ArrayList<String>> getPaperAuthor() throws IOException {
 		return extractPaperAuthor(fetchWebpages(startURLPaper));
 	}

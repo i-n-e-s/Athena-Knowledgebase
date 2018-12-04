@@ -13,7 +13,8 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import de.tudarmstadt.informatik.ukp.athenakp.Application;
-import de.tudarmstadt.informatik.ukp.athenakp.crawler.ACL18WebParser;
+import de.tudarmstadt.informatik.ukp.athenakp.crawler.CrawlerFacade;
+import de.tudarmstadt.informatik.ukp.athenakp.crawler.SupportedConferences;
 import de.tudarmstadt.informatik.ukp.athenakp.database.access.ConferenceCommonAccess;
 import de.tudarmstadt.informatik.ukp.athenakp.database.access.PaperCommonAccess;
 import de.tudarmstadt.informatik.ukp.athenakp.database.hibernate.ConferenceHibernateAccess;
@@ -82,7 +83,7 @@ public class ParsedDataInserter {
 	 * TODO: implement saveandupdate in Common Access? Otherwise implement check if entry exist. Expensive?
 	 */
 	private void aclStorePapersAndAuthors(String beginYear, String endYear) throws IOException {
-		ACL18WebParser acl18WebParser = new ACL18WebParser(beginYear, endYear);
+		CrawlerFacade acl18WebParser = new CrawlerFacade(SupportedConferences.ACL, beginYear, endYear);
 		System.out.println(" - this can take a couple of minutes..");
 		ArrayList<ArrayList<String>> listOfPaperAuthor = acl18WebParser.getPaperAuthor();
 		PaperCommonAccess paperFiler = new PaperHibernateAccess();
@@ -103,6 +104,7 @@ public class ParsedDataInserter {
 			paper.setTitle(paperTitle);
 			paper.setAnthology(anthology);
 			paper.setReleaseDate(LocalDate.of(Integer.parseInt(storeSplit[1]), Integer.parseInt(storeSplit[2]), 1));
+			paper.setHref("http://aclweb.org/anthology/" + anthology); //wow that was easy
 			// we ignore the first entry, since it is a Paper's title
 			for (int i = 1; i < paperAndAuthors.size(); i++) {
 				String authorName = paperAndAuthors.get(i);
@@ -133,7 +135,7 @@ public class ParsedDataInserter {
 	 * @param endYear The last year to get data from
 	 */
 	private void acl2018StoreConferenceInformation(String beginYear, String endYear) {
-		ACL18WebParser acl18WebParser = new ACL18WebParser(beginYear, endYear);
+		CrawlerFacade acl18WebParser = new CrawlerFacade(SupportedConferences.ACL, beginYear, endYear);
 		ConferenceCommonAccess conferenceCommonAccess = new ConferenceHibernateAccess();
 		try{
 			Conference acl2018 = acl18WebParser.getConferenceInformation();
