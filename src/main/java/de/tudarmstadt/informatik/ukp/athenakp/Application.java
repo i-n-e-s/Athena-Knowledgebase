@@ -1,20 +1,24 @@
 package de.tudarmstadt.informatik.ukp.athenakp;
 
+import java.time.LocalDate;
 import java.util.Date;
-import java.time.*;
 
-import de.tudarmstadt.informatik.ukp.athenakp.database.models.*;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import de.tudarmstadt.informatik.ukp.athenakp.database.access.ConferenceCommonAccess;
-import de.tudarmstadt.informatik.ukp.athenakp.database.hibernate.ConferenceHibernateAccess;
 import de.tudarmstadt.informatik.ukp.athenakp.database.access.InstitutionCommonAccess;
 import de.tudarmstadt.informatik.ukp.athenakp.database.access.PaperCommonAccess;
 import de.tudarmstadt.informatik.ukp.athenakp.database.access.PersonCommonAccess;
+import de.tudarmstadt.informatik.ukp.athenakp.database.hibernate.ConferenceHibernateAccess;
 import de.tudarmstadt.informatik.ukp.athenakp.database.hibernate.InstitutionHibernateAccess;
 import de.tudarmstadt.informatik.ukp.athenakp.database.hibernate.PaperHibernateAccess;
 import de.tudarmstadt.informatik.ukp.athenakp.database.hibernate.PersonHibernateAccess;
+import de.tudarmstadt.informatik.ukp.athenakp.database.models.Author;
+import de.tudarmstadt.informatik.ukp.athenakp.database.models.Conference;
+import de.tudarmstadt.informatik.ukp.athenakp.database.models.Event;
+import de.tudarmstadt.informatik.ukp.athenakp.database.models.Institution;
+import de.tudarmstadt.informatik.ukp.athenakp.database.models.Paper;
 
 @SpringBootApplication
 public class Application {
@@ -86,8 +90,8 @@ public class Application {
 		Conference dummyConference = new Conference();
 		dummyConference.setStartDate(LocalDate.parse("2012-06-30"));
 		dummyConference.setEndDate(LocalDate.now());
-//		dummyConference.setStartDate(new Date(2017 - 1900, 8 - 1, 15));
-//		dummyConference.setEndDate(new Date(2017 - 1900, 9 - 1, 2));
+		//		dummyConference.setStartDate(new Date(2017 - 1900, 8 - 1, 15));
+		//		dummyConference.setEndDate(new Date(2017 - 1900, 9 - 1, 2));
 		dummyConference.setName("Conference of Nerds");
 
 		ConferenceCommonAccess conferenceAccess = new ConferenceHibernateAccess();
@@ -95,8 +99,8 @@ public class Application {
 
 		Event dummyEvent = new Event();
 		dummyEvent.setTitle("reeeing in public - how to channel your inner frog");
-		dummyEvent.setBegin(new Date(2017, 8, 2));
-		dummyEvent.setEnd(new Date(2017,8,3));
+		dummyEvent.setBegin(LocalDate.of(2017, 8, 2));
+		dummyEvent.setEnd(LocalDate.of(2017, 8, 3));
 
 	}
 }

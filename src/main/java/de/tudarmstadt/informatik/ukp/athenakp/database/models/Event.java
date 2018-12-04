@@ -1,14 +1,12 @@
 package de.tudarmstadt.informatik.ukp.athenakp.database.models;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 
 import org.hibernate.annotations.GenericGenerator;
 
@@ -22,15 +20,14 @@ public class Event {
 	@Column(name="id")
 	private long id;
 	/*Start time*/
-	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name="begin_date")
-	private Date begin;
+	private LocalDate begin;
 	/*End time*/
-	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name="end_date")
-	private Date end;
+	private LocalDate end;
 	/*Host*/
-	//private Person host;                //TODO Person von Author abstrahieren
+	@Column(name = "host")
+	private Person host;                //TODO Person von Author abstrahieren
 	/* Place where this event happens */
 	@Column(name = "place")
 	private String place;
@@ -43,7 +40,8 @@ public class Event {
 	/* Attendees */
 	//private Set<Person> attendees;      //TODO Hibernatemäßige Setter für alle Set<> oder List<> fehlen
 	/* Category */
-	private EventCategory category;   //TODO Hibernatemäßige Getter/Setter für diese ENUM implementieren
+	@Column(name = "category")
+	private EventCategory category;
 
 	/**
 	 * Gets the unique id of this event
@@ -65,7 +63,7 @@ public class Event {
 	 * Gets the time this event begins
 	 * @return This event's begin time/date
 	 */
-	public Date getBegin() {
+	public LocalDate getBegin() {
 		return begin;
 	}
 
@@ -73,7 +71,7 @@ public class Event {
 	 * Sets the time this event begins
 	 * @param begin The time this event begins
 	 */
-	public void setBegin(Date begin) {
+	public void setBegin(LocalDate begin) {
 		this.begin = begin;
 	}
 
@@ -81,7 +79,7 @@ public class Event {
 	 * Gets the time this event ends
 	 * @return This event's new end time/date
 	 */
-	public Date getEnd() {
+	public LocalDate getEnd() {
 		return end;
 	}
 
@@ -89,8 +87,24 @@ public class Event {
 	 * Sets the time this event ends
 	 * @param end the new time this event ends
 	 */
-	public void setEnd(Date end) {
+	public void setEnd(LocalDate end) {
 		this.end = end;
+	}
+
+	/**
+	 * Gets the person who manages this event
+	 * @return This event's manager
+	 */
+	public Person getHost() {
+		return host;
+	}
+
+	/**
+	 * Sets the person who manages this event
+	 * @param This event's new manager
+	 */
+	public void setHost(Person host) {
+		this.host = host;
 	}
 
 	/**
@@ -148,6 +162,22 @@ public class Event {
 	}
 
 	/**
+	 * Gets this event's category
+	 * @return This event's category
+	 */
+	public EventCategory getCategory() {
+		return category;
+	}
+
+	/**
+	 * Sets this event's category
+	 * @return This event's new category
+	 */
+	public void setCategory(EventCategory category) {
+		this.category = category;
+	}
+
+	/**
 	 * Gets the attendend persons of this event
 	 * @return The attendend persons of this event
 
@@ -158,8 +188,4 @@ public class Event {
         return attendees;
     }
 	 */
-
-
-
-
 }
