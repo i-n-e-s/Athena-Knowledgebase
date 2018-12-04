@@ -274,6 +274,7 @@ class ACL18WebParser extends AbstractCrawler{
 			System.out.println("Gathered all results!");
 		}
 		catch(InterruptedException | ExecutionException e) {
+			System.err.println("Error while gathering results!");
 			e.printStackTrace();
 		}
 
