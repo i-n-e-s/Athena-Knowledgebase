@@ -1,8 +1,15 @@
 package de.tudarmstadt.informatik.ukp.athenakp.database.models;
 
 public enum EventCategory {
-	TUTORIAL,
+	CEREMONY,
+	MEAL,
 	MEETING,
+	PRESENTATION,
+	RECRUITMENT,
+	SESSION,
 	SOCIAL,
-	MEAL
+	TALK,
+	TUTORIAL,
+	WELCOME,
+	WORKSHOP
 }
