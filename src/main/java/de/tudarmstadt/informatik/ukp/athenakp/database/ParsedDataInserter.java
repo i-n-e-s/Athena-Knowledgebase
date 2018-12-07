@@ -1,5 +1,6 @@
 package de.tudarmstadt.informatik.ukp.athenakp.database;
 
+import java.io.File;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -9,15 +10,7 @@ import java.util.TimeZone;
 
 import javax.annotation.PostConstruct;
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.TimeZone;
-
-import javax.annotation.PostConstruct;
-
+import org.apache.commons.io.FileUtils;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
@@ -73,12 +66,15 @@ public class ParsedDataInserter {
 
 		System.out.printf("Scraping years %s through %s", beginYear, endYear);
 
-		try {
-			parsedDataInserter.aclStorePapersAndAuthors(beginYear, endYear);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		//		parsedDataInserter.acl2018StoreConferenceInformation();
+		//		try {
+		//			parsedDataInserter.aclStorePapersAndAuthors(beginYear, endYear);
+		//		} catch (IOException e) {
+		//			e.printStackTrace();
+		//		}
+		//		parsedDataInserter.acl2018StoreConferenceInformation(beginYear, endYear);
+		parsedDataInserter.acl2018StoreEventInformation(beginYear, endYear);
+		System.out.println("\nDone!");
+		System.exit(0);
 	}
 
 	/**
@@ -154,6 +150,21 @@ public class ParsedDataInserter {
 		catch (IOException e){
 			e.printStackTrace();
 		}
+	}
 
+	/**
+	 * Stores the acl2018 conference's timetable into the database
+	 * @param beginYear The first year to get data from
+	 * @param endYear The last year to get data from
+	 */
+	private void acl2018StoreEventInformation(String beginYear, String endYear) {
+		CrawlerFacade acl18WebParser = new CrawlerFacade(SupportedConferences.ACL, beginYear, endYear);
+		//		EventCommonAccess evenCommonAccess = new EventHibernateAccess();
+		try{
+			FileUtils.writeLines(new File("events.txt"), acl18WebParser.getTimetable()); //commons-io
+		}
+		catch (IOException e){
+			e.printStackTrace();
+		}
 	}
 }

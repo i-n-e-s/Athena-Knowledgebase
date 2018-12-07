@@ -1,6 +1,7 @@
 package de.tudarmstadt.informatik.ukp.athenakp;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.Date;
 
 import org.springframework.boot.SpringApplication;
@@ -99,8 +100,9 @@ public class Application {
 
 		Event dummyEvent = new Event();
 		dummyEvent.setTitle("reeeing in public - how to channel your inner frog");
-		dummyEvent.setBegin(LocalDate.of(2017, 8, 2));
-		dummyEvent.setEnd(LocalDate.of(2017, 8, 3));
+		dummyEvent.setDate(LocalDate.of(2017, 8, 2));
+		dummyEvent.setBegin(LocalTime.of(14, 30));
+		dummyEvent.setEnd(LocalTime.of(15, 0));
 
 	}
 }

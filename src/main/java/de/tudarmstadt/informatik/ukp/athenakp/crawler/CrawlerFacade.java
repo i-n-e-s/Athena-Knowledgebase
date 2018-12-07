@@ -51,7 +51,7 @@ public class CrawlerFacade extends AbstractCrawler{
 	}
 
 	@Override
-	public ArrayList<ArrayList<String>> getTimetable() throws IOException {
+	public ArrayList<ArrayList<Object>> getTimetable() throws IOException {
 		return crawler.getTimetable();
 	}
 }

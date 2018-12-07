@@ -92,8 +92,7 @@ public class CrawlerToolset {
 	 * year: The year the paper was released in
 	 * month: The month the paper was released in
 	 */
-	public static class PaperStore
-	{
+	public static class PaperStore {
 		public String title, year, month;
 
 		@Override
@@ -101,5 +100,16 @@ public class CrawlerToolset {
 		{
 			return title + ";;" + year + ";;" + month;
 		}
+	}
+
+	/**
+	 * Temporarily stores information about a session
+	 * begin, end: The begin and end time of the session
+	 * title, desc: The title and a description of the session
+	 */
+	public static class SessionStore {
+		public LocalTime begin, end;
+		public String title, desc;
+		//		public ArrayList<SubsessionStore> subsessions;
 	}
 }

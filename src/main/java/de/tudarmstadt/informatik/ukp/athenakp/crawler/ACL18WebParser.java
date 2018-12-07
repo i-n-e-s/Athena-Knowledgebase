@@ -2,7 +2,9 @@ package de.tudarmstadt.informatik.ukp.athenakp.crawler;
 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -282,8 +284,56 @@ class ACL18WebParser extends AbstractCrawler{
 	}
 
 	@Override
-	public ArrayList<ArrayList<String>> getTimetable() throws IOException {
-		ArrayList<ArrayList<String>> result = new ArrayList<>();
+	public ArrayList<ArrayList<Object>> getTimetable() throws IOException {
+		ArrayList<ArrayList<Object>> result = new ArrayList<>();
+		Element schedule = Jsoup.connect(schedulePage).get().select("#schedule").get(0);
+		Elements days = schedule.select(".day-schedule");
+
+		for(Element day : days) {
+			if(!day.id().contains("1")) //debug
+				continue;
+
+			String[] monthDay = day.select(".day").get(0).text().split(":")[1].trim().split(" "); //the text has the form of "Sunday: July 15"
+			Elements tr = day.select("tr");
+
+			for(int i = 0; i < tr.size(); i++) {
+				Element el = tr.get(i);
+				//conference, date, begin time, end time, title, (host,) place, description, category, list of sessions
+				ArrayList<Object> event = new ArrayList<>();
+
+				event.add("ACL 2018");
+				event.add(LocalDate.of(2018, CrawlerToolset.getMonthIndex(monthDay[0]), Integer.parseInt(monthDay[1])));
+
+				if(el.id().startsWith("session")) {
+					String[] time = el.select(".session-times").text().split("–"); //NOT A HYPHEN!!! IT'S AN 'EN DASH'
+					String[] begin = time[0].split(":");
+					String[] end = time[1].split(":");
+					String title = el.select(".session-name").text();
+					Elements place = el.select(".session-location");
+
+					event.add(LocalTime.of(Integer.parseInt(begin[0]), Integer.parseInt(begin[1])));
+					event.add(LocalTime.of(Integer.parseInt(end[0]), Integer.parseInt(end[1])));
+					event.add(title);
+					event.add(place.isEmpty() ? "?" : place.get(0).text());
+					event.add("No description yet");
+					event.add("No category yet");
+
+					if(i + 1 < tr.size() && tr.get(i + 1).hasClass("poster-session-row")) {
+						Element row = tr.get(++i);
+						Elements sessions = row.select(".poster-name");
+						ArrayList<String> sessionTitles = new ArrayList<>();
+
+						for(Element session : sessions) {
+							sessionTitles.add(session.text());
+						}
+
+						event.add(Arrays.toString(sessionTitles.toArray()));
+					}
+				}
+
+				result.add(event);
+			}
+		}
 
 		return result;
 	}

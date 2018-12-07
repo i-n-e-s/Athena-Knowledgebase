@@ -39,14 +39,6 @@ abstract class AbstractCrawler {
 	public abstract ArrayList<ArrayList<String>> getPaperAuthor() throws IOException;
 
 	/**
-	 * Returns a list of lists. Each sublist represents an event.
-	 * The sub lists are in the form: begin date, end date, host, place, title, description, category TODO is more needed?
-	 * @return A list of lists of events and their metadata, null when data not available
-	 * @throws IOException if Jsoup.connect fails
-	 */
-	public abstract ArrayList<ArrayList<String>> getTimetable() throws IOException;
-
-	/**
 	 * A method which returns a conference instance with its name, location, and start and end date set.
 	 * Scrapes an about page for its information and employs string conversion found in CrawlerToolset
 	 * @return A conference instance with its name, location, and start and end date set, null when data not available, an empty Conference instance if an IOException occurs
@@ -54,4 +46,12 @@ abstract class AbstractCrawler {
 	 * @author Julian Steitz
 	 */
 	public abstract Conference getConferenceInformation() throws IOException;
+
+	/**
+	 * Returns a list of lists. Each sublist represents an event.
+	 * The sub lists are in the form: conference, date, begin time, end time, title, (host,) place, description, category, list of sessions
+	 * @return A list of lists of events and their metadata, null when data not available
+	 * @throws IOException if Jsoup.connect fails
+	 */
+	public abstract ArrayList<ArrayList<Object>> getTimetable() throws IOException;
 }

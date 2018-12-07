@@ -1,0 +1,4 @@
+[ACL 2018, 2018-07-15, 09:00, 12:30, Tutorial, ?, No description yet, No category yet, [100 Things You Always Wanted to Know about Semantics & Pragmatics But Were Afraid to Ask, Neural Approaches to Conversational AI, Variational Inference and Deep Generative Models, Connecting Language and Vision to Actions]]
+[ACL 2018, 2018-07-15, 12:30, 13:30, Lunch, , No description yet, No category yet]
+[ACL 2018, 2018-07-15, 13:30, 17:00, Tutorial, ?, No description yet, No category yet, [Beyond Multiword Expressions: Processing Idioms and Metaphors, Neural Semantic Parsing, Deep Reinforcement Learning for NLP, Multi-lingual Entity Discovery and Linking]]
+[ACL 2018, 2018-07-15, 18:00, 20:00, Welcome Reception, Melbourne Room 1, MCEC, No description yet, No category yet]
