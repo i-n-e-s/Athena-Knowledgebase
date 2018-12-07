@@ -146,10 +146,10 @@ class ACL18WebParser extends AbstractCrawler{
 		List<Document> input4 = webpages.subList(quarterSize * 3, webpages.size());
 		ArrayList<ArrayList<String>> result = new ArrayList<>();
 		ExecutorService executor = Executors.newFixedThreadPool(4);
-		Future<ArrayList<ArrayList<String>>> f1 = executor.submit(() -> {return extractPaperAuthor(input1);});
-		Future<ArrayList<ArrayList<String>>> f2 = executor.submit(() -> {return extractPaperAuthor(input2);});
-		Future<ArrayList<ArrayList<String>>> f3 = executor.submit(() -> {return extractPaperAuthor(input3);});
-		Future<ArrayList<ArrayList<String>>> f4 = executor.submit(() -> {return extractPaperAuthor(input4);});
+		Future<ArrayList<ArrayList<String>>> f1 = executor.submit(() -> extractPaperAuthor(input1));
+		Future<ArrayList<ArrayList<String>>> f2 = executor.submit(() -> extractPaperAuthor(input2));
+		Future<ArrayList<ArrayList<String>>> f3 = executor.submit(() -> extractPaperAuthor(input3));
+		Future<ArrayList<ArrayList<String>>> f4 = executor.submit(() -> extractPaperAuthor(input4));
 		System.out.println("Waiting for thread results...");
 
 		try {
