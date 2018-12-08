@@ -1,6 +1,6 @@
 package de.tudarmstadt.informatik.ukp.athenakp.database.models;
 
-import java.time.LocalTime;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -20,12 +20,6 @@ public class Session
 	@GenericGenerator(name="increment", strategy="increment")
 	@Column(name="id")
 	private long id;
-	/*Start time*/
-	@Column(name="begin")
-	private LocalTime begin;
-	/*End time*/
-	@Column(name="end")
-	private LocalTime end;
 	/* Title */
 	@Column(name = "title")
 	private String title;
@@ -35,9 +29,9 @@ public class Session
 	/* Place where this session happens */
 	@Column(name = "place")
 	private String place;
-	//	/* Subessions, if any */
-	//	@Column(name = "subsessions")
-	//	private Set<Subsession> subsessions;
+	/* Subessions, if any */
+	@Column(name = "subsessions")
+	private Set<Subsession> subsessions;
 
 	/**
 	 * Gets the unique id of this session
@@ -53,38 +47,6 @@ public class Session
 	 */
 	public void setId(long id) {
 		this.id = id;
-	}
-
-	/**
-	 * Gets the time this session begins
-	 * @return This session's begin time
-	 */
-	public LocalTime getBegin() {
-		return begin;
-	}
-
-	/**
-	 * Sets the time this session begins
-	 * @param begin The time this session begins
-	 */
-	public void setBegin(LocalTime begin) {
-		this.begin = begin;
-	}
-
-	/**
-	 * Gets the time this session ends
-	 * @return This session's new end time
-	 */
-	public LocalTime getEnd() {
-		return end;
-	}
-
-	/**
-	 * Sets the time this session ends
-	 * @param end the new time this session ends
-	 */
-	public void setEnd(LocalTime end) {
-		this.end = end;
 	}
 
 	/**
@@ -141,19 +103,19 @@ public class Session
 		this.shortDescription = shortDescription;
 	}
 
-	//	/**
-	//	 * Gets this event's sessions (if any)
-	//	 * @return This event's sessions
-	//	 */
-	//	public Set<Subsession> getSubsessions() {
-	//		return subsessions;
-	//	}
-	//
-	//	/**
-	//	 * Sets this event's sessions (if any)
-	//	 * @param sessions This event's new sessions
-	//	 */
-	//	public void setSubsessions(Set<Subsession> subsessions) {
-	//		this.subsessions = subsessions;
-	//	}
+	/**
+	 * Gets this event's sessions (if any)
+	 * @return This event's sessions
+	 */
+	public Set<Subsession> getSubsessions() {
+		return subsessions;
+	}
+
+	/**
+	 * Sets this event's sessions (if any)
+	 * @param sessions This event's new sessions
+	 */
+	public void setSubsessions(Set<Subsession> subsessions) {
+		this.subsessions = subsessions;
+	}
 }

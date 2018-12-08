@@ -5,6 +5,7 @@ import static java.lang.Integer.parseInt;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.Month;
+import java.util.ArrayList;
 
 /**
  * A class with methods that might be useful across a variety of conferences / scraping tasks
@@ -96,20 +97,40 @@ public class CrawlerToolset {
 		public String title, year, month;
 
 		@Override
-		public String toString()
-		{
+		public String toString() {
 			return title + ";;" + year + ";;" + month;
 		}
 	}
 
 	/**
 	 * Temporarily stores information about a session
-	 * begin, end: The begin and end time of the session
+	 * place: The place where this session happens
 	 * title, desc: The title and a description of the session
+	 * chair: The chair of this session
+	 * subsessions: Any subsession
 	 */
 	public static class SessionStore {
+		public String place, title, desc, chair;
+		public ArrayList<SubsessionStore> subsessions;
+
+		@Override
+		public String toString() {
+			return String.format("place=%s;;title=%s;;desc=%s;;chair=%s;;subsessions=%s", place, title, desc, chair, subsessions.toString());
+		}
+	}
+
+	/**
+	 * Temporarily stores information about a subsession
+	 * begin, end: The begin and end time of the subsession
+	 * title, desc: The title and a description of the session
+	 */
+	public static class SubsessionStore {
 		public LocalTime begin, end;
 		public String title, desc;
-		//		public ArrayList<SubsessionStore> subsessions;
+
+		@Override
+		public String toString() {
+			return String.format("begin=%s;;end=%s;;title=%s;;desc=%s", begin, end, title, desc);
+		}
 	}
 }

@@ -53,5 +53,5 @@ abstract class AbstractCrawler {
 	 * @return A list of lists of events and their metadata, null when data not available
 	 * @throws IOException if Jsoup.connect fails
 	 */
-	public abstract ArrayList<ArrayList<Object>> getTimetable() throws IOException;
+	public abstract ArrayList<ArrayList<Object>> getSchedule() throws IOException;
 }

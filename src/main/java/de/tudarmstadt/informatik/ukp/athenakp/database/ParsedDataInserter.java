@@ -73,7 +73,7 @@ public class ParsedDataInserter {
 		//		}
 		//		parsedDataInserter.acl2018StoreConferenceInformation(beginYear, endYear);
 		parsedDataInserter.acl2018StoreEventInformation(beginYear, endYear);
-		System.out.println("\nDone!");
+		System.out.println("Done!");
 		System.exit(0);
 	}
 
@@ -161,7 +161,7 @@ public class ParsedDataInserter {
 		CrawlerFacade acl18WebParser = new CrawlerFacade(SupportedConferences.ACL, beginYear, endYear);
 		//		EventCommonAccess evenCommonAccess = new EventHibernateAccess();
 		try{
-			FileUtils.writeLines(new File("events.txt"), acl18WebParser.getTimetable()); //commons-io
+			FileUtils.writeLines(new File("events.txt"), acl18WebParser.getSchedule()); //commons-io
 		}
 		catch (IOException e){
 			e.printStackTrace();

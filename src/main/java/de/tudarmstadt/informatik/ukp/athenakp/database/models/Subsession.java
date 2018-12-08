@@ -1,7 +1,6 @@
 package de.tudarmstadt.informatik.ukp.athenakp.database.models;
 
 import java.time.LocalTime;
-import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
@@ -31,9 +30,9 @@ public class Subsession
 	/* Brief Description */
 	@Column(name = "short_description")
 	private String shortDescription;
-	/* Papers, if any */
-	@Column(name = "papers")
-	private Set<Paper> papers;
+	//	/* Papers, if any */
+	//	@Column(name = "papers") //so far, a subsession only ever seems to have one paper - so its title is stored as the subsession's title, same for the description
+	//	private Set<Paper> papers;
 
 	/**
 	 * Gets the unique id of this subsession

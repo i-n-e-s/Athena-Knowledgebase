@@ -1,8 +1,8 @@
 package de.tudarmstadt.informatik.ukp.athenakp.database.models;
 
 public enum EventCategory {
+	BREAK,
 	CEREMONY,
-	MEAL,
 	MEETING,
 	PRESENTATION,
 	RECRUITMENT,
