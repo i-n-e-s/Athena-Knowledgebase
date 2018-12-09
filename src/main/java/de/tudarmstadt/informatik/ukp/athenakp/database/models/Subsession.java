@@ -3,21 +3,22 @@ package de.tudarmstadt.informatik.ukp.athenakp.database.models;
 import java.time.LocalTime;
 
 import javax.persistence.Column;
+import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Table;
 
 import org.hibernate.annotations.GenericGenerator;
 
-//@Entity
-//@Table(name="subsubsession")
-public class Subsession
-{
+@Entity
+@Table(name="subsubsession")
+public class Subsession {
 	/*Unique id*/
 	@Id
 	@GeneratedValue(generator="increment")
 	@GenericGenerator(name="increment", strategy="increment")
-	@Column(name="id")
-	private long id;
+	@Column(name="subsessionID")
+	private long subsessionID;
 	/*Start time*/
 	@Column(name="begin")
 	private LocalTime begin;
@@ -28,8 +29,8 @@ public class Subsession
 	@Column(name = "title")
 	private String title;
 	/* Brief Description */
-	@Column(name = "short_description")
-	private String shortDescription;
+	@Column(name = "description")
+	private String description;
 	//	/* Papers, if any */
 	//	@Column(name = "papers") //so far, a subsession only ever seems to have one paper - so its title is stored as the subsession's title, same for the description
 	//	private Set<Paper> papers;
@@ -39,7 +40,7 @@ public class Subsession
 	 * @return The unique id of this subsession
 	 */
 	public long getId() {
-		return id;
+		return subsessionID;
 	}
 
 	/**
@@ -47,7 +48,7 @@ public class Subsession
 	 * @param id The new id
 	 */
 	public void setId(long id) {
-		this.id = id;
+		this.subsessionID = id;
 	}
 
 	/**
@@ -101,20 +102,20 @@ public class Subsession
 	}
 
 	/**
-	 * Gets a short description of the subsession
+	 * Gets a description of the subsession
 	 *
-	 * @return A short description of the subsession
+	 * @return A description of the subsession
 	 */
-	public String getShortDescription() {
-		return shortDescription;
+	public String getDescription() {
+		return description;
 	}
 
 	/**
-	 * Sets a short description of the subsession
+	 * Sets a description of the subsession
 	 *
-	 * @param shortDescription A new short description of the subsession
+	 * @param description A new description of the subsession
 	 */
-	public void setShortDescription(String shortDescription) {
-		this.shortDescription = shortDescription;
+	public void setDescription(String description) {
+		this.description = description;
 	}
 }

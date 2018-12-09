@@ -2,35 +2,44 @@ package de.tudarmstadt.informatik.ukp.athenakp.database.models;
 
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.GenericGenerator;
 
 @Entity
 @Table(name="session")
-public class Session
-{
+public class Session { //TODO: chair
 	/*Unique id*/
 	@Id
 	@GeneratedValue(generator="increment")
 	@GenericGenerator(name="increment", strategy="increment")
-	@Column(name="id")
-	private long id;
+	@Column(name="sessionID")
+	private long sessionID;
 	/* Title */
 	@Column(name = "title")
 	private String title;
 	/* Brief Description */
-	@Column(name = "short_description")
-	private String shortDescription;
+	@Column(name = "description")
+	private String description;
 	/* Place where this session happens */
 	@Column(name = "place")
 	private String place;
 	/* Subessions, if any */
-	@Column(name = "subsessions")
+	@OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER)
+	@JoinTable(
+			name = "session_subsession",
+			joinColumns = { @JoinColumn(name = "sessionID") },
+			inverseJoinColumns = { @JoinColumn(name = "subsessionID") }
+			)
 	private Set<Subsession> subsessions;
 
 	/**
@@ -38,7 +47,7 @@ public class Session
 	 * @return The unique id of this session
 	 */
 	public long getId() {
-		return id;
+		return sessionID;
 	}
 
 	/**
@@ -46,7 +55,7 @@ public class Session
 	 * @param id The new id
 	 */
 	public void setId(long id) {
-		this.id = id;
+		this.sessionID = id;
 	}
 
 	/**
@@ -86,21 +95,21 @@ public class Session
 	}
 
 	/**
-	 * Gets a short description of the session
+	 * Gets a description of the session
 	 *
-	 * @return A short description of the session
+	 * @return A description of the session
 	 */
-	public String getShortDescription() {
-		return shortDescription;
+	public String getDescription() {
+		return description;
 	}
 
 	/**
-	 * Sets a short description of the session
+	 * Sets a description of the session
 	 *
-	 * @param shortDescription A new short description of the session
+	 * @param description A new description of the session
 	 */
-	public void setShortDescription(String shortDescription) {
-		this.shortDescription = shortDescription;
+	public void setDescription(String description) {
+		this.description = description;
 	}
 
 	/**

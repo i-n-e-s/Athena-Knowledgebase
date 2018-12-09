@@ -4,10 +4,15 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.GenericGenerator;
@@ -19,8 +24,8 @@ public class Event {
 	@Id
 	@GeneratedValue(generator="increment")
 	@GenericGenerator(name="increment", strategy="increment")
-	@Column(name="id")
-	private long id;
+	@Column(name="eventID")
+	private long eventID;
 	/*Name of conference this event belongs to*/
 	@Column(name="conference")
 	private String conference;
@@ -35,7 +40,7 @@ public class Event {
 	private LocalTime end;
 	/*Host*/
 	//	@Column(name = "host") //FIXME: crashes - perhaps save id?
-	private Person host;                //TODO Person von Author abstrahieren
+	//	private Person host;                //TODO Person von Author abstrahieren
 	/* Place where this event happens, if empty look in sessions */
 	@Column(name = "place")
 	private String place;
@@ -43,16 +48,21 @@ public class Event {
 	@Column(name = "title")
 	private String title;
 	/* Brief Description */
-	@Column(name = "short_description")
-	private String shortDescription;
+	@Column(name = "description")
+	private String description;
 	/* Category */
 	@Column(name = "category")
 	private EventCategory category;
 	/* Papers, if any */
-	@Column(name = "papers")
-	private Set<Paper> papers;
+	//	@Column(name = "papers")
+	//	private Set<Paper> papers;
 	/* Sessions, if any */
-	@Column(name = "sessions")
+	@OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER)
+	@JoinTable(
+			name = "event_session",
+			joinColumns = { @JoinColumn(name = "eventID") },
+			inverseJoinColumns = { @JoinColumn(name = "sessionID") }
+			)
 	private Set<Session> sessions;
 
 	/**
@@ -60,7 +70,7 @@ public class Event {
 	 * @return The unique id of this event
 	 */
 	public long getId() {
-		return id;
+		return eventID;
 	}
 
 	/**
@@ -68,7 +78,7 @@ public class Event {
 	 * @param id The new id
 	 */
 	public void setId(long id) {
-		this.id = id;
+		this.eventID = id;
 	}
 
 	/**
@@ -135,21 +145,21 @@ public class Event {
 		this.end = end;
 	}
 
-	/**
-	 * Gets the person who manages this event
-	 * @return This event's manager
-	 */
-	public Person getHost() {
-		return host;
-	}
-
-	/**
-	 * Sets the person who manages this event
-	 * @param This event's new manager
-	 */
-	public void setHost(Person host) {
-		this.host = host;
-	}
+	//	/**
+	//	 * Gets the person who manages this event
+	//	 * @return This event's manager
+	//	 */
+	//	public Person getHost() {
+	//		return host;
+	//	}
+	//
+	//	/**
+	//	 * Sets the person who manages this event
+	//	 * @param This event's new manager
+	//	 */
+	//	public void setHost(Person host) {
+	//		this.host = host;
+	//	}
 
 	/**
 	 * Gets the place where this event happens
@@ -188,21 +198,21 @@ public class Event {
 	}
 
 	/**
-	 * Gets a short description of the event
+	 * Gets a description of the event
 	 *
-	 * @return A short description of the event
+	 * @return A description of the event
 	 */
-	public String getShortDescription() {
-		return shortDescription;
+	public String getDescription() {
+		return description;
 	}
 
 	/**
-	 * Sets a short description of the event
+	 * Sets a description of the event
 	 *
-	 * @param shortDescription A new short description of the event
+	 * @param description A new description of the event
 	 */
-	public void setShortDescription(String shortDescription) {
-		this.shortDescription = shortDescription;
+	public void setDescription(String description) {
+		this.description = description;
 	}
 
 	/**
@@ -221,21 +231,21 @@ public class Event {
 		this.category = category;
 	}
 
-	/**
-	 * Gets this event's papers (if any, usually used in poster sessions)
-	 * @param papers This event's papers
-	 */
-	public Set<Paper> getPapers() {
-		return papers;
-	}
-
-	/**
-	 * Sets this event's papers (if any, usually used in poster sessions)
-	 * @return This event's new papers
-	 */
-	public void setPapers(Set<Paper> papers) {
-		this.papers = papers;
-	}
+	//	/**
+	//	 * Gets this event's papers (if any, usually used in poster sessions)
+	//	 * @param papers This event's papers
+	//	 */
+	//	public Set<Paper> getPapers() {
+	//		return papers;
+	//	}
+	//
+	//	/**
+	//	 * Sets this event's papers (if any, usually used in poster sessions)
+	//	 * @return This event's new papers
+	//	 */
+	//	public void setPapers(Set<Paper> papers) {
+	//		this.papers = papers;
+	//	}
 
 	/**
 	 * Gets this event's sessions (if any)

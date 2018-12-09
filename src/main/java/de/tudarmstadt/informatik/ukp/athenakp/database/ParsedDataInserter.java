@@ -1,29 +1,37 @@
 package de.tudarmstadt.informatik.ukp.athenakp.database;
 
-import java.io.File;
 import java.io.IOException;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.TimeZone;
 
 import javax.annotation.PostConstruct;
 
-import org.apache.commons.io.FileUtils;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import de.tudarmstadt.informatik.ukp.athenakp.Application;
 import de.tudarmstadt.informatik.ukp.athenakp.crawler.CrawlerFacade;
+import de.tudarmstadt.informatik.ukp.athenakp.crawler.CrawlerToolset.SessionStore;
+import de.tudarmstadt.informatik.ukp.athenakp.crawler.CrawlerToolset.SubsessionStore;
 import de.tudarmstadt.informatik.ukp.athenakp.crawler.SupportedConferences;
 import de.tudarmstadt.informatik.ukp.athenakp.database.access.ConferenceCommonAccess;
+import de.tudarmstadt.informatik.ukp.athenakp.database.access.EventCommonAccess;
 import de.tudarmstadt.informatik.ukp.athenakp.database.access.PaperCommonAccess;
 import de.tudarmstadt.informatik.ukp.athenakp.database.hibernate.ConferenceHibernateAccess;
+import de.tudarmstadt.informatik.ukp.athenakp.database.hibernate.EventHibernateAccess;
 import de.tudarmstadt.informatik.ukp.athenakp.database.hibernate.PaperHibernateAccess;
 import de.tudarmstadt.informatik.ukp.athenakp.database.models.Author;
 import de.tudarmstadt.informatik.ukp.athenakp.database.models.Conference;
+import de.tudarmstadt.informatik.ukp.athenakp.database.models.Event;
+import de.tudarmstadt.informatik.ukp.athenakp.database.models.EventCategory;
 import de.tudarmstadt.informatik.ukp.athenakp.database.models.Paper;
+import de.tudarmstadt.informatik.ukp.athenakp.database.models.Session;
+import de.tudarmstadt.informatik.ukp.athenakp.database.models.Subsession;
 
 
 @SpringBootApplication
@@ -74,7 +82,6 @@ public class ParsedDataInserter {
 		//		parsedDataInserter.acl2018StoreConferenceInformation(beginYear, endYear);
 		parsedDataInserter.acl2018StoreEventInformation(beginYear, endYear);
 		System.out.println("Done!");
-		System.exit(0);
 	}
 
 	/**
@@ -159,11 +166,56 @@ public class ParsedDataInserter {
 	 */
 	private void acl2018StoreEventInformation(String beginYear, String endYear) {
 		CrawlerFacade acl18WebParser = new CrawlerFacade(SupportedConferences.ACL, beginYear, endYear);
-		//		EventCommonAccess evenCommonAccess = new EventHibernateAccess();
-		try{
-			FileUtils.writeLines(new File("events.txt"), acl18WebParser.getSchedule()); //commons-io
+		EventCommonAccess eventCommonAccess = new EventHibernateAccess();
+
+		try {
+			ArrayList<ArrayList<Object>> events = acl18WebParser.getSchedule();
+
+			for(ArrayList<Object> eventData : events) {
+				Event event = new Event();
+				java.util.Set<Session> sessions = new HashSet<Session>();
+
+				event.setConference((String)eventData.get(0));
+				event.setDate((LocalDate)eventData.get(1));
+				event.setBegin((LocalTime)eventData.get(2));
+				event.setEnd((LocalTime)eventData.get(3));
+				event.setTitle((String)eventData.get(4));
+				event.setPlace((String)eventData.get(5));
+				event.setDescription((String)eventData.get(5));
+				event.setCategory((EventCategory)eventData.get(7));
+
+				if(eventData.size() > 8 && eventData.get(8) != null) {
+					//TODO save chair
+					for(SessionStore sessionStore : (ArrayList<SessionStore>)eventData.get(8)) {
+						Session session = new Session();
+						java.util.Set<Subsession> subsessions = new HashSet<Subsession>();
+
+						session.setTitle(sessionStore.title);
+						session.setDescription(sessionStore.desc);
+						session.setPlace(sessionStore.place);
+
+						if(sessionStore.subsessions != null) {
+							for(SubsessionStore subsessionStore : sessionStore.subsessions) {
+								Subsession subsession = new Subsession();
+
+								subsession.setBegin(subsessionStore.begin);
+								subsession.setEnd(subsessionStore.end);
+								subsession.setTitle(subsessionStore.title);
+								subsession.setDescription(subsessionStore.desc);
+								subsessions.add(subsession);
+							}
+						}
+
+						sessions.add(session);
+					}
+				}
+
+				event.setSessions(sessions);
+				eventCommonAccess.add(event);
+			}
+
 		}
-		catch (IOException e){
+		catch(IOException e){
 			e.printStackTrace();
 		}
 	}

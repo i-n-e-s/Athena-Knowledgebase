@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -318,13 +317,6 @@ class ACL18WebParser extends AbstractCrawler{
 
 		executor.shutdown();
 		return result;
-		//		//threading? :DD - takes about 1 minute 20 seconds without
-		//		parseFirstDay(days.get(0), result);
-		//		parseOtherDays(days.get(1), result);
-		//		parseOtherDays(days.get(2), result);
-		//		parseOtherDays(days.get(3), result);
-		//		parseWorkshops(result);
-		//		return result;
 	}
 
 	/**
@@ -346,14 +338,17 @@ class ACL18WebParser extends AbstractCrawler{
 			//special case
 			if(i + 1 < tr.size() && tr.get(i + 1).hasClass("poster-session-row")) {
 				Element row = tr.get(++i);
-				Elements sessions = row.select(".poster-name");
-				ArrayList<String> sessionTitles = new ArrayList<>();
+				Elements tutorials = row.select(".poster-name");
+				ArrayList<SessionStore> sessions = new ArrayList<>();
 
-				for(Element session : sessions) {
-					sessionTitles.add(session.text());
+				for(Element session : tutorials) {
+					SessionStore sessionStore = new SessionStore();
+
+					sessionStore.title = session.text();
+					sessions.add(sessionStore);
 				}
 
-				event.add(Arrays.toString(sessionTitles.toArray()));
+				event.add(sessions);
 			}
 
 			result.add(event);
@@ -535,7 +530,7 @@ class ACL18WebParser extends AbstractCrawler{
 			sessionList.add(session);
 		}
 
-		event.add(Arrays.toString(sessionList.toArray()));
+		event.add(sessionList);
 	}
 
 	/**
@@ -576,7 +571,7 @@ class ACL18WebParser extends AbstractCrawler{
 			sessionList.add(session);
 		}
 
-		event.add(Arrays.toString(sessionList.toArray()));
+		event.add(sessionList);
 	}
 
 	/**
