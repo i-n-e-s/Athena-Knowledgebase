@@ -33,7 +33,7 @@ public class CrawlerToolsetTest {
 		String dayDescription = "12";
 		String yearDescription = "1990";
 		String monthDescription = "July";
-		LocalDate correctDate = LocalDate.of(1990, 7, 12);
+		LocalDate correctDate = LocalDate.of(1991, 7, 12);
 
 		LocalDate convertedDate = CrawlerToolset.stringToLocalDate(dayDescription, monthDescription, yearDescription);
 		assertEquals(correctDate, convertedDate);
