@@ -291,16 +291,40 @@ class ACL18WebParser extends AbstractCrawler{
 	public ArrayList<ArrayList<Object>> getSchedule() throws IOException {
 		System.out.println();
 		ArrayList<ArrayList<Object>> result = new ArrayList<>();
+		System.out.println("Preparing data and starting 5 scraper threads...");
 		Element schedule = Jsoup.connect(schedulePage).get().select("#schedule").get(0);
 		Elements days = schedule.select(".day-schedule");
+		//threading :DD - takes about 1 minute 20 seconds without, 30 seconds with
+		ExecutorService executor = Executors.newFixedThreadPool(5);
+		Future<ArrayList<ArrayList<Object>>> f1 = executor.submit(() -> parseFirstDay(days.get(0), new ArrayList<ArrayList<Object>>()));
+		Future<ArrayList<ArrayList<Object>>> f2 = executor.submit(() -> parseOtherDays(days.get(1), new ArrayList<ArrayList<Object>>()));
+		Future<ArrayList<ArrayList<Object>>> f3 = executor.submit(() -> parseOtherDays(days.get(2), new ArrayList<ArrayList<Object>>()));
+		Future<ArrayList<ArrayList<Object>>> f4 = executor.submit(() -> parseOtherDays(days.get(3), new ArrayList<ArrayList<Object>>()));
+		Future<ArrayList<ArrayList<Object>>> f5 = executor.submit(() -> parseWorkshops(new ArrayList<ArrayList<Object>>()));
+		System.out.println("Waiting for thread results...");
 
-		//threading? :DD - takes about 1 minute 20 seconds without
-		parseFirstDay(days.get(0), result);
-		parseOtherDays(days.get(1), result);
-		parseOtherDays(days.get(2), result);
-		parseOtherDays(days.get(3), result);
-		parseWorkshops(result);
+		try {
+			result.addAll(f1.get());
+			result.addAll(f2.get());
+			result.addAll(f3.get());
+			result.addAll(f4.get());
+			result.addAll(f5.get());
+			System.out.println("Gathered all results!");
+		}
+		catch(InterruptedException | ExecutionException e) {
+			System.err.println("Error while gathering results!");
+			e.printStackTrace();
+		}
+
+		executor.shutdown();
 		return result;
+		//		//threading? :DD - takes about 1 minute 20 seconds without
+		//		parseFirstDay(days.get(0), result);
+		//		parseOtherDays(days.get(1), result);
+		//		parseOtherDays(days.get(2), result);
+		//		parseOtherDays(days.get(3), result);
+		//		parseWorkshops(result);
+		//		return result;
 	}
 
 	/**
@@ -308,7 +332,7 @@ class ACL18WebParser extends AbstractCrawler{
 	 * @param day The day element of the website
 	 * @param result The resulting arraylist with the complete schedule data of the first day
 	 */
-	private void parseFirstDay(Element day, ArrayList<ArrayList<Object>> result) {
+	private ArrayList<ArrayList<Object>> parseFirstDay(Element day, ArrayList<ArrayList<Object>> result) {
 		String[] monthDay = day.selectFirst(".day").text().split(":")[1].trim().split(" "); //the text has the form of "Sunday: July 15"
 		Elements tr = day.select("tr");
 
@@ -334,6 +358,8 @@ class ACL18WebParser extends AbstractCrawler{
 
 			result.add(event);
 		}
+
+		return result;
 	}
 
 	/**
@@ -341,7 +367,7 @@ class ACL18WebParser extends AbstractCrawler{
 	 * @param day The day element of the website
 	 * @param result The resulting arraylist with the complete schedule data of the given day
 	 */
-	private void parseOtherDays(Element day, ArrayList<ArrayList<Object>> result) {
+	private ArrayList<ArrayList<Object>> parseOtherDays(Element day, ArrayList<ArrayList<Object>> result) {
 		String[] monthDay = day.selectFirst(".day").text().split(":")[1].trim().split(" "); //the text has the form of "Sunday: July 15"
 		Elements tr = day.select("tr");
 
@@ -359,6 +385,8 @@ class ACL18WebParser extends AbstractCrawler{
 
 			result.add(event);
 		}
+
+		return result;
 	}
 
 	//TODO: Some workshops have a parseable schedule, which would result in each workshop consisting of events again, which seems weird from a database point of view. How to counteract this?
@@ -369,7 +397,7 @@ class ACL18WebParser extends AbstractCrawler{
 	 * Some of this is hardcoded because why not
 	 * @param result The resulting arraylist with the complete workshop data
 	 */
-	private void parseWorkshops(ArrayList<ArrayList<Object>> result) {
+	private ArrayList<ArrayList<Object>> parseWorkshops(ArrayList<ArrayList<Object>> result) {
 		try {
 			Document doc = Jsoup.connect(workshopPage).get();
 			Elements content = doc.select(".post-content");
@@ -402,6 +430,8 @@ class ACL18WebParser extends AbstractCrawler{
 		catch(IOException e) {
 			e.printStackTrace();
 		}
+
+		return result;
 	}
 
 	/**
