@@ -34,6 +34,7 @@ class ACL18WebParser extends AbstractCrawler{
 	private String startURLPaper;
 	private String schedulePage = "https://acl2018.org/programme/schedule/";
 	private String aboutPage = "https://acl2018.org/";
+	private String workshopPage = "https://acl2018.org/workshops/";
 	/**
 	 * Only parses in the given year range. If only one year is needed, use the same input for both
 	 * @param beginYear The first year to get data from
@@ -294,19 +295,20 @@ class ACL18WebParser extends AbstractCrawler{
 		Elements days = schedule.select(".day-schedule");
 
 		//threading? :DD - takes about 1 minute 20 seconds without
-		parseDayOne(days.get(0), result);
+		parseFirstDay(days.get(0), result);
 		parseOtherDays(days.get(1), result);
 		parseOtherDays(days.get(2), result);
 		parseOtherDays(days.get(3), result);
+		parseWorkshops(result);
 		return result;
 	}
 
 	/**
 	 * Parses ACL 2018's first days' schedule (seperate method because it contains a special case)
 	 * @param day The day element of the website
-	 * @param result The resulting arraylist with the complete schedule data
+	 * @param result The resulting arraylist with the complete schedule data of the first day
 	 */
-	private void parseDayOne(Element day, ArrayList<ArrayList<Object>> result) {
+	private void parseFirstDay(Element day, ArrayList<ArrayList<Object>> result) {
 		String[] monthDay = day.selectFirst(".day").text().split(":")[1].trim().split(" "); //the text has the form of "Sunday: July 15"
 		Elements tr = day.select("tr");
 
@@ -337,7 +339,7 @@ class ACL18WebParser extends AbstractCrawler{
 	/**
 	 * Parses ACL 2018's other days' schedule
 	 * @param day The day element of the website
-	 * @param result The resulting arraylist with the complete schedule data
+	 * @param result The resulting arraylist with the complete schedule data of the given day
 	 */
 	private void parseOtherDays(Element day, ArrayList<ArrayList<Object>> result) {
 		String[] monthDay = day.selectFirst(".day").text().split(":")[1].trim().split(" "); //the text has the form of "Sunday: July 15"
@@ -356,6 +358,49 @@ class ACL18WebParser extends AbstractCrawler{
 				addPosterSessionInfo(tr.get(++i).select(".poster-sub-session"), event);
 
 			result.add(event);
+		}
+	}
+
+	//TODO: Some workshops have a parseable schedule, which would result in each workshop consisting of events again, which seems weird from a database point of view. How to counteract this?
+	// 		Currently workshop schedules are not saved because of this. The events do also not contain the lunch break, as each workshop seems to do them slightly differently.
+	//		It took quite a bit of experimenting and my time to realize that this issue is not easily solvable and better be discussed in the group.
+	/**
+	 * Parses ACL 2018's workshop schedule.
+	 * Some of this is hardcoded because why not
+	 * @param result The resulting arraylist with the complete workshop data
+	 */
+	private void parseWorkshops(ArrayList<ArrayList<Object>> result) {
+		try {
+			Document doc = Jsoup.connect(workshopPage).get();
+			Elements content = doc.select(".post-content");
+			Elements days = content.select("ul");
+
+			for(int i = 0; i < days.size(); i++) {
+				Element day = days.get(i);
+				Elements workshops = day.select("li");
+
+				for(Element workshop : workshops) {
+					//conference, date, begin time, end time, title, (host,) place, description, category, list of sessions
+					ArrayList<Object> event = new ArrayList<>();
+					String[] dayMonth = content.select("h4").get(i).text().split(" ", 2)[1].split(" ");
+					String[] titleRoom = workshop.text().split(": ");
+					String description = workshop.selectFirst("a").attr("href");//just the workshop link for now
+
+					event.add("ACL 2018");
+					event.add(LocalDate.of(2018, CrawlerToolset.getMonthIndex(dayMonth[1]), Integer.parseInt(dayMonth[0])));
+					event.add(LocalTime.of(9, 0));
+					event.add(LocalTime.of(17, 0)); //assume 5pm, because the schedule table is not 100% proportional
+					event.add(titleRoom[0]);
+					event.add(titleRoom[1]);
+					event.add(description);
+					event.add(EventCategory.WORKSHOP);
+					event.add(null);
+					result.add(event);
+				}
+			}
+		}
+		catch(IOException e) {
+			e.printStackTrace();
 		}
 	}
 
