@@ -20,8 +20,13 @@ public class PaperHibernateAccess implements PaperCommonAccess {
 	}
 
 	@Override
-	public List<Paper> getByAuthor(String author) { //TODO: implement this
-		return null;
+	public List<Paper> getByAuthor(String author) {
+		Session session = HibernateUtils.getSessionFactory().openSession();
+		Criteria paperCriteria = session.createCriteria(Paper.class);
+		Criteria authorCriteria = paperCriteria.createCriteria("author");
+		authorCriteria.add(Restrictions.eq("fullName",author));
+		session.close();
+		return authorCriteria.list();
 	}
 
 	@Override
