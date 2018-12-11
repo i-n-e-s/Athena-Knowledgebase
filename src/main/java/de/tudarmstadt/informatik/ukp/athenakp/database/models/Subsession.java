@@ -11,7 +11,7 @@ import javax.persistence.Table;
 import org.hibernate.annotations.GenericGenerator;
 
 @Entity
-@Table(name="subsubsession")
+@Table(name="subsession")
 public class Subsession {
 	/*Unique id*/
 	@Id
@@ -29,7 +29,7 @@ public class Subsession {
 	@Column(name = "title")
 	private String title;
 	/* Brief Description */
-	@Column(name = "description")
+	@Column(name = "description", columnDefinition = "VARCHAR(3000)") //fixes titles that are too long for being storable in the column
 	private String description;
 	//	/* Papers, if any */
 	//	@Column(name = "papers") //so far, a subsession only ever seems to have one paper - so its title is stored as the subsession's title, same for the description

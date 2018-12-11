@@ -28,7 +28,7 @@ public class Session { //TODO: chair
 	@Column(name = "title")
 	private String title;
 	/* Brief Description */
-	@Column(name = "description")
+	@Column(name = "description", columnDefinition = "VARCHAR(1000)") //fixes titles that are too long for being storable in the column
 	private String description;
 	/* Place where this session happens */
 	@Column(name = "place")

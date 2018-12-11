@@ -204,6 +204,8 @@ public class ParsedDataInserter {
 								subsession.setDescription(subsessionStore.desc);
 								subsessions.add(subsession);
 							}
+
+							session.setSubsessions(subsessions);
 						}
 
 						sessions.add(session);
