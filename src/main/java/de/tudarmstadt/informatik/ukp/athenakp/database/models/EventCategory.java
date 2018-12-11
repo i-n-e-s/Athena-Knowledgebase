@@ -1,6 +1,6 @@
 package de.tudarmstadt.informatik.ukp.athenakp.database.models;
 
-public enum EventCategory {
+public enum EventCategory { //TODO If you change anything here, change it in the wiki, too.
 	BREAK,
 	CEREMONY,
 	MEETING,

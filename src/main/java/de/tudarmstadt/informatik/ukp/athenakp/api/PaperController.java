@@ -59,7 +59,7 @@ public class PaperController {
 	@RequestMapping("/byPaperID/{value}/href")
 	public String getHref(@PathVariable("value")Long value) {
 		List<Paper> papers = byPaperID(value);
-		
+
 		if(papers.size() > 0)
 			return papers.get(0).getHref();
 		else return null;
@@ -119,7 +119,7 @@ public class PaperController {
 
 	/**
 	 * @param value The paper's direct download link
-	 * @return All paper's with the given download link
+	 * @return All papers with the given download link
 	 */
 	@RequestMapping("/byHref/{value}") //TODO: is this necessary?
 	public List<Paper> byHref(@PathVariable("value")String value) {
