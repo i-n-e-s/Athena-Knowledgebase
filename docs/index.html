@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset='utf-8'>
+		<title>Athena Knowledgebase</title>
+	</head>
+	<body>
+		<header>
+			<div class="container">
+				<h1>Athena Knowledgebase</h1>
+				<h2>A conversational Agent</h2>
+			</div>
+		</header>
+		<div class="container">
+			<section id="main_content">
+				<p>Um auf die in der Datenbank gespeicherten Daten zugreifen zu können, kann das von uns bereitgestellte REST API verwendet werden. Es ist möglich, alle unten aufgelisteten Entitäten anhand der vorgeschriebenen Parameter abzufragen.
+					Auf das REST API kann <a href="https://example.org">unter diesem Link</a> zugegriffen werden.
+				</p>
+				<p>Die Wikiseite einer jeden Entität nennt ein Präfix, was bei jeder Abfrage über diese Entität an den vorher genannten Link angehängt wird.
+					Weiterhin sind auf jeder Wikiseite alle möglichen Abfragen zu dieser Entität aufgelistet. Diese sind dem Link-Präfix-Konstrukt hinten anzufügen.
+					Eine Anfrage hat möglicherweise Parameter, die vom Nutzer hinzugegeben werden müssen. Diese Parameter sind mit <code>{}</code> umkreist, beim Aufrufen des APIS komplett zu ersetzen, und im dort folgenden Text näher erläutert.
+				</p>
+				<p>Beispiel einer Abfrage anhand einer Paper ID: <a href="https://example.org/papers/byPaperID/10">https://example.org/papers/byPaperID/10</a></p>
+				<p>Durchgestrichene Anfragen sind geplant, oder funktionieren noch nicht.</p>
+				<h4>Liste der abfragbaren Entitäten</h4>
+				<ol>
+					<li>[[Conference|Conference]]</li>
+					<li>[[Event|Event]]</li>
+					<li>[[Institution|Institution]]</li>
+					<li>[[Paper|Paper]]</li>
+					<li>[[Person|Person]]</li>
+				</ol>
+				<p>Anmerkung: Ein Autor ist einer Person untergeordnet. Dabei ist der einzige Unterschied, dass eine Person keine Paper geschrieben hat, ein Autor jedoch schon.</p>
+			</section>
+		</div>
+	</body>
+</html>
