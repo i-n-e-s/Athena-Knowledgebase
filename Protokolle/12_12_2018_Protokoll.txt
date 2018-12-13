@@ -1,0 +1,67 @@
+Protokoll: 
+Beginn: 	9:00
+Ende: 		10:50
+Protokollant: Julian Steitz
+
+Thomas Server:
+	verzögert sich aus nicht nachvollziehbaren Gründen
+
+Präsentation:
+	Daniel zeigt Doku (Benutzerhandbuch)
+		Thomas wünscht sich ein Dummybeispiel in der Dokumentation "Aufruf für einen Use Case"
+		+ Was kann man mit dem Programm machen (Umfang) - Codestruktur: "Wo finde ich was, wenn ichs erweitern möchte" 
+	Philipp semantic scholar:
+		Thomas nickt
+		Aliase über semantic scholar werden herausgegeben
+	Daniel zeigt Schedule:
+		Thomas merkt an, dass Parser deaktiviert werden muss bei anderen Jahren - es muss einen Ort geben, an dem man zwischen parsern 
+		wählen kann - Jonas spricht Facade an, die das implementieren soll - neues Jahr mit anfangs weniger Informationen muss mit 
+		wenig Anpassungen funktionieren
+
+Thomasfragen:
+	Crawler + Parser kombiniert? Er hat die Idee, den Wunsch: Crawler legt Zwischenformat ab - was müsste man da ändern (prüfen?-ins Wiki)
+	Tristan: javax persistance momentan  -- Was muss ich tun wenn ich die Datenbank ändern möchte
+
+Qualitätssicherung:
+	Tristan zeigt fantastisches 3NF - Protokoll
+	Einigung auf einen Workflow zur Kenntnisnahme von neuen Änderungen
+		Änderungen von Klassen in git + phpmyadmin
+	Clemens wünscht sich ausführlichere Begründung atomar etc. "warum hängen sie ab" erstmal ausführlich danach nur erweitern
+	Erste Iteration als Baseline danach nur Änderungen
+
+Criteria Api deprecated:
+	
+Repository Pattern:
+ 	verworfen, da unvertretbarer Mehraufwand
+
+Autoren-paper relation:
+	rumpo Derpel x 80 für 80 Paper Bug-hunt ausgerufen
+
+Parser gibt Models zurück?
+	Ja
+	Daniel würde sich kümmern
+
+Tristan: hibernate setup
+	nach Beendung drop table?
+		Ja
+Tests:
+	muss sein - 
+	Crawler: html Dateien in Testassets
+	requests (eg. semantic scholar) - mocken- Mockito		: soll eigentlich 50%
+	integrationstests: eigene Datenbank
+
+---
+Aufgaben (nicht unbedingt vollständig):
+	Zwischenformat prüfen - siehe Thomasfragen
+	Wiki um "wo finde ich was, wenn ichs erweitern möchte" erweitern - siehe Präsentation  
+	Autoren zusammenlegen - erledigt? s.o Autoren-paper relation
+	Abstracts
+	bis nächstes Jahr - herausfinden wie man Umgebungsinformationen kommen könnte
+	zweites QS-Ziel angefangen
+	Tristan : drop table Spaß
+	User Stories in schön schreiben
+	Tests s.o.
+	16.1 : Präsentationen
+---
+Treffen
+	16.01. nächstes Arbeitgebertreffen 9:00
