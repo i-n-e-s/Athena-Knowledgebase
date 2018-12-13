@@ -11,7 +11,7 @@ import de.tudarmstadt.informatik.ukp.athenakp.database.access.PaperCommonAccess;
 import de.tudarmstadt.informatik.ukp.athenakp.database.models.Paper;
 
 /**
- * @author Daniel Lehmann
+ * @author Daniel Lehmann, Jonas Hake
  */
 public class PaperHibernateAccess implements PaperCommonAccess {
 	@Override
@@ -21,12 +21,14 @@ public class PaperHibernateAccess implements PaperCommonAccess {
 
 	@Override
 	public List<Paper> getByAuthor(String author) {
+		List<Paper> result;
 		Session session = HibernateUtils.getSessionFactory().openSession();
 		Criteria paperCriteria = session.createCriteria(Paper.class);
-		Criteria authorCriteria = paperCriteria.createCriteria("author");
+		Criteria authorCriteria = paperCriteria.createCriteria("authors");
 		authorCriteria.add(Restrictions.eq("fullName",author));
+		result = authorCriteria.list();
 		session.close();
-		return authorCriteria.list();
+		return result;
 	}
 
 	@Override
