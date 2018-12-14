@@ -32,12 +32,12 @@ public class ConferenceHibernateAccess implements ConferenceCommonAccess {
 	}
 
 	@Override
-	public List<Conference> getByAuthor(String author) { //TODO: implement this
+	public List<Conference> getByAuthor(long authorID) { //TODO: implement this
 		return null;
 	}
 
 	@Override
-	public List<Conference> getByPaper(String paper) { //TODO: implement this
+	public List<Conference> getByPaper(long paperID) { //TODO: implement this
 		return null;
 	}
 

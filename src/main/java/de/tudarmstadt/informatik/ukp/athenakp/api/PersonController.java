@@ -98,7 +98,7 @@ public class PersonController {
 	 * @return All persons working at the given institution
 	 */
 	@RequestMapping("/byInstitution/{value}") //TODO: perhaps arguments for finer control?
-	public List<Person> byInstitution(@PathVariable("value")String value) {
+	public List<Person> byInstitution(@PathVariable("value")long value) {
 		return access.getByInstitutionID(value);
 	}
 }

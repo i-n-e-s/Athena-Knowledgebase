@@ -60,8 +60,8 @@ public class PersonHibernateAccess implements PersonCommonAccess {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public List<Person> getByInstitutionID(String institutionID) { //TODO implement this
-		return null;
+	public List<Person> getByInstitutionID(long institutionID) { //TODO implement this
+		return getBy("institutionID", institutionID);
 	}
 
 	/**
