@@ -3,7 +3,10 @@ package de.tudarmstadt.informatik.ukp.athenakp.crawler;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import de.tudarmstadt.informatik.ukp.athenakp.database.models.Author;
 import de.tudarmstadt.informatik.ukp.athenakp.database.models.Conference;
+import de.tudarmstadt.informatik.ukp.athenakp.database.models.Event;
+import de.tudarmstadt.informatik.ukp.athenakp.database.models.Paper;
 
 /**
  *
@@ -16,27 +19,26 @@ abstract class AbstractCrawler {
 	/**
 	 * Returns all authors who published in the year 2018
 	 *
-	 * @return A list of all authors, null when data not available
+	 * @return A list of all authors, an empty list when data not available
 	 * @throws IOException if Jsoup.connect fails
 	 */
-	public abstract ArrayList<String> getAuthors() throws IOException;
+	public abstract ArrayList<Author> getAuthors() throws IOException;
 
 	/**
 	 * Returns all papers which were published in the year 2018
 	 *
-	 * @return A list of all paper titles, null when data not available
+	 * @return A list of all papers, an empty list when data not available
 	 * @throws IOException if Jsoup.connect fails
 	 */
-	public abstract ArrayList<String> getPaperTitles() throws IOException;
+	public abstract ArrayList<Paper> getPaperTitles() throws IOException;
 
 	/**
-	 * Returns a list of lists. Each sublist represents a published paper.
-	 * The sub lists are in the form: Title, Author1, Author2, ...
+	 * Returns a list of papers. Each object contains the paper's title and its authors
 	 *
-	 * @return A list of lists of paper's titles and their associated author, null when data not available
+	 * @return A list of papers and their associated authors, an empty list when data not available
 	 * @throws IOException if Jsoup.connect fails
 	 */
-	public abstract ArrayList<ArrayList<String>> getPaperAuthor() throws IOException;
+	public abstract ArrayList<Paper> getPaperAuthor() throws IOException;
 
 	/**
 	 * A method which returns a conference instance with its name, location, and start and end date set.
@@ -48,10 +50,9 @@ abstract class AbstractCrawler {
 	public abstract Conference getConferenceInformation() throws IOException;
 
 	/**
-	 * Returns a list of lists. Each sublist represents an event.
-	 * The sub lists are in the form: conference, date, begin time, end time, title, (host,) place, description, category, list of sessions
-	 * @return A list of lists of events and their metadata, null when data not available
+	 * Returns a list of events.
+	 * @return A list of events, an empty list when data not available
 	 * @throws IOException if Jsoup.connect fails
 	 */
-	public abstract ArrayList<ArrayList<Object>> getSchedule() throws IOException;
+	public abstract ArrayList<Event> getSchedule() throws IOException;
 }

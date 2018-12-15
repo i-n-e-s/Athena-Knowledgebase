@@ -1,11 +1,8 @@
 package de.tudarmstadt.informatik.ukp.athenakp.database;
 
 import java.io.IOException;
-import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
 import java.util.TimeZone;
 
@@ -16,8 +13,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import de.tudarmstadt.informatik.ukp.athenakp.Application;
 import de.tudarmstadt.informatik.ukp.athenakp.crawler.CrawlerFacade;
-import de.tudarmstadt.informatik.ukp.athenakp.crawler.CrawlerToolset.SessionStore;
-import de.tudarmstadt.informatik.ukp.athenakp.crawler.CrawlerToolset.SubsessionStore;
 import de.tudarmstadt.informatik.ukp.athenakp.crawler.SupportedConferences;
 import de.tudarmstadt.informatik.ukp.athenakp.database.access.ConferenceCommonAccess;
 import de.tudarmstadt.informatik.ukp.athenakp.database.access.EventCommonAccess;
@@ -25,13 +20,9 @@ import de.tudarmstadt.informatik.ukp.athenakp.database.access.PaperCommonAccess;
 import de.tudarmstadt.informatik.ukp.athenakp.database.hibernate.ConferenceHibernateAccess;
 import de.tudarmstadt.informatik.ukp.athenakp.database.hibernate.EventHibernateAccess;
 import de.tudarmstadt.informatik.ukp.athenakp.database.hibernate.PaperHibernateAccess;
-import de.tudarmstadt.informatik.ukp.athenakp.database.models.Author;
 import de.tudarmstadt.informatik.ukp.athenakp.database.models.Conference;
 import de.tudarmstadt.informatik.ukp.athenakp.database.models.Event;
-import de.tudarmstadt.informatik.ukp.athenakp.database.models.EventCategory;
 import de.tudarmstadt.informatik.ukp.athenakp.database.models.Paper;
-import de.tudarmstadt.informatik.ukp.athenakp.database.models.Session;
-import de.tudarmstadt.informatik.ukp.athenakp.database.models.Subsession;
 
 
 @SpringBootApplication
@@ -60,6 +51,7 @@ public class ParsedDataInserter {
 	void started() {
 		TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
 	}
+
 	public static void main(String[] args) {
 		SpringApplication.run(Application.class, args);
 		ParsedDataInserter parsedDataInserter;
@@ -105,47 +97,12 @@ public class ParsedDataInserter {
 	 */
 	private void aclStorePapersAndAuthors() throws IOException {
 		System.out.println(" - this can take a couple of minutes..");
-		ArrayList<ArrayList<String>> listOfPaperAuthor = acl18WebParser.getPaperAuthor();
+		ArrayList<Paper> papers = acl18WebParser.getPaperAuthor();
 		System.out.println("Done scraping! Inserting data into database...");
 		PaperCommonAccess paperFiler = new PaperHibernateAccess();
 		// PersonCommonAccess personfiler = new PersonHibernateAccess();
 
-		for (ArrayList<String> paperAndAuthors : listOfPaperAuthor) {
-			// only one Paper per paperandauthors
-			Paper paper = new Paper();
-			// clean up the titles in the form of [C18-1017] Simple Neologism Based Domain Independe...
-			// C18-1017 would be the anthology - we remove [] because the rest API dislikes the characters and they
-			// convey no meaning
-			String rawStore = paperAndAuthors.get(0);
-			String[] storeSplit = rawStore.split(";;");
-			String rawTitle = storeSplit[0];
-			String[] splitRawTitle = rawTitle.split(" ", 2);
-			String paperTitle = splitRawTitle[1];
-			String anthology = splitRawTitle[0].replace("[", "").replace("]", "");
-			paper.setTitle(paperTitle);
-			paper.setAnthology(anthology);
-			paper.setReleaseDate(LocalDate.of(Integer.parseInt(storeSplit[1]), Integer.parseInt(storeSplit[2]), 1));
-			paper.setHref("http://aclweb.org/anthology/" + anthology); //wow that was easy
-			// we ignore the first entry, since it is a Paper's title
-			for (int i = 1; i < paperAndAuthors.size(); i++) {
-				String authorName = paperAndAuthors.get(i);
-				Author author = new Author();
-				// because acl2018 seems to not employ prefixes (e.g. Prof. Dr.), we do not need to scan them
-				// scanning them might make for a good user story
-				author.setFullName(authorName);
-				// Both following statements seem necessary for the author_paper table but lead to Hibernate
-				// access returning an object (paper) as often as a relation in author_paper exists
-				// looking into the tables themselves, duplicate papers (even with the same PaperID) do not exist
-				// TODO: fix whatever causes the multiple Hibernate Accesses (returning the same object)
-				// TODO: when calling the API (my guess: paper_author relation)
-				// set paper - author relation
-				paper.addAuthor(author);
-				// set author - paper relation
-				author.addPaper(paper);
-				// add author to database + paper included
-				// personfiler.add(author);
-			}
-			// adding the paper automatically adds the corresponding authors - realisation that took hours
+		for (Paper paper : papers) {
 			paperFiler.add(paper);
 		}
 	}
@@ -171,50 +128,9 @@ public class ParsedDataInserter {
 		EventCommonAccess eventCommonAccess = new EventHibernateAccess();
 
 		try {
-			ArrayList<ArrayList<Object>> events = acl18WebParser.getSchedule();
+			ArrayList<Event> events = acl18WebParser.getSchedule();
 
-			for(ArrayList<Object> eventData : events) {
-				Event event = new Event();
-				java.util.Set<Session> sessions = new HashSet<Session>();
-
-				event.setConference((String)eventData.get(0));
-				event.setDate((LocalDate)eventData.get(1));
-				event.setBegin((LocalTime)eventData.get(2));
-				event.setEnd((LocalTime)eventData.get(3));
-				event.setTitle((String)eventData.get(4));
-				event.setPlace((String)eventData.get(5));
-				event.setDescription((String)eventData.get(5));
-				event.setCategory((EventCategory)eventData.get(7));
-
-				if(eventData.size() > 8 && eventData.get(8) != null) {
-					//TODO save chair
-					for(SessionStore sessionStore : (ArrayList<SessionStore>)eventData.get(8)) {
-						Session session = new Session();
-						java.util.Set<Subsession> subsessions = new HashSet<Subsession>();
-
-						session.setTitle(sessionStore.title);
-						session.setDescription(sessionStore.desc);
-						session.setPlace(sessionStore.place);
-
-						if(sessionStore.subsessions != null) {
-							for(SubsessionStore subsessionStore : sessionStore.subsessions) {
-								Subsession subsession = new Subsession();
-
-								subsession.setBegin(subsessionStore.begin);
-								subsession.setEnd(subsessionStore.end);
-								subsession.setTitle(subsessionStore.title);
-								subsession.setDescription(subsessionStore.desc);
-								subsessions.add(subsession);
-							}
-
-							session.setSubsessions(subsessions);
-						}
-
-						sessions.add(session);
-					}
-				}
-
-				event.setSessions(sessions);
+			for(Event event : events) {
 				eventCommonAccess.add(event);
 			}
 
