@@ -42,6 +42,16 @@ import de.tudarmstadt.informatik.ukp.athenakp.database.models.Subsession;
 	@author Julian Steitz
  */
 public class ParsedDataInserter {
+	private CrawlerFacade acl18WebParser;
+
+	/**
+	 * @param beginYear The first year to get data from
+	 * @param endYear The last year to get data from
+	 */
+	public ParsedDataInserter(String beginYear, String endYear) {
+		acl18WebParser = new CrawlerFacade(SupportedConferences.ACL, beginYear, endYear);
+	}
+
 	// this makes it so everything written into the database is in UTC.
 	// from https://aboullaite.me/spring-boot-time-zone-configuration-using-hibernate/
 	// took me far too long to find
@@ -52,7 +62,7 @@ public class ParsedDataInserter {
 	}
 	public static void main(String[] args) {
 		SpringApplication.run(Application.class, args);
-		ParsedDataInserter parsedDataInserter = new ParsedDataInserter();
+		ParsedDataInserter parsedDataInserter;
 
 		List<String> argList = Arrays.asList(args);
 		String beginYear = "2018", endYear = "2018";
@@ -72,15 +82,16 @@ public class ParsedDataInserter {
 			}
 		}
 
+		parsedDataInserter = new ParsedDataInserter(beginYear, endYear);
 		System.out.printf("Scraping years %s through %s", beginYear, endYear);
 
-		//		try {
-		//			parsedDataInserter.aclStorePapersAndAuthors(beginYear, endYear);
-		//		} catch (IOException e) {
-		//			e.printStackTrace();
-		//		}
-		//		parsedDataInserter.acl2018StoreConferenceInformation(beginYear, endYear);
-		parsedDataInserter.acl2018StoreEventInformation(beginYear, endYear);
+		try {
+			parsedDataInserter.aclStorePapersAndAuthors();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		parsedDataInserter.acl2018StoreConferenceInformation();
+		parsedDataInserter.acl2018StoreEventInformation();
 		System.out.println("Done!");
 	}
 
@@ -88,14 +99,11 @@ public class ParsedDataInserter {
 	 * Constructs Author and Paper Objects from ACL18Webparser().getPaperAuthor() and adds them to the database
 	 * see its documentation for its makeup
 	 *
-	 * @param beginYear The first year to get data from
-	 * @param endYear The last year to get data from
 	 * @throws IOException if jsoup was interrupted in the scraping process (during getPaperAuthor())
 	 * @author Julian Steitz, Daniel Lehmann
 	 * TODO: implement saveandupdate in Common Access? Otherwise implement check if entry exist. Expensive?
 	 */
-	private void aclStorePapersAndAuthors(String beginYear, String endYear) throws IOException {
-		CrawlerFacade acl18WebParser = new CrawlerFacade(SupportedConferences.ACL, beginYear, endYear);
+	private void aclStorePapersAndAuthors() throws IOException {
 		System.out.println(" - this can take a couple of minutes..");
 		ArrayList<ArrayList<String>> listOfPaperAuthor = acl18WebParser.getPaperAuthor();
 		System.out.println("Done scraping! Inserting data into database...");
@@ -144,11 +152,8 @@ public class ParsedDataInserter {
 
 	/**
 	 * Stores the acl2018 conference into the database
-	 * @param beginYear The first year to get data from
-	 * @param endYear The last year to get data from
 	 */
-	private void acl2018StoreConferenceInformation(String beginYear, String endYear) {
-		CrawlerFacade acl18WebParser = new CrawlerFacade(SupportedConferences.ACL, beginYear, endYear);
+	private void acl2018StoreConferenceInformation() {
 		ConferenceCommonAccess conferenceCommonAccess = new ConferenceHibernateAccess();
 		try{
 			Conference acl2018 = acl18WebParser.getConferenceInformation();
@@ -161,11 +166,8 @@ public class ParsedDataInserter {
 
 	/**
 	 * Stores the acl2018 conference's timetable into the database
-	 * @param beginYear The first year to get data from
-	 * @param endYear The last year to get data from
 	 */
-	private void acl2018StoreEventInformation(String beginYear, String endYear) {
-		CrawlerFacade acl18WebParser = new CrawlerFacade(SupportedConferences.ACL, beginYear, endYear);
+	private void acl2018StoreEventInformation() {
 		EventCommonAccess eventCommonAccess = new EventHibernateAccess();
 
 		try {
