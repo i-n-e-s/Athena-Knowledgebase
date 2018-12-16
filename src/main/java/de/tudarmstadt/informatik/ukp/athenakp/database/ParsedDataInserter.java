@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.List;
 import java.util.TimeZone;
 import java.util.TreeMap;
@@ -93,13 +92,7 @@ public class ParsedDataInserter {
 		// PersonCommonAccess personfiler = new PersonHibernateAccess();
 
 		//Keeps Track of all added Authors, so they won't be added twice	
-		TreeMap<String,Author> addedAuthors = new TreeMap<String, Author>(new Comparator<String>() {
-
-			@Override
-			public int compare(String o1, String o2) {
-				return o1.compareTo(o2) ;
-			}
-		});
+		TreeMap<String,Author> addedAuthors = new TreeMap<String,Author>((o1, o2) -> o1.compareTo(o2));
 		
 		for (ArrayList<String> paperAndAuthors : listOfPaperAuthor) {
 			// only one Paper per paperandauthors

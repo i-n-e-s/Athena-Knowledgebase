@@ -137,11 +137,11 @@ public class PaperController {
 	
 	/**
 	 * 
-	 * @param author The author from which the paper are requested
+	 * @param value The author from which the paper are requested
 	 * @return All papers, that the given author has published
 	 */
-	@RequestMapping("/byAuthor/{author}")
-	public List<Paper> byAuthor(@PathVariable("author")String author){
-		return access.getByAuthor(author);
+	@RequestMapping("/byAuthor/{value}")
+	public List<Paper> byAuthor(@PathVariable("value")String value){
+		return access.getByAuthor(value);
 	}
 }
