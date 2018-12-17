@@ -39,12 +39,15 @@ public class Workshop implements ScheduleEntry{
 	/*End time*/
 	@Column(name="end")
 	private LocalTime end;
+	/* Place where this workshop happens */
+	@Column(name = "place")
+	private String place;
 	/* Title */
 	@Column(name = "title")
 	private String title;
-	/* Brief Description */
-	@Column(name = "description")
-	private String description;
+	/* Abbreviation */
+	@Column(name = "abbreviation")
+	private String abbreviation;
 	/* Events, not all workshops provide easily scrapable schedule*/
 	@OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER)
 	@JoinTable(
@@ -135,6 +138,24 @@ public class Workshop implements ScheduleEntry{
 	}
 
 	/**
+	 * Gets the place where this workshop happens
+	 *
+	 * @return The place where this workshop happens
+	 */
+	public String getPlace() {
+		return place;
+	}
+
+	/**
+	 * Sets the place where this workshop happens
+	 *
+	 * @param place The new place where this workshop happens
+	 */
+	public void setPlace(String place) {
+		this.place = place;
+	}
+
+	/**
 	 * Gets the title of this workshop
 	 *
 	 * @return The title of this workshop
@@ -153,21 +174,21 @@ public class Workshop implements ScheduleEntry{
 	}
 
 	/**
-	 * Gets a description of the workshop
+	 * Gets a abbreviation of the workshop
 	 *
-	 * @return A description of the workshop
+	 * @return A abbreviation of the workshop
 	 */
-	public String getDescription() {
-		return description;
+	public String getAbbreviation() {
+		return abbreviation;
 	}
 
 	/**
-	 * Sets a description of the workshop
+	 * Sets a abbreviation of the workshop
 	 *
-	 * @param description A new description of the workshop
+	 * @param description A new abbreviation of the workshop
 	 */
-	public void setDescription(String description) {
-		this.description = description;
+	public void setAbbreviation(String abbreviation) {
+		this.abbreviation = abbreviation;
 	}
 
 	/**

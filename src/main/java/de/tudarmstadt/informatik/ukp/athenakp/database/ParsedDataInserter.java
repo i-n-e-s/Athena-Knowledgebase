@@ -39,6 +39,8 @@ import de.tudarmstadt.informatik.ukp.athenakp.database.models.Workshop;
 public class ParsedDataInserter {
 	private CrawlerFacade acl18WebParser;
 
+	public ParsedDataInserter(){}
+
 	/**
 	 * @param beginYear The first year to get data from
 	 * @param endYear The last year to get data from
@@ -81,12 +83,12 @@ public class ParsedDataInserter {
 		parsedDataInserter = new ParsedDataInserter(beginYear, endYear);
 		System.out.printf("Scraping years %s through %s", beginYear, endYear);
 
-		try {
-			parsedDataInserter.aclStorePapersAndAuthors();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		parsedDataInserter.acl2018StoreConferenceInformation();
+		//		try {
+		//			parsedDataInserter.aclStorePapersAndAuthors();
+		//		} catch (IOException e) {
+		//			e.printStackTrace();
+		//		}
+		//		parsedDataInserter.acl2018StoreConferenceInformation();
 		parsedDataInserter.acl2018StoreEventInformation();
 		System.out.println("Done!");
 	}

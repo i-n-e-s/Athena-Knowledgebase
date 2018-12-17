@@ -48,6 +48,13 @@ public interface WorkshopCommonAccess extends CommonAccess<Workshop> {
 	public List<Workshop> getByEndTime(Integer hour, Integer minute);
 
 	/**
+	 * Get all workshops with specified place.
+	 * @param place The workshop's place.
+	 * @return A List of all workshops with the specified place.
+	 */
+	public List<Workshop> getByPlace(String place);
+
+	/**
 	 * Get all workshops with specified title.
 	 * @param title The workshop's title.
 	 * @return A List of all workshops with the specified title.
@@ -55,9 +62,9 @@ public interface WorkshopCommonAccess extends CommonAccess<Workshop> {
 	public List<Workshop> getByTitle(String title);
 
 	/**
-	 * Get all workshops with specified description.
-	 * @param description The workshop's description.
-	 * @return A List of all workshops with the specified description.
+	 * Get all workshops with specified abbreviation.
+	 * @param description The workshop's abbreviation.
+	 * @return A List of all workshops with the specified abbreviation.
 	 */
-	public List<Workshop> getByDescription(String description);
+	public List<Workshop> getByAbbreviation(String abbreviation);
 }

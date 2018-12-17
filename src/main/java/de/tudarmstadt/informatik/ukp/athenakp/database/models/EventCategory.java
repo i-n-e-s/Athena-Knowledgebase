@@ -10,6 +10,5 @@ public enum EventCategory { //TODO If you change anything here, change it in the
 	SOCIAL,
 	TALK,
 	TUTORIAL,
-	WELCOME,
-	WORKSHOP
+	WELCOME
 }

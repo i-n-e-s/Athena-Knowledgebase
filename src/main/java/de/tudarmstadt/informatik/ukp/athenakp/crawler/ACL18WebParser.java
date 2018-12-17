@@ -23,6 +23,7 @@ import de.tudarmstadt.informatik.ukp.athenakp.database.models.Paper;
 import de.tudarmstadt.informatik.ukp.athenakp.database.models.ScheduleEntry;
 import de.tudarmstadt.informatik.ukp.athenakp.database.models.Session;
 import de.tudarmstadt.informatik.ukp.athenakp.database.models.Subsession;
+import de.tudarmstadt.informatik.ukp.athenakp.database.models.Workshop;
 
 /**
  * A class, which holds the capability to return a List of all authors, which
@@ -320,11 +321,12 @@ class ACL18WebParser extends AbstractCrawler{
 
 	@Override
 	public ArrayList<ScheduleEntry> getSchedule() throws IOException {
+		System.out.println();
 		ArrayList<ScheduleEntry> result = new ArrayList<>();
 		System.out.println("Preparing data and starting 5 scraper threads...");
 		Element schedule = Jsoup.connect(schedulePage).get().select("#schedule").get(0);
 		Elements days = schedule.select(".day-schedule");
-		//threading :DD - takes about 1 minute 20 seconds without, 30 seconds with
+		//threading :DD
 		ExecutorService executor = Executors.newFixedThreadPool(5);
 		Future<ArrayList<ScheduleEntry>> f1 = executor.submit(() -> parseFirstDay(days.get(0), new ArrayList<ScheduleEntry>()));
 		Future<ArrayList<ScheduleEntry>> f2 = executor.submit(() -> parseOtherDays(days.get(1), new ArrayList<ScheduleEntry>()));
@@ -430,21 +432,85 @@ class ACL18WebParser extends AbstractCrawler{
 				Element day = days.get(i);
 				Elements workshops = day.select("li");
 
-				for(Element workshop : workshops) {
-					Event event = new Event();
+				for(Element workshopEl : workshops) {
+					Workshop workshop = new Workshop();
 					String[] dayMonth = content.select("h4").get(i).text().split(" ", 2)[1].split(" ");
-					String[] titleRoom = workshop.text().split(": ");
-					String description = workshop.selectFirst("a").attr("href");//just the workshop link for now
+					String[] complTitleRoom = workshopEl.text().split(": ");
+					String link = workshopEl.selectFirst("a").attr("href");
+					String[] titleAbbr = complTitleRoom[0].split("\\(");
 
-					event.setConference("ACL 2018");
-					event.setDate(LocalDate.of(2018, CrawlerToolset.getMonthIndex(dayMonth[1]), Integer.parseInt(dayMonth[0])));
-					event.setBegin(LocalTime.of(9, 0));
-					event.setEnd(LocalTime.of(17, 0)); //assume 5pm, because the schedule table is not 100% proportional
-					event.setTitle(titleRoom[0]);
-					event.setPlace(titleRoom[1]);
-					event.setDescription(description);
-					event.setCategory(EventCategory.WORKSHOP);
-					result.add(event);
+					workshop.setConference("ACL 2018");
+					workshop.setDate(LocalDate.of(2018, CrawlerToolset.getMonthIndex(dayMonth[1]), Integer.parseInt(dayMonth[0])));
+					workshop.setBegin(LocalTime.of(9, 0));
+					workshop.setEnd(LocalTime.of(17, 0)); //assume 5pm, because the schedule table is not 100% proportional
+					workshop.setTitle(titleAbbr[0].trim());
+					workshop.setPlace(complTitleRoom[1]);
+					workshop.setAbbreviation(titleAbbr[1].replace(")", "").trim());
+
+					//not every workshop has a schedule and each one has a different layout - this switch is there to select them
+					switch(workshop.getAbbreviation()) {
+						case "BioNLP":
+							Elements rows;
+
+							doc = Jsoup.connect(link).get();
+							rows = doc.select("table > tbody > tr");
+
+							for(int row = 1; row < rows.size(); row++) {
+								Elements currentRow = rows.get(row).select("td");
+								Event event = new Event();
+								String[] eventTime = currentRow.get(0).text().split("–"); //NOT A HYPHEN!!! IT'S AN 'EN DASH'
+								String[] eventBegin = eventTime[0].split(":");
+								String[] eventEnd = eventTime[1].split(":");
+
+								event.setPlace(workshop.getPlace());
+
+								if(row + 1 < rows.size() && !currentRow.select("b").isEmpty()) {
+									boolean decrease = false;
+									Elements nextRow = rows.get(++row).select("td");
+									Session session = new Session();
+
+									while(row < rows.size() && nextRow.select("b").isEmpty()) {
+										Subsession subsession = new Subsession();
+										int idx = 0;
+
+										if(nextRow.size() > 1) { //not a poster session
+											String[] sessionTime = nextRow.get(idx++).text().split("–"); //NOT A HYPHEN!!! IT'S AN 'EN DASH'
+											String[] sessionBegin = sessionTime[0].split(":");
+											String[] sessionEnd = sessionTime[1].split(":");
+
+											subsession.setBegin(LocalTime.of(Integer.parseInt(sessionBegin[0]), Integer.parseInt(sessionBegin[1])));
+											subsession.setEnd(LocalTime.of(Integer.parseInt(sessionEnd[0]), Integer.parseInt(sessionEnd[1])));
+										}
+
+										String title = nextRow.get(idx).select("i").text();
+										String descr = nextRow.get(idx).html().split("<br>")[1]; //the authors/talkers
+
+										session.setTitle(title);
+										session.setDescription(descr);
+										session.setPlace(event.getPlace());
+										session.addSubsession(subsession);
+										row++;
+										decrease = true;
+									}
+
+									event.addSession(session);
+
+									if(decrease) //only decrease if the while loop executed at least once
+										row--; //row was incremented in previous while iteration, but now nextRow is bold again, so the for loop will continue (and increment again, skipping this row which is not wanted)
+								}
+
+								event.setBegin(LocalTime.of(Integer.parseInt(eventBegin[0]), Integer.parseInt(eventBegin[1])));
+								event.setEnd(LocalTime.of(Integer.parseInt(eventEnd[0]), Integer.parseInt(eventEnd[1])));
+								event.setTitle(currentRow.get(1).text());
+								event.setDate(workshop.getDate());
+								event.setConference(workshop.getConference());
+								event.setCategory(chooseEventCategory(event.getTitle().toLowerCase()));
+							}
+
+							break;
+					}
+
+					result.add(workshop);
 				}
 			}
 		}
@@ -472,7 +538,6 @@ class ACL18WebParser extends AbstractCrawler{
 			String title = el.select(".session-name").text();
 			String desc = el.select(".session-suffix").text();
 			Elements place = el.select(".session-location");
-			EventCategory category = null;
 
 			if(!desc.isEmpty())
 				title = title.replace(desc, "");
@@ -482,31 +547,37 @@ class ACL18WebParser extends AbstractCrawler{
 			event.setTitle(title);
 			event.setPlace(place.isEmpty() ? "?" : (place.get(0).text().isEmpty() ? "?" : place.get(0).text()));
 			event.setDescription(desc);
-			title = title.toLowerCase();
-
-			if(title.startsWith("tutorial"))
-				category = EventCategory.TUTORIAL;
-			else if(title.contains("welcome"))
-				category = EventCategory.WELCOME;
-			else if(title.startsWith("lunch") || title.contains("break"))
-				category = EventCategory.BREAK;
-			else if(title.contains("oral"))
-				category = EventCategory.PRESENTATION;
-			else if(title.contains("poster"))
-				category = EventCategory.SESSION;
-			else if(title.contains("recruitment"))
-				category = EventCategory.RECRUITMENT;
-			else if(title.contains("talk"))
-				category = EventCategory.TALK;
-			else if(title.contains("meeting"))
-				category = EventCategory.MEETING;
-			else if(title.contains("social"))
-				category = EventCategory.SOCIAL;
-			else if(title.contains("award") || title.contains("achievement"))
-				category = EventCategory.CEREMONY;
-
-			event.setCategory(category);
+			event.setCategory(chooseEventCategory(title.toLowerCase()));
 		}
+	}
+
+	/**
+	 * Chooses the proper event category based on the event's title
+	 * @param title The event's title
+	 * @return The proper event category, null if none could be determined
+	 */
+	private EventCategory chooseEventCategory(String title) {
+		if(title.startsWith("tutorial"))
+			return EventCategory.TUTORIAL;
+		else if(title.contains("welcome") || title.contains("open"))
+			return EventCategory.WELCOME;
+		else if(title.startsWith("lunch") || title.contains("break"))
+			return EventCategory.BREAK;
+		else if(title.contains("oral"))
+			return EventCategory.PRESENTATION;
+		else if(title.contains("poster"))
+			return EventCategory.SESSION;
+		else if(title.contains("recruitment"))
+			return EventCategory.RECRUITMENT;
+		else if(title.contains("talk"))
+			return EventCategory.TALK;
+		else if(title.contains("meeting"))
+			return EventCategory.MEETING;
+		else if(title.contains("social"))
+			return EventCategory.SOCIAL;
+		else if(title.contains("award") || title.contains("achievement"))
+			return EventCategory.CEREMONY;
+		else return null;
 	}
 
 	/**

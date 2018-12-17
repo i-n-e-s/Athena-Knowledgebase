@@ -44,13 +44,18 @@ public class WorkshopHibernateAccess implements WorkshopCommonAccess {
 	}
 
 	@Override
+	public List<Workshop> getByPlace(String place) {
+		return getBy("place", place);
+	}
+
+	@Override
 	public List<Workshop> getByTitle(String title) {
 		return getBy("title", title);
 	}
 
 	@Override
-	public List<Workshop> getByDescription(String description) {
-		return getBy("description", description);
+	public List<Workshop> getByAbbreviation(String abbreviation) {
+		return getBy("abbreviation", abbreviation);
 	}
 
 	/**
