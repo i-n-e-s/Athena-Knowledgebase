@@ -5,14 +5,14 @@ import java.util.ArrayList;
 
 import de.tudarmstadt.informatik.ukp.athenakp.database.models.Author;
 import de.tudarmstadt.informatik.ukp.athenakp.database.models.Conference;
-import de.tudarmstadt.informatik.ukp.athenakp.database.models.Event;
 import de.tudarmstadt.informatik.ukp.athenakp.database.models.Paper;
+import de.tudarmstadt.informatik.ukp.athenakp.database.models.ScheduleEntry;
 
 /**
  *
  * This is the abstract base of the crawler
  *
- * @author Jonas Hake
+ * @author Jonas Hake, Daniel Lehmann
  *
  */
 abstract class AbstractCrawler {
@@ -54,5 +54,5 @@ abstract class AbstractCrawler {
 	 * @return A list of events, an empty list when data not available
 	 * @throws IOException if Jsoup.connect fails
 	 */
-	public abstract ArrayList<Event> getSchedule() throws IOException;
+	public abstract ArrayList<ScheduleEntry> getSchedule() throws IOException;
 }

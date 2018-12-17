@@ -20,6 +20,7 @@ import de.tudarmstadt.informatik.ukp.athenakp.database.models.Conference;
 import de.tudarmstadt.informatik.ukp.athenakp.database.models.Event;
 import de.tudarmstadt.informatik.ukp.athenakp.database.models.EventCategory;
 import de.tudarmstadt.informatik.ukp.athenakp.database.models.Paper;
+import de.tudarmstadt.informatik.ukp.athenakp.database.models.ScheduleEntry;
 import de.tudarmstadt.informatik.ukp.athenakp.database.models.Session;
 import de.tudarmstadt.informatik.ukp.athenakp.database.models.Subsession;
 
@@ -318,19 +319,18 @@ class ACL18WebParser extends AbstractCrawler{
 	}
 
 	@Override
-	public ArrayList<Event> getSchedule() throws IOException {
-		System.out.println();
-		ArrayList<Event> result = new ArrayList<>();
+	public ArrayList<ScheduleEntry> getSchedule() throws IOException {
+		ArrayList<ScheduleEntry> result = new ArrayList<>();
 		System.out.println("Preparing data and starting 5 scraper threads...");
 		Element schedule = Jsoup.connect(schedulePage).get().select("#schedule").get(0);
 		Elements days = schedule.select(".day-schedule");
 		//threading :DD - takes about 1 minute 20 seconds without, 30 seconds with
 		ExecutorService executor = Executors.newFixedThreadPool(5);
-		Future<ArrayList<Event>> f1 = executor.submit(() -> parseFirstDay(days.get(0), new ArrayList<Event>()));
-		Future<ArrayList<Event>> f2 = executor.submit(() -> parseOtherDays(days.get(1), new ArrayList<Event>()));
-		Future<ArrayList<Event>> f3 = executor.submit(() -> parseOtherDays(days.get(2), new ArrayList<Event>()));
-		Future<ArrayList<Event>> f4 = executor.submit(() -> parseOtherDays(days.get(3), new ArrayList<Event>()));
-		Future<ArrayList<Event>> f5 = executor.submit(() -> parseWorkshops(new ArrayList<Event>()));
+		Future<ArrayList<ScheduleEntry>> f1 = executor.submit(() -> parseFirstDay(days.get(0), new ArrayList<ScheduleEntry>()));
+		Future<ArrayList<ScheduleEntry>> f2 = executor.submit(() -> parseOtherDays(days.get(1), new ArrayList<ScheduleEntry>()));
+		Future<ArrayList<ScheduleEntry>> f3 = executor.submit(() -> parseOtherDays(days.get(2), new ArrayList<ScheduleEntry>()));
+		Future<ArrayList<ScheduleEntry>> f4 = executor.submit(() -> parseOtherDays(days.get(3), new ArrayList<ScheduleEntry>()));
+		Future<ArrayList<ScheduleEntry>> f5 = executor.submit(() -> parseWorkshops(new ArrayList<ScheduleEntry>()));
 		System.out.println("Waiting for thread results...");
 
 		try {
@@ -355,7 +355,7 @@ class ACL18WebParser extends AbstractCrawler{
 	 * @param day The day element of the website
 	 * @param result The resulting arraylist with the complete events of the first day
 	 */
-	private ArrayList<Event> parseFirstDay(Element day, ArrayList<Event> result) {
+	private ArrayList<ScheduleEntry> parseFirstDay(Element day, ArrayList<ScheduleEntry> result) {
 		String[] monthDay = day.selectFirst(".day").text().split(":")[1].trim().split(" "); //the text has the form of "Sunday: July 15"
 		Elements tr = day.select("tr");
 
@@ -390,7 +390,7 @@ class ACL18WebParser extends AbstractCrawler{
 	 * @param day The day element of the website
 	 * @param result The resulting arraylist with the complete events of the given day
 	 */
-	private ArrayList<Event> parseOtherDays(Element day, ArrayList<Event> result) {
+	private ArrayList<ScheduleEntry> parseOtherDays(Element day, ArrayList<ScheduleEntry> result) {
 		String[] monthDay = day.selectFirst(".day").text().split(":")[1].trim().split(" "); //the text has the form of "Sunday: July 15"
 		Elements tr = day.select("tr");
 
@@ -420,7 +420,7 @@ class ACL18WebParser extends AbstractCrawler{
 	 * Some of this is hardcoded because why not
 	 * @param result The resulting arraylist with the complete workshop data
 	 */
-	private ArrayList<Event> parseWorkshops(ArrayList<Event> result) {
+	private ArrayList<ScheduleEntry> parseWorkshops(ArrayList<ScheduleEntry> result) {
 		try {
 			Document doc = Jsoup.connect(workshopPage).get();
 			Elements content = doc.select(".post-content");

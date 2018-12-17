@@ -17,12 +17,16 @@ import de.tudarmstadt.informatik.ukp.athenakp.crawler.SupportedConferences;
 import de.tudarmstadt.informatik.ukp.athenakp.database.access.ConferenceCommonAccess;
 import de.tudarmstadt.informatik.ukp.athenakp.database.access.EventCommonAccess;
 import de.tudarmstadt.informatik.ukp.athenakp.database.access.PaperCommonAccess;
+import de.tudarmstadt.informatik.ukp.athenakp.database.access.WorkshopCommonAccess;
 import de.tudarmstadt.informatik.ukp.athenakp.database.hibernate.ConferenceHibernateAccess;
 import de.tudarmstadt.informatik.ukp.athenakp.database.hibernate.EventHibernateAccess;
 import de.tudarmstadt.informatik.ukp.athenakp.database.hibernate.PaperHibernateAccess;
+import de.tudarmstadt.informatik.ukp.athenakp.database.hibernate.WorkshopHibernateAccess;
 import de.tudarmstadt.informatik.ukp.athenakp.database.models.Conference;
 import de.tudarmstadt.informatik.ukp.athenakp.database.models.Event;
 import de.tudarmstadt.informatik.ukp.athenakp.database.models.Paper;
+import de.tudarmstadt.informatik.ukp.athenakp.database.models.ScheduleEntry;
+import de.tudarmstadt.informatik.ukp.athenakp.database.models.Workshop;
 
 
 @SpringBootApplication
@@ -126,12 +130,16 @@ public class ParsedDataInserter {
 	 */
 	private void acl2018StoreEventInformation() {
 		EventCommonAccess eventCommonAccess = new EventHibernateAccess();
+		WorkshopCommonAccess workshopCommonAccess = new WorkshopHibernateAccess();
 
 		try {
-			ArrayList<Event> events = acl18WebParser.getSchedule();
+			ArrayList<ScheduleEntry> entries = acl18WebParser.getSchedule();
 
-			for(Event event : events) {
-				eventCommonAccess.add(event);
+			for(ScheduleEntry entry : entries) {
+				if(entry instanceof Event)
+					eventCommonAccess.add((Event)entry);
+				else if(entry instanceof Workshop)
+					workshopCommonAccess.add((Workshop)entry);
 			}
 
 		}

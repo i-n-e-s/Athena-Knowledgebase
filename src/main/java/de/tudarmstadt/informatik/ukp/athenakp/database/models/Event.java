@@ -20,7 +20,7 @@ import org.hibernate.annotations.GenericGenerator;
 
 @Entity
 @Table(name="events")
-public class Event {
+public class Event implements ScheduleEntry{
 	/*Unique id*/
 	@Id
 	@GeneratedValue(generator="increment")
@@ -266,7 +266,7 @@ public class Event {
 
 	/**
 	 * Adds a session to this event's session list
-	 * @param s The sessin to add
+	 * @param s The session to add
 	 */
 	public void addSession(Session s) {
 		sessions.add(s);

@@ -5,8 +5,8 @@ import java.util.ArrayList;
 
 import de.tudarmstadt.informatik.ukp.athenakp.database.models.Author;
 import de.tudarmstadt.informatik.ukp.athenakp.database.models.Conference;
-import de.tudarmstadt.informatik.ukp.athenakp.database.models.Event;
 import de.tudarmstadt.informatik.ukp.athenakp.database.models.Paper;
+import de.tudarmstadt.informatik.ukp.athenakp.database.models.ScheduleEntry;
 
 /**
  *
@@ -54,7 +54,7 @@ public class CrawlerFacade extends AbstractCrawler{
 	}
 
 	@Override
-	public ArrayList<Event> getSchedule() throws IOException {
+	public ArrayList<ScheduleEntry> getSchedule() throws IOException {
 		return crawler.getSchedule();
 	}
 }

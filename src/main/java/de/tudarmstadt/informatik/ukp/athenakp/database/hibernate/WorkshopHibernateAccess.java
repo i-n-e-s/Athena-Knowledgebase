@@ -8,60 +8,49 @@ import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 
-import de.tudarmstadt.informatik.ukp.athenakp.database.access.EventCommonAccess;
-import de.tudarmstadt.informatik.ukp.athenakp.database.models.Event;
-import de.tudarmstadt.informatik.ukp.athenakp.database.models.EventCategory;
+import de.tudarmstadt.informatik.ukp.athenakp.database.access.WorkshopCommonAccess;
+import de.tudarmstadt.informatik.ukp.athenakp.database.models.Workshop;
 
 /**
  * @author Daniel Lehmann
  */
-public class EventHibernateAccess implements EventCommonAccess {
+public class WorkshopHibernateAccess implements WorkshopCommonAccess {
 	@Override
-	public List<Event> getById(Long id) {
-		return getBy("eventID", id);
+	public List<Workshop> getById(Long id) {
+		return getBy("id", id);
 	}
 
 	@Override
-	public List<Event> getByConference(String conference) {
+	public List<Workshop> getByConference(String conference) {
 		return getBy("conference", conference);
 	}
 
 	@Override
-	public List<Event> getByDate(Integer year, Integer month, Integer day) {
+	public List<Workshop> getByDate(Integer year, Integer month, Integer day) {
 		LocalDate localDate = LocalDate.of(year, month, day);
 		return getBy("date", localDate);
 	}
 
 	@Override
-	public List<Event> getByStartTime(Integer hour, Integer minute) {
+	public List<Workshop> getByStartTime(Integer hour, Integer minute) {
 		LocalTime localTime = LocalTime.of(hour, minute);
 		return getBy("begin", localTime);
 	}
 
 	@Override
-	public List<Event> getByEndTime(Integer hour, Integer minute) {
+	public List<Workshop> getByEndTime(Integer hour, Integer minute) {
 		LocalTime localTime = LocalTime.of(hour, minute);
 		return getBy("end", localTime);
 	}
 
 	@Override
-	public List<Event> getByPlace(String place) {
-		return getBy("place", place);
-	}
-
-	@Override
-	public List<Event> getByTitle(String title) {
+	public List<Workshop> getByTitle(String title) {
 		return getBy("title", title);
 	}
 
 	@Override
-	public List<Event> getByDescription(String description) {
+	public List<Workshop> getByDescription(String description) {
 		return getBy("description", description);
-	}
-
-	@Override
-	public List<Event> getByCategory(EventCategory category) {
-		return getBy("category", category);
 	}
 
 	/**
@@ -70,10 +59,10 @@ public class EventHibernateAccess implements EventCommonAccess {
 	 * @param value The value to restrict the selection to
 	 * @return A List of all persons with the given restriction
 	 */
-	private List<Event> getBy(String name, Object value) {
+	private List<Workshop> getBy(String name, Object value) {
 		Session session = HibernateUtils.getSessionFactory().openSession();
-		Criteria criteria = session.createCriteria(Event.class);
-		List<Event> result;
+		Criteria criteria = session.createCriteria(Workshop.class);
+		List<Workshop> result;
 
 		criteria.add(Restrictions.eq(name, value));
 		result = criteria.list();
@@ -82,7 +71,7 @@ public class EventHibernateAccess implements EventCommonAccess {
 	}
 
 	@Override
-	public void add(Event data) {
+	public void add(Workshop data) {
 		Session session = HibernateUtils.getSessionFactory().openSession();
 
 		session.beginTransaction();
@@ -92,7 +81,7 @@ public class EventHibernateAccess implements EventCommonAccess {
 	}
 
 	@Override
-	public void update(Event data) {
+	public void update(Workshop data) {
 		Session session = HibernateUtils.getSessionFactory().openSession();
 
 		session.beginTransaction();
@@ -102,7 +91,7 @@ public class EventHibernateAccess implements EventCommonAccess {
 	}
 
 	@Override
-	public void delete(Event data) {
+	public void delete(Workshop data) {
 		Session session = HibernateUtils.getSessionFactory().openSession();
 
 		session.beginTransaction();
@@ -112,9 +101,9 @@ public class EventHibernateAccess implements EventCommonAccess {
 	}
 
 	@Override
-	public List<Event> get() {
+	public List<Workshop> get() {
 		Session session = HibernateUtils.getSessionFactory().openSession();
-		List<Event> result = session.createCriteria(Event.class).list();
+		List<Workshop> result = session.createCriteria(Workshop.class).list();
 
 		session.close();
 		return result;
