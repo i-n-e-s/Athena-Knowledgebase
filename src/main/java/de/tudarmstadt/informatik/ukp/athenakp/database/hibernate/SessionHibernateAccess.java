@@ -14,7 +14,7 @@ import de.tudarmstadt.informatik.ukp.athenakp.database.models.Session;
 public class SessionHibernateAccess implements SessionCommonAccess {
 	@Override
 	public List<Session> getById(Long id) {
-		return getBy("id", id);
+		return getBy("sessionID", id);
 	}
 
 	@Override
