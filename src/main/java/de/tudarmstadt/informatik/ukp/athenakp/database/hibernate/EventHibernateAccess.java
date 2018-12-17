@@ -18,7 +18,7 @@ import de.tudarmstadt.informatik.ukp.athenakp.database.models.EventCategory;
 public class EventHibernateAccess implements EventCommonAccess {
 	@Override
 	public List<Event> getById(Long id) {
-		return getBy("id", id);
+		return getBy("eventID", id);
 	}
 
 	@Override

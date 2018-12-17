@@ -16,7 +16,7 @@ import de.tudarmstadt.informatik.ukp.athenakp.database.models.Subsession;
 public class SubsessionHibernateAccess implements SubsessionCommonAccess {
 	@Override
 	public List<Subsession> getById(Long id) {
-		return getBy("id", id);
+		return getBy("subsessionID", id);
 	}
 
 	@Override
