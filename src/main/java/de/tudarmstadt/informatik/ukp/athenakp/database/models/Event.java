@@ -1,6 +1,6 @@
 package de.tudarmstadt.informatik.ukp.athenakp.database.models;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -24,11 +24,11 @@ public class Event {
 	/*Start time*/
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name="begin_date")
-	private Date begin;
+	private LocalDateTime begin;
 	/*End time*/
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name="end_date")
-	private Date end;
+	private LocalDateTime end;
 	/*Host*/
 	//private Person host;                //TODO Person von Author abstrahieren
 	/* Place where this event happens */
@@ -65,7 +65,7 @@ public class Event {
 	 * Gets the time this event begins
 	 * @return This event's begin time/date
 	 */
-	public Date getBegin() {
+	public LocalDateTime getBegin() {
 		return begin;
 	}
 
@@ -73,7 +73,7 @@ public class Event {
 	 * Sets the time this event begins
 	 * @param begin The time this event begins
 	 */
-	public void setBegin(Date begin) {
+	public void setBegin(LocalDateTime begin) {
 		this.begin = begin;
 	}
 
@@ -81,7 +81,7 @@ public class Event {
 	 * Gets the time this event ends
 	 * @return This event's new end time/date
 	 */
-	public Date getEnd() {
+	public LocalDateTime getEnd() {
 		return end;
 	}
 
@@ -89,7 +89,7 @@ public class Event {
 	 * Sets the time this event ends
 	 * @param end the new time this event ends
 	 */
-	public void setEnd(Date end) {
+	public void setEnd(LocalDateTime end) {
 		this.end = end;
 	}
 
