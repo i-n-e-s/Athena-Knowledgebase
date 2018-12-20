@@ -66,6 +66,7 @@ public class Testdatabase {
 			conferences[i].setStartDate(tmpDate);
 			conferences[i].setEndDate(tmpDate.plusDays(1));
 			conferences[i].setCountry("Testcountry" + i);
+			conferences[i].setCity("Testcity" + i);
 			conferences[i].setAddress("Testadress" + i);
 		}
 
@@ -111,7 +112,7 @@ public class Testdatabase {
 		InstitutionHibernateAccess iha = new InstitutionHibernateAccess();
 		PaperHibernateAccess paha = new PaperHibernateAccess();
 		PersonHibernateAccess peha = new PersonHibernateAccess();
-
+		//TODO add EventHibernateAccess here
 		System.out.println("Start inserting Data");
 		
 		for (Conference c : conferences) cha.add(c);
