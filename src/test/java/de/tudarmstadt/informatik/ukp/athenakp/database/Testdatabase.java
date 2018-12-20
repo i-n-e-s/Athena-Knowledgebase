@@ -8,6 +8,9 @@ import java.util.TimeZone;
 
 import javax.annotation.PostConstruct;
 
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
 import de.tudarmstadt.informatik.ukp.athenakp.database.hibernate.ConferenceHibernateAccess;
 import de.tudarmstadt.informatik.ukp.athenakp.database.hibernate.InstitutionHibernateAccess;
 import de.tudarmstadt.informatik.ukp.athenakp.database.hibernate.PaperHibernateAccess;
@@ -24,6 +27,7 @@ import de.tudarmstadt.informatik.ukp.athenakp.database.models.Paper;
  * @author Jonas Hake
  *
  */
+@SpringBootApplication
 public class Testdatabase {
 
 	private int conferenceQuantity = 2;
@@ -37,11 +41,18 @@ public class Testdatabase {
 		TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
 	}
 	
+	public static void main(String[] args) {
+		SpringApplication.run(Testdatabase.class,"");
+		Testdatabase testdb = new Testdatabase();
+		testdb.createDB();
+	}
+	
 	/**
 	 * Creates a database for testing purposes. The created entries are deterministic based on the given parameters. 
 	 * All fields are set, if some fields should be empty they have to be manually removed. The 
 	 */
-	public void create() {
+	public void createDB() {
+		System.out.println("Start creating Data");
 		Conference conferences[] = new Conference[conferenceQuantity];
 		Institution institutions[] = new Institution[institutionQuantity];
 		Author authors[] = new Author[authorQuantity];
@@ -49,51 +60,51 @@ public class Testdatabase {
 		Event events[] = new Event[eventQuantity];
 
 		for(int i = 0; i< conferences.length;i++) {
-			Conference c = new Conference();
-			c.setName("Conference" + i);
-			LocalDate tmpDate = LocalDate.of(1960 + i, i%12, i%28); 
-			c.setStartDate(tmpDate);
-			c.setEndDate(tmpDate.plusDays(1));
-			c.setCountry("Testcountry" + i);
-			c.setAddress("Testadress" + i);
+			conferences[i] = new Conference();
+			conferences[i].setName("Conference" + i);
+			LocalDate tmpDate = LocalDate.of(1960 + i, (i%12)+1 , (i%28)+1); 
+			conferences[i].setStartDate(tmpDate);
+			conferences[i].setEndDate(tmpDate.plusDays(1));
+			conferences[i].setCountry("Testcountry" + i);
+			conferences[i].setAddress("Testadress" + i);
 		}
 
 		for(int i = 0; i < institutions.length; i++) {
-			Institution in = new Institution();
-			in.setName("Institution" + i);
+			institutions[i] = new Institution();
+			institutions[i].setName("Institution" + i);
 		}
 
 		for(int i = 0; i<authors.length; i++) {
-			Author a = new Author();
+			authors[i] = new Author();
 
-			a.setPrefix("Prefix" + i%2);
-			a.setFullName("Author "+i);
-			a.setBirthdate(LocalDate.of(1900+(i%70 + 30), i%12, i%28));
-			a.setInstitution(institutions[i%11]);//Maybe some Data are not available
+			authors[i].setPrefix("Prefix" + i%2);
+			authors[i].setFullName("Author "+i);
+			authors[i].setBirthdate(LocalDate.of(1900+(i%70 + 30), (i%12)+1 , (i%28)+1));
+			authors[i].setInstitution(institutions[i%institutionQuantity]);//Maybe some Data are not available
 		}
 
 		for(int i = 0; i< papers.length; i++) {
-			Paper p = new Paper();
+			papers[i] = new Paper();
 			HashSet<Author> tmpAuthors = findAuthorsForPaper(authors, i);
 			for (Author a : tmpAuthors) {
-				p.addAuthor(a);
+				papers[i].addAuthor(a);
 			}
-			p.setTopic("Topic" + i%4);
-			p.setTitle("Title" + i);
-			p.setHref("Link.test/" + i);
-			p.setPdfFileSize(i+100);
-			p.setAnthology("Ant" + i);
+			papers[i].setTopic("Topic" + i%4);
+			papers[i].setTitle("Title" + i);
+			papers[i].setHref("Link.test/" + i);
+			papers[i].setPdfFileSize(i+100);
+			papers[i].setAnthology("Ant" + i);
 
 		}
 
 		for (int i = 0; i < events.length; i++) {
-			Event e = new Event();
-			LocalDateTime tmpDateTime= LocalDateTime.of(LocalDate.of(2018, i%12, i%28),LocalTime.of(i%24, i%60)); 
-			e.setBegin(tmpDateTime);
-			e.setEnd(tmpDateTime.plusHours(1));
-			e.setPlace("Place" + i);
-			e.setTitle("EventTitle" + i);
-			e.setShortDescription("Description" + i);
+			events[i] = new Event();
+			LocalDateTime tmpDateTime= LocalDateTime.of(LocalDate.of(2018, (i%12)+1 , (i%28)+1),LocalTime.of(i%24, i%60)); 
+			events[i].setBegin(tmpDateTime);
+			events[i].setEnd(tmpDateTime.plusHours(1));
+			events[i].setPlace("Place" + i);
+			events[i].setTitle("EventTitle" + i);
+			events[i].setShortDescription("Description" + i);
 		}
 
 		ConferenceHibernateAccess cha = new ConferenceHibernateAccess();
@@ -101,10 +112,14 @@ public class Testdatabase {
 		PaperHibernateAccess paha = new PaperHibernateAccess();
 		PersonHibernateAccess peha = new PersonHibernateAccess();
 
+		System.out.println("Start inserting Data");
+		
 		for (Conference c : conferences) cha.add(c);
 		for (Institution i : institutions) iha.add(i);
 		for (Author a : authors) peha.add(a);
 		for (Paper p: papers) paha.add(p);
+		
+		System.out.println("Done inserting Data");
 	}
 
 	/**
