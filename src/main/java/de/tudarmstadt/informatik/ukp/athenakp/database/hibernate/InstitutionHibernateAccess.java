@@ -24,8 +24,8 @@ public class InstitutionHibernateAccess implements InstitutionCommonAccess {
 	}
 
 	@Override
-	public List<Institution> getByPerson(String person) { //TODO: implement
-		return null;
+	public List<Institution> getByPersonID(long person) { //TODO: implement
+		throw new UnsupportedOperationException("Not supported yet.");
 	}
 
 	/**

@@ -31,43 +31,67 @@ public class ConferenceJPAAccess implements ConferenceCommonAccess {
         return result;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<Conference> getByName(String name) {
         return getBy("name", name);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<Conference> getByStartDate(Integer year, Integer month, Integer day) {
         LocalDate localDate = LocalDate.of(year,month,day);
         return getBy("startDate", localDate);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<Conference> getByEndDate(Integer year, Integer month, Integer day) {
         LocalDate localDate = LocalDate.of(year,month,day);
         return getBy("endDate", localDate);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<Conference> getByAuthor(long personID) {
-        return null;
+        throw new UnsupportedOperationException("Not supported yet!");
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<Conference> getByPaper(long paperID) {
-        return null;
+        throw new UnsupportedOperationException("Not supported yet!");
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<Conference> getByCountry(String country) {
         return getBy("country", country);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<Conference> getByCity(String city) {
         return getBy("city", city);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void add(Conference data) {
         EntityManager entityManager = PersistenceManager.getEntityManager();
@@ -78,6 +102,9 @@ public class ConferenceJPAAccess implements ConferenceCommonAccess {
         entityManager.close();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void update(Conference data) {
         EntityManager entityManager = PersistenceManager.getEntityManager();
@@ -88,6 +115,9 @@ public class ConferenceJPAAccess implements ConferenceCommonAccess {
         entityManager.close();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void delete(Conference data) {
         EntityManager entityManager = PersistenceManager.getEntityManager();
@@ -98,6 +128,9 @@ public class ConferenceJPAAccess implements ConferenceCommonAccess {
         entityManager.close();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<Conference> get() {
         EntityManager entityManager = PersistenceManager.getEntityManager();
