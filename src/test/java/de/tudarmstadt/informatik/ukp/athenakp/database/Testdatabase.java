@@ -4,14 +4,17 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.HashSet;
+import java.util.List;
 import java.util.TimeZone;
 
 import javax.annotation.PostConstruct;
 
+import org.hibernate.Session;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import de.tudarmstadt.informatik.ukp.athenakp.database.hibernate.ConferenceHibernateAccess;
+import de.tudarmstadt.informatik.ukp.athenakp.database.hibernate.HibernateUtils;
 import de.tudarmstadt.informatik.ukp.athenakp.database.hibernate.InstitutionHibernateAccess;
 import de.tudarmstadt.informatik.ukp.athenakp.database.hibernate.PaperHibernateAccess;
 import de.tudarmstadt.informatik.ukp.athenakp.database.hibernate.PersonHibernateAccess;
@@ -36,28 +39,64 @@ public class Testdatabase {
 	private int paperQuantity = 50;
 	private int eventQuantity = 20;
 
+	Conference conferences[];
+	Institution institutions[];
+	Author authors[];
+	Paper papers[];
+	Event events[];
+
 	@PostConstruct
 	void started() {
 		TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
 	}
-	
+
 	public static void main(String[] args) {
 		SpringApplication.run(Testdatabase.class,"");
 		Testdatabase testdb = new Testdatabase();
 		testdb.createDB();
 	}
-	
+
 	/**
 	 * Creates a database for testing purposes. The created entries are deterministic based on the given parameters. 
-	 * All fields are set, if some fields should be empty they have to be manually removed. The 
+	 * <b>WARNING:</b> This method deletes the whole database 'athena' and replaces it! If you just want to insert new 
+	 * data use {@link #generateData()} and {@link #insertData()}
 	 */
 	public void createDB() {
-		System.out.println("Start creating Data");
-		Conference conferences[] = new Conference[conferenceQuantity];
-		Institution institutions[] = new Institution[institutionQuantity];
-		Author authors[] = new Author[authorQuantity];
-		Paper papers[] = new Paper[paperQuantity];
-		Event events[] = new Event[eventQuantity];
+		deleteOldData();
+		generateData();
+		insertData();		
+	}
+
+	/**
+	 * Deletes all tables in the athena-database, except hibernate_sequence
+	 */
+	public void deleteOldData() {
+		System.out.println("Start deleting");
+		Session session = HibernateUtils.getSessionFactory().openSession();
+		List<String> list = session.createSQLQuery("SHOW tables").list();
+		session.beginTransaction();
+		for (String tableName : list) {
+			if(!tableName.equals("hibernate_sequence")) {//Needed because hibernate wont work without it
+				session.createSQLQuery(String.format("SET FOREIGN_KEY_CHECKS=0", tableName)).executeUpdate();
+				session.createSQLQuery(String.format("\nDELETE FROM %s \n WHERE 1", tableName)).executeUpdate();
+				session.createSQLQuery(String.format("SET FOREIGN_KEY_CHECKS=1", tableName)).executeUpdate();
+			}
+		}
+		session.getTransaction().commit();
+		session.close();
+		System.out.println("Done deleting");
+	}
+
+	/**
+	 * Generates generic hibernate objects based on set quantities
+	 */
+	public void generateData() {
+		System.out.println("Start creating data");
+		conferences = new Conference[conferenceQuantity];
+		institutions = new Institution[institutionQuantity];
+		authors = new Author[authorQuantity];
+		papers = new Paper[paperQuantity];
+		events = new Event[eventQuantity];
 
 		for(int i = 0; i< conferences.length;i++) {
 			conferences[i] = new Conference();
@@ -77,7 +116,6 @@ public class Testdatabase {
 
 		for(int i = 0; i<authors.length; i++) {
 			authors[i] = new Author();
-
 			authors[i].setPrefix("Prefix" + i%2);
 			authors[i].setFullName("Author "+i);
 			authors[i].setBirthdate(LocalDate.of(1900+(i%70 + 30), (i%12)+1 , (i%28)+1));
@@ -88,6 +126,7 @@ public class Testdatabase {
 			papers[i] = new Paper();
 			HashSet<Author> tmpAuthors = findAuthorsForPaper(authors, i);
 			for (Author a : tmpAuthors) {
+				a.addPaper(papers[i]);
 				papers[i].addAuthor(a);
 			}
 			papers[i].setTopic("Topic" + i%4);
@@ -107,22 +146,32 @@ public class Testdatabase {
 			events[i].setTitle("EventTitle" + i);
 			events[i].setShortDescription("Description" + i);
 		}
+		System.out.println("Done creating data");
+	}
 
+	/**
+	 * insert data object into database. The data have to be generated or set first
+	 */
+	public void insertData() {
+		System.out.println("Start inserting data");
 		ConferenceHibernateAccess cha = new ConferenceHibernateAccess();
 		InstitutionHibernateAccess iha = new InstitutionHibernateAccess();
 		PaperHibernateAccess paha = new PaperHibernateAccess();
 		PersonHibernateAccess peha = new PersonHibernateAccess();
 		//TODO add EventHibernateAccess here
 		System.out.println("Start inserting Data");
-		
+
+		//FIXME multiple Persons and Papers are added into db, presumably because of the multiple Accesses
 		for (Conference c : conferences) cha.add(c);
 		for (Institution i : institutions) iha.add(i);
-		for (Author a : authors) peha.add(a);
-		for (Paper p: papers) paha.add(p);
-		
-		System.out.println("Done inserting Data");
+		for (Author a : authors) {
+			if(!authorInDB(a)) peha.add(a);
+		}
+		for (Paper p: papers) {
+			if(!paperInDB(p)) paha.add(p);
+		}
+		System.out.println("Done inserting data");
 	}
-
 	/**
 	 * Generates a HashSet of Authors, which is deterministic.
 	 * @param authors All authors
@@ -141,6 +190,36 @@ public class Testdatabase {
 	}
 
 	/**
+	 * 
+	 * checks if an author with the same name already exist
+	 * 
+	 * @param a the author, which should be searched in the database
+	 * @return true if an author-entry exist with the same name
+	 */
+	private boolean authorInDB(Author a) {
+		Session session = HibernateUtils.getSessionFactory().openSession();
+		List<String> result = session.createSQLQuery(
+				String.format("\nSELECT fullName FROM person \n WHERE fullName = '%s' \n LIMIT 1", a.getFullName() )).list();
+		session.close();
+		return !result.isEmpty();
+	}
+
+	/**
+	 * 
+	 * checks if an paper with the same title already exist
+	 * 
+	 * @param a the paper, which should be searched in the database
+	 * @return true if an paper-entry exist with the same title
+	 */
+	private boolean paperInDB(Paper p) {
+		Session session = HibernateUtils.getSessionFactory().openSession();
+		List<String> result = session.createSQLQuery(
+				String.format("\nSELECT title FROM paper \n WHERE title = '%s' \n LIMIT 1", p.getTitle() )).list();
+		session.close();
+		return !result.isEmpty();
+	}
+
+	/**
 	 * conferenceQuantity is the number of Conferences, which will be generated
 	 * 
 	 * @return The current ConferenceQuantity
@@ -148,7 +227,7 @@ public class Testdatabase {
 	public int getConferenceQuantity() {
 		return conferenceQuantity;
 	}
-	
+
 	/**
 	 * conferenceQuantity is the number of Conferences, which will be generated
 	 * 
@@ -157,7 +236,7 @@ public class Testdatabase {
 	public void setConferenceQuantity(int conferenceQuantity) {
 		this.conferenceQuantity = conferenceQuantity;
 	}
-	
+
 	/**
 	 * institutionQuantity is the number of Institution, which will be generated
 	 * 
@@ -166,7 +245,7 @@ public class Testdatabase {
 	public int getInstitutionQuantity() {
 		return institutionQuantity;
 	}
-	
+
 	/**
 	 * institutionQuantity is the number of Institution, which will be generated
 	 * 
@@ -175,7 +254,7 @@ public class Testdatabase {
 	public void setInstitutionQuantity(int institutionQuantity) {
 		this.institutionQuantity = institutionQuantity;
 	}
-	
+
 	/**
 	 * authorQuantity is the number of Authors, which will be generated
 	 * 
@@ -184,7 +263,7 @@ public class Testdatabase {
 	public int getAuthorQuantity() {
 		return authorQuantity;
 	}
-	
+
 	/**
 	 * paperQuantity is the number of Papers, which will be generated
 	 * 
@@ -193,7 +272,7 @@ public class Testdatabase {
 	public void setAuthorQuantity(int authorQuantity) {
 		this.authorQuantity = authorQuantity;
 	}
-	
+
 	/**
 	 * paperQuantity is the number of Papers, which will be generated
 	 * 
@@ -202,7 +281,7 @@ public class Testdatabase {
 	public int getPaperQuantity() {
 		return paperQuantity;
 	}
-	
+
 	/**
 	 * paperQuantity is the number of Papers, which will be generated
 	 * 
@@ -211,7 +290,7 @@ public class Testdatabase {
 	public void setPaperQuantity(int paperQuantity) {
 		this.paperQuantity = paperQuantity;
 	}
-	
+
 	/**
 	 * eventQuantity is the number of Events, which will be generated
 	 * 
@@ -220,7 +299,7 @@ public class Testdatabase {
 	public int getEventQuantity() {
 		return eventQuantity;
 	}
-	
+
 	/**
 	 * eventQuantity is the number of Events, which will be generated
 	 * 
