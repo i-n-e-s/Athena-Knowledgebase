@@ -33,11 +33,11 @@ import de.tudarmstadt.informatik.ukp.athenakp.database.models.Paper;
 @SpringBootApplication
 public class Testdatabase {
 
-	private int conferenceQuantity = 2;
-	private int institutionQuantity = 10;
-	private int authorQuantity = 100;
-	private int paperQuantity = 50;
-	private int eventQuantity = 20;
+	private int conferenceQuantity;
+	private int institutionQuantity;
+	private int authorQuantity;
+	private int paperQuantity;
+	private int eventQuantity;
 
 	Conference conferences[];
 	Institution institutions[];
@@ -45,6 +45,10 @@ public class Testdatabase {
 	Paper papers[];
 	Event events[];
 
+	public Testdatabase() {
+		setDefaultParameters();
+	}
+	
 	@PostConstruct
 	void started() {
 		TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
@@ -57,7 +61,19 @@ public class Testdatabase {
 	}
 
 	/**
-	 * Creates a database for testing purposes. The created entries are deterministic based on the given parameters. 
+	 * Reset the Parameters to there default values
+	 */
+	public void setDefaultParameters() {
+		conferenceQuantity = 2;
+		institutionQuantity = 10;
+		authorQuantity = 100;
+		paperQuantity = 50;
+		eventQuantity = 20;
+	}
+	
+	/**
+	 * Creates a database for testing purposes. The created entries are deterministic based on the given parameters.
+	 * The set 
 	 * <b>WARNING:</b> This method deletes the whole database 'athena' and replaces it! If you just want to insert new 
 	 * data use {@link #generateData()} and {@link #insertData()}
 	 */

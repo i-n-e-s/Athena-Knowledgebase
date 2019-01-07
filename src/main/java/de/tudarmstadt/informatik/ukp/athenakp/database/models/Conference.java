@@ -1,19 +1,23 @@
 package de.tudarmstadt.informatik.ukp.athenakp.database.models;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.ManyToMany;
+import javax.persistence.Table;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name="conference")
 public class Conference {
 	/*Name of conference*/
 	@Id
-	@Column(name="name")
+	@Column(name="name")//TODO Wouldn't an auto-generated id  like in paper be better? What if someone misspelled the name?
 	private String name;
 	/*First day of conference no need for the temporal annotation with java.time (indeed this would break it)*/
 	@Column (name="startDate")
