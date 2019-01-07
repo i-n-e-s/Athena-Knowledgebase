@@ -17,7 +17,7 @@ import org.springframework.boot.SpringApplication;
 import de.tudarmstadt.informatik.ukp.athenakp.database.Testdatabase;
 import de.tudarmstadt.informatik.ukp.athenakp.database.models.Conference;
 
-public class ConferenceHibernateAccessTest {
+public class ConferenceHibernateAccessIntegrationTest {
 	
 	static Testdatabase testdb;
 	static ConferenceHibernateAccess uut;
