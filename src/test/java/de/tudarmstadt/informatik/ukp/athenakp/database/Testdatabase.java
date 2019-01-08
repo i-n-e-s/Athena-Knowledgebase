@@ -149,7 +149,8 @@ public class Testdatabase {
 			papers[i].setTitle("Title" + i);
 			papers[i].setHref("Link.test/" + i);
 			papers[i].setPdfFileSize(i+100);
-			papers[i].setAnthology("Ant" + i);
+			papers[i].setReleaseDate(LocalDate.of(i,i%12+1,i%28+1));
+			papers[i].setAnthology("Ant" + i%25);
 
 		}
 
