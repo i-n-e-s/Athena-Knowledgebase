@@ -135,12 +135,42 @@ public class PaperHibernateAccessIntegrationTest {
 	}
 	
 	@Test
-	public void addAndDeleteTest() {
+	public void addAndDeleteTest() {//Could be wrong, if getByPaperID is broken
 		uut.add(testValue);
 		List<Paper> returnValue = uut.getByPaperID(testValue.getPaperID());
 		if(returnValue.size() == 0) fail("return of existing Database is empty");
-		if(returnValue.size() > 2) fail("more than one return value");
+		if(returnValue.size() > 1) fail("more than one return value");
 		assertEquals(testValue.getTitle(), returnValue.get(0).getTitle());
-		
+		assertEquals(testValue.getReleaseDate(), returnValue.get(0).getReleaseDate());
+		assertEquals(testValue.getTopic(), returnValue.get(0).getTopic());
+		assertEquals(testValue.getHref(), returnValue.get(0).getHref());
+		assertEquals(testValue.getPdfFileSize(), returnValue.get(0).getPdfFileSize());
+		assertEquals(testValue.getAnthology(), returnValue.get(0).getAnthology());
+		for (Author authorReturn : returnValue.get(0).getAuthors()) {
+			boolean containsAuthor = false;
+			for (Author authorTestVal : testValue.getAuthors()) {
+				if(authorTestVal.getFullName().equals(authorReturn.getFullName()) 
+						&& containsAuthor) fail("duplicate author entry in return");
+				if(authorTestVal.getFullName().equals(authorReturn.getFullName())) 
+					containsAuthor = true; 
+			}
+			assertTrue(containsAuthor);
+		}
+		uut.delete(testValue);
+		assertTrue(uut.getByPaperID(testValue.getPaperID()).size() == 0);
+		testDB.createDB();//If delete is broken don't pollute DB
 	}
+	
+	@Test
+	public void updateTest() {
+		uut.add(testValue);
+		testValue.setTitle("UpdatedTitle");
+		uut.update(testValue);
+		List<Paper> returnValues = uut.getByPaperID(testValue.getPaperID());
+		if(returnValues.size() == 0) fail("return is empty");
+		if(returnValues.size() > 1) fail("more than one return value");
+		assertEquals(testValue.getPaperID(), returnValues.get(0).getPaperID());
+		testDB.createDB();//Don't pollute the Database
+	}
+	
 }
