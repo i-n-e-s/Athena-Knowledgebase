@@ -169,7 +169,7 @@ public class PaperHibernateAccessIntegrationTest {
 		List<Paper> returnValues = uut.getByPaperID(testValue.getPaperID());
 		if(returnValues.size() == 0) fail("return is empty");
 		if(returnValues.size() > 1) fail("more than one return value");
-		assertEquals(testValue.getPaperID(), returnValues.get(0).getPaperID());
+		assertEquals("UpdatedTitle", returnValues.get(0).getTitle());
 		testDB.createDB();//Don't pollute the Database
 	}
 	
