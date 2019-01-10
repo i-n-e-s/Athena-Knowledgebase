@@ -1,0 +1,51 @@
+Beginn: 11:00
+Ende :	12:56
+QS-Feedback erörtern
+
+Erstes QS-Ziel
+	Prozess und Schreiben von 1-2 Leuten seperat
+	Integrationstests? Korrekte Daten In and Out	"Mockito"
+	Wie belegen - gibt es automatisierte Tools
+	Einigung über Fälle, die geprüft werden müssen:
+		e.g. invalide Inputs 
+		zweimal der gleiche Primary Key
+	Das dann als Checklist
+	
+	Jonas schaut nach Belegung für 3NF
+
+Zweites QS-Ziel
+	Codequalität
+		Klassenvariablennamen
+		Variablennamen
+		Code-Review
+		Dokumentation
+			Ausführlichkeit - wie weit muss es 
+			umschrieben sein, sind alle constraints der Variablen gegeben, e.g. localDate - keine negativen Daten
+			
+			sind alle throws gesetzt?
+			Codeduplikate vermeiden, auslagern
+			Rückgabetypen in ReadMe -z.B. LocalDate statt Date
+
+		Einzelner Entry-Point statt mehrere
+		
+		Formatter einigen
+		In-Doc JavaCode - mit Rechtfertigung für triviale Kommentare in QS Dokument
+		
+		Es wurde sich auf die englische Sprache als Kommentarsprache geeeinigt - Außer Tristan schreit laut auf
+		Rechtschreibung auch auf die Checklist
+		
+		Im Codereview: Faustregel - kann man einen langen Codeblock auch in eine Hilfsmethode auslagern - "länger als 40 Zeilen"
+			Begründung wenn länger
+		private/public/package-private - Checklist
+		
+		gitdif oder Gesamtheit betrachten
+		Reviewer betrachtet die ganze Klasse und Entwickler ist für das Einhalten der Standards in der kompletten Klasse die er 
+		verändert hat verantwortlich
+
+		travis mit einem Formatter aufsetzen - er überprüft
+		
+		You touch it, you own it - anpassen an aktuelle Standards
+
+		ChecklistMenschen = Jonas + Julian
+Montag:
+	Zusammenführen der Branches - CodeReview
