@@ -23,7 +23,6 @@ import de.tudarmstadt.informatik.ukp.athenakp.database.models.Paper;
 import de.tudarmstadt.informatik.ukp.athenakp.database.models.ScheduleEntry;
 import de.tudarmstadt.informatik.ukp.athenakp.database.models.Session;
 import de.tudarmstadt.informatik.ukp.athenakp.database.models.Subsession;
-import de.tudarmstadt.informatik.ukp.athenakp.database.models.Workshop;
 
 /**
  * A class, which holds the capability to return a List of all authors, which
@@ -37,7 +36,6 @@ class ACL18WebParser extends AbstractCrawler{
 	private String startURLPaper;
 	private String schedulePage = "https://acl2018.org/programme/schedule/";
 	private String aboutPage = "https://acl2018.org/";
-	private String workshopPage = "https://acl2018.org/workshops/";
 
 	/**
 	 * Only parses in the given year range. If only one year is needed, use the same input for both
@@ -332,7 +330,7 @@ class ACL18WebParser extends AbstractCrawler{
 		Future<ArrayList<ScheduleEntry>> f2 = executor.submit(() -> parseOtherDays(days.get(1), new ArrayList<ScheduleEntry>()));
 		Future<ArrayList<ScheduleEntry>> f3 = executor.submit(() -> parseOtherDays(days.get(2), new ArrayList<ScheduleEntry>()));
 		Future<ArrayList<ScheduleEntry>> f4 = executor.submit(() -> parseOtherDays(days.get(3), new ArrayList<ScheduleEntry>()));
-		Future<ArrayList<ScheduleEntry>> f5 = executor.submit(() -> parseWorkshops(new ArrayList<ScheduleEntry>()));
+		Future<ArrayList<ScheduleEntry>> f5 = executor.submit(ACL18WorkshopParser::parseWorkshops);
 		System.out.println("Waiting for thread results...");
 
 		try {
@@ -409,113 +407,6 @@ class ACL18WebParser extends AbstractCrawler{
 				addPosterSessionInfo(tr.get(++i).select(".poster-sub-session"), event);
 
 			result.add(event);
-		}
-
-		return result;
-	}
-
-	//TODO: Some workshops have a parseable schedule, which would result in each workshop consisting of events again, which seems weird from a database point of view. How to counteract this?
-	// 		Currently workshop schedules are not saved because of this. The events do also not contain the lunch break, as each workshop seems to do them slightly differently.
-	//		It took quite a bit of experimenting and my time to realize that this issue is not easily solvable and better be discussed in the group.
-	/**
-	 * Parses ACL 2018's workshop schedule.
-	 * Some of this is hardcoded because why not
-	 * @param result The resulting arraylist with the complete workshop data
-	 */
-	private ArrayList<ScheduleEntry> parseWorkshops(ArrayList<ScheduleEntry> result) {
-		try {
-			Document doc = Jsoup.connect(workshopPage).get();
-			Elements content = doc.select(".post-content");
-			Elements days = content.select("ul");
-
-			for(int i = 0; i < days.size(); i++) {
-				Element day = days.get(i);
-				Elements workshops = day.select("li");
-
-				for(Element workshopEl : workshops) {
-					Workshop workshop = new Workshop();
-					String[] dayMonth = content.select("h4").get(i).text().split(" ", 2)[1].split(" ");
-					String[] complTitleRoom = workshopEl.text().split(": ");
-					String link = workshopEl.selectFirst("a").attr("href");
-					String[] titleAbbr = complTitleRoom[0].split("\\(");
-
-					workshop.setConference("ACL 2018");
-					workshop.setDate(LocalDate.of(2018, CrawlerToolset.getMonthIndex(dayMonth[1]), Integer.parseInt(dayMonth[0])));
-					workshop.setBegin(LocalTime.of(9, 0));
-					workshop.setEnd(LocalTime.of(17, 0)); //assume 5pm, because the schedule table is not 100% proportional
-					workshop.setTitle(titleAbbr[0].trim());
-					workshop.setPlace(complTitleRoom[1]);
-					workshop.setAbbreviation(titleAbbr[1].replace(")", "").trim());
-
-					//not every workshop has a schedule and each one has a different layout - this switch is there to select them
-					switch(workshop.getAbbreviation()) {
-						case "BioNLP":
-							Elements rows;
-
-							doc = Jsoup.connect(link).get();
-							rows = doc.select("table > tbody > tr");
-
-							for(int row = 1; row < rows.size(); row++) {
-								Elements currentRow = rows.get(row).select("td");
-								Event event = new Event();
-								String[] eventTime = currentRow.get(0).text().split("–"); //NOT A HYPHEN!!! IT'S AN 'EN DASH'
-								String[] eventBegin = eventTime[0].split(":");
-								String[] eventEnd = eventTime[1].split(":");
-
-								event.setPlace(workshop.getPlace());
-
-								if(row + 1 < rows.size() && !currentRow.select("b").isEmpty()) {
-									boolean decrease = false;
-									Elements nextRow = rows.get(++row).select("td");
-									Session session = new Session();
-
-									while(row < rows.size() && nextRow.select("b").isEmpty()) {
-										Subsession subsession = new Subsession();
-										int idx = 0;
-
-										if(nextRow.size() > 1) { //not a poster session
-											String[] sessionTime = nextRow.get(idx++).text().split("–"); //NOT A HYPHEN!!! IT'S AN 'EN DASH'
-											String[] sessionBegin = sessionTime[0].split(":");
-											String[] sessionEnd = sessionTime[1].split(":");
-
-											subsession.setBegin(LocalTime.of(Integer.parseInt(sessionBegin[0]), Integer.parseInt(sessionBegin[1])));
-											subsession.setEnd(LocalTime.of(Integer.parseInt(sessionEnd[0]), Integer.parseInt(sessionEnd[1])));
-										}
-
-										String title = nextRow.get(idx).select("i").text();
-										String descr = nextRow.get(idx).html().split("<br>")[1]; //the authors/talkers
-
-										session.setTitle(title);
-										session.setDescription(descr);
-										session.setPlace(event.getPlace());
-										session.addSubsession(subsession);
-										row++;
-										decrease = true;
-									}
-
-									event.addSession(session);
-
-									if(decrease) //only decrease if the while loop executed at least once
-										row--; //row was incremented in previous while iteration, but now nextRow is bold again, so the for loop will continue (and increment again, skipping this row which is not wanted)
-								}
-
-								event.setBegin(LocalTime.of(Integer.parseInt(eventBegin[0]), Integer.parseInt(eventBegin[1])));
-								event.setEnd(LocalTime.of(Integer.parseInt(eventEnd[0]), Integer.parseInt(eventEnd[1])));
-								event.setTitle(currentRow.get(1).text());
-								event.setDate(workshop.getDate());
-								event.setConference(workshop.getConference());
-								event.setCategory(chooseEventCategory(event.getTitle().toLowerCase()));
-							}
-
-							break;
-					}
-
-					result.add(workshop);
-				}
-			}
-		}
-		catch(IOException e) {
-			e.printStackTrace();
 		}
 
 		return result;
