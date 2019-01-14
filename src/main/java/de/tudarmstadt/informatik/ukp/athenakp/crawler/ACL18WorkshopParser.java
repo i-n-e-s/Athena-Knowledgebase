@@ -22,9 +22,6 @@ import de.tudarmstadt.informatik.ukp.athenakp.database.models.Workshop;
 public class ACL18WorkshopParser {
 	private static final String workshopPage = "https://acl2018.org/workshops/";
 
-	//TODO: Some workshops have a parseable schedule, which would result in each workshop consisting of events again, which seems weird from a database point of view. How to counteract this?
-	// 		Currently workshop schedules are not saved because of this. The events do also not contain the lunch break, as each workshop seems to do them slightly differently.
-	//		It took quite a bit of experimenting and my time to realize that this issue is not easily solvable and better be discussed in the group.
 	/**
 	 * Parses ACL 2018's workshop schedule.
 	 * Some of this is hardcoded because why not
@@ -88,6 +85,7 @@ public class ACL18WorkshopParser {
 	 * @param doc The document containing the schedule
 	 * @param workshop The workshop instance to add the schedule to
 	 */
+	//the method can't be written more concise because it parses one single workshop's schedule which can't be broken up in multiple parts
 	private static void parseMSR(Document doc, Workshop workshop) {
 		Elements els = doc.select("#program_table > tbody > tr");
 		Event previousEvent = null;
@@ -167,6 +165,7 @@ public class ACL18WorkshopParser {
 	 * @param doc The document containing the schedule
 	 * @param workshop The workshop instance to add the schedule to
 	 */
+	//the method can't be written more concise because it parses one single workshop's schedule which can't be broken up in multiple parts
 	private static void parseMRQA(Document doc, Workshop workshop) {
 		Elements blog = doc.selectFirst(".blog-main").children();
 		boolean programFound = false;
@@ -248,6 +247,7 @@ public class ACL18WorkshopParser {
 	 * @param doc The document containing the schedule
 	 * @param workshop The workshop instance to add the schedule to
 	 */
+	//the method can't be written more concise because it parses one single workshop's schedule which can't be broken up in multiple parts
 	private static void parseRELNLP(Document doc, Workshop workshop) {
 		Elements els = doc.select(".tyJCtd").get(1).children();
 		boolean programFound = false;
@@ -287,8 +287,7 @@ public class ACL18WorkshopParser {
 			}
 
 			Event event = new Event();
-			//TODO: this time extraction code is used often, perhaps use a util method returning two local times?
-			//		but there is a lot of variation, so unsure how feasible it would be
+			//this time extraction code is used often, but there is a lot of variation so no util method
 			String[] time = el.html().split("strong>")[1].split("<")[0].trim().split("--");
 			String[] begin = time[0].split(":");
 			String[] end = time[1].split(":");
@@ -317,6 +316,7 @@ public class ACL18WorkshopParser {
 	 * @param doc The document containing the schedule
 	 * @param workshop The workshop instance to add the schedule to
 	 */
+	//the method can't be written more concise because it parses one single workshop's schedule which can't be broken up in multiple parts
 	private static void parseECONLP(Document doc, Workshop workshop) {
 		Elements els = doc.selectFirst(".wrapper").children().get(2).children();
 		boolean programFound = false;
@@ -427,6 +427,7 @@ public class ACL18WorkshopParser {
 	 * @param doc The document containing the schedule
 	 * @param workshop The workshop instance to add the schedule to
 	 */
+	//the method can't be written more concise because it parses one single workshop's schedule which can't be broken up in multiple parts
 	private static void parseSocialNLP(Document doc, Workshop workshop) {
 		Elements els = doc.selectFirst("#sites-canvas-main-content > table > tbody > tr > td > div > div > table:nth-child(37) > tbody").children();
 
@@ -504,6 +505,7 @@ public class ACL18WorkshopParser {
 	 * @param doc The document containing the schedule
 	 * @param workshop The workshop instance to add the schedule to
 	 */
+	//the method can't be written more concise because it parses one single workshop's schedule which can't be broken up in multiple parts
 	private static void parseNLPOSS(Document doc, Workshop workshop) {
 		Elements els = doc.selectFirst("#program").select("p");
 		Event event = new Event();
