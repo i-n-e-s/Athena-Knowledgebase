@@ -1,5 +1,5 @@
 Beginn: 14:00
-Ende:	
+Ende:	16:00
 
 Programm:
 	Wie gehen wir mit Bugs um, die erst später erscheinen?
