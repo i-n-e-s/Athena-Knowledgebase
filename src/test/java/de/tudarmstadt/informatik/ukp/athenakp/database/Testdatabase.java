@@ -48,7 +48,7 @@ public class Testdatabase {
 	public Testdatabase() {
 		setDefaultParameters();
 	}
-	
+
 	@PostConstruct
 	void started() {
 		TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
@@ -70,7 +70,7 @@ public class Testdatabase {
 		paperQuantity = 50;
 		eventQuantity = 20;
 	}
-	
+
 	/**
 	 * Creates a database for testing purposes. The created entries are deterministic based on the given parameters.
 	 * The set 
@@ -107,6 +107,7 @@ public class Testdatabase {
 	 * Generates generic hibernate objects based on set quantities
 	 */
 	public void generateData() {
+		//Need to be one method, because data is linked
 		System.out.println("Start creating data");
 		conferences = new Conference[conferenceQuantity];
 		institutions = new Institution[institutionQuantity];
@@ -324,5 +325,95 @@ public class Testdatabase {
 	 */
 	public void setEventQuantity(int eventQuantity) {
 		this.eventQuantity = eventQuantity;
+	}
+
+	/**
+	 * Returns the {@link Conference conferences}, which will be added to the conference
+	 * 
+	 * @return {@link Conference conferences}, which will be added to the Database
+	 */
+	public Conference[] getConferences() {
+		return conferences;
+	}
+
+	/**
+	 * Set the {@link Conference conferences}, which will be added to the Database, when {@link #insertData()} is executed}
+	 * 
+	 * @param Conferences The {@link Conference conferences}, which will be added
+	 */
+	public void setConferences(Conference[] conferences) {
+		this.conferences = conferences;
+	}
+
+	/**
+	 * Returns the {@link Institution institutions}, which will be added to the database
+	 * 
+	 * @return {@link Institution institutions}, which were originally/will be added to the Database
+	 */
+	public Institution[] getInstitutions() {
+		return institutions;
+	}
+
+	/**
+	 * Set the {@link Institution institutions}, which will be added to the Database, when {@link #insertData()} is executed}
+	 * 
+	 * @param Institutions The {@link Institution institutions}, which will be added
+	 */
+	public void setInstitutions(Institution[] institutions) {
+		this.institutions = institutions;
+	}
+
+	/**
+	 * Returns the {@link Author authors}, which will be added to the database
+	 * 
+	 * @return {@link Author authors}, which were originally/will be added to the database
+	 */
+	public Author[] getAuthors() {
+		return authors;
+	}
+
+	/**
+	 * Set the {@link Author authors}, which will be added to the Database, when {@link #insertData()} is executed}
+	 * 
+	 * @param authors The {@link Author authors}, which will be added
+	 */
+	public void setAuthors(Author[] authors) {
+		this.authors = authors;
+	}
+
+	/**
+	 * Returns the {@link Paper papers}, which will be added to the database
+	 * 
+	 * @return {@link Paper papers}, which were originally/will be added to the database
+	 */
+	public Paper[] getPapers() {
+		return papers;
+	}
+
+	/**
+	 * Set the {@link Paper papers}, which will be added to the Database, when {@link #insertData()} is executed}
+	 * 
+	 * @param papers The {@link Paper papers}, which will be added
+	 */
+	public void setPapers(Paper[] papers) {
+		this.papers = papers;
+	}
+
+	/**
+	 * Returns the {@link Event Events}, which will be added to the database
+	 * 
+	 * @return {@link Event Events}, which were originally/will be added to the Database
+	 */
+	public Event[] getEvents() {
+		return events;
+	}
+
+	/**
+	 * Set the {@link Event events}, which will be added to the Database, when {@link #insertData()} is executed}
+	 * 
+	 * @param events The {@link Event events}, which will be added
+	 */
+	public void setEvents(Event[] events) {
+		this.events = events;
 	}
 }
