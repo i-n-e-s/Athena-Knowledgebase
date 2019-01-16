@@ -1,0 +1,81 @@
+Beginn: 9:00
+Ende: gegen 11:30
+
+public disclaimer: Sollte Thomas unglücklich sein, würde er es sich anmerken lassen: Noch scheint alles gut zu sein
+
+
+Arbeitgebertreffen (Mit Thomas und Clemens):
+Präsentation des Arbeitsfortschrittes
+
+
+Problem: Workshop-Schedule wurden noch nicht gespeichtert - jetzt fixed: Daniel erklärt das Modell
+		Begriffsklärung Workshops - Workshopevents
+		Daniel zeigt betreffenden Code
+
+
+Problem: Semanticscholar - zu viele Anfragen, eine Anfrage pro Paper pro Autor: Philipp erklärt die Lösung
+		Anfrage nur noch max = Anzahl der Autoren, anstatt Anzahl Paper
+		Zugriff nur wenn benötigt
+		Philipp erklärt Vorhergehensweise - 
+
+
+Thomas und andere Gruppe wünscht sich ein Datenbankschema:
+	im Wiki - expliziter Wunsch
+	Außerdem: Wiki besser auf englisch
+
+
+Server scheint zu stehen - sobald Thomas User funktioniert: soon^TM
+
+
+OpenstreetMaps: 
+	Koordinaten - einmalig rausfinden pro Konferenz - Nominatim sparen
+	
+
+Nutzer der Konferenzbots:
+	Besucher.. Wissenschaftler im NLP-Bereich - Prototyp
+
+
+Jonas spricht Wunsch der anderen Gruppe an, dass die API dynamischer wird:
+
+
+
+Ideen von Thomas:
+	Volltext der Paper, falls möglich
+		PDF runterladen, parsen
+	GUI für Optionen: sinnvoll? - wäre dann ein Webinterface: hauptsache leicht zu editieren. Parametisierung möglicherweise schon genug
+
+
+Erinnerungen von Clemens:
+	Vortragstermin 23.01 ----  11:40 muss jeder da sein
+		Überziehungen wird es nicht geben: Länge 7min
+	Es wird erwatet, dass einer pro Gruppe pro Präsentationstermin - im Moodle steht "freuen"
+		wird nicht kontrolliert
+	Lizenz muss klar sein: gehört das auch in den Vortrag?
+	Nutzergruppen, was man ergänzen kann: auf den Punkt bringen - Tool ist gedacht für alle Benutzer, die diese Konferenz besuchen
+		Trotzdem, der eigentliche Benutzer ist eigentlich die andere Gruppe - das FrontEnd
+			Genaue Spezifikationen vermutlich nicht nötig
+
+-----------------
+Aufgaben: 
+	API dynamischer gestalten
+	Wiki/Doku auf englisch
+	Datenbankschema erstellen + Wiki
+	Exploration: PDF-parsing: Julian erkundigt sich - hat dann eine Meinung: Tools & Aufwand
+	Exploration, Überlegung: GUI - Parametisierung
+	Lizenz klären mit Thomas (war es Apache?)
+-----------------
+
+Code-Review Template gezeigt:
+	Clemens findet es gut, zusammen mit Standards als Anhang
+	Schlägt vor, Code Reviews gleich den "Experten" zuzuteilen: formal
+		Sollten Reviews auch im nächsten Sprint stagnieren
+
+
+Next Sprint:
+	API-ändern: SQL-Generator
+		bietet Sprint für varargs? oder einfach postprocessing vom Sprint?
+		
+
+Das klang irrelevant und interessant:
+	DEEP-L (persönliche Notiz)
+
