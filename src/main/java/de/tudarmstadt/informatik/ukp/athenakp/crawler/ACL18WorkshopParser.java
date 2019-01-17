@@ -108,6 +108,7 @@ public class ACL18WorkshopParser {
 			if(previousEvent != null) {
 				previousEvent.setEnd(time);
 				workshop.addEvent(previousEvent);
+				workshop.setEnd(previousEvent.getEnd());
 			}
 
 			if(el.hasClass("program_break")) {
@@ -237,6 +238,7 @@ public class ACL18WorkshopParser {
 					}
 
 					workshop.addEvent(previousEvent);
+					workshop.setEnd(previousEvent.getEnd());
 				}
 			}
 		}
@@ -281,6 +283,7 @@ public class ACL18WorkshopParser {
 					previousEvent.setCategory(EventCategory.SESSION);
 
 				workshop.addEvent(previousEvent);
+				workshop.setEnd(previousEvent.getEnd());
 
 				if(skip)
 					continue;
@@ -368,6 +371,7 @@ public class ACL18WorkshopParser {
 				}
 
 				workshop.addEvent(event);
+				workshop.setEnd(event.getEnd());
 				event = null;
 			}
 		}
@@ -419,6 +423,7 @@ public class ACL18WorkshopParser {
 				event.setCategory(EventCategory.TALK);
 
 			workshop.addEvent(event);
+			workshop.setEnd(event.getEnd());
 		}
 	}
 
@@ -497,6 +502,7 @@ public class ACL18WorkshopParser {
 				event.setCategory(EventCategory.BREAK);
 
 			workshop.addEvent(event);
+			workshop.setEnd(event.getEnd());
 		}
 	}
 
@@ -557,6 +563,7 @@ public class ACL18WorkshopParser {
 				event.setCategory(EventCategory.BREAK);
 
 			workshop.addEvent(event);
+			workshop.setEnd(event.getEnd());
 			event = new Event();
 		}
 	}
