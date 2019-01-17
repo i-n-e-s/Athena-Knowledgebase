@@ -68,7 +68,6 @@ public class ACL18WorkshopParser {
 						case "NLPOSS": parseNLPOSS(Jsoup.connect(wsLink).get(), workshop); break;
 					}
 
-
 					result.add(workshop);
 				}
 			}
@@ -188,12 +187,8 @@ public class ACL18WorkshopParser {
 				if(line.contains("|")) {
 					Event event = new Event();
 					String[] split = line.split("\\|"); //splitting by | only basically gets the char array as a string array
-					String[] time = split[0].trim().split("–"); //NOT A HYPHEN!!! IT'S AN 'EN DASH'
-					String[] begin = time[0].split(":");
-					String[] end = time[1].split(":");
 
-					event.setBegin(LocalTime.of(Integer.parseInt(begin[0]), Integer.parseInt(begin[1])));
-					event.setEnd(LocalTime.of(Integer.parseInt(end[0]), Integer.parseInt(end[1])));
+					setEventBeginEnd(extractBeginEnd(split[0].trim().split("–")), event); //NOT A HYPHEN!!! IT'S AN 'EN DASH'
 					event.setConference(workshop.getConference());
 					event.setPlace(workshop.getPlace());
 					event.setTitle(split[1].trim());
@@ -291,13 +286,9 @@ public class ACL18WorkshopParser {
 
 			Event event = new Event();
 			//this time extraction code is used often, but there is a lot of variation so no util method
-			String[] time = el.html().split("strong>")[1].split("<")[0].trim().split("--");
-			String[] begin = time[0].split(":");
-			String[] end = time[1].split(":");
 			String info = el.html().split("/strong>")[1];
 
-			event.setBegin(LocalTime.of(Integer.parseInt(begin[0]), Integer.parseInt(begin[1])));
-			event.setEnd(LocalTime.of(Integer.parseInt(end[0]), Integer.parseInt(end[1])));
+			setEventBeginEnd(extractBeginEnd(el.html().split("strong>")[1].split("<")[0].trim().split("--")), event);
 			event.setConference(workshop.getConference());
 			event.setPlace(workshop.getPlace());
 
@@ -336,13 +327,8 @@ public class ACL18WorkshopParser {
 				continue;
 
 			if(event == null) {
-				String[] time = el.html().split("–"); //NOT A HYPHEN!!! IT'S AN 'EN DASH'
-				String[] begin = time[0].split(":");
-				String[] end = time[1].split(":");
-
 				event = new Event();
-				event.setBegin(LocalTime.of(Integer.parseInt(begin[0]), Integer.parseInt(begin[1])));
-				event.setEnd(LocalTime.of(Integer.parseInt(end[0]), Integer.parseInt(end[1])));
+				setEventBeginEnd(extractBeginEnd(el.html().split("–")), event); //NOT A HYPHEN!!! IT'S AN 'EN DASH'
 				event.setConference(workshop.getConference());
 				event.setPlace(workshop.getPlace());
 			}
@@ -401,12 +387,9 @@ public class ACL18WorkshopParser {
 			if(time.length < 2) //schedule ends
 				break;
 
-			String[] begin = time[0].split(":");
-			String[] end = time[1].split(":");
 			Event event = new Event();
 
-			event.setBegin(LocalTime.of(Integer.parseInt(begin[0]), Integer.parseInt(begin[1])));
-			event.setEnd(LocalTime.of(Integer.parseInt(end[0]), Integer.parseInt(end[1])));
+			setEventBeginEnd(extractBeginEnd(time), event);
 			event.setConference(workshop.getConference());
 			event.setPlace(workshop.getPlace());
 			event.setTitle(el.html().split("</strong>")[1].replace("<em>", "").replace("</em>", "").replace("&nbsp;", " "));
@@ -443,9 +426,6 @@ public class ACL18WorkshopParser {
 			if(td.size() == 0) //header
 				continue;
 
-			String[] time;
-			String[] begin;
-			String[] end;
 			String[] titleDesc = td.get(1).html().split("<br>");
 			Event event = new Event();
 
@@ -455,11 +435,7 @@ public class ACL18WorkshopParser {
 			if(td.get(0).hasText()) {
 				String[] timeTitle = td.get(0).html().split("<br>");
 
-				time = timeTitle[0].split("-");
-				begin = time[0].split(":");
-				end = time[1].split(":");
-				event.setBegin(LocalTime.of(Integer.parseInt(begin[0]), Integer.parseInt(begin[1])));
-				event.setEnd(LocalTime.of(Integer.parseInt(end[0]), Integer.parseInt(end[1])));
+				setEventBeginEnd(extractBeginEnd(timeTitle[0].split("-")), event);
 
 				if(timeTitle.length > 1)
 					event.setTitle(timeTitle[1]);
@@ -519,18 +495,13 @@ public class ACL18WorkshopParser {
 		for(int i = 0; i < els.size(); i++) {
 			Element el = els.get(i);
 			String[] time = el.html().split("<strong>")[0].split(" - ");
-			String[] begin;
-			String[] end;
 
 			if(time.length < 2) //schedule ends
 				break;
 
 			time[0] = time[0].substring(0, 2) + ":" + time[0].substring(2);
 			time[1] = time[1].substring(0, 2) + ":" + time[1].substring(2, 4); //cut off excess whitespace and &nbsp;s
-			begin = time[0].split(":");
-			end = time[1].split(":");
-			event.setBegin(LocalTime.of(Integer.parseInt(begin[0]), Integer.parseInt(begin[1])));
-			event.setEnd(LocalTime.of(Integer.parseInt(end[0]), Integer.parseInt(end[1])));
+			setEventBeginEnd(extractBeginEnd(time), event);
 			event.setConference(workshop.getConference());
 			event.setPlace(workshop.getPlace());
 			event.setTitle(el.html().split("<strong>")[1].split("</strong>")[0]);
@@ -566,5 +537,30 @@ public class ACL18WorkshopParser {
 			workshop.setEnd(event.getEnd());
 			event = new Event();
 		}
+	}
+
+	/**
+	 * Extracts the {@link LocalTime} from Strings containing the begin (first index) and end (second index) in the format hh:mm
+	 * @param beginEnd The array containing the begin (first index) and end (second index) time in the format hh:mm
+	 * @return A {@link LocalTime} array containing the extracted begin (first index) and end (second index)
+	 */
+	public static final LocalTime[] extractBeginEnd(String[] beginEnd) {
+		String[] begin = beginEnd[0].split(":");
+		String[] end = beginEnd[1].split(":");
+
+		return new LocalTime[] {
+				LocalTime.of(Integer.parseInt(begin[0]), Integer.parseInt(begin[1])),
+				LocalTime.of(Integer.parseInt(end[0]), Integer.parseInt(end[1]))
+		};
+	}
+
+	/**
+	 * Sets the given event's begin and end
+	 * @param beginEnd An {@link LocalTime} array containing the begin (first index) and end (second index) times
+	 * @param event The event to set the begin and end of
+	 */
+	public static final void setEventBeginEnd(LocalTime[] beginEnd, Event event) {
+		event.setBegin(beginEnd[0]);
+		event.setEnd(beginEnd[1]);
 	}
 }
