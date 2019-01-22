@@ -1,7 +1,6 @@
 package de.tudarmstadt.informatik.ukp.athenakp.database.models;
 
-import java.time.LocalDate;
-import java.time.LocalTime;
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -30,15 +29,12 @@ public class Workshop implements ScheduleEntry{
 	/*Name of conference this workshop belongs to*/
 	@Column(name="conference")
 	private String conference;
-	/*The date of this workshop*/
-	@Column(name="date")
-	private LocalDate date;
 	/*Start time*/
 	@Column(name="begin")
-	private LocalTime begin;
+	private LocalDateTime begin;
 	/*End time*/
 	@Column(name="end")
-	private LocalTime end;
+	private LocalDateTime end;
 	/* Place where this workshop happens */
 	@Column(name = "place")
 	private String place;
@@ -90,26 +86,10 @@ public class Workshop implements ScheduleEntry{
 	}
 
 	/**
-	 * Gets the date this workshop happens on
-	 * @return This workshop's date
-	 */
-	public LocalDate getDate() {
-		return date;
-	}
-
-	/**
-	 * Sets the date this workshop happens on
-	 * @param date The date this workshop happens on
-	 */
-	public void setDate(LocalDate date) {
-		this.date = date;
-	}
-
-	/**
 	 * Gets the time this workshop begins
 	 * @return This workshop's begin time
 	 */
-	public LocalTime getBegin() {
+	public LocalDateTime getBegin() {
 		return begin;
 	}
 
@@ -117,7 +97,7 @@ public class Workshop implements ScheduleEntry{
 	 * Sets the time this workshop begins
 	 * @param begin The time this workshop begins
 	 */
-	public void setBegin(LocalTime begin) {
+	public void setBegin(LocalDateTime begin) {
 		this.begin = begin;
 	}
 
@@ -125,7 +105,7 @@ public class Workshop implements ScheduleEntry{
 	 * Gets the time this workshop ends
 	 * @return This workshop's new end time
 	 */
-	public LocalTime getEnd() {
+	public LocalDateTime getEnd() {
 		return end;
 	}
 
@@ -133,7 +113,7 @@ public class Workshop implements ScheduleEntry{
 	 * Sets the time this workshop ends
 	 * @param end the new time this workshop ends
 	 */
-	public void setEnd(LocalTime end) {
+	public void setEnd(LocalDateTime end) {
 		this.end = end;
 	}
 

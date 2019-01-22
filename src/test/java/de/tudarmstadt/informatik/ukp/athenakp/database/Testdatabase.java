@@ -26,7 +26,7 @@ import de.tudarmstadt.informatik.ukp.athenakp.database.models.Paper;
 
 /**
  * A class to create a uniform database for testing purposes
- * 
+ *
  * @author Jonas Hake
  *
  */
@@ -73,14 +73,14 @@ public class Testdatabase {
 
 	/**
 	 * Creates a database for testing purposes. The created entries are deterministic based on the given parameters.
-	 * The set 
-	 * <b>WARNING:</b> This method deletes the whole database 'athena' and replaces it! If you just want to insert new 
+	 * The set
+	 * <b>WARNING:</b> This method deletes the whole database 'athena' and replaces it! If you just want to insert new
 	 * data use {@link #generateData()} and {@link #insertData()}
 	 */
 	public void createDB() {
 		deleteOldData();
 		generateData();
-		insertData();		
+		insertData();
 	}
 
 	/**
@@ -118,7 +118,7 @@ public class Testdatabase {
 		for(int i = 0; i< conferences.length;i++) {
 			conferences[i] = new Conference();
 			conferences[i].setName("Conference" + i);
-			LocalDate tmpDate = LocalDate.of(1960 + i, (i%12)+1 , (i%28)+1); 
+			LocalDate tmpDate = LocalDate.of(1960 + i, (i%12)+1 , (i%28)+1);
 			conferences[i].setStartDate(tmpDate);
 			conferences[i].setEndDate(tmpDate.plusDays(1));
 			conferences[i].setCountry("Testcountry" + i);
@@ -157,12 +157,12 @@ public class Testdatabase {
 
 		for (int i = 0; i < events.length; i++) {
 			events[i] = new Event();
-			LocalDateTime tmpDateTime= LocalDateTime.of(LocalDate.of(2018, (i%12)+1 , (i%28)+1),LocalTime.of(i%24, i%60)); 
+			LocalDateTime tmpDateTime= LocalDateTime.of(LocalDate.of(2018, (i%12)+1 , (i%28)+1),LocalTime.of(i%24, i%60));
 			events[i].setBegin(tmpDateTime);
 			events[i].setEnd(tmpDateTime.plusHours(1));
 			events[i].setPlace("Place" + i);
 			events[i].setTitle("EventTitle" + i);
-			events[i].setShortDescription("Description" + i);
+			events[i].setDescription("Description" + i);
 		}
 		System.out.println("Done creating data");
 	}
@@ -208,9 +208,9 @@ public class Testdatabase {
 	}
 
 	/**
-	 * 
+	 *
 	 * checks if an author with the same name already exist
-	 * 
+	 *
 	 * @param a the author, which should be searched in the database
 	 * @return true if an author-entry exist with the same name
 	 */
@@ -223,9 +223,9 @@ public class Testdatabase {
 	}
 
 	/**
-	 * 
+	 *
 	 * checks if an paper with the same title already exist
-	 * 
+	 *
 	 * @param a the paper, which should be searched in the database
 	 * @return true if an paper-entry exist with the same title
 	 */
@@ -239,7 +239,7 @@ public class Testdatabase {
 
 	/**
 	 * conferenceQuantity is the number of Conferences, which will be generated
-	 * 
+	 *
 	 * @return The current ConferenceQuantity
 	 */
 	public int getConferenceQuantity() {
@@ -248,7 +248,7 @@ public class Testdatabase {
 
 	/**
 	 * conferenceQuantity is the number of Conferences, which will be generated
-	 * 
+	 *
 	 * @param conferenceQuantity The desired ConferenceQuantity
 	 */
 	public void setConferenceQuantity(int conferenceQuantity) {
@@ -257,7 +257,7 @@ public class Testdatabase {
 
 	/**
 	 * institutionQuantity is the number of Institution, which will be generated
-	 * 
+	 *
 	 * @return The current institutionQuantity
 	 */
 	public int getInstitutionQuantity() {
@@ -266,7 +266,7 @@ public class Testdatabase {
 
 	/**
 	 * institutionQuantity is the number of Institution, which will be generated
-	 * 
+	 *
 	 * @param institutionQuantity The desired institutionQuantity
 	 */
 	public void setInstitutionQuantity(int institutionQuantity) {
@@ -275,7 +275,7 @@ public class Testdatabase {
 
 	/**
 	 * authorQuantity is the number of Authors, which will be generated
-	 * 
+	 *
 	 * @return authorQuantity The current authorQuantity
 	 */
 	public int getAuthorQuantity() {
@@ -284,7 +284,7 @@ public class Testdatabase {
 
 	/**
 	 * paperQuantity is the number of Papers, which will be generated
-	 * 
+	 *
 	 * @param authorQuantity The desired paperQuantity
 	 */
 	public void setAuthorQuantity(int authorQuantity) {
@@ -293,7 +293,7 @@ public class Testdatabase {
 
 	/**
 	 * paperQuantity is the number of Papers, which will be generated
-	 * 
+	 *
 	 * @return paperQuantity The current paperQuantity
 	 */
 	public int getPaperQuantity() {
@@ -302,7 +302,7 @@ public class Testdatabase {
 
 	/**
 	 * paperQuantity is the number of Papers, which will be generated
-	 * 
+	 *
 	 * @param paperQuantity The desired paperQuantity
 	 */
 	public void setPaperQuantity(int paperQuantity) {
@@ -311,7 +311,7 @@ public class Testdatabase {
 
 	/**
 	 * eventQuantity is the number of Events, which will be generated
-	 * 
+	 *
 	 * @return The current eventQuantity
 	 */
 	public int getEventQuantity() {
@@ -320,7 +320,7 @@ public class Testdatabase {
 
 	/**
 	 * eventQuantity is the number of Events, which will be generated
-	 * 
+	 *
 	 * @param eventQuantity The desired eventQuantity
 	 */
 	public void setEventQuantity(int eventQuantity) {
@@ -329,7 +329,7 @@ public class Testdatabase {
 
 	/**
 	 * Returns the {@link Conference conferences}, which will be added to the conference
-	 * 
+	 *
 	 * @return {@link Conference conferences}, which will be added to the Database
 	 */
 	public Conference[] getConferences() {
@@ -338,7 +338,7 @@ public class Testdatabase {
 
 	/**
 	 * Set the {@link Conference conferences}, which will be added to the Database, when {@link #insertData()} is executed}
-	 * 
+	 *
 	 * @param Conferences The {@link Conference conferences}, which will be added
 	 */
 	public void setConferences(Conference[] conferences) {
@@ -347,7 +347,7 @@ public class Testdatabase {
 
 	/**
 	 * Returns the {@link Institution institutions}, which will be added to the database
-	 * 
+	 *
 	 * @return {@link Institution institutions}, which were originally/will be added to the Database
 	 */
 	public Institution[] getInstitutions() {
@@ -356,7 +356,7 @@ public class Testdatabase {
 
 	/**
 	 * Set the {@link Institution institutions}, which will be added to the Database, when {@link #insertData()} is executed}
-	 * 
+	 *
 	 * @param Institutions The {@link Institution institutions}, which will be added
 	 */
 	public void setInstitutions(Institution[] institutions) {
@@ -365,7 +365,7 @@ public class Testdatabase {
 
 	/**
 	 * Returns the {@link Author authors}, which will be added to the database
-	 * 
+	 *
 	 * @return {@link Author authors}, which were originally/will be added to the database
 	 */
 	public Author[] getAuthors() {
@@ -374,7 +374,7 @@ public class Testdatabase {
 
 	/**
 	 * Set the {@link Author authors}, which will be added to the Database, when {@link #insertData()} is executed}
-	 * 
+	 *
 	 * @param authors The {@link Author authors}, which will be added
 	 */
 	public void setAuthors(Author[] authors) {
@@ -383,7 +383,7 @@ public class Testdatabase {
 
 	/**
 	 * Returns the {@link Paper papers}, which will be added to the database
-	 * 
+	 *
 	 * @return {@link Paper papers}, which were originally/will be added to the database
 	 */
 	public Paper[] getPapers() {
@@ -392,7 +392,7 @@ public class Testdatabase {
 
 	/**
 	 * Set the {@link Paper papers}, which will be added to the Database, when {@link #insertData()} is executed}
-	 * 
+	 *
 	 * @param papers The {@link Paper papers}, which will be added
 	 */
 	public void setPapers(Paper[] papers) {
@@ -401,7 +401,7 @@ public class Testdatabase {
 
 	/**
 	 * Returns the {@link Event Events}, which will be added to the database
-	 * 
+	 *
 	 * @return {@link Event Events}, which were originally/will be added to the Database
 	 */
 	public Event[] getEvents() {
@@ -410,7 +410,7 @@ public class Testdatabase {
 
 	/**
 	 * Set the {@link Event events}, which will be added to the Database, when {@link #insertData()} is executed}
-	 * 
+	 *
 	 * @param events The {@link Event events}, which will be added
 	 */
 	public void setEvents(Event[] events) {

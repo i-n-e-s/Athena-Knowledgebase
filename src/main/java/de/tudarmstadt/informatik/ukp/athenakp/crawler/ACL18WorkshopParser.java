@@ -2,6 +2,7 @@ package de.tudarmstadt.informatik.ukp.athenakp.crawler;
 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 
@@ -45,11 +46,11 @@ public class ACL18WorkshopParser {
 					String[] complTitleRoom = workshopEl.text().split(": Room");
 					String wsLink = workshopEl.selectFirst("a").attr("href");
 					String[] titleAbbr = complTitleRoom[0].split("\\(");
+					LocalDate date = LocalDate.of(2018, CrawlerToolset.getMonthIndex(dayMonth[1]), Integer.parseInt(dayMonth[0]));
 
 					workshop.setConference("ACL 2018");
-					workshop.setDate(LocalDate.of(2018, CrawlerToolset.getMonthIndex(dayMonth[1]), Integer.parseInt(dayMonth[0])));
-					workshop.setBegin(LocalTime.of(9, 0));
-					workshop.setEnd(LocalTime.of(17, 0)); //assume 5pm, because the schedule table is not 100% proportional
+					workshop.setBegin(LocalDateTime.of(date, LocalTime.of(9, 0)));
+					workshop.setEnd(LocalDateTime.of(date, LocalTime.of(17, 0))); //assume 5pm, because the schedule table is not 100% proportional
 					workshop.setTitle(titleAbbr[0].trim());
 					workshop.setPlace("Room" + complTitleRoom[1]);
 					workshop.setAbbreviation(titleAbbr[1].replace(")", "").trim());
@@ -99,13 +100,12 @@ public class ACL18WorkshopParser {
 				timeSplit[0] = timeSplit[0].replace("h", "");
 
 			time = LocalTime.of(Integer.parseInt(timeSplit[0]), Integer.parseInt(timeSplit[1]));
-			event.setBegin(time);
-			event.setDate(workshop.getDate());
+			event.setBegin(LocalDateTime.of(workshop.getBegin().toLocalDate(), time));
 			event.setConference(workshop.getConference());
 
 			//i'm assuming that the closing event is the end of the workshop, thus it does not get added
 			if(previousEvent != null) {
-				previousEvent.setEnd(time);
+				previousEvent.setEnd(LocalDateTime.of(workshop.getEnd().toLocalDate(), time));
 				workshop.addEvent(previousEvent);
 				workshop.setEnd(previousEvent.getEnd());
 			}
@@ -560,7 +560,7 @@ public class ACL18WorkshopParser {
 	 * @param event The event to set the begin and end of
 	 */
 	public static final void setEventBeginEnd(LocalTime[] beginEnd, Event event) {
-		event.setBegin(beginEnd[0]);
-		event.setEnd(beginEnd[1]);
+		event.setBegin(LocalDateTime.of(event.getBegin().toLocalDate(), beginEnd[0]));
+		event.setEnd(LocalDateTime.of(event.getBegin().toLocalDate(), beginEnd[1]));
 	}
 }

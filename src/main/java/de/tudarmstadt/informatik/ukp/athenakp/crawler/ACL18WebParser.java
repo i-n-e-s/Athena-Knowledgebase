@@ -2,6 +2,7 @@ package de.tudarmstadt.informatik.ukp.athenakp.crawler;
 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -420,7 +421,6 @@ class ACL18WebParser extends AbstractCrawler{
 	 */
 	private void addGeneralEventInfo(Element el, Event event, String[] monthDay) {
 		event.setConference("ACL 2018");
-		event.setDate(LocalDate.of(2018, CrawlerToolset.getMonthIndex(monthDay[0]), Integer.parseInt(monthDay[1])));
 
 		if(el.id().startsWith("session")) {
 			String[] time = el.select(".session-times").text().split("–"); //NOT A HYPHEN!!! IT'S AN 'EN DASH'
@@ -429,12 +429,13 @@ class ACL18WebParser extends AbstractCrawler{
 			String title = el.select(".session-name").text();
 			String desc = el.select(".session-suffix").text();
 			Elements place = el.select(".session-location");
+			LocalDate date = LocalDate.of(2018, CrawlerToolset.getMonthIndex(monthDay[0]), Integer.parseInt(monthDay[1]));
 
 			if(!desc.isEmpty())
 				title = title.replace(desc, "");
 
-			event.setBegin(LocalTime.of(Integer.parseInt(begin[0]), Integer.parseInt(begin[1])));
-			event.setEnd(LocalTime.of(Integer.parseInt(end[0]), Integer.parseInt(end[1])));
+			event.setBegin(LocalDateTime.of(date, LocalTime.of(Integer.parseInt(begin[0]), Integer.parseInt(begin[1]))));
+			event.setEnd(LocalDateTime.of(date, LocalTime.of(Integer.parseInt(end[0]), Integer.parseInt(end[1]))));
 			event.setTitle(title);
 			event.setPlace(place.isEmpty() ? "?" : (place.get(0).text().isEmpty() ? "?" : place.get(0).text()));
 			event.setDescription(desc);
@@ -501,8 +502,8 @@ class ACL18WebParser extends AbstractCrawler{
 				String subDescHref = subTitleEl.select("a").get(2).attr("href"); //let's hope it's always the third :D
 				String subDesc = getDescriptionFromHref(subDescHref, tacl);
 
-				subsession.setBegin(subStart);
-				subsession.setEnd(subEnd);
+				subsession.setBegin(LocalDateTime.of(event.getBegin().toLocalDate(), subStart));
+				subsession.setEnd(LocalDateTime.of(event.getEnd().toLocalDate(), subEnd));
 				subsession.setTitle(subTitle);
 				subsession.setDescription(subDesc);
 				session.addSubsession(subsession);
