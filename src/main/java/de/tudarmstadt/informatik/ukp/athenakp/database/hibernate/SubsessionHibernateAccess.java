@@ -1,6 +1,6 @@
 package de.tudarmstadt.informatik.ukp.athenakp.database.hibernate;
 
-import java.time.LocalTime;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.hibernate.Criteria;
@@ -20,15 +20,15 @@ public class SubsessionHibernateAccess implements SubsessionCommonAccess {
 	}
 
 	@Override
-	public List<Subsession> getByStartTime(Integer hour, Integer minute) {
-		LocalTime localTime = LocalTime.of(hour, minute);
-		return getBy("begin", localTime);
+	public List<Subsession> getByStartTime(Integer year, Integer month, Integer day, Integer hour, Integer minute) {
+		LocalDateTime localDateTime = LocalDateTime.of(year, month, day, hour, minute);
+		return getBy("begin", localDateTime);
 	}
 
 	@Override
-	public List<Subsession> getByEndTime(Integer hour, Integer minute) {
-		LocalTime localTime = LocalTime.of(hour, minute);
-		return getBy("end", localTime);
+	public List<Subsession> getByEndTime(Integer year, Integer month, Integer day, Integer hour, Integer minute) {
+		LocalDateTime localDateTime = LocalDateTime.of(year, month, day, hour, minute);
+		return getBy("end", localDateTime);
 	}
 
 	@Override
