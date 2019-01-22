@@ -1,0 +1,84 @@
+Protokoll: 9:00 - 11:15
+Protokollant: Julian Steitz
+
+Präsentation:
+	4min Vortrag 				- Julian: 
+	8min Team Projektvortrag		- Jonas: Deadline Samstag Abend
+
+Build-Prozess:
+	erforderlich (auch wegen der Präsentation)
+	Wie funktioniert das bei Maven - automatische tests - Nochmal in Folien überprüfen was erforderlich und melden an Jonas
+		Maven/Gradle - bauen: Julian - Deadline zum Scheitern Freitag Abend - Buildprocess Gradle, Maven, Travic etc.
+
+horizontale Länge Code:
+		Wunschlänge:	144 Zeichen Code
+
+	Wunsch nach horizontaler Beschränkung:
+		Daniel möchte Codezeilen nicht arbitär aufsplitten und weigert sich
+			lambda und Strings ok
+			zwei Formatter
+		Julian, Philipp und Jonas sind d'accord
+		Tristan noch nicht abgefragt
+		Alternativ ein formatter? Daniel möchte das persönlich nicht - geht ums Prinzip
+
+
+Jonas merkt an, dass er nicht in Absoluten sprechen möchte - Konfliktpotential
+
+Soll der Crawler Objekte zurückgeben oder nicht?
+stärkere Bindung an Hibernate als Kontra
+Leserlichkeit pro?
+Objekte - oder nicht bei Crawler
+
+	
+Generizität Anmerkung von Philipp: 
+	DOM-Pfade setzen
+	Team: vllt ist ein generischer Crawler nicht flexibel genug
+	
+
+semantic-scholar:
+	Philipp stellt Funktionen vor
+	API: hat auch eine APi zur Suchfunktion "gibt es einen Autor/ ein Werk", dass so heißt.
+	 
+	intern wird auch bei der Website nur die API - mehr Funktionen als erwartet
+	gut für edge cases: identische Namen
+
+Objekte oder Attributswert Rückgabe:
+	Objektrückgabe, außer Objekt wächst zu sehr von der Größe (pdfs?)
+
+Fragen an Tristan:
+	create criteria deprecated - trotzdem gut? - Repository Pattern pending
+	
+
+Jonas merkt an, dass man mit dem anderen Team kommunizieren sollte
+
+Julian merkt java.time implementierung an
+	neue Implementation soll implementiert wieder
+
+QS-Ziele
+	Codequalität wird ja bereits implementiert - sinnvoll das auch zu nehmen
+
+User Stories:
+	für QS-Ziel der älteren Sprints : überarbeiten und gut aussehen lassen
+
+
+QS-Dokument Feedback:
+	Schriftarten sind falsch
+	Clemens schickt pdf - so soll es dann von den Formalitäten her aussehen
+	
+	schon deutlich besser
+	Clemens hat auch begonnen schon Formulierungen anzustreichen
+	Anmerkungen im Dokument vermerkt - bei Fragen an Clemens
+	Essentiell:
+	ENDE JEDES SPRINTES: PROKTOLL DER ÄNDERUNGEN UND BEGRÜNDUNG WARUM DIE 3NF NICHT VERLETZT IST. Das muss auch nachvollziehbar sein.
+
+
+abstraktes Ziel des Projektes:
+	Befüllung der Datenbank - webcrawler untergeordnet
+
+
+QS: codequalität
+	IDE konfiguerien zu schreien, wenn etwas fehlt
+Userstory "als so und so"
+
+
+Userstories mit Philipp + Julian: alle die einfallen bis Donnerstag Abend - epics können es auch sein

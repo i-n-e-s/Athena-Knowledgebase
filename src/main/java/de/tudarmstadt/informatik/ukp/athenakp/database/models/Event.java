@@ -1,7 +1,6 @@
 package de.tudarmstadt.informatik.ukp.athenakp.database.models;
 
-import java.time.LocalDate;
-import java.time.LocalTime;
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -20,7 +19,7 @@ import org.hibernate.annotations.GenericGenerator;
 
 @Entity
 @Table(name="events")
-public class Event implements ScheduleEntry{
+public class Event extends Model implements ScheduleEntry{
 	/*Unique id*/
 	@Id
 	@GeneratedValue(generator="increment")
@@ -34,11 +33,11 @@ public class Event implements ScheduleEntry{
 	@Column(name="date")
 	private LocalDate date;
 	/*Start time*/
-	@Column(name="begin")
-	private LocalTime begin;
+	@Column(name="begin_date")
+	private LocalDateTime begin;
 	/*End time*/
-	@Column(name="end")
-	private LocalTime end;
+	@Column(name="end_date")
+	private LocalDateTime end;
 	/*Host*/
 	//	@Column(name = "host") //FIXME: crashes - perhaps save id?
 	//	private Person host;                //TODO Person von Author abstrahieren
@@ -118,7 +117,7 @@ public class Event implements ScheduleEntry{
 	 * Gets the time this event begins
 	 * @return This event's begin time
 	 */
-	public LocalTime getBegin() {
+	public LocalDateTime getBegin() {
 		return begin;
 	}
 
@@ -126,7 +125,7 @@ public class Event implements ScheduleEntry{
 	 * Sets the time this event begins
 	 * @param begin The time this event begins
 	 */
-	public void setBegin(LocalTime begin) {
+	public void setBegin(LocalDateTime begin) {
 		this.begin = begin;
 	}
 
@@ -134,7 +133,7 @@ public class Event implements ScheduleEntry{
 	 * Gets the time this event ends
 	 * @return This event's new end time
 	 */
-	public LocalTime getEnd() {
+	public LocalDateTime getEnd() {
 		return end;
 	}
 
@@ -142,7 +141,7 @@ public class Event implements ScheduleEntry{
 	 * Sets the time this event ends
 	 * @param end the new time this event ends
 	 */
-	public void setEnd(LocalTime end) {
+	public void setEnd(LocalDateTime end) {
 		this.end = end;
 	}
 

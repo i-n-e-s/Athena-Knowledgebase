@@ -14,10 +14,10 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name="conference")
-public class Conference {
+public class Conference extends Model{
 	/*Name of conference*/
 	@Id
-	@Column(name="name")
+	@Column(name="name")//TODO Wouldn't an auto-generated id  like in paper be better? What if someone misspelled the name?
 	private String name;
 	/*First day of conference no need for the temporal annotation with java.time (indeed this would break it)*/
 	@Column (name="startDate")
