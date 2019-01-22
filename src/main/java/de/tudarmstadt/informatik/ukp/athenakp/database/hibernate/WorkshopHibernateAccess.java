@@ -1,7 +1,6 @@
 package de.tudarmstadt.informatik.ukp.athenakp.database.hibernate;
 
-import java.time.LocalDate;
-import java.time.LocalTime;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.hibernate.Criteria;
@@ -26,21 +25,15 @@ public class WorkshopHibernateAccess implements WorkshopCommonAccess {
 	}
 
 	@Override
-	public List<Workshop> getByDate(Integer year, Integer month, Integer day) {
-		LocalDate localDate = LocalDate.of(year, month, day);
-		return getBy("date", localDate);
+	public List<Workshop> getByStartTime(Integer year, Integer month, Integer day, Integer hour, Integer minute) {
+		LocalDateTime localDateTime = LocalDateTime.of(year, month, day, hour, minute);
+		return getBy("begin", localDateTime);
 	}
 
 	@Override
-	public List<Workshop> getByStartTime(Integer hour, Integer minute) {
-		LocalTime localTime = LocalTime.of(hour, minute);
-		return getBy("begin", localTime);
-	}
-
-	@Override
-	public List<Workshop> getByEndTime(Integer hour, Integer minute) {
-		LocalTime localTime = LocalTime.of(hour, minute);
-		return getBy("end", localTime);
+	public List<Workshop> getByEndTime(Integer year, Integer month, Integer day, Integer hour, Integer minute) {
+		LocalDateTime localDateTime = LocalDateTime.of(year, month, day, hour, minute);
+		return getBy("end", localDateTime);
 	}
 
 	@Override

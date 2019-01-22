@@ -23,29 +23,26 @@ public interface WorkshopCommonAccess extends CommonAccess<Workshop> {
 	public List<Workshop> getByConference(String conference);
 
 	/**
-	 * Get all workshops with specified start date.
-	 * @param year The conference's start year.
-	 * @param month The conference's start month.
-	 * @param day The conference's start day.
-	 * @return A List of all workshops with the specified start date.
-	 */
-	public List<Workshop> getByDate(Integer year, Integer month, Integer day);
-
-	/**
 	 * Get all workshops with specified start time.
-	 * @param hour The conference's start hour.
-	 * @param minute The conference's start minute.
+	 * @param year The workshop's start year.
+	 * @param month The workshop's start month.
+	 * @param day The workshop's start day.
+	 * @param hour The workshop's start hour.
+	 * @param minute The workshop's start minute.
 	 * @return A List of all workshops with the specified end time.
 	 */
-	public List<Workshop> getByStartTime(Integer hour, Integer minute);
+	public List<Workshop> getByStartTime(Integer year, Integer month, Integer day, Integer hour, Integer minute);
 
 	/**
 	 * Get all workshops with specified end time.
-	 * @param hour The conference's end hour.
-	 * @param minute The conference's end minute.
+	 * @param year The workshop's end year.
+	 * @param month The workshop's end month.
+	 * @param day The workshop's end day.
+	 * @param hour The workshop's end hour.
+	 * @param minute The workshop's end minute.
 	 * @return A List of all workshops with the specified end time.
 	 */
-	public List<Workshop> getByEndTime(Integer hour, Integer minute);
+	public List<Workshop> getByEndTime(Integer year, Integer month, Integer day, Integer hour, Integer minute);
 
 	/**
 	 * Get all workshops with specified place.

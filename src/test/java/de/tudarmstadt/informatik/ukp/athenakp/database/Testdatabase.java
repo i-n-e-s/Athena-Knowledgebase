@@ -18,11 +18,13 @@ import de.tudarmstadt.informatik.ukp.athenakp.database.hibernate.HibernateUtils;
 import de.tudarmstadt.informatik.ukp.athenakp.database.hibernate.InstitutionHibernateAccess;
 import de.tudarmstadt.informatik.ukp.athenakp.database.hibernate.PaperHibernateAccess;
 import de.tudarmstadt.informatik.ukp.athenakp.database.hibernate.PersonHibernateAccess;
+import de.tudarmstadt.informatik.ukp.athenakp.database.hibernate.WorkshopHibernateAccess;
 import de.tudarmstadt.informatik.ukp.athenakp.database.models.Author;
 import de.tudarmstadt.informatik.ukp.athenakp.database.models.Conference;
 import de.tudarmstadt.informatik.ukp.athenakp.database.models.Event;
 import de.tudarmstadt.informatik.ukp.athenakp.database.models.Institution;
 import de.tudarmstadt.informatik.ukp.athenakp.database.models.Paper;
+import de.tudarmstadt.informatik.ukp.athenakp.database.models.Workshop;
 
 /**
  * A class to create a uniform database for testing purposes
@@ -38,12 +40,14 @@ public class Testdatabase {
 	private int authorQuantity;
 	private int paperQuantity;
 	private int eventQuantity;
+	private int workshopQuantity;
 
 	Conference conferences[];
 	Institution institutions[];
 	Author authors[];
 	Paper papers[];
 	Event events[];
+	Workshop workshops[];
 
 	public Testdatabase() {
 		setDefaultParameters();
@@ -69,6 +73,7 @@ public class Testdatabase {
 		authorQuantity = 100;
 		paperQuantity = 50;
 		eventQuantity = 20;
+		workshopQuantity = 20;
 	}
 
 	/**
@@ -114,6 +119,7 @@ public class Testdatabase {
 		authors = new Author[authorQuantity];
 		papers = new Paper[paperQuantity];
 		events = new Event[eventQuantity];
+		workshops = new Workshop[workshopQuantity];
 
 		for(int i = 0; i< conferences.length;i++) {
 			conferences[i] = new Conference();
@@ -164,6 +170,17 @@ public class Testdatabase {
 			events[i].setTitle("EventTitle" + i);
 			events[i].setDescription("Description" + i);
 		}
+
+		for(int i = 0; i< workshops.length; i++) {
+			workshops[i] = new Workshop();
+			workshops[i].setConference("Conference" + i);
+			LocalDateTime tmpDateTime= LocalDateTime.of(LocalDate.of(2018, (i%12)+1 , (i%28)+1),LocalTime.of(i%24, i%60));
+			workshops[i].setBegin(tmpDateTime);
+			workshops[i].setEnd(tmpDateTime.plusHours(1));
+			workshops[i].setPlace("Place" + i);
+			workshops[i].setTitle("Title" + i);
+			workshops[i].setAbbreviation("Abbreviation" + i);
+		}
 		System.out.println("Done creating data");
 	}
 
@@ -177,6 +194,7 @@ public class Testdatabase {
 		PaperHibernateAccess paha = new PaperHibernateAccess();
 		PersonHibernateAccess peha = new PersonHibernateAccess();
 		//TODO add EventHibernateAccess here
+		WorkshopHibernateAccess wha = new WorkshopHibernateAccess();
 		System.out.println("Start inserting Data");
 
 		//FIXME multiple Persons and Papers are added into db, presumably because of the multiple Accesses
@@ -188,6 +206,7 @@ public class Testdatabase {
 		for (Paper p: papers) {
 			if(!paperInDB(p)) paha.add(p);
 		}
+		for(Workshop w : workshops) wha.add(w);
 		System.out.println("Done inserting data");
 	}
 	/**
@@ -400,9 +419,9 @@ public class Testdatabase {
 	}
 
 	/**
-	 * Returns the {@link Event Events}, which will be added to the database
+	 * Returns the {@link Event events}, which will be added to the database
 	 *
-	 * @return {@link Event Events}, which were originally/will be added to the Database
+	 * @return {@link Event events}, which were originally/will be added to the Database
 	 */
 	public Event[] getEvents() {
 		return events;
@@ -415,5 +434,23 @@ public class Testdatabase {
 	 */
 	public void setEvents(Event[] events) {
 		this.events = events;
+	}
+
+	/**
+	 * Returns the {@link Workshop workshops}, which will be added to the database
+	 *
+	 * @return {@link Workshop workshops}, which were originally/will be added to the Database
+	 */
+	public Workshop[] getWorkshops() {
+		return workshops;
+	}
+
+	/**
+	 * Set the {@link Workshop workshops}, which will be added to the Database, when {@link #insertData()} is executed}
+	 *
+	 * @param workshops The {@link Workshop workshops}, which will be added
+	 */
+	public void setWorkshops(Workshop[] workshops) {
+		this.workshops = workshops;
 	}
 }

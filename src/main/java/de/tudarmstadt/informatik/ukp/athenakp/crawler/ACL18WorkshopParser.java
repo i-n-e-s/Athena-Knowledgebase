@@ -188,7 +188,7 @@ public class ACL18WorkshopParser {
 					Event event = new Event();
 					String[] split = line.split("\\|"); //splitting by | only basically gets the char array as a string array
 
-					setEventBeginEnd(extractBeginEnd(split[0].trim().split("–")), event); //NOT A HYPHEN!!! IT'S AN 'EN DASH'
+					setEventBeginEnd(extractBeginEnd(split[0].trim().split("–")), workshop.getBegin().toLocalDate(), workshop.getEnd().toLocalDate(), event); //NOT A HYPHEN!!! IT'S AN 'EN DASH'
 					event.setConference(workshop.getConference());
 					event.setPlace(workshop.getPlace());
 					event.setTitle(split[1].trim());
@@ -288,7 +288,7 @@ public class ACL18WorkshopParser {
 			//this time extraction code is used often, but there is a lot of variation so no util method
 			String info = el.html().split("/strong>")[1];
 
-			setEventBeginEnd(extractBeginEnd(el.html().split("strong>")[1].split("<")[0].trim().split("--")), event);
+			setEventBeginEnd(extractBeginEnd(el.html().split("strong>")[1].split("<")[0].trim().split("--")), workshop.getBegin().toLocalDate(), workshop.getEnd().toLocalDate(), event);
 			event.setConference(workshop.getConference());
 			event.setPlace(workshop.getPlace());
 
@@ -328,7 +328,7 @@ public class ACL18WorkshopParser {
 
 			if(event == null) {
 				event = new Event();
-				setEventBeginEnd(extractBeginEnd(el.html().split("–")), event); //NOT A HYPHEN!!! IT'S AN 'EN DASH'
+				setEventBeginEnd(extractBeginEnd(el.html().split("–")), workshop.getBegin().toLocalDate(), workshop.getEnd().toLocalDate(), event); //NOT A HYPHEN!!! IT'S AN 'EN DASH'
 				event.setConference(workshop.getConference());
 				event.setPlace(workshop.getPlace());
 			}
@@ -389,7 +389,7 @@ public class ACL18WorkshopParser {
 
 			Event event = new Event();
 
-			setEventBeginEnd(extractBeginEnd(time), event);
+			setEventBeginEnd(extractBeginEnd(time), workshop.getBegin().toLocalDate(), workshop.getEnd().toLocalDate(), event);
 			event.setConference(workshop.getConference());
 			event.setPlace(workshop.getPlace());
 			event.setTitle(el.html().split("</strong>")[1].replace("<em>", "").replace("</em>", "").replace("&nbsp;", " "));
@@ -435,7 +435,7 @@ public class ACL18WorkshopParser {
 			if(td.get(0).hasText()) {
 				String[] timeTitle = td.get(0).html().split("<br>");
 
-				setEventBeginEnd(extractBeginEnd(timeTitle[0].split("-")), event);
+				setEventBeginEnd(extractBeginEnd(timeTitle[0].split("-")), workshop.getBegin().toLocalDate(), workshop.getEnd().toLocalDate(), event);
 
 				if(timeTitle.length > 1)
 					event.setTitle(timeTitle[1]);
@@ -501,7 +501,7 @@ public class ACL18WorkshopParser {
 
 			time[0] = time[0].substring(0, 2) + ":" + time[0].substring(2);
 			time[1] = time[1].substring(0, 2) + ":" + time[1].substring(2, 4); //cut off excess whitespace and &nbsp;s
-			setEventBeginEnd(extractBeginEnd(time), event);
+			setEventBeginEnd(extractBeginEnd(time), workshop.getBegin().toLocalDate(), workshop.getEnd().toLocalDate(), event);
 			event.setConference(workshop.getConference());
 			event.setPlace(workshop.getPlace());
 			event.setTitle(el.html().split("<strong>")[1].split("</strong>")[0]);
@@ -555,12 +555,14 @@ public class ACL18WorkshopParser {
 	}
 
 	/**
-	 * Sets the given event's begin and end
+	 * Sets the given event's begin and end.
 	 * @param beginEnd An {@link LocalTime} array containing the begin (first index) and end (second index) times
+	 * @param beginDate The {@link LocalDate} to use as the begin date, usually the one of the workshop
+	 * @param endDate The {@link LocalDate} to use as the end date, usually the one of the workshop
 	 * @param event The event to set the begin and end of
 	 */
-	public static final void setEventBeginEnd(LocalTime[] beginEnd, Event event) {
-		event.setBegin(LocalDateTime.of(event.getBegin().toLocalDate(), beginEnd[0]));
-		event.setEnd(LocalDateTime.of(event.getBegin().toLocalDate(), beginEnd[1]));
+	public static final void setEventBeginEnd(LocalTime[] beginEnd, LocalDate beginDate, LocalDate endDate, Event event) {
+		event.setBegin(LocalDateTime.of(beginDate, beginEnd[0]));
+		event.setEnd(LocalDateTime.of(endDate, beginEnd[1]));
 	}
 }
