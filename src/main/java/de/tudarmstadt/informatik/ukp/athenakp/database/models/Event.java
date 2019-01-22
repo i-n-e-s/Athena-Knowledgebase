@@ -29,10 +29,10 @@ public class Event extends Model{
 	@Column(name="conference")
 	private String conference;
 	/*Start time*/
-	@Column(name="begin_date")
+	@Column(name="begin")
 	private LocalDateTime begin;
 	/*End time*/
-	@Column(name="end_date")
+	@Column(name="end")
 	private LocalDateTime end;
 	/*Host*/
 	//	@Column(name = "host") //FIXME: crashes - perhaps save id?

@@ -9,20 +9,25 @@ import java.util.TimeZone;
 
 import javax.annotation.PostConstruct;
 
-import org.hibernate.Session;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import de.tudarmstadt.informatik.ukp.athenakp.database.hibernate.ConferenceHibernateAccess;
+import de.tudarmstadt.informatik.ukp.athenakp.database.hibernate.EventHibernateAccess;
 import de.tudarmstadt.informatik.ukp.athenakp.database.hibernate.HibernateUtils;
 import de.tudarmstadt.informatik.ukp.athenakp.database.hibernate.InstitutionHibernateAccess;
 import de.tudarmstadt.informatik.ukp.athenakp.database.hibernate.PaperHibernateAccess;
 import de.tudarmstadt.informatik.ukp.athenakp.database.hibernate.PersonHibernateAccess;
+import de.tudarmstadt.informatik.ukp.athenakp.database.hibernate.SessionHibernateAccess;
+import de.tudarmstadt.informatik.ukp.athenakp.database.hibernate.SubsessionHibernateAccess;
 import de.tudarmstadt.informatik.ukp.athenakp.database.models.Author;
 import de.tudarmstadt.informatik.ukp.athenakp.database.models.Conference;
 import de.tudarmstadt.informatik.ukp.athenakp.database.models.Event;
+import de.tudarmstadt.informatik.ukp.athenakp.database.models.EventCategory;
 import de.tudarmstadt.informatik.ukp.athenakp.database.models.Institution;
 import de.tudarmstadt.informatik.ukp.athenakp.database.models.Paper;
+import de.tudarmstadt.informatik.ukp.athenakp.database.models.Session;
+import de.tudarmstadt.informatik.ukp.athenakp.database.models.Subsession;
 
 /**
  * A class to create a uniform database for testing purposes
@@ -38,12 +43,16 @@ public class Testdatabase {
 	private int authorQuantity;
 	private int paperQuantity;
 	private int eventQuantity;
+	private int sessionQuantity;
+	private int subsessionQuantity;
 
 	Conference conferences[];
 	Institution institutions[];
 	Author authors[];
 	Paper papers[];
 	Event events[];
+	Session sessions[];
+	Subsession subsessions[];
 
 	public Testdatabase() {
 		setDefaultParameters();
@@ -69,6 +78,8 @@ public class Testdatabase {
 		authorQuantity = 100;
 		paperQuantity = 50;
 		eventQuantity = 20;
+		sessionQuantity = 20;
+		subsessionQuantity = 20;
 	}
 
 	/**
@@ -88,7 +99,7 @@ public class Testdatabase {
 	 */
 	public void deleteOldData() {
 		System.out.println("Start deleting");
-		Session session = HibernateUtils.getSessionFactory().openSession();
+		org.hibernate.Session session = HibernateUtils.getSessionFactory().openSession();
 		List<String> list = session.createSQLQuery("SHOW tables").list();
 		session.beginTransaction();
 		for (String tableName : list) {
@@ -114,6 +125,8 @@ public class Testdatabase {
 		authors = new Author[authorQuantity];
 		papers = new Paper[paperQuantity];
 		events = new Event[eventQuantity];
+		sessions = new Session[sessionQuantity];
+		subsessions = new Subsession[subsessionQuantity];
 
 		for(int i = 0; i< conferences.length;i++) {
 			conferences[i] = new Conference();
@@ -158,11 +171,29 @@ public class Testdatabase {
 		for (int i = 0; i < events.length; i++) {
 			events[i] = new Event();
 			LocalDateTime tmpDateTime= LocalDateTime.of(LocalDate.of(2018, (i%12)+1 , (i%28)+1),LocalTime.of(i%24, i%60));
+			events[i].setConference("Conference" + i);
 			events[i].setBegin(tmpDateTime);
 			events[i].setEnd(tmpDateTime.plusHours(1));
 			events[i].setPlace("Place" + i);
-			events[i].setTitle("EventTitle" + i);
+			events[i].setTitle("Title" + i);
 			events[i].setDescription("Description" + i);
+			events[i].setCategory(i == 0 ? EventCategory.WELCOME : EventCategory.CEREMONY);
+		}
+
+		for(int i = 0; i < sessionQuantity; i++) {
+			sessions[i] = new Session();
+			sessions[i].setTitle("Title" + i);
+			sessions[i].setDescription("Description" + i);
+			sessions[i].setPlace("Place" + i);
+		}
+
+		for(int i = 0; i < subsessionQuantity; i++) {
+			subsessions[i] = new Subsession();
+			LocalDateTime tmpDateTime= LocalDateTime.of(LocalDate.of(2018, (i%12)+1 , (i%28)+1),LocalTime.of(i%24, i%60));
+			subsessions[i].setBegin(tmpDateTime);
+			subsessions[i].setEnd(tmpDateTime.plusHours(1));
+			subsessions[i].setTitle("Title" + i);
+			subsessions[i].setDescription("Description" + i);
 		}
 		System.out.println("Done creating data");
 	}
@@ -176,7 +207,9 @@ public class Testdatabase {
 		InstitutionHibernateAccess iha = new InstitutionHibernateAccess();
 		PaperHibernateAccess paha = new PaperHibernateAccess();
 		PersonHibernateAccess peha = new PersonHibernateAccess();
-		//TODO add EventHibernateAccess here
+		EventHibernateAccess eha  = new EventHibernateAccess();
+		SessionHibernateAccess seha  = new SessionHibernateAccess();
+		SubsessionHibernateAccess suha  = new SubsessionHibernateAccess();
 		System.out.println("Start inserting Data");
 
 		//FIXME multiple Persons and Papers are added into db, presumably because of the multiple Accesses
@@ -188,6 +221,9 @@ public class Testdatabase {
 		for (Paper p: papers) {
 			if(!paperInDB(p)) paha.add(p);
 		}
+		for(Event e : events) eha.add(e);
+		for(Session s : sessions) seha.add(s);
+		for(Subsession s : subsessions) suha.add(s);
 		System.out.println("Done inserting data");
 	}
 	/**
@@ -215,7 +251,7 @@ public class Testdatabase {
 	 * @return true if an author-entry exist with the same name
 	 */
 	private boolean authorInDB(Author a) {
-		Session session = HibernateUtils.getSessionFactory().openSession();
+		org.hibernate.Session session = HibernateUtils.getSessionFactory().openSession();
 		List<String> result = session.createSQLQuery(
 				String.format("\nSELECT fullName FROM person \n WHERE fullName = '%s' \n LIMIT 1", a.getFullName() )).list();
 		session.close();
@@ -230,7 +266,7 @@ public class Testdatabase {
 	 * @return true if an paper-entry exist with the same title
 	 */
 	private boolean paperInDB(Paper p) {
-		Session session = HibernateUtils.getSessionFactory().openSession();
+		org.hibernate.Session session = HibernateUtils.getSessionFactory().openSession();
 		List<String> result = session.createSQLQuery(
 				String.format("\nSELECT title FROM paper \n WHERE title = '%s' \n LIMIT 1", p.getTitle() )).list();
 		session.close();
@@ -415,5 +451,41 @@ public class Testdatabase {
 	 */
 	public void setEvents(Event[] events) {
 		this.events = events;
+	}
+
+	/**
+	 * Returns the {@link Session sessions}, which will be added to the database
+	 *
+	 * @return {@link Session sessions}, which were originally/will be added to the Database
+	 */
+	public Session[] getSessions() {
+		return sessions;
+	}
+
+	/**
+	 * Set the {@link Session sessions}, which will be added to the Database, when {@link #insertData()} is executed}
+	 *
+	 * @param sessions The {@link Session sessions}, which will be added
+	 */
+	public void setSessions(Session[] sessions) {
+		this.sessions = sessions;
+	}
+
+	/**
+	 * Returns the {@link Subsession subsessions}, which will be added to the database
+	 *
+	 * @return {@link Subsession subsessions}, which were originally/will be added to the Database
+	 */
+	public Subsession[] getSubsessions() {
+		return subsessions;
+	}
+
+	/**
+	 * Set the {@link Subsession subsessions}, which will be added to the Database, when {@link #insertData()} is executed}
+	 *
+	 * @param subsessions The {@link Subsession subsessions}, which will be added
+	 */
+	public void setSubsessions(Subsession[] subsessions) {
+		this.subsessions = subsessions;
 	}
 }
