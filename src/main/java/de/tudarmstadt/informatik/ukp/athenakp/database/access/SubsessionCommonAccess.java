@@ -17,19 +17,25 @@ public interface SubsessionCommonAccess extends CommonAccess<Subsession> {
 
 	/**
 	 * Get all subsessions with specified start time.
-	 * @param hour The conference's start hour.
-	 * @param minute The conference's start minute.
+	 * @param year The subsession's start year.
+	 * @param month The subsession's start month.
+	 * @param day The subsession's start day.
+	 * @param hour The subsession's start hour.
+	 * @param minute The subsession's start minute.
 	 * @return A List of all subsessions with the specified end time.
 	 */
-	public List<Subsession> getByStartTime(Integer hour, Integer minute);
+	public List<Subsession> getByStartTime(Integer year, Integer month, Integer day, Integer hour, Integer minute);
 
 	/**
 	 * Get all subsessions with specified end time.
-	 * @param hour The conference's end hour.
-	 * @param minute The conference's end minute.
+	 * @param year The subsession's start year.
+	 * @param month The subsession's start month.
+	 * @param day The subsession's start day.
+	 * @param hour The subsession's end hour.
+	 * @param minute The subsession's end minute.
 	 * @return A List of all subsessions with the specified end time.
 	 */
-	public List<Subsession> getByEndTime(Integer hour, Integer minute);
+	public List<Subsession> getByEndTime(Integer year, Integer month, Integer day, Integer hour, Integer minute);
 
 	/**
 	 * Get all subsessions with specified title.

@@ -1,5 +1,6 @@
 package de.tudarmstadt.informatik.ukp.athenakp.database.models;
 
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 import javax.persistence.Column;
@@ -21,10 +22,10 @@ public class Subsession {
 	private long subsessionID;
 	/*Start time*/
 	@Column(name="begin")
-	private LocalTime begin;
+	private LocalDateTime begin;
 	/*End time*/
 	@Column(name="end")
-	private LocalTime end;
+	private LocalDateTime end;
 	/* Title */
 	@Column(name = "title")
 	private String title;
@@ -55,7 +56,7 @@ public class Subsession {
 	 * Gets the time this subsession begins
 	 * @return This subsession's begin time
 	 */
-	public LocalTime getBegin() {
+	public LocalDateTime getBegin() {
 		return begin;
 	}
 
@@ -63,7 +64,7 @@ public class Subsession {
 	 * Sets the time this subsession begins
 	 * @param begin The time this subsession begins
 	 */
-	public void setBegin(LocalTime begin) {
+	public void setBegin(LocalDateTime begin) {
 		this.begin = begin;
 	}
 
@@ -71,7 +72,7 @@ public class Subsession {
 	 * Gets the time this subsession ends
 	 * @return This subsession's new end time
 	 */
-	public LocalTime getEnd() {
+	public LocalDateTime getEnd() {
 		return end;
 	}
 
@@ -79,7 +80,7 @@ public class Subsession {
 	 * Sets the time this subsession ends
 	 * @param end the new time this subsession ends
 	 */
-	public void setEnd(LocalTime end) {
+	public void setEnd(LocalDateTime end) {
 		this.end = end;
 	}
 

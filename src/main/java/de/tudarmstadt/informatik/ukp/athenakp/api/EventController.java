@@ -66,31 +66,26 @@ public class EventController {
 	 * @param year The year in which the event started
 	 * @param month The month in which the event started
 	 * @param day The day on which the event started
-	 * @return The events with the specified start date, if existing
-	 */
-	@RequestMapping("/byDate/{year}/{month}/{day}")
-	public List<Event> byDate(@PathVariable("year")Integer year, @PathVariable("month")Integer month, @PathVariable("day")Integer day) {
-		return access.getByDate(year, month, day);
-	}
-
-	/**
 	 * @param hour The hour in which the event started
 	 * @param minute The minute in which the event started
 	 * @return The events with the specified start time, if existing
 	 */
-	@RequestMapping("/byStartTime/{hour}/{minute}")
-	public List<Event> byStartTime(@PathVariable("hour")Integer hour, @PathVariable("minute")Integer minute) {
-		return access.getByStartTime(hour, minute);
+	@RequestMapping("/byStartTime/{year}/{month}/{day}/{hour}/{minute}")
+	public List<Event> byStartTime(@PathVariable("year")Integer year, @PathVariable("month")Integer month, @PathVariable("day")Integer day, @PathVariable("hour")Integer hour, @PathVariable("minute")Integer minute) {
+		return access.getByStartTime(year, month, day, hour, minute);
 	}
 
 	/**
+	 * @param year The year in which the event ended
+	 * @param month The month in which the event ended
+	 * @param day The day on which the event ended
 	 * @param hour The hour in which the event ended
 	 * @param minute The minute in which the event ended
 	 * @return The events with the specified start time, if existing
 	 */
-	@RequestMapping("/byEndTime/{hour}/{minute}")
-	public List<Event> byEndTime(@PathVariable("hour")Integer hour, @PathVariable("minute")Integer minute) {
-		return access.getByEndTime(hour, minute);
+	@RequestMapping("/byEndTime/{year}/{month}/{day}/{hour}/{minute}")
+	public List<Event> byEndTime(@PathVariable("year")Integer year, @PathVariable("month")Integer month, @PathVariable("day")Integer day, @PathVariable("hour")Integer hour, @PathVariable("minute")Integer minute) {
+		return access.getByEndTime(year, month, day, hour, minute);
 	}
 
 	/**

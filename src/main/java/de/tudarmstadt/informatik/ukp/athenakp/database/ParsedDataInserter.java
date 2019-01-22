@@ -2,6 +2,7 @@ package de.tudarmstadt.informatik.ukp.athenakp.database;
 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -103,9 +104,9 @@ public class ParsedDataInserter {
 		PaperCommonAccess paperFiler = new PaperHibernateAccess();
 		// PersonCommonAccess personfiler = new PersonHibernateAccess();
 
-		//Keeps Track of all added Authors, so they won't be added twice	
+		//Keeps Track of all added Authors, so they won't be added twice
 		TreeMap<String,Author> addedAuthors = new TreeMap<String,Author>((o1, o2) -> o1.compareTo(o2));
-		
+
 		for (ArrayList<String> paperAndAuthors : listOfPaperAuthor) {
 			// only one Paper per paperandauthors
 			Paper paper = new Paper();
@@ -188,9 +189,8 @@ public class ParsedDataInserter {
 				java.util.Set<Session> sessions = new HashSet<Session>();
 
 				event.setConference((String)eventData.get(0));
-				event.setDate((LocalDate)eventData.get(1));
-				event.setBegin((LocalTime)eventData.get(2));
-				event.setEnd((LocalTime)eventData.get(3));
+				event.setBegin(LocalDateTime.of((LocalDate)eventData.get(1), (LocalTime)eventData.get(2)));
+				event.setEnd(LocalDateTime.of((LocalDate)eventData.get(1), (LocalTime)eventData.get(3)));
 				event.setTitle((String)eventData.get(4));
 				event.setPlace((String)eventData.get(5));
 				event.setDescription((String)eventData.get(5));
@@ -210,8 +210,8 @@ public class ParsedDataInserter {
 							for(SubsessionStore subsessionStore : sessionStore.subsessions) {
 								Subsession subsession = new Subsession();
 
-								subsession.setBegin(subsessionStore.begin);
-								subsession.setEnd(subsessionStore.end);
+								subsession.setBegin(LocalDateTime.of(event.getBegin().toLocalDate(), subsessionStore.begin));
+								subsession.setEnd(LocalDateTime.of(event.getEnd().toLocalDate(), subsessionStore.end));
 								subsession.setTitle(subsessionStore.title);
 								subsession.setDescription(subsessionStore.desc);
 								subsessions.add(subsession);

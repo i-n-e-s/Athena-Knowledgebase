@@ -1,6 +1,7 @@
 package de.tudarmstadt.informatik.ukp.athenakp.database.models;
 
 import java.time.LocalDateTime;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -27,15 +28,10 @@ public class Event extends Model{
 	/*Name of conference this event belongs to*/
 	@Column(name="conference")
 	private String conference;
-	/*The date of this event*/
-	@Column(name="date")
-	private LocalDate date;
 	/*Start time*/
-	//@Temporal(TemporalType.TIMESTAMP)
 	@Column(name="begin_date")
 	private LocalDateTime begin;
 	/*End time*/
-	//@Temporal(TemporalType.TIMESTAMP)
 	@Column(name="end_date")
 	private LocalDateTime end;
 	/*Host*/
@@ -95,22 +91,6 @@ public class Event extends Model{
 	 */
 	public void setConference(String conference) {
 		this.conference = conference;
-	}
-
-	/**
-	 * Gets the date this event happens on
-	 * @return This event's date
-	 */
-	public LocalDate getDate() {
-		return date;
-	}
-
-	/**
-	 * Sets the date this event happens on
-	 * @param date The date this event happens on
-	 */
-	public void setDate(LocalDate date) {
-		this.date = date;
 	}
 
 	/**

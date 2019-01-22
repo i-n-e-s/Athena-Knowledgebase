@@ -24,29 +24,26 @@ public interface EventCommonAccess extends CommonAccess<Event> {
 	public List<Event> getByConference(String conference);
 
 	/**
-	 * Get all events with specified start date.
-	 * @param year The conference's start year.
-	 * @param month The conference's start month.
-	 * @param day The conference's start day.
-	 * @return A List of all events with the specified start date.
-	 */
-	public List<Event> getByDate(Integer year, Integer month, Integer day);
-
-	/**
 	 * Get all events with specified start time.
-	 * @param hour The conference's start hour.
-	 * @param minute The conference's start minute.
+	 * @param year The event's start year.
+	 * @param month The event's start month.
+	 * @param day The event's start day.
+	 * @param hour The event's start hour.
+	 * @param minute The event's start minute.
 	 * @return A List of all events with the specified end time.
 	 */
-	public List<Event> getByStartTime(Integer hour, Integer minute);
+	public List<Event> getByStartTime(Integer year, Integer month, Integer day, Integer hour, Integer minute);
 
 	/**
 	 * Get all events with specified end time.
-	 * @param hour The conference's end hour.
-	 * @param minute The conference's end minute.
+	 * @param year The event's start year.
+	 * @param month The event's start month.
+	 * @param day The event's start day.
+	 * @param hour The event's end hour.
+	 * @param minute The event's end minute.
 	 * @return A List of all events with the specified end time.
 	 */
-	public List<Event> getByEndTime(Integer hour, Integer minute);
+	public List<Event> getByEndTime(Integer year, Integer month, Integer day, Integer hour, Integer minute);
 
 	/**
 	 * Get all events with specified place.
