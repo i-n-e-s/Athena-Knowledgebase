@@ -24,8 +24,8 @@ import de.tudarmstadt.informatik.ukp.athenakp.crawler.SupportedConferences;
 import de.tudarmstadt.informatik.ukp.athenakp.database.access.ConferenceCommonAccess;
 import de.tudarmstadt.informatik.ukp.athenakp.database.access.EventCommonAccess;
 import de.tudarmstadt.informatik.ukp.athenakp.database.access.PaperCommonAccess;
-import de.tudarmstadt.informatik.ukp.athenakp.database.hibernate.EventHibernateAccess;
 import de.tudarmstadt.informatik.ukp.athenakp.database.jpa.ConferenceJPAAccess;
+import de.tudarmstadt.informatik.ukp.athenakp.database.jpa.EventJPAAccess;
 import de.tudarmstadt.informatik.ukp.athenakp.database.jpa.PaperJPAAccess;
 import de.tudarmstadt.informatik.ukp.athenakp.database.models.Author;
 import de.tudarmstadt.informatik.ukp.athenakp.database.models.Conference;
@@ -179,7 +179,7 @@ public class ParsedDataInserter {
 	 */
 	private void acl2018StoreEventInformation(String beginYear, String endYear) {
 		CrawlerFacade acl18WebParser = new CrawlerFacade(SupportedConferences.ACL, beginYear, endYear);
-		EventCommonAccess eventCommonAccess = new EventHibernateAccess();
+		EventCommonAccess eventCommonAccess = new EventJPAAccess();
 
 		try {
 			ArrayList<ArrayList<Object>> events = acl18WebParser.getSchedule();
