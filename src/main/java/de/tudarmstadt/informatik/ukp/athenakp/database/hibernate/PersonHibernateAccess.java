@@ -14,6 +14,7 @@ import de.tudarmstadt.informatik.ukp.athenakp.database.models.Person;
  *
  * @author Tristan Wettich, Daniel Lehmann
  */
+@Deprecated
 public class PersonHibernateAccess implements PersonCommonAccess {
 
 	/**

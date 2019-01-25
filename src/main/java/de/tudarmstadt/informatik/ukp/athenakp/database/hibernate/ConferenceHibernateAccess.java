@@ -13,6 +13,7 @@ import de.tudarmstadt.informatik.ukp.athenakp.database.models.Conference;
 /**
  * @author Daniel Lehmann
  */
+@Deprecated
 public class ConferenceHibernateAccess implements ConferenceCommonAccess {
 	@Override
 	public List<Conference> getByName(String name) {

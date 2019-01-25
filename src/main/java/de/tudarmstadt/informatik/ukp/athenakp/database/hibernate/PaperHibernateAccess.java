@@ -13,6 +13,7 @@ import de.tudarmstadt.informatik.ukp.athenakp.database.models.Paper;
 /**
  * @author Daniel Lehmann
  */
+@Deprecated
 public class PaperHibernateAccess implements PaperCommonAccess {
 	@Override
 	public List<Paper> getByPaperID(Long paperID) {
