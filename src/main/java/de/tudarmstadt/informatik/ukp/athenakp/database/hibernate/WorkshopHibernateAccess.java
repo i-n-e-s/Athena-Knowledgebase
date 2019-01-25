@@ -20,8 +20,8 @@ public class WorkshopHibernateAccess implements WorkshopCommonAccess {
 	}
 
 	@Override
-	public List<Workshop> getByConference(String conference) {
-		return getBy("conference", conference);
+	public List<Workshop> getByConferenceName(String conferenceName) {
+		return getBy("conferenceName", conferenceName);
 	}
 
 	@Override

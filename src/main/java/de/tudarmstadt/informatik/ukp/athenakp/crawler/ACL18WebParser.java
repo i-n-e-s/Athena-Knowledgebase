@@ -420,7 +420,7 @@ class ACL18WebParser extends AbstractCrawler{
 	 * @param monthDay The month (index 0) and day (index 1) where this event happens
 	 */
 	private void addGeneralEventInfo(Element el, Event event, String[] monthDay) {
-		event.setConference("ACL 2018");
+		event.setConferenceName("ACL 2018");
 
 		if(el.id().startsWith("session")) {
 			String[] time = el.select(".session-times").text().split("–"); //NOT A HYPHEN!!! IT'S AN 'EN DASH'

@@ -17,10 +17,10 @@ public interface WorkshopCommonAccess extends CommonAccess<Workshop> {
 
 	/**
 	 * Get all workshops with specified conference.
-	 * @param conference The workshop's conference's name.
+	 * @param conferenceName The workshop's conference's name.
 	 * @return A List of all workshops with the specified conference.
 	 */
-	public List<Workshop> getByConference(String conference);
+	public List<Workshop> getByConferenceName(String conferenceName);
 
 	/**
 	 * Get all workshops with specified start time.

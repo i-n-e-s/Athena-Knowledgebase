@@ -204,7 +204,7 @@ public class Testdatabase {
 
 		for(int i = 0; i< workshops.length; i++) {
 			workshops[i] = new Workshop();
-			workshops[i].setConference("Conference" + i);
+			workshops[i].setConferenceName("Conference" + i);
 			LocalDateTime tmpDateTime= LocalDateTime.of(LocalDate.of(2018, (i%12)+1 , (i%28)+1),LocalTime.of(i%24, i%60));
 			workshops[i].setBegin(tmpDateTime);
 			workshops[i].setEnd(tmpDateTime.plusHours(1));

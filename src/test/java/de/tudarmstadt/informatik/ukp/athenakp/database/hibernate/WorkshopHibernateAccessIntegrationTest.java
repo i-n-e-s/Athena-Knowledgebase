@@ -39,7 +39,7 @@ public class WorkshopHibernateAccessIntegrationTest {
 		testEvent1.setTitle("TestTitleTest1");
 		testEvent2 = new Event();
 		testEvent2.setTitle("TestTitleTest2");
-		testValue.setConference("TestConferenceTest");
+		testValue.setConferenceName("TestConferenceTest");
 		testValue.setBegin(LocalDateTime.of(1234, 12, 3, 4, 5));
 		testValue.setEnd(LocalDateTime.of(1234, 12, 3, 5, 6));
 		testValue.setPlace("TestPlaceTest");
@@ -57,15 +57,15 @@ public class WorkshopHibernateAccessIntegrationTest {
 
 	@Test
 	public void getByConferenceTest() {
-		List<Workshop> returnValue = uut.getByConference("Conference0");
+		List<Workshop> returnValue = uut.getByConferenceName("Conference0");
 		if(returnValue.size() == 0) fail("return of existing Database is empty");
 		if(returnValue.size() > 1) fail("more than one returnValue ");
-		assertEquals("Conference0", returnValue.get(0).getConference());
+		assertEquals("Conference0", returnValue.get(0).getConferenceName());
 	}
 
 	@Test
 	public void getByConferenceInvalidConferenceTest() {
-		assertTrue(uut.getByConference("InvalidConference").size() == 0);
+		assertTrue(uut.getByConferenceName("InvalidConference").size() == 0);
 	}
 
 	@Test
@@ -139,7 +139,7 @@ public class WorkshopHibernateAccessIntegrationTest {
 		List<Workshop> returnValue = uut.getById(testValue.getId());
 		if(returnValue.size() == 0) fail("return of existing Database is empty");
 		if(returnValue.size() > 1) fail("more than one return value");
-		assertEquals(testValue.getConference(), returnValue.get(0).getConference());
+		assertEquals(testValue.getConferenceName(), returnValue.get(0).getConferenceName());
 		assertEquals(testValue.getBegin(), returnValue.get(0).getBegin());
 		assertEquals(testValue.getEnd(), returnValue.get(0).getEnd());
 		assertEquals(testValue.getPlace(), returnValue.get(0).getPlace());

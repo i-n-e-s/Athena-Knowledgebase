@@ -27,8 +27,8 @@ public class Workshop extends Model implements ScheduleEntry{
 	@Column(name="workshopID")
 	private long workshopID;
 	/*Name of conference this workshop belongs to*/
-	@Column(name="conference")
-	private String conference;
+	@Column(name="conferenceName")
+	private String conferenceName;
 	/*Start time*/
 	@Column(name="begin")
 	private LocalDateTime begin;
@@ -73,16 +73,16 @@ public class Workshop extends Model implements ScheduleEntry{
 	 * Gets the conference name this workshop belongs to
 	 * @return The conference this workshop belongs to
 	 */
-	public String getConference() {
-		return conference;
+	public String getConferenceName() {
+		return conferenceName;
 	}
 
 	/**
 	 * Sets this workshop's conference's name
-	 * @param conference The new conference
+	 * @param conferenceName The new conference
 	 */
-	public void setConference(String conference) {
-		this.conference = conference;
+	public void setConferenceName(String conferenceName) {
+		this.conferenceName = conferenceName;
 	}
 
 	/**

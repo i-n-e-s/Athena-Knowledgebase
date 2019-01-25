@@ -48,7 +48,7 @@ public class ACL18WorkshopParser {
 					String[] titleAbbr = complTitleRoom[0].split("\\(");
 					LocalDate date = LocalDate.of(2018, CrawlerToolset.getMonthIndex(dayMonth[1]), Integer.parseInt(dayMonth[0]));
 
-					workshop.setConference("ACL 2018");
+					workshop.setConferenceName("ACL 2018");
 					workshop.setBegin(LocalDateTime.of(date, LocalTime.of(9, 0)));
 					workshop.setEnd(LocalDateTime.of(date, LocalTime.of(17, 0))); //assume 5pm, because the schedule table is not 100% proportional
 					workshop.setTitle(titleAbbr[0].trim());
@@ -101,7 +101,7 @@ public class ACL18WorkshopParser {
 
 			time = LocalTime.of(Integer.parseInt(timeSplit[0]), Integer.parseInt(timeSplit[1]));
 			event.setBegin(LocalDateTime.of(workshop.getBegin().toLocalDate(), time));
-			event.setConference(workshop.getConference());
+			event.setConferenceName(workshop.getConferenceName());
 
 			//i'm assuming that the closing event is the end of the workshop, thus it does not get added
 			if(previousEvent != null) {
@@ -189,7 +189,7 @@ public class ACL18WorkshopParser {
 					String[] split = line.split("\\|"); //splitting by | only basically gets the char array as a string array
 
 					setEventBeginEnd(extractBeginEnd(split[0].trim().split("–")), workshop.getBegin().toLocalDate(), workshop.getEnd().toLocalDate(), event); //NOT A HYPHEN!!! IT'S AN 'EN DASH'
-					event.setConference(workshop.getConference());
+					event.setConferenceName(workshop.getConferenceName());
 					event.setPlace(workshop.getPlace());
 					event.setTitle(split[1].trim());
 
@@ -289,7 +289,7 @@ public class ACL18WorkshopParser {
 			String info = el.html().split("/strong>")[1];
 
 			setEventBeginEnd(extractBeginEnd(el.html().split("strong>")[1].split("<")[0].trim().split("--")), workshop.getBegin().toLocalDate(), workshop.getEnd().toLocalDate(), event);
-			event.setConference(workshop.getConference());
+			event.setConferenceName(workshop.getConferenceName());
 			event.setPlace(workshop.getPlace());
 
 			if(info.contains(":") && !info.contains("Invited")) {
@@ -329,7 +329,7 @@ public class ACL18WorkshopParser {
 			if(event == null) {
 				event = new Event();
 				setEventBeginEnd(extractBeginEnd(el.html().split("–")), workshop.getBegin().toLocalDate(), workshop.getEnd().toLocalDate(), event); //NOT A HYPHEN!!! IT'S AN 'EN DASH'
-				event.setConference(workshop.getConference());
+				event.setConferenceName(workshop.getConferenceName());
 				event.setPlace(workshop.getPlace());
 			}
 			else {
@@ -390,7 +390,7 @@ public class ACL18WorkshopParser {
 			Event event = new Event();
 
 			setEventBeginEnd(extractBeginEnd(time), workshop.getBegin().toLocalDate(), workshop.getEnd().toLocalDate(), event);
-			event.setConference(workshop.getConference());
+			event.setConferenceName(workshop.getConferenceName());
 			event.setPlace(workshop.getPlace());
 			event.setTitle(el.html().split("</strong>")[1].replace("<em>", "").replace("</em>", "").replace("&nbsp;", " "));
 
@@ -429,7 +429,7 @@ public class ACL18WorkshopParser {
 			String[] titleDesc = td.get(1).html().split("<br>");
 			Event event = new Event();
 
-			event.setConference(workshop.getConference());
+			event.setConferenceName(workshop.getConferenceName());
 			event.setPlace(workshop.getPlace());
 
 			if(td.get(0).hasText()) {
@@ -502,7 +502,7 @@ public class ACL18WorkshopParser {
 			time[0] = time[0].substring(0, 2) + ":" + time[0].substring(2);
 			time[1] = time[1].substring(0, 2) + ":" + time[1].substring(2, 4); //cut off excess whitespace and &nbsp;s
 			setEventBeginEnd(extractBeginEnd(time), workshop.getBegin().toLocalDate(), workshop.getEnd().toLocalDate(), event);
-			event.setConference(workshop.getConference());
+			event.setConferenceName(workshop.getConferenceName());
 			event.setPlace(workshop.getPlace());
 			event.setTitle(el.html().split("<strong>")[1].split("</strong>")[0]);
 
