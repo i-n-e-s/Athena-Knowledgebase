@@ -7,10 +7,12 @@ import static org.junit.Assert.fail;
 import java.util.HashSet;
 import java.util.List;
 
+import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.springframework.boot.SpringApplication;
+import org.springframework.context.ConfigurableApplicationContext;
 
 import de.tudarmstadt.informatik.ukp.athenakp.database.Testdatabase;
 import de.tudarmstadt.informatik.ukp.athenakp.database.models.Session;
@@ -22,13 +24,19 @@ public class SessionJPAAccessIntegrationTest {
 	static Session testValue;
 	static Subsession testSubsession1;
 	static Subsession testSubsession2;
+	static ConfigurableApplicationContext ctx;
 
 	@BeforeClass
 	public static void setUpDatabase() {
-		SpringApplication.run(Testdatabase.class, "");
+		ctx = SpringApplication.run(Testdatabase.class, "");
 		testDB = new Testdatabase();
 		uut = new SessionJPAAccess();
 		testDB.createDB();
+	}
+
+	@AfterClass
+	public static void shutdownDatabase() {
+		ctx.close();
 	}
 
 	public void resetValues() {
@@ -49,6 +57,14 @@ public class SessionJPAAccessIntegrationTest {
 	@Before
 	public void resetDB() {
 		resetValues();
+	}
+
+	@Test
+	public void getTest() {
+		testDB.setDefaultParameters();
+		testDB.createDB();
+		List<Session> returnValues = uut.get();
+		if(returnValues.size() != testDB.getConferenceQuantity()) fail("TestDatabase is not the expected size");
 	}
 
 	@Test

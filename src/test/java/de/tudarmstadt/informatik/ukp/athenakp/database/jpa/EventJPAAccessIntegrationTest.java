@@ -8,10 +8,12 @@ import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
 
+import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.springframework.boot.SpringApplication;
+import org.springframework.context.ConfigurableApplicationContext;
 
 import de.tudarmstadt.informatik.ukp.athenakp.database.Testdatabase;
 import de.tudarmstadt.informatik.ukp.athenakp.database.models.Event;
@@ -24,13 +26,19 @@ public class EventJPAAccessIntegrationTest {
 	static Event testValue;
 	static Session testSession1;
 	static Session testSession2;
+	static ConfigurableApplicationContext ctx;
 
 	@BeforeClass
 	public static void setUpDatabase() {
-		SpringApplication.run(Testdatabase.class, "");
+		ctx = SpringApplication.run(Testdatabase.class, "");
 		testDB = new Testdatabase();
 		uut = new EventJPAAccess();
 		testDB.createDB();
+	}
+
+	@AfterClass
+	public static void shutdownDatabase() {
+		ctx.close();
 	}
 
 	public void resetValues() {
@@ -59,6 +67,14 @@ public class EventJPAAccessIntegrationTest {
 	@Before
 	public void resetDB() {
 		resetValues();
+	}
+
+	@Test
+	public void getTest() {
+		testDB.setDefaultParameters();
+		testDB.createDB();
+		List<Event> returnValues = uut.get();
+		if(returnValues.size() != testDB.getConferenceQuantity()) fail("TestDatabase is not the expected size");
 	}
 
 	@Test
