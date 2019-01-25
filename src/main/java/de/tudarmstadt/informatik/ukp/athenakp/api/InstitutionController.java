@@ -51,7 +51,7 @@ public class InstitutionController {
 	 * @return The institutions where the specified person works, if existing
 	 */
 	@RequestMapping("/byPerson/{value}") //TODO: perhaps arguments for finer control?
-	public List<Institution> byPerson(@PathVariable("value")String value) {
-		return access.getByPerson(value);
+	public List<Institution> byPerson(@PathVariable("value")Long value) {
+		return access.getByPersonID(value);
 	}
 }
