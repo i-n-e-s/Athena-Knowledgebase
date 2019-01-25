@@ -14,7 +14,7 @@
         <properties>
             <!--<property name="javax.persistence.jdbc.driver"-->
                       <!--value="org.h2.Driver" />-->
-
+			
             <property name="javax.persistence.jdbc.url"
                       value="jdbc:mysql://localhost:3306/athena?serverTimezone=UTC&amp;useLegacyDatetimeCode=false" />
 
@@ -28,7 +28,7 @@
                       value="org.hibernate.dialect.MariaDBDialect" />
 
             <property name="hibernate.show_sql"
-                      value="true" />
+                      value="false" />
 
             <property name="hibernate.hbm2ddl.auto"
                       value="create-drop" />
