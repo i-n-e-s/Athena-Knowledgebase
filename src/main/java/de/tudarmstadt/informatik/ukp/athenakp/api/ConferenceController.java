@@ -6,7 +6,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import de.tudarmstadt.informatik.ukp.athenakp.database.hibernate.ConferenceHibernateAccess;
+import de.tudarmstadt.informatik.ukp.athenakp.database.access.ConferenceCommonAccess;
+import de.tudarmstadt.informatik.ukp.athenakp.database.jpa.ConferenceJPAAccess;
 import de.tudarmstadt.informatik.ukp.athenakp.database.models.Conference;
 
 /**
@@ -18,7 +19,7 @@ import de.tudarmstadt.informatik.ukp.athenakp.database.models.Conference;
 @RestController
 @RequestMapping("/conferences")
 public class ConferenceController {
-	private final ConferenceHibernateAccess access = new ConferenceHibernateAccess();
+	private final ConferenceCommonAccess access = new ConferenceJPAAccess();
 
 	/**
 	 * @return All conferences in the database
