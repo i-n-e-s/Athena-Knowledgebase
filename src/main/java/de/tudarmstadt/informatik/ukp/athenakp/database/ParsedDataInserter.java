@@ -188,7 +188,7 @@ public class ParsedDataInserter {
 				Event event = new Event();
 				java.util.Set<Session> sessions = new HashSet<Session>();
 
-				event.setConference((String)eventData.get(0));
+				event.setConferenceName((String)eventData.get(0));
 				event.setBegin(LocalDateTime.of((LocalDate)eventData.get(1), (LocalTime)eventData.get(2)));
 				event.setEnd(LocalDateTime.of((LocalDate)eventData.get(1), (LocalTime)eventData.get(3)));
 				event.setTitle((String)eventData.get(4));
