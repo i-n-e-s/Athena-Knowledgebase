@@ -106,7 +106,7 @@ public class PersonHibernateAccessIntegrationTest {//TODO Only Tested with Autho
 	
 	@Test
 	public void getByInstitute() {
-		List<Person> returnValues = uut.getByInstitutionID("803");
+		List<Person> returnValues = uut.getByInstitutionID(803);
 		assertNotNull(returnValues);
 		if(returnValues.size() < 10) fail("return of existing Database is to small or empty");
 		if(returnValues.size() > 10) fail("more than expected returnValues");
