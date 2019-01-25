@@ -36,17 +36,17 @@ public interface ConferenceCommonAccess extends CommonAccess<Conference>
 
 	/**
 	 * Get all conferences with specified author.
-	 * @param author The conference's author.
+	 * @param personID The conference's author's ID.
 	 * @return A List of all conferences with the specified author.
 	 */
-	public List<Conference> getByAuthor(String author);
+	public List<Conference> getByAuthor(long personID);
 
 	/**
 	 * Get all conferences with specified paper.
-	 * @param paper The conference's paper.
+	 * @param paperID The conference's paper's ID.
 	 * @return A List of all conferences with the specified paper.
 	 */
-	public List<Conference> getByPaper(String paper);
+	public List<Conference> getByPaper(long paperID);
 
 	/**
 	 * Get all conferences in the specified country

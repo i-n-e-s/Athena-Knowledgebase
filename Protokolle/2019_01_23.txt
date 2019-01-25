@@ -1,0 +1,51 @@
+Beginn: 9:00
+Ende: 11:00
+
+Anfrage vom anderen Team wird besprochen:
+Wie soll die API aussehen?
+	"dynamisch" - Pro Modell nur eine Methode im Controller
+		getPaper() - Methoden php in der API
+			Daniel meldet sich freiwillig
+
+Datenbankschema
+	Tristan
+
+Aufhübschen der Präsentation:
+	Jonas stellt vor
+
+Implementation der equals Funktionalität Klasse wird besprochen - erläutert. Noch nicht in den Hibernate Klassen implementiert, bis jetzt nur 
+in Jonas' Branch
+
+
+Julian klagt sein OpenStreetMaps Leid
+
+Wenn direkt SQL gesprochen wird, verlieren wir die Option, das Backend zu wechselns (ignorieren JPA)
+
+Criteriaproblem:
+	Einfache Addierung von Kriterien ist nicht wirklich machbar
+	Wie funktionieren Joins
+	
+	2-er Team wird vorgeschlagen
+		welche Form soll der String haben "php"-artig
+	1-e Person:
+	Api-Limitierung in die Docs
+		Keine Autoren nach Bäumen
+		Reicht ein Teiltitel - braucht man eine PaperID
+
+		anfängliche Doku
+		Julian: macht es Donnerstag, schickt es Freitag
+			auf englisch
+	Andere Person:
+		Implementierung: Daniel
+		
+
+Großdiskussion Git, Jit (zwölfter Akt)
+
+
+Hibernate: wird auf deprecated gesetzt werden
+
+JPA-Review:
+	Daniel bis Freitag Abend
+	JPA .cfg - Datenbank wird gebaut und automatisch gekillt
+
+Rückmeldung QS-Dokument:
