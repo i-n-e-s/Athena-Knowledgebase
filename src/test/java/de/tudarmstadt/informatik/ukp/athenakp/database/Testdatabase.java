@@ -182,12 +182,8 @@ public class Testdatabase {
 		//FIXME multiple Persons and Papers are added into db, presumably because of the multiple Accesses
 		for (Conference c : conferences) cha.add(c);
 		for (Institution i : institutions) iha.add(i);
-		for (Author a : authors) {
-			if(!authorInDB(a)) peha.add(a);
-		}
-		for (Paper p: papers) {
-			if(!paperInDB(p)) paha.add(p);
-		}
+		for (Author a : authors)  peha.add(a);
+		for (Paper p: papers) paha.add(p);
 		System.out.println("Done inserting data");
 	}
 	/**
@@ -214,13 +210,13 @@ public class Testdatabase {
 	 * @param a the author, which should be searched in the database
 	 * @return true if an author-entry exist with the same name
 	 */
-	private boolean authorInDB(Author a) {
+/*	private boolean authorInDB(Author a) {
 		Session session = HibernateUtils.getSessionFactory().openSession();
 		List<String> result = session.createSQLQuery(
 				String.format("\nSELECT fullName FROM person \n WHERE fullName = '%s' \n LIMIT 1", a.getFullName() )).list();
 		session.close();
 		return !result.isEmpty();
-	}
+	}*/
 
 	/**
 	 * 
@@ -229,13 +225,13 @@ public class Testdatabase {
 	 * @param a the paper, which should be searched in the database
 	 * @return true if an paper-entry exist with the same title
 	 */
-	private boolean paperInDB(Paper p) {
+/*	private boolean paperInDB(Paper p) {
 		Session session = HibernateUtils.getSessionFactory().openSession();
 		List<String> result = session.createSQLQuery(
 				String.format("\nSELECT title FROM paper \n WHERE title = '%s' \n LIMIT 1", p.getTitle() )).list();
 		session.close();
 		return !result.isEmpty();
-	}
+	}*/
 
 	/**
 	 * conferenceQuantity is the number of Conferences, which will be generated
@@ -339,7 +335,7 @@ public class Testdatabase {
 	/**
 	 * Set the {@link Conference conferences}, which will be added to the Database, when {@link #insertData()} is executed}
 	 * 
-	 * @param Conferences The {@link Conference conferences}, which will be added
+	 * @param conferences The {@link Conference conferences}, which will be added
 	 */
 	public void setConferences(Conference[] conferences) {
 		this.conferences = conferences;
@@ -357,7 +353,7 @@ public class Testdatabase {
 	/**
 	 * Set the {@link Institution institutions}, which will be added to the Database, when {@link #insertData()} is executed}
 	 * 
-	 * @param Institutions The {@link Institution institutions}, which will be added
+	 * @param institutions The {@link Institution institutions}, which will be added
 	 */
 	public void setInstitutions(Institution[] institutions) {
 		this.institutions = institutions;
