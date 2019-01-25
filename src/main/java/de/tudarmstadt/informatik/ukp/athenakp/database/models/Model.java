@@ -37,7 +37,7 @@ public abstract class Model {
 						return false;
 					}
 				} catch (IllegalArgumentException | IllegalAccessException e) {
-					// TODO Auto-generated catch block
+					System.err.println("This should never be reached...");
 					e.printStackTrace();
 				}
 			}
