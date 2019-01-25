@@ -15,6 +15,7 @@ import org.springframework.boot.SpringApplication;
 import de.tudarmstadt.informatik.ukp.athenakp.database.Testdatabase;
 import de.tudarmstadt.informatik.ukp.athenakp.database.models.Subsession;
 
+@Deprecated
 public class SubsessionHibernateAccessIntegrationTest {
 	static Testdatabase testDB;
 	static SubsessionHibernateAccess uut;

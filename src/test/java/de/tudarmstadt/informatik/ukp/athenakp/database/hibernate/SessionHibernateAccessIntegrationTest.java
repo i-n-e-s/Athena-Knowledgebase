@@ -16,6 +16,7 @@ import de.tudarmstadt.informatik.ukp.athenakp.database.Testdatabase;
 import de.tudarmstadt.informatik.ukp.athenakp.database.models.Session;
 import de.tudarmstadt.informatik.ukp.athenakp.database.models.Subsession;
 
+@Deprecated
 public class SessionHibernateAccessIntegrationTest {
 	static Testdatabase testDB;
 	static SessionHibernateAccess uut;

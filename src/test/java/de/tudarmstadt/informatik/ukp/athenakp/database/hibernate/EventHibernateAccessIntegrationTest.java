@@ -18,6 +18,7 @@ import de.tudarmstadt.informatik.ukp.athenakp.database.models.Event;
 import de.tudarmstadt.informatik.ukp.athenakp.database.models.EventCategory;
 import de.tudarmstadt.informatik.ukp.athenakp.database.models.Session;
 
+@Deprecated
 public class EventHibernateAccessIntegrationTest {
 	static Testdatabase testDB;
 	static EventHibernateAccess uut;
