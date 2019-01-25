@@ -21,10 +21,10 @@ import de.tudarmstadt.informatik.ukp.athenakp.database.models.Institution;
 import de.tudarmstadt.informatik.ukp.athenakp.database.models.Paper;
 
 @SpringBootApplication
-public class Application {
+public class HibernateSandBox {
 
 	public static void main(String[] args) {
-		SpringApplication.run(Application.class, args);
+		SpringApplication.run(HibernateSandBox.class, args);
 
 		Institution dummyInstitution = new Institution();
 		dummyInstitution.setName("Black Mesa");

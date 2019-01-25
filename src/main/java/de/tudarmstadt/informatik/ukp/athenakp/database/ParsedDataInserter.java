@@ -13,13 +13,13 @@ import javax.annotation.PostConstruct;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-import de.tudarmstadt.informatik.ukp.athenakp.Application;
+import de.tudarmstadt.informatik.ukp.athenakp.JPASandBox;
 import de.tudarmstadt.informatik.ukp.athenakp.crawler.CrawlerFacade;
 import de.tudarmstadt.informatik.ukp.athenakp.crawler.SupportedConferences;
 import de.tudarmstadt.informatik.ukp.athenakp.database.access.ConferenceCommonAccess;
 import de.tudarmstadt.informatik.ukp.athenakp.database.access.PaperCommonAccess;
-import de.tudarmstadt.informatik.ukp.athenakp.database.hibernate.ConferenceHibernateAccess;
-import de.tudarmstadt.informatik.ukp.athenakp.database.hibernate.PaperHibernateAccess;
+import de.tudarmstadt.informatik.ukp.athenakp.database.jpa.ConferenceJPAAccess;
+import de.tudarmstadt.informatik.ukp.athenakp.database.jpa.PaperJPAAccess;
 import de.tudarmstadt.informatik.ukp.athenakp.database.models.Author;
 import de.tudarmstadt.informatik.ukp.athenakp.database.models.Conference;
 import de.tudarmstadt.informatik.ukp.athenakp.database.models.Paper;
@@ -42,7 +42,7 @@ public class ParsedDataInserter {
 		TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
 	}
 	public static void main(String[] args) {
-		SpringApplication.run(Application.class, args);
+		SpringApplication.run(JPASandBox.class, args);
 		ParsedDataInserter parsedDataInserter = new ParsedDataInserter();
 
 		List<String> argList = Arrays.asList(args);
@@ -88,8 +88,8 @@ public class ParsedDataInserter {
 		System.out.println(" - this can take a couple of minutes..");
 		ArrayList<ArrayList<String>> listOfPaperAuthor = acl18WebParser.getPaperAuthor();
 		System.out.println("Done scraping! Inserting data into database...");
-		PaperCommonAccess paperFiler = new PaperHibernateAccess();
-		// PersonCommonAccess personfiler = new PersonHibernateAccess();
+		PaperCommonAccess paperFiler = new PaperJPAAccess();
+		// PersonCommonAccess personfiler = new PersonJPAAccess();
 
 		//Keeps Track of all added Authors, so they won't be added twice	
 		TreeMap<String,Author> addedAuthors = new TreeMap<String,Author>((o1, o2) -> o1.compareTo(o2));
@@ -149,7 +149,7 @@ public class ParsedDataInserter {
 	 */
 	private void acl2018StoreConferenceInformation(String beginYear, String endYear) {
 		CrawlerFacade acl18WebParser = new CrawlerFacade(SupportedConferences.ACL, beginYear, endYear);
-		ConferenceCommonAccess conferenceCommonAccess = new ConferenceHibernateAccess();
+		ConferenceCommonAccess conferenceCommonAccess = new ConferenceJPAAccess();
 		try{
 			Conference acl2018 = acl18WebParser.getConferenceInformation();
 			conferenceCommonAccess.add(acl2018);
