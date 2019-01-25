@@ -13,6 +13,7 @@ import de.tudarmstadt.informatik.ukp.athenakp.database.models.Workshop;
 /**
  * @author Daniel Lehmann
  */
+@Deprecated
 public class WorkshopHibernateAccess implements WorkshopCommonAccess {
 	@Override
 	public List<Workshop> getById(Long id) {

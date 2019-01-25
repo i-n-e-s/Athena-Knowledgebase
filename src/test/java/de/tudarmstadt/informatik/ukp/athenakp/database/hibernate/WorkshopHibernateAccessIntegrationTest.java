@@ -17,6 +17,7 @@ import de.tudarmstadt.informatik.ukp.athenakp.database.Testdatabase;
 import de.tudarmstadt.informatik.ukp.athenakp.database.models.Event;
 import de.tudarmstadt.informatik.ukp.athenakp.database.models.Workshop;
 
+@Deprecated
 public class WorkshopHibernateAccessIntegrationTest {
 	static Testdatabase testDB;
 	static WorkshopHibernateAccess uut;
