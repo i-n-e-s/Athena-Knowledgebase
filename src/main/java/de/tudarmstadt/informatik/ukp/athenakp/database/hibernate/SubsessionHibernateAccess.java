@@ -13,6 +13,7 @@ import de.tudarmstadt.informatik.ukp.athenakp.database.models.Subsession;
 /**
  * @author Daniel Lehmann
  */
+@Deprecated
 public class SubsessionHibernateAccess implements SubsessionCommonAccess {
 	@Override
 	public List<Subsession> getById(Long id) {

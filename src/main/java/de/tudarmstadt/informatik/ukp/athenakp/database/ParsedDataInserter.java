@@ -11,12 +11,16 @@ import javax.annotation.PostConstruct;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-import de.tudarmstadt.informatik.ukp.athenakp.Application;
+import de.tudarmstadt.informatik.ukp.athenakp.JPASandBox;
 import de.tudarmstadt.informatik.ukp.athenakp.crawler.CrawlerFacade;
 import de.tudarmstadt.informatik.ukp.athenakp.crawler.SupportedConferences;
 import de.tudarmstadt.informatik.ukp.athenakp.database.access.ConferenceCommonAccess;
 import de.tudarmstadt.informatik.ukp.athenakp.database.access.EventCommonAccess;
 import de.tudarmstadt.informatik.ukp.athenakp.database.access.PaperCommonAccess;
+import de.tudarmstadt.informatik.ukp.athenakp.database.jpa.ConferenceJPAAccess;
+import de.tudarmstadt.informatik.ukp.athenakp.database.jpa.EventJPAAccess;
+import de.tudarmstadt.informatik.ukp.athenakp.database.jpa.PaperJPAAccess;
+import de.tudarmstadt.informatik.ukp.athenakp.database.models.Author;
 import de.tudarmstadt.informatik.ukp.athenakp.database.access.WorkshopCommonAccess;
 import de.tudarmstadt.informatik.ukp.athenakp.database.hibernate.ConferenceHibernateAccess;
 import de.tudarmstadt.informatik.ukp.athenakp.database.hibernate.EventHibernateAccess;
@@ -59,7 +63,7 @@ public class ParsedDataInserter {
 	}
 
 	public static void main(String[] args) {
-		SpringApplication.run(Application.class, args);
+		SpringApplication.run(JPASandBox.class, args);
 		ParsedDataInserter parsedDataInserter;
 
 		List<String> argList = Arrays.asList(args);
@@ -105,8 +109,8 @@ public class ParsedDataInserter {
 		System.out.println(" - this can take a couple of minutes..");
 		ArrayList<Paper> papers = acl18WebParser.getPaperAuthor();
 		System.out.println("Done scraping! Inserting data into database...");
-		PaperCommonAccess paperFiler = new PaperHibernateAccess();
-		// PersonCommonAccess personfiler = new PersonHibernateAccess();
+		PaperCommonAccess paperFiler = new PaperJPAAccess();
+		// PersonCommonAccess personfiler = new PersonJPAAccess();
 
 		for (Paper paper : papers) {
 			paperFiler.add(paper);

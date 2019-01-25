@@ -14,14 +14,14 @@ public interface EventCommonAccess extends CommonAccess<Event> {
 	 * @param id The event's id.
 	 * @return A List of all events with the specified event id.
 	 */
-	public List<Event> getById(Long id);
+	public List<Event> getByEventId(Long id);
 
 	/**
 	 * Get all events with specified conference.
-	 * @param conference The event's conference's name.
+	 * @param conferenceName The event's conference's name.
 	 * @return A List of all events with the specified conference.
 	 */
-	public List<Event> getByConference(String conference);
+	public List<Event> getByConferenceName(String conferenceName);
 
 	/**
 	 * Get all events with specified start time.

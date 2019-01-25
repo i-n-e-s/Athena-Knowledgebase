@@ -6,7 +6,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import de.tudarmstadt.informatik.ukp.athenakp.database.hibernate.InstitutionHibernateAccess;
+import de.tudarmstadt.informatik.ukp.athenakp.database.access.InstitutionCommonAccess;
+import de.tudarmstadt.informatik.ukp.athenakp.database.jpa.InstitutionJPAAccess;
 import de.tudarmstadt.informatik.ukp.athenakp.database.models.Institution;
 
 /**
@@ -18,7 +19,7 @@ import de.tudarmstadt.informatik.ukp.athenakp.database.models.Institution;
 @RestController
 @RequestMapping("/institutions")
 public class InstitutionController {
-	private final InstitutionHibernateAccess access = new InstitutionHibernateAccess();
+	private final InstitutionCommonAccess access = new InstitutionJPAAccess();
 
 	/**
 	 * @return All institutions in the database
@@ -51,7 +52,7 @@ public class InstitutionController {
 	 * @return The institutions where the specified person works, if existing
 	 */
 	@RequestMapping("/byPerson/{value}") //TODO: perhaps arguments for finer control?
-	public List<Institution> byPerson(@PathVariable("value")String value) {
-		return access.getByPerson(value);
+	public List<Institution> byPerson(@PathVariable("value")Long value) {
+		return access.getByPersonID(value);
 	}
 }

@@ -56,5 +56,5 @@ public interface PersonCommonAccess extends CommonAccess<Person> {
 	 * @param institutionID The person's institution's id.
 	 * @return A List of all persons with the specified institution's id.
 	 */
-	public List<Person> getByInstitutionID(String institutionID);
+	public List<Person> getByInstitutionID(long institutionID);
 }

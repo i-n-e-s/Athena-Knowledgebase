@@ -6,7 +6,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import de.tudarmstadt.informatik.ukp.athenakp.database.hibernate.ConferenceHibernateAccess;
+import de.tudarmstadt.informatik.ukp.athenakp.database.access.ConferenceCommonAccess;
+import de.tudarmstadt.informatik.ukp.athenakp.database.jpa.ConferenceJPAAccess;
 import de.tudarmstadt.informatik.ukp.athenakp.database.models.Conference;
 
 /**
@@ -18,7 +19,7 @@ import de.tudarmstadt.informatik.ukp.athenakp.database.models.Conference;
 @RestController
 @RequestMapping("/conferences")
 public class ConferenceController {
-	private final ConferenceHibernateAccess access = new ConferenceHibernateAccess();
+	private final ConferenceCommonAccess access = new ConferenceJPAAccess();
 
 	/**
 	 * @return All conferences in the database
@@ -83,7 +84,7 @@ public class ConferenceController {
 	 * @return The conferences where the specified author spoke at
 	 */
 	@RequestMapping("/byAuthor/{value}") //TODO: perhaps arguments for finer control?
-	public List<Conference> byAuthor(@PathVariable("value")String value) {
+	public List<Conference> byAuthor(@PathVariable("value")long value) {
 		return access.getByAuthor(value);
 	}
 
@@ -92,7 +93,7 @@ public class ConferenceController {
 	 * @return The conferences where the specified paper was shown at
 	 */
 	@RequestMapping("/byPaper/{value}") //TODO: perhaps arguments for finer control?
-	public List<Conference> byPaper(@PathVariable("value")String value) {
+	public List<Conference> byPaper(@PathVariable("value")long value) {
 		return access.getByPaper(value);
 	}
 }
