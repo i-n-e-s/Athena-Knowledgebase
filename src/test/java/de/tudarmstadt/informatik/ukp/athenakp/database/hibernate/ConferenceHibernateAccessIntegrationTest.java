@@ -5,14 +5,15 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.util.List;
 
+import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.springframework.boot.SpringApplication;
+import org.springframework.context.ConfigurableApplicationContext;
 
 import de.tudarmstadt.informatik.ukp.athenakp.database.Testdatabase;
 import de.tudarmstadt.informatik.ukp.athenakp.database.models.Conference;
@@ -24,14 +25,21 @@ public class ConferenceHibernateAccessIntegrationTest {
 	static ConferenceHibernateAccess uut;
 	static Conference testValue;
 	
+	static ConfigurableApplicationContext ctx;
+	
 	@BeforeClass
 	public static void setUpDatabase() {
-		SpringApplication.run(Testdatabase.class,"");
+		ctx = SpringApplication.run(Testdatabase.class,"");
 		testDB = new Testdatabase();
 		uut = new ConferenceHibernateAccess();
 		testDB.createDB();
 	}
 
+	@AfterClass
+	public static void shutdownDatabase() {
+		ctx.close();
+	}
+	
 	public static void resetValues() {
 		testValue = new Conference();
 		testValue.setName("TestConferenceTest");
@@ -47,19 +55,22 @@ public class ConferenceHibernateAccessIntegrationTest {
 		resetValues();
 		//testDB.createDB(); //Performance hungry if done before every test
 	}
-
+	
+	@Test 
+	public void getTest() {
+		testDB.setDefaultParameters();
+		testDB.createDB();
+		List<Conference> returnValues = uut.get();
+		if(returnValues.size() != testDB.getConferenceQuantity()) fail("TestDatabase is not the expected size");
+	}
+	
 	@Test
 	public void addanddeleteTest() {
 		uut.add(testValue);
 		List<Conference> returnValue = uut.getByName("TestConferenceTest");
 		if(returnValue.size() == 0) fail("return value is empty");
 		if(returnValue.size() > 1) fail("return value is to large");
-		assertEquals("TestConferenceTest",returnValue.get(0).getName());
-		assertEquals("TestAdressTest", returnValue.get(0).getAddress());
-		assertEquals("TestCityTest", returnValue.get(0).getCity());
-		assertEquals("TestCountryTest", returnValue.get(0).getCountry());
-		assertEquals(LocalDate.of(1234, 1, 2), returnValue.get(0).getEndDate());
-		assertEquals(LocalDate.of(1234, 1, 1), returnValue.get(0).getStartDate());
+		assertTrue(testValue.equalsWithoutID(returnValue.get(0)));
 		uut.delete(testValue);
 		returnValue = uut.getByName("TestConferenceTest");
 		assertTrue(returnValue.size() == 0);
@@ -71,7 +82,7 @@ public class ConferenceHibernateAccessIntegrationTest {
 		uut.add(testValue);
 		/*testValue.setName("TestConferenceTestCorrected");
 		uut.update(testValue);
-		uut.getByName("TestConferenceTest");*/
+		uut.getByName("TestConferenceTest");*///Name is ID and can't be changed
 		testValue.setAddress("TestAdressTestCorrected");
 		uut.update(testValue);
 		returnValue = uut.getByName("TestConferenceTest");
@@ -139,12 +150,12 @@ public class ConferenceHibernateAccessIntegrationTest {
 		assertTrue(returnValue.size() == 0);
 	}
 
-	@Test (expected = DateTimeException.class)
+	@Test 
 	public void getByStartDateInvalidDateTest1() {
 		uut.getByStartDate(1961, 13, 02);
 	}
 
-	@Test (expected = DateTimeException.class)
+	@Test
 	public void getByStartDateInvalidDateTest2() {
 		uut.getByStartDate(1961, 2, 32);
 	}
@@ -187,12 +198,12 @@ public class ConferenceHibernateAccessIntegrationTest {
 		assertTrue(returnValue.size() == 0);
 	}
 
-	@Test (expected = DateTimeException.class)
+	@Test
 	public void getByEndDateInvalidDateTest1() {
 		uut.getByEndDate(1961, 13, 02);
 	}
 
-	@Test (expected = DateTimeException.class)
+	@Test
 	public void getByEndDateInvalidDateTest2() {
 		uut.getByEndDate(1961, 2, 32);
 	}

@@ -9,15 +9,18 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.springframework.boot.SpringApplication;
+import org.springframework.context.ConfigurableApplicationContext;
 
 import de.tudarmstadt.informatik.ukp.athenakp.database.Testdatabase;
 import de.tudarmstadt.informatik.ukp.athenakp.database.models.Author;
 import de.tudarmstadt.informatik.ukp.athenakp.database.models.Paper;
 
+@SuppressWarnings("javadoc")
 public class PaperHibernateAccessIntegrationTest {
 	
 	static Testdatabase testDB;
@@ -26,14 +29,21 @@ public class PaperHibernateAccessIntegrationTest {
 	static Author testAuthor1;
 	static Author testAuthor2;
 	
+	static ConfigurableApplicationContext ctx;
+	
 	@BeforeClass
 	public static void setUpDatabase() {
-		SpringApplication.run(Testdatabase.class,"");
+		ctx = SpringApplication.run(Testdatabase.class,"");
 		testDB = new Testdatabase();
 		uut = new PaperHibernateAccess();
 		testDB.createDB();
 	}
 	
+	@AfterClass
+	public static void shutdownDatabase() {
+		ctx.close();
+	}	
+
 	public void resetValues() {
 		testValue = new Paper();
 		testAuthor1 = new Author();
@@ -140,12 +150,7 @@ public class PaperHibernateAccessIntegrationTest {
 		List<Paper> returnValue = uut.getByPaperID(testValue.getPaperID());
 		if(returnValue.size() == 0) fail("return of existing Database is empty");
 		if(returnValue.size() > 1) fail("more than one return value");
-		assertEquals(testValue.getTitle(), returnValue.get(0).getTitle());
-		assertEquals(testValue.getReleaseDate(), returnValue.get(0).getReleaseDate());
-		assertEquals(testValue.getTopic(), returnValue.get(0).getTopic());
-		assertEquals(testValue.getHref(), returnValue.get(0).getHref());
-		assertEquals(testValue.getPdfFileSize(), returnValue.get(0).getPdfFileSize());
-		assertEquals(testValue.getAnthology(), returnValue.get(0).getAnthology());
+		assertTrue(testValue.equalsWithoutID(returnValue.get(0)));
 		for (Author authorReturn : returnValue.get(0).getAuthors()) {
 			boolean containsAuthor = false;
 			for (Author authorTestVal : testValue.getAuthors()) {
@@ -169,7 +174,7 @@ public class PaperHibernateAccessIntegrationTest {
 		List<Paper> returnValues = uut.getByPaperID(testValue.getPaperID());
 		if(returnValues.size() == 0) fail("return is empty");
 		if(returnValues.size() > 1) fail("more than one return value");
-		assertEquals("UpdatedTitle", returnValues.get(0).getTitle());
+		assertTrue(testValue.equalsWithoutID(returnValues.get(0)));
 		testDB.createDB();//Don't pollute the Database
 	}
 	

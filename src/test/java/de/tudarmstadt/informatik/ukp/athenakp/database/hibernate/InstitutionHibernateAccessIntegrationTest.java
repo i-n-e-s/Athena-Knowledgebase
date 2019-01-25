@@ -6,10 +6,12 @@ import static org.junit.Assert.fail;
 
 import java.util.List;
 
+import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.springframework.boot.SpringApplication;
+import org.springframework.context.ConfigurableApplicationContext;
 
 import de.tudarmstadt.informatik.ukp.athenakp.database.Testdatabase;
 import de.tudarmstadt.informatik.ukp.athenakp.database.models.Institution;
@@ -21,12 +23,19 @@ public class InstitutionHibernateAccessIntegrationTest {
 	static InstitutionHibernateAccess uut;
 	static Institution testValue;
 	
+	static ConfigurableApplicationContext ctx;
+	
 	@BeforeClass
 	public static void setUpDatabase() {
-		SpringApplication.run(Testdatabase.class,"");
+		ctx = SpringApplication.run(Testdatabase.class,"");
 		testDB = new Testdatabase();
 		uut = new InstitutionHibernateAccess();
 		testDB.createDB();
+	}
+	
+	@AfterClass
+	public static void shutdownDatabase() {
+		ctx.close();
 	}
 	
 	public static void resetValues() {
@@ -46,6 +55,7 @@ public class InstitutionHibernateAccessIntegrationTest {
 		List<Institution> returnValue = uut.getByName(testValue.getName());
 		if(returnValue.size() == 0) fail("return value is empty");
 		if(returnValue.size() > 1) fail("return value is to large");
+		assertTrue(testValue.equalsWithoutID(returnValue.get(0)));
 		uut.delete(testValue);
 		returnValue = uut.getByName(testValue.getName());
 		assertTrue(returnValue.size() == 0);

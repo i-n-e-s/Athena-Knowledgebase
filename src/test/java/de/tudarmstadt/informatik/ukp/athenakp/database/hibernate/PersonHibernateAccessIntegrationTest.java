@@ -13,6 +13,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.springframework.boot.SpringApplication;
+import org.springframework.context.ConfigurableApplicationContext;
 
 import de.tudarmstadt.informatik.ukp.athenakp.database.Testdatabase;
 import de.tudarmstadt.informatik.ukp.athenakp.database.models.Author;
@@ -20,6 +21,7 @@ import de.tudarmstadt.informatik.ukp.athenakp.database.models.Institution;
 import de.tudarmstadt.informatik.ukp.athenakp.database.models.Paper;
 import de.tudarmstadt.informatik.ukp.athenakp.database.models.Person;
 
+@SuppressWarnings("javadoc")
 public class PersonHibernateAccessIntegrationTest {//TODO Only Tested with Author instance. May use other Persons to
 
 	static Testdatabase testDB;
@@ -28,10 +30,12 @@ public class PersonHibernateAccessIntegrationTest {//TODO Only Tested with Autho
 	static Paper testPaper1;
 	static Paper testPaper2;
 	static Institution testInstitution;
+	
+	static ConfigurableApplicationContext ctx;
 
 	@BeforeClass
 	public static void setUpDatabase() {
-		SpringApplication.run(Testdatabase.class,"");
+		ctx = SpringApplication.run(Testdatabase.class,"");
 		testDB = new Testdatabase();
 		uut = new PersonHibernateAccess();
 		testDB.createDB();
@@ -67,7 +71,8 @@ public class PersonHibernateAccessIntegrationTest {//TODO Only Tested with Autho
 		List<Person> returnValues = uut.getByPersonID(testValue.getPersonID());
 		if(returnValues.size() == 0) fail("return of existing Database is empty");
 		if(returnValues.size() > 1) fail("more than one returnValue ");
-		assertEquals("TestValueName",returnValues.get(0).getFullName());
+		assertTrue(testValue.equalsWithoutID(returnValues.get(0)));
+		testDB.createDB();
 	}
 	
 	@Test 
@@ -121,11 +126,7 @@ public class PersonHibernateAccessIntegrationTest {//TODO Only Tested with Autho
 		List<Person> returnValues = uut.getByPersonID(testValue.getPersonID());
 		if(returnValues.size() == 0) fail("return of existing Database is empty");
 		if(returnValues.size() > 1) fail("more than one returnValue ");
-		assertEquals("TestPrefix", returnValues.get(0).getPrefix());
-		assertEquals("TestValueName", returnValues.get(0).getFullName());
-		assertEquals(LocalDate.of(123,12,1), returnValues.get(0).getBirthdate());
-		assertEquals(testValue.getPersonID(), returnValues.get(0).getPersonID());
-		assertEquals(testValue.getInstitution().getName(), returnValues.get(0).getInstitution().getName());
+		assertTrue(testValue.equalsWithoutID(returnValues.get(0)));
 		uut.delete(testValue);
 		assertTrue(uut.getByPersonID(testValue.getPersonID()).size() == 0);
 		testDB.createDB();
