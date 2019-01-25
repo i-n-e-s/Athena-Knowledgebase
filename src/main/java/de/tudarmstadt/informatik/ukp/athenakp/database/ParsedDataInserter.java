@@ -17,15 +17,11 @@ import de.tudarmstadt.informatik.ukp.athenakp.crawler.SupportedConferences;
 import de.tudarmstadt.informatik.ukp.athenakp.database.access.ConferenceCommonAccess;
 import de.tudarmstadt.informatik.ukp.athenakp.database.access.EventCommonAccess;
 import de.tudarmstadt.informatik.ukp.athenakp.database.access.PaperCommonAccess;
-import de.tudarmstadt.informatik.ukp.athenakp.database.jpa.ConferenceJPAAccess;
-import de.tudarmstadt.informatik.ukp.athenakp.database.jpa.EventJPAAccess;
-import de.tudarmstadt.informatik.ukp.athenakp.database.jpa.PaperJPAAccess;
-import de.tudarmstadt.informatik.ukp.athenakp.database.models.Author;
 import de.tudarmstadt.informatik.ukp.athenakp.database.access.WorkshopCommonAccess;
 import de.tudarmstadt.informatik.ukp.athenakp.database.hibernate.ConferenceHibernateAccess;
-import de.tudarmstadt.informatik.ukp.athenakp.database.hibernate.EventHibernateAccess;
-import de.tudarmstadt.informatik.ukp.athenakp.database.hibernate.PaperHibernateAccess;
-import de.tudarmstadt.informatik.ukp.athenakp.database.hibernate.WorkshopHibernateAccess;
+import de.tudarmstadt.informatik.ukp.athenakp.database.jpa.EventJPAAccess;
+import de.tudarmstadt.informatik.ukp.athenakp.database.jpa.PaperJPAAccess;
+import de.tudarmstadt.informatik.ukp.athenakp.database.jpa.WorkshopJPAAccess;
 import de.tudarmstadt.informatik.ukp.athenakp.database.models.Conference;
 import de.tudarmstadt.informatik.ukp.athenakp.database.models.Event;
 import de.tudarmstadt.informatik.ukp.athenakp.database.models.Paper;
@@ -135,8 +131,8 @@ public class ParsedDataInserter {
 	 * Stores the acl2018 conference's timetable into the database
 	 */
 	private void acl2018StoreEventInformation() {
-		EventCommonAccess eventCommonAccess = new EventHibernateAccess();
-		WorkshopCommonAccess workshopCommonAccess = new WorkshopHibernateAccess();
+		EventCommonAccess eventCommonAccess = new EventJPAAccess();
+		WorkshopCommonAccess workshopCommonAccess = new WorkshopJPAAccess();
 
 		try {
 			ArrayList<ScheduleEntry> entries = acl18WebParser.getSchedule();
