@@ -10,7 +10,6 @@ import javax.persistence.criteria.Root;
 
 import de.tudarmstadt.informatik.ukp.athenakp.database.access.PaperCommonAccess;
 import de.tudarmstadt.informatik.ukp.athenakp.database.models.Paper;
-import de.tudarmstadt.informatik.ukp.athenakp.database.models.Paper_;
 
 public class PaperJPAAccess implements PaperCommonAccess {
 
@@ -70,7 +69,7 @@ public class PaperJPAAccess implements PaperCommonAccess {
 		LocalDate date2 = LocalDate.of(year2, month2, 1);
 		criteriaQuery
 		.select(root)
-		.where(builder.between(root.get(Paper_.releaseDate), date1, date2));
+		.where(builder.between(root.get("releaseDate"), date1, date2));
 		List<Paper> result = entityManager.createQuery(criteriaQuery).getResultList();
 		entityManager.close();
 		return result;
