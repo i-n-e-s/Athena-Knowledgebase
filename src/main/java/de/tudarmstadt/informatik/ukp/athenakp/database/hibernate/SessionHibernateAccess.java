@@ -11,6 +11,7 @@ import de.tudarmstadt.informatik.ukp.athenakp.database.models.Session;
 /**
  * @author Daniel Lehmann
  */
+@Deprecated
 public class SessionHibernateAccess implements SessionCommonAccess {
 	@Override
 	public List<Session> getById(Long id) {

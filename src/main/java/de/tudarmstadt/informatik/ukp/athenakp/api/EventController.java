@@ -7,7 +7,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import de.tudarmstadt.informatik.ukp.athenakp.database.hibernate.EventHibernateAccess;
+import de.tudarmstadt.informatik.ukp.athenakp.database.access.EventCommonAccess;
+import de.tudarmstadt.informatik.ukp.athenakp.database.jpa.EventJPAAccess;
 import de.tudarmstadt.informatik.ukp.athenakp.database.models.Event;
 import de.tudarmstadt.informatik.ukp.athenakp.database.models.EventCategory;
 import de.tudarmstadt.informatik.ukp.athenakp.database.models.Session;
@@ -21,7 +22,7 @@ import de.tudarmstadt.informatik.ukp.athenakp.database.models.Session;
 @RestController
 @RequestMapping("/events")
 public class EventController {
-	private final EventHibernateAccess access = new EventHibernateAccess();
+	private final EventCommonAccess access = new EventJPAAccess();
 
 	/**
 	 * @return All events in the database

@@ -14,6 +14,7 @@ import de.tudarmstadt.informatik.ukp.athenakp.database.models.EventCategory;
 /**
  * @author Daniel Lehmann
  */
+@Deprecated
 public class EventHibernateAccess implements EventCommonAccess {
 	@Override
 	public List<Event> getById(Long id) {
