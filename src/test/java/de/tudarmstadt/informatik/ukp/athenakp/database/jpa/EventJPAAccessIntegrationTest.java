@@ -62,7 +62,7 @@ public class EventJPAAccessIntegrationTest {
 	}
 
 	@Test
-	public void getByConferenceTest() {
+	public void getByConferenceNameTest() {
 		List<Event> returnValue = uut.getByConferenceName("Conference0");
 		if(returnValue.size() == 0) fail("return of existing Database is empty");
 		if(returnValue.size() > 1) fail("more than one returnValue ");
