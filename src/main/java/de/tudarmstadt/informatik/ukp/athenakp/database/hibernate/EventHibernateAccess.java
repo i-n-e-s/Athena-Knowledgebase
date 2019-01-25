@@ -17,13 +17,13 @@ import de.tudarmstadt.informatik.ukp.athenakp.database.models.EventCategory;
 @Deprecated
 public class EventHibernateAccess implements EventCommonAccess {
 	@Override
-	public List<Event> getById(Long id) {
+	public List<Event> getByEventId(Long id) {
 		return getBy("eventID", id);
 	}
 
 	@Override
-	public List<Event> getByConference(String conference) {
-		return getBy("conference", conference);
+	public List<Event> getByConferenceName(String conferenceName) {
+		return getBy("conferenceName", conferenceName);
 	}
 
 	@Override

@@ -171,7 +171,7 @@ public class Testdatabase {
 		for (int i = 0; i < events.length; i++) {
 			events[i] = new Event();
 			LocalDateTime tmpDateTime= LocalDateTime.of(LocalDate.of(2018, (i%12)+1 , (i%28)+1),LocalTime.of(i%24, i%60));
-			events[i].setConference("Conference" + i);
+			events[i].setConferenceName("Conference" + i);
 			events[i].setBegin(tmpDateTime);
 			events[i].setEnd(tmpDateTime.plusHours(1));
 			events[i].setPlace("Place" + i);

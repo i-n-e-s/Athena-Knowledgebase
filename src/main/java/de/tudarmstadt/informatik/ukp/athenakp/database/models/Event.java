@@ -26,8 +26,8 @@ public class Event extends Model{
 	@Column(name="eventID")
 	private long eventID;
 	/*Name of conference this event belongs to*/
-	@Column(name="conference")
-	private String conference;
+	@Column(name="conferenceName")
+	private String conferenceName;
 	/*Start time*/
 	@Column(name="begin")
 	private LocalDateTime begin;
@@ -81,16 +81,16 @@ public class Event extends Model{
 	 * Gets the conference name this event belongs to
 	 * @return The conference this event belongs to
 	 */
-	public String getConference() {
-		return conference;
+	public String getConferenceName() {
+		return conferenceName;
 	}
 
 	/**
 	 * Sets this event's conference's name
 	 * @param conference The new conference
 	 */
-	public void setConference(String conference) {
-		this.conference = conference;
+	public void setConferenceName(String conferenceName) {
+		this.conferenceName = conferenceName;
 	}
 
 	/**

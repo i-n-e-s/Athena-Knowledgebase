@@ -38,7 +38,7 @@ public class EventController {
 	 */
 	@RequestMapping("/byEventID/{value}")
 	public List<Event> byEventID(@PathVariable("value")Long value) {
-		return access.getById(value);
+		return access.getByEventId(value);
 	}
 
 	/**
@@ -60,7 +60,7 @@ public class EventController {
 	 */
 	@RequestMapping("/byConference/{value}")
 	public List<Event> byConference(@PathVariable("value")String value) {
-		return access.getByConference(value);
+		return access.getByConferenceName(value);
 	}
 
 	/**

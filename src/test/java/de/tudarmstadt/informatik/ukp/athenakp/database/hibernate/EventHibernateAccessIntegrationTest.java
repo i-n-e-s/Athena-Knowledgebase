@@ -44,7 +44,7 @@ public class EventHibernateAccessIntegrationTest {
 		testSession2.setTitle("TestTitleTest2");
 		testSession2.setDescription("TestDescriptionTest2");
 		testSession2.setPlace("TestPlaceTest2");
-		testValue.setConference("TestConferenceTest");
+		testValue.setConferenceName("TestConferenceTest");
 		testValue.setBegin(LocalDateTime.of(1234, 12, 3, 4, 5));
 		testValue.setEnd(LocalDateTime.of(1234, 12, 3, 5, 6));
 		testValue.setPlace("TestPlaceTest");
@@ -63,15 +63,15 @@ public class EventHibernateAccessIntegrationTest {
 
 	@Test
 	public void getByConferenceTest() {
-		List<Event> returnValue = uut.getByConference("Conference0");
+		List<Event> returnValue = uut.getByConferenceName("Conference0");
 		if(returnValue.size() == 0) fail("return of existing Database is empty");
 		if(returnValue.size() > 1) fail("more than one returnValue ");
-		assertEquals("Conference0", returnValue.get(0).getConference());
+		assertEquals("Conference0", returnValue.get(0).getConferenceName());
 	}
 
 	@Test
 	public void getByConferenceInvalidConferenceTest() {
-		assertTrue(uut.getByConference("InvalidConference").size() == 0);
+		assertTrue(uut.getByConferenceName("InvalidConference").size() == 0);
 	}
 
 	@Test
@@ -150,10 +150,10 @@ public class EventHibernateAccessIntegrationTest {
 	@Test
 	public void addAndDeleteTest() {
 		uut.add(testValue);
-		List<Event> returnValue = uut.getById(testValue.getId());
+		List<Event> returnValue = uut.getByEventId(testValue.getId());
 		if(returnValue.size() == 0) fail("return of existing Database is empty");
 		if(returnValue.size() > 1) fail("more than one return value");
-		assertEquals(testValue.getConference(), returnValue.get(0).getConference());
+		assertEquals(testValue.getConferenceName(), returnValue.get(0).getConferenceName());
 		assertEquals(testValue.getBegin(), returnValue.get(0).getBegin());
 		assertEquals(testValue.getEnd(), returnValue.get(0).getEnd());
 		assertEquals(testValue.getPlace(), returnValue.get(0).getPlace());
@@ -169,7 +169,7 @@ public class EventHibernateAccessIntegrationTest {
 		}
 		assertEquals(0, correctSessions);
 		uut.delete(testValue);
-		assertTrue(uut.getById(testValue.getId()).size() == 0);
+		assertTrue(uut.getByEventId(testValue.getId()).size() == 0);
 		testDB.createDB();//If delete is broken don't pollute DB
 	}
 
@@ -178,7 +178,7 @@ public class EventHibernateAccessIntegrationTest {
 		uut.add(testValue);
 		testValue.setTitle("UpdatedTitle");
 		uut.update(testValue);
-		List<Event> returnValues = uut.getById(testValue.getId());
+		List<Event> returnValues = uut.getByEventId(testValue.getId());
 		if(returnValues.size() == 0) fail("return is empty");
 		if(returnValues.size() > 1) fail("more than one return value");
 		assertEquals("UpdatedTitle", returnValues.get(0).getTitle());
