@@ -59,7 +59,7 @@ public class PaperController {
 	@RequestMapping("/byPaperID/{value}/href")
 	public String getHref(@PathVariable("value")Long value) {
 		List<Paper> papers = byPaperID(value);
-		
+
 		if(papers.size() > 0)
 			return papers.get(0).getHref();
 		else return null;
