@@ -17,7 +17,7 @@ import org.hibernate.annotations.GenericGenerator;
 
 @Entity
 @Table(name="session")
-public class Session extends Model{ //TODO: chair
+public class Session{ //TODO: chair
 	/*Unique id*/
 	@Id
 	@GeneratedValue(generator="increment")

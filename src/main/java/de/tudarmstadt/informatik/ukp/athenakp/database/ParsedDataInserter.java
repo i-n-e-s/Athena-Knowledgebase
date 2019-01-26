@@ -9,7 +9,6 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.TimeZone;
-import java.util.TreeMap;
 
 import javax.annotation.PostConstruct;
 
@@ -104,9 +103,6 @@ public class ParsedDataInserter {
 		PaperCommonAccess paperFiler = new PaperJPAAccess();
 		// PersonCommonAccess personfiler = new PersonJPAAccess();
 
-		//Keeps Track of all added Authors, so they won't be added twice
-		TreeMap<String,Author> addedAuthors = new TreeMap<String,Author>((o1, o2) -> o1.compareTo(o2));
-
 		for (ArrayList<String> paperAndAuthors : listOfPaperAuthor) {
 			// only one Paper per paperandauthors
 			Paper paper = new Paper();
@@ -126,18 +122,10 @@ public class ParsedDataInserter {
 			// we ignore the first entry, since it is a Paper's title
 			for (int i = 1; i < paperAndAuthors.size(); i++) {
 				String authorName = paperAndAuthors.get(i);
-				Author author;
-				if(!addedAuthors.containsKey(authorName)) {
-					author = new Author();
-					// because acl2018 seems to not employ prefixes (e.g. Prof. Dr.), we do not need to scan them
-					// scanning them might make for a good user story
-					author.setFullName(authorName);
-					addedAuthors.put(authorName, author);
-
-				}else {
-					author = addedAuthors.get(authorName);
-				}
-
+				Author author = new Author();
+				// because acl2018 seems to not employ prefixes (e.g. Prof. Dr.), we do not need to scan them
+				// scanning them might make for a good user story
+				author.setFullName(authorName);
 				// Both following statements seem necessary for the author_paper table but lead to Hibernate
 				// access returning an object (paper) as often as a relation in author_paper exists
 				// looking into the tables themselves, duplicate papers (even with the same PaperID) do not exist

@@ -18,7 +18,7 @@ import org.hibernate.annotations.GenericGenerator;
 
 @Entity
 @Table(name="events")
-public class Event extends Model{
+public class Event {
 	/*Unique id*/
 	@Id
 	@GeneratedValue(generator="increment")

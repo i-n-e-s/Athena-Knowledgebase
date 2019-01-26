@@ -135,14 +135,4 @@ public class PaperController {
 	public List<Paper> byPdfFileSize(@PathVariable("value")Integer value) {
 		return access.getByPdfFileSize(value);
 	}
-	
-	/**
-	 * 
-	 * @param value The author from which the paper are requested
-	 * @return All papers, that the given author has published
-	 */
-	@RequestMapping("/byAuthor/{value}")
-	public List<Paper> byAuthor(@PathVariable("value")String value){
-		return access.getByAuthor(value);
-	}
 }

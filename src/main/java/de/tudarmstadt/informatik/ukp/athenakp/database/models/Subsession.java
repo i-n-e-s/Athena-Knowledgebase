@@ -1,7 +1,6 @@
 package de.tudarmstadt.informatik.ukp.athenakp.database.models;
 
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -13,7 +12,7 @@ import org.hibernate.annotations.GenericGenerator;
 
 @Entity
 @Table(name="subsession")
-public class Subsession extends Model {
+public class Subsession {
 	/*Unique id*/
 	@Id
 	@GeneratedValue(generator="increment")

@@ -15,6 +15,8 @@ import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 /**
  * @author Tristan Wettich
@@ -24,7 +26,7 @@ import javax.persistence.Table;
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "type", discriminatorType = DiscriminatorType.STRING)
 @DiscriminatorValue(value = "person")
-public class Person extends Model{
+public class Person {
 	/*Unique id*/
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -39,10 +41,10 @@ public class Person extends Model{
 	private String fullName;
 
 	/*Birthday and day of death*/
-	//@Temporal(TemporalType.TIMESTAMP)
+	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "birthday")
 	private LocalDate birthdate;
-	//@Temporal(TemporalType.TIMESTAMP)
+	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "obit")
 	private LocalDate obit;
 
