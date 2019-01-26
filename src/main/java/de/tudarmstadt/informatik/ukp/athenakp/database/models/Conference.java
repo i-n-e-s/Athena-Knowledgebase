@@ -10,7 +10,7 @@ import javax.persistence.*;
 
 @Entity
 @Table(name="conference")
-public class Conference {
+public class Conference extends Model {
 	/*Name of conference*/
 	@Id
 	@Column(name="name")
