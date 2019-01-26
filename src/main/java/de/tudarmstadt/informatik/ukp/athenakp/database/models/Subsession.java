@@ -12,7 +12,7 @@ import org.hibernate.annotations.GenericGenerator;
 
 @Entity
 @Table(name="subsession")
-public class Subsession extends Model {
+public class Subsession {
 	/*Unique id*/
 	@Id
 	@GeneratedValue(generator="increment")

@@ -2,7 +2,6 @@ package de.tudarmstadt.informatik.ukp.athenakp;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -100,8 +99,8 @@ public class HibernateSandBox {
 
 		Event dummyEvent = new Event();
 		dummyEvent.setTitle("reeeing in public - how to channel your inner frog");
-		dummyEvent.setBegin(LocalDateTime.of(LocalDate.of(2017, 8, 2), LocalTime.of(16,30)));
-		dummyEvent.setEnd(LocalDateTime.of(LocalDate.of(2017,8,3), LocalTime.of(12,0)));
+		dummyEvent.setBegin(LocalDateTime.of(2017, 8, 2, 14, 30));
+		dummyEvent.setEnd(LocalDateTime.of(2017, 8, 2, 15, 0));
 
 	}
 }

@@ -18,7 +18,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name="paper")
-public class Paper extends Model{
+public class Paper {
 	/*Identifier*/
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)

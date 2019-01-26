@@ -12,7 +12,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name="institutions")
-public class Institution extends Model{
+public class Institution {
 
 	/*Unique institutionID*/
 	@Id
