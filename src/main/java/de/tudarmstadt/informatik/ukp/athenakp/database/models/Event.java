@@ -87,7 +87,7 @@ public class Event {
 
 	/**
 	 * Sets this event's conference's name
-	 * @param conference The new conference
+	 * @param conferenceName The new conference
 	 */
 	public void setConferenceName(String conferenceName) {
 		this.conferenceName = conferenceName;

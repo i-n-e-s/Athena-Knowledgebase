@@ -60,7 +60,6 @@ public class Session{ //TODO: chair
 
 	/**
 	 * Gets the place where this session happens
-	 *
 	 * @return The place where this session happens
 	 */
 	public String getPlace() {
@@ -69,7 +68,6 @@ public class Session{ //TODO: chair
 
 	/**
 	 * Sets the place where this session happens
-	 *
 	 * @param place The new place where this session happens
 	 */
 	public void setPlace(String place) {
@@ -78,7 +76,6 @@ public class Session{ //TODO: chair
 
 	/**
 	 * Gets the title of this session
-	 *
 	 * @return The title of this session
 	 */
 	public String getTitle() {
@@ -87,7 +84,6 @@ public class Session{ //TODO: chair
 
 	/**
 	 * Sets the title of this session
-	 *
 	 * @param title The new title of this session
 	 */
 	public void setTitle(String title) {
@@ -96,7 +92,6 @@ public class Session{ //TODO: chair
 
 	/**
 	 * Gets a description of the session
-	 *
 	 * @return A description of the session
 	 */
 	public String getDescription() {
@@ -105,7 +100,6 @@ public class Session{ //TODO: chair
 
 	/**
 	 * Sets a description of the session
-	 *
 	 * @param description A new description of the session
 	 */
 	public void setDescription(String description) {
@@ -113,16 +107,16 @@ public class Session{ //TODO: chair
 	}
 
 	/**
-	 * Gets this event's sessions (if any)
-	 * @return This event's sessions
+	 * Gets this session's subsessions (if any)
+	 * @return This session's subsessions
 	 */
 	public Set<Subsession> getSubsessions() {
 		return subsessions;
 	}
 
 	/**
-	 * Sets this event's sessions (if any)
-	 * @param sessions This event's new sessions
+	 * Sets this session's subsessions (if any)
+	 * @param subsessions This session's new subsessions
 	 */
 	public void setSubsessions(Set<Subsession> subsessions) {
 		this.subsessions = subsessions;
