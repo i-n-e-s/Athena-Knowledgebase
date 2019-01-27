@@ -47,6 +47,7 @@ public class RequestScannerTest {
 		expected.add(new RequestToken(RequestTokenType.NUMBER, "05", 66));
 		expected.add(new RequestToken(RequestTokenType.SPACE, "+", 68));
 		expected.add(new RequestToken(RequestTokenType.NUMBER, "22", 69));
+		expected.add(new RequestToken(RequestTokenType.END, "<end>", 71));
 
 		assertEquals("Actual size is not equal to expected size!", expected.size(), actual.size());
 
@@ -80,6 +81,7 @@ public class RequestScannerTest {
 		expected.add(new RequestToken(RequestTokenType.NUMBER, "05", 66));
 		expected.add(new RequestToken(RequestTokenType.SPACE, "+", 68));
 		expected.add(new RequestToken(RequestTokenType.NUMBER, "22", 69));
+		expected.add(new RequestToken(RequestTokenType.END, "<end>", 71));
 
 		assertEquals("Actual size is not equal to expected size!", expected.size(), actual.size());
 

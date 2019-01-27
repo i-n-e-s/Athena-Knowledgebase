@@ -33,6 +33,7 @@ public class RequestToken {
 		ATTR_EQ, // =
 		ATTR_SEPERATOR, // &
 		ATTR_SPECIFIER, // :
+		END, //the end of the world (well, more like the request)
 		ERROR, //an error (duh!)
 		HIERARCHY_SEPERATOR, // /
 		JOIN, // $

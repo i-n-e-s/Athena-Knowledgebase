@@ -44,6 +44,7 @@ public class RequestScanner {
 			tokenStart = currentIndex;
 		}
 
+		tokens.add(new RequestToken(RequestTokenType.END, "<end>", tokenStart));
 		return tokens;
 	}
 
