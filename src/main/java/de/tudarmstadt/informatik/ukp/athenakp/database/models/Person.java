@@ -15,8 +15,6 @@ import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 
 /**
  * @author Tristan Wettich
@@ -41,10 +39,8 @@ public class Person {
 	private String fullName;
 
 	/*Birthday and day of death*/
-	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "birthday")
 	private LocalDate birthdate;
-	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "obit")
 	private LocalDate obit;
 
