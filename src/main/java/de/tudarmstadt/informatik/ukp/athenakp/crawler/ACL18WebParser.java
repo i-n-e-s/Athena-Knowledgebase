@@ -387,9 +387,6 @@ class ACL18WebParser extends AbstractCrawler{
 		return result;
 	}
 
-	//TODO: Some workshops have a parseable schedule, which would result in each workshop consisting of events again, which seems weird from a database point of view. How to counteract this?
-	// 		Currently workshop schedules are not saved because of this. The events do also not contain the lunch break, as each workshop seems to do them slightly differently.
-	//		It took quite a bit of experimenting and my time to realize that this issue is not easily solvable and better be discussed in the group.
 	/**
 	 * Parses ACL 2018's workshop schedule.
 	 * Some of this is hardcoded because why not
