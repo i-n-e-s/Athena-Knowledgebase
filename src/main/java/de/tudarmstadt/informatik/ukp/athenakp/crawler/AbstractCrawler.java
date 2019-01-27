@@ -46,4 +46,12 @@ abstract class AbstractCrawler {
 	 * @author Julian Steitz
 	 */
 	public abstract Conference getConferenceInformation() throws IOException;
+
+	/**
+	 * Returns a list of lists. Each sublist represents an event.
+	 * The sub lists are in the form: conference, date, begin time, end time, title, (host,) place, description, category, list of sessions
+	 * @return A list of lists of events and their metadata, null when data not available
+	 * @throws IOException if Jsoup.connect fails
+	 */
+	public abstract ArrayList<ArrayList<Object>> getSchedule() throws IOException;
 }

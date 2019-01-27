@@ -49,4 +49,9 @@ public class CrawlerFacade extends AbstractCrawler{
 	public Conference getConferenceInformation() throws IOException {
 		return crawler.getConferenceInformation();
 	}
+
+	@Override
+	public ArrayList<ArrayList<Object>> getSchedule() throws IOException {
+		return crawler.getSchedule();
+	}
 }

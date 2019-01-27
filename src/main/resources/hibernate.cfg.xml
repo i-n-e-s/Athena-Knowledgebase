@@ -15,7 +15,7 @@
         <property name="connection.password">ihavesecurityissues</property>
 
         <!--Hibernate Properties-->
-        <property name="show_sql">true</property> <!--Echoes all SQL to stdout-->
+        <property name="show_sql">false</property> <!--Echoes all SQL to stdout-->
         <property name="dialect">org.hibernate.dialect.MariaDBDialect</property>
         <property name="hibernate.hbm2ddl.auto">update</property>
         <!--<property name="hibernate.connection.pool_size">32</property>-->
@@ -27,6 +27,8 @@
         <mapping class="de.tudarmstadt.informatik.ukp.athenakp.database.models.Paper" />
         <mapping class="de.tudarmstadt.informatik.ukp.athenakp.database.models.Conference" />
         <mapping class="de.tudarmstadt.informatik.ukp.athenakp.database.models.Event" />
+        <mapping class="de.tudarmstadt.informatik.ukp.athenakp.database.models.Session" />
+        <mapping class="de.tudarmstadt.informatik.ukp.athenakp.database.models.Subsession" />
         <!--<mapping class="/roseindia/Employee" />-->
 
     </session-factory>

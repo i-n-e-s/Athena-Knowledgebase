@@ -2,11 +2,11 @@ package de.tudarmstadt.informatik.ukp.athenakp.database;
 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.HashSet;
 import java.util.TimeZone;
-import java.util.TreeMap;
 
 import javax.annotation.PostConstruct;
 
@@ -15,14 +15,22 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import de.tudarmstadt.informatik.ukp.athenakp.JPASandBox;
 import de.tudarmstadt.informatik.ukp.athenakp.crawler.CrawlerFacade;
+import de.tudarmstadt.informatik.ukp.athenakp.crawler.CrawlerToolset.SessionStore;
+import de.tudarmstadt.informatik.ukp.athenakp.crawler.CrawlerToolset.SubsessionStore;
 import de.tudarmstadt.informatik.ukp.athenakp.crawler.SupportedConferences;
 import de.tudarmstadt.informatik.ukp.athenakp.database.access.ConferenceCommonAccess;
+import de.tudarmstadt.informatik.ukp.athenakp.database.access.EventCommonAccess;
 import de.tudarmstadt.informatik.ukp.athenakp.database.access.PaperCommonAccess;
 import de.tudarmstadt.informatik.ukp.athenakp.database.jpa.ConferenceJPAAccess;
+import de.tudarmstadt.informatik.ukp.athenakp.database.jpa.EventJPAAccess;
 import de.tudarmstadt.informatik.ukp.athenakp.database.jpa.PaperJPAAccess;
 import de.tudarmstadt.informatik.ukp.athenakp.database.models.Author;
 import de.tudarmstadt.informatik.ukp.athenakp.database.models.Conference;
+import de.tudarmstadt.informatik.ukp.athenakp.database.models.Event;
+import de.tudarmstadt.informatik.ukp.athenakp.database.models.EventCategory;
 import de.tudarmstadt.informatik.ukp.athenakp.database.models.Paper;
+import de.tudarmstadt.informatik.ukp.athenakp.database.models.Session;
+import de.tudarmstadt.informatik.ukp.athenakp.database.models.Subsession;
 
 
 @SpringBootApplication
@@ -45,10 +53,9 @@ public class ParsedDataInserter {
 		SpringApplication.run(JPASandBox.class, args);
 		ParsedDataInserter parsedDataInserter = new ParsedDataInserter();
 
-		List<String> argList = Arrays.asList(args);
 		String beginYear = "2018", endYear = "2018";
 
-		for(String arg : argList) {
+		for(String arg : args) {
 			if(arg.startsWith("-beginYear=")) {
 				String year = arg.split("=")[1];
 
@@ -65,12 +72,14 @@ public class ParsedDataInserter {
 
 		System.out.printf("Scraping years %s through %s", beginYear, endYear);
 
-		try {
-			parsedDataInserter.aclStorePapersAndAuthors(beginYear, endYear);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		//		parsedDataInserter.acl2018StoreConferenceInformation();
+		//		try {
+		//			parsedDataInserter.aclStorePapersAndAuthors(beginYear, endYear);
+		//		} catch (IOException e) {
+		//			e.printStackTrace();
+		//		}
+		//		parsedDataInserter.acl2018StoreConferenceInformation(beginYear, endYear);
+		parsedDataInserter.acl2018StoreEventInformation(beginYear, endYear);
+		System.out.println("Done!");
 	}
 
 	/**
@@ -91,9 +100,6 @@ public class ParsedDataInserter {
 		PaperCommonAccess paperFiler = new PaperJPAAccess();
 		// PersonCommonAccess personfiler = new PersonJPAAccess();
 
-		//Keeps Track of all added Authors, so they won't be added twice	
-		TreeMap<String,Author> addedAuthors = new TreeMap<String,Author>((o1, o2) -> o1.compareTo(o2));
-		
 		for (ArrayList<String> paperAndAuthors : listOfPaperAuthor) {
 			// only one Paper per paperandauthors
 			Paper paper = new Paper();
@@ -113,18 +119,10 @@ public class ParsedDataInserter {
 			// we ignore the first entry, since it is a Paper's title
 			for (int i = 1; i < paperAndAuthors.size(); i++) {
 				String authorName = paperAndAuthors.get(i);
-				Author author;
-				if(!addedAuthors.containsKey(authorName)) {
-					author = new Author();
-					// because acl2018 seems to not employ prefixes (e.g. Prof. Dr.), we do not need to scan them
-					// scanning them might make for a good user story
-					author.setFullName(authorName);
-					addedAuthors.put(authorName, author);
-
-				}else {
-					author = addedAuthors.get(authorName);
-				}
-
+				Author author = new Author();
+				// because acl2018 seems to not employ prefixes (e.g. Prof. Dr.), we do not need to scan them
+				// scanning them might make for a good user story
+				author.setFullName(authorName);
 				// Both following statements seem necessary for the author_paper table but lead to Hibernate
 				// access returning an object (paper) as often as a relation in author_paper exists
 				// looking into the tables themselves, duplicate papers (even with the same PaperID) do not exist
@@ -157,6 +155,67 @@ public class ParsedDataInserter {
 		catch (IOException e){
 			e.printStackTrace();
 		}
+	}
 
+	/**
+	 * Stores the acl2018 conference's timetable into the database
+	 * @param beginYear The first year to get data from
+	 * @param endYear The last year to get data from
+	 */
+	private void acl2018StoreEventInformation(String beginYear, String endYear) {
+		CrawlerFacade acl18WebParser = new CrawlerFacade(SupportedConferences.ACL, beginYear, endYear);
+		EventCommonAccess eventCommonAccess = new EventJPAAccess();
+
+		try {
+			ArrayList<ArrayList<Object>> events = acl18WebParser.getSchedule();
+
+			for(ArrayList<Object> eventData : events) {
+				Event event = new Event();
+				java.util.Set<Session> sessions = new HashSet<Session>();
+
+				event.setConferenceName((String)eventData.get(0));
+				event.setBegin(LocalDateTime.of((LocalDate)eventData.get(1), (LocalTime)eventData.get(2)));
+				event.setEnd(LocalDateTime.of((LocalDate)eventData.get(1), (LocalTime)eventData.get(3)));
+				event.setTitle((String)eventData.get(4));
+				event.setPlace((String)eventData.get(5));
+				event.setDescription((String)eventData.get(5));
+				event.setCategory((EventCategory)eventData.get(7));
+
+				if(eventData.size() > 8 && eventData.get(8) != null) {
+					//TODO save chair
+					for(SessionStore sessionStore : (ArrayList<SessionStore>)eventData.get(8)) {
+						Session session = new Session();
+						java.util.Set<Subsession> subsessions = new HashSet<Subsession>();
+
+						session.setTitle(sessionStore.title);
+						session.setDescription(sessionStore.desc);
+						session.setPlace(sessionStore.place);
+
+						if(sessionStore.subsessions != null) {
+							for(SubsessionStore subsessionStore : sessionStore.subsessions) {
+								Subsession subsession = new Subsession();
+
+								subsession.setBegin(LocalDateTime.of(event.getBegin().toLocalDate(), subsessionStore.begin));
+								subsession.setEnd(LocalDateTime.of(event.getEnd().toLocalDate(), subsessionStore.end));
+								subsession.setTitle(subsessionStore.title);
+								subsession.setDescription(subsessionStore.desc);
+								subsessions.add(subsession);
+							}
+
+							session.setSubsessions(subsessions);
+						}
+
+						sessions.add(session);
+					}
+				}
+
+				event.setSessions(sessions);
+				eventCommonAccess.add(event);
+			}
+
+		}
+		catch(IOException e){
+			e.printStackTrace();
+		}
 	}
 }

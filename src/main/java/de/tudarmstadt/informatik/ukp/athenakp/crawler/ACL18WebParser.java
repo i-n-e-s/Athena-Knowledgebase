@@ -2,9 +2,9 @@ package de.tudarmstadt.informatik.ukp.athenakp.crawler;
 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
-
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -15,10 +15,11 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import de.tudarmstadt.informatik.ukp.athenakp.database.models.Conference;
-
 import de.tudarmstadt.informatik.ukp.athenakp.crawler.CrawlerToolset.PaperStore;
+import de.tudarmstadt.informatik.ukp.athenakp.crawler.CrawlerToolset.SessionStore;
+import de.tudarmstadt.informatik.ukp.athenakp.crawler.CrawlerToolset.SubsessionStore;
 import de.tudarmstadt.informatik.ukp.athenakp.database.models.Conference;
+import de.tudarmstadt.informatik.ukp.athenakp.database.models.EventCategory;
 
 /**
  * A class, which holds the capability to return a List of all authors, which
@@ -32,7 +33,7 @@ class ACL18WebParser extends AbstractCrawler{
 	private String startURLPaper;
 	private String schedulePage = "https://acl2018.org/programme/schedule/";
 	private String aboutPage = "https://acl2018.org/";
-
+	private String workshopPage = "https://acl2018.org/workshops/";
 	/**
 	 * Only parses in the given year range. If only one year is needed, use the same input for both
 	 * @param beginYear The first year to get data from
@@ -86,6 +87,11 @@ class ACL18WebParser extends AbstractCrawler{
 		return docs;
 	}
 
+	@Override
+	public ArrayList<String> getAuthors() throws IOException {
+		return extractAuthors(fetchWebpages(startURLAuthors));
+	}
+
 	/**
 	 * Extracts all authors from a given list of webpages, which are in the ACL
 	 * search form (e.g. {@link here
@@ -107,6 +113,11 @@ class ACL18WebParser extends AbstractCrawler{
 		return authors;
 	}
 
+	@Override
+	public ArrayList<String> getPaperTitles() throws IOException {
+		return extractPapers(fetchWebpages(startURLPaper));
+	}
+
 	/**
 	 * Extracts all papers from a given list of webpages, which are in the ACL search
 	 * form (e.g. {@link here
@@ -126,6 +137,40 @@ class ACL18WebParser extends AbstractCrawler{
 			}
 		}
 		return paperList;
+	}
+
+	@Override
+	public ArrayList<ArrayList<String>> getPaperAuthor() throws IOException {
+		System.out.println("Fetching webpages...");
+		List<Document> webpages = fetchWebpages(startURLPaper);
+		System.out.println("Preparing data and starting 4 scraper threads...");
+		int quarterSize = (int)Math.ceil(webpages.size() / 4);
+		List<Document> input1 = webpages.subList(0, quarterSize);
+		List<Document> input2 = webpages.subList(quarterSize, quarterSize * 2);
+		List<Document> input3 = webpages.subList(quarterSize * 2, quarterSize * 3);
+		List<Document> input4 = webpages.subList(quarterSize * 3, webpages.size());
+		ArrayList<ArrayList<String>> result = new ArrayList<>();
+		ExecutorService executor = Executors.newFixedThreadPool(4);
+		Future<ArrayList<ArrayList<String>>> f1 = executor.submit(() -> extractPaperAuthor(input1));
+		Future<ArrayList<ArrayList<String>>> f2 = executor.submit(() -> extractPaperAuthor(input2));
+		Future<ArrayList<ArrayList<String>>> f3 = executor.submit(() -> extractPaperAuthor(input3));
+		Future<ArrayList<ArrayList<String>>> f4 = executor.submit(() -> extractPaperAuthor(input4));
+		System.out.println("Waiting for thread results...");
+
+		try {
+			result.addAll(f1.get());
+			result.addAll(f2.get());
+			result.addAll(f3.get());
+			result.addAll(f4.get());
+			System.out.println("Gathered all results!");
+		}
+		catch(InterruptedException | ExecutionException e) {
+			System.err.println("Error while gathering results!");
+			e.printStackTrace();
+		}
+
+		executor.shutdown();
+		return result;
 	}
 
 	/**
@@ -242,31 +287,19 @@ class ACL18WebParser extends AbstractCrawler{
 	}
 
 	@Override
-	public ArrayList<String> getAuthors() throws IOException {
-		return extractAuthors(fetchWebpages(startURLAuthors));
-	}
-
-	@Override
-	public ArrayList<String> getPaperTitles() throws IOException {
-		return extractPapers(fetchWebpages(startURLPaper));
-	}
-
-	@Override
-	public ArrayList<ArrayList<String>> getPaperAuthor() throws IOException {
-		System.out.println("Fetching webpages...");
-		List<Document> webpages = fetchWebpages(startURLPaper);
-		System.out.println("Preparing data and starting 4 scraper threads...");
-		int quarterSize = (int)Math.ceil(webpages.size() / 4);
-		List<Document> input1 = webpages.subList(0, quarterSize);
-		List<Document> input2 = webpages.subList(quarterSize, quarterSize * 2);
-		List<Document> input3 = webpages.subList(quarterSize * 2, quarterSize * 3);
-		List<Document> input4 = webpages.subList(quarterSize * 3, webpages.size());
-		ArrayList<ArrayList<String>> result = new ArrayList<>();
-		ExecutorService executor = Executors.newFixedThreadPool(4);
-		Future<ArrayList<ArrayList<String>>> f1 = executor.submit(() -> {return extractPaperAuthor(input1);});
-		Future<ArrayList<ArrayList<String>>> f2 = executor.submit(() -> {return extractPaperAuthor(input2);});
-		Future<ArrayList<ArrayList<String>>> f3 = executor.submit(() -> {return extractPaperAuthor(input3);});
-		Future<ArrayList<ArrayList<String>>> f4 = executor.submit(() -> {return extractPaperAuthor(input4);});
+	public ArrayList<ArrayList<Object>> getSchedule() throws IOException {
+		System.out.println();
+		ArrayList<ArrayList<Object>> result = new ArrayList<>();
+		System.out.println("Preparing data and starting 5 scraper threads...");
+		Element schedule = Jsoup.connect(schedulePage).get().select("#schedule").get(0);
+		Elements days = schedule.select(".day-schedule");
+		//threading :DD - takes about 1 minute 20 seconds without, 30 seconds with
+		ExecutorService executor = Executors.newFixedThreadPool(5);
+		Future<ArrayList<ArrayList<Object>>> f1 = executor.submit(() -> parseFirstDay(days.get(0), new ArrayList<ArrayList<Object>>()));
+		Future<ArrayList<ArrayList<Object>>> f2 = executor.submit(() -> parseOtherDays(days.get(1), new ArrayList<ArrayList<Object>>()));
+		Future<ArrayList<ArrayList<Object>>> f3 = executor.submit(() -> parseOtherDays(days.get(2), new ArrayList<ArrayList<Object>>()));
+		Future<ArrayList<ArrayList<Object>>> f4 = executor.submit(() -> parseOtherDays(days.get(3), new ArrayList<ArrayList<Object>>()));
+		Future<ArrayList<ArrayList<Object>>> f5 = executor.submit(() -> parseWorkshops(new ArrayList<ArrayList<Object>>()));
 		System.out.println("Waiting for thread results...");
 
 		try {
@@ -274,6 +307,7 @@ class ACL18WebParser extends AbstractCrawler{
 			result.addAll(f2.get());
 			result.addAll(f3.get());
 			result.addAll(f4.get());
+			result.addAll(f5.get());
 			System.out.println("Gathered all results!");
 		}
 		catch(InterruptedException | ExecutionException e) {
@@ -283,5 +317,295 @@ class ACL18WebParser extends AbstractCrawler{
 
 		executor.shutdown();
 		return result;
+	}
+
+	/**
+	 * Parses ACL 2018's first days' schedule (seperate method because it contains a special case)
+	 * @param day The day element of the website
+	 * @param result The resulting arraylist with the complete schedule data of the first day
+	 */
+	private ArrayList<ArrayList<Object>> parseFirstDay(Element day, ArrayList<ArrayList<Object>> result) {
+		String[] monthDay = day.selectFirst(".day").text().split(":")[1].trim().split(" "); //the text has the form of "Sunday: July 15"
+		Elements tr = day.select("tr");
+
+		//looping through all table rows, each contains an event
+		for(int i = 0; i < tr.size(); i++) {
+			Element el = tr.get(i);
+			//conference, date, begin time, end time, title, (host,) place, description, category, list of sessions
+			ArrayList<Object> event = new ArrayList<>();
+
+			addGeneralEventInfo(el, event, monthDay);
+
+			//special case
+			if(i + 1 < tr.size() && tr.get(i + 1).hasClass("poster-session-row")) {
+				Element row = tr.get(++i);
+				Elements tutorials = row.select(".poster-name");
+				ArrayList<SessionStore> sessions = new ArrayList<>();
+
+				//the table row might contain several tutorials in the same timeframe, so loop through those
+				for(Element session : tutorials) {
+					SessionStore sessionStore = new SessionStore();
+
+					sessionStore.title = session.text();
+					sessions.add(sessionStore);
+				}
+
+				event.add(sessions);
+			}
+
+			result.add(event);
+		}
+
+		return result;
+	}
+
+	/**
+	 * Parses ACL 2018's other days' schedule
+	 * @param day The day element of the website
+	 * @param result The resulting arraylist with the complete schedule data of the given day
+	 */
+	private ArrayList<ArrayList<Object>> parseOtherDays(Element day, ArrayList<ArrayList<Object>> result) {
+		String[] monthDay = day.selectFirst(".day").text().split(":")[1].trim().split(" "); //the text has the form of "Sunday: July 15"
+		Elements tr = day.select("tr");
+
+		//looping through all table rows, each contains an event
+		for(int i = 0; i < tr.size(); i++) {
+			Element el = tr.get(i);
+			//conference, date, begin time, end time, title, (host,) place, description, category, list of sessions
+			ArrayList<Object> event = new ArrayList<>();
+
+			addGeneralEventInfo(el, event, monthDay);
+
+			if(event.get(event.size() - 1) == EventCategory.PRESENTATION)
+				addOralPresentationInfo(tr.get(++i).select(".conc-session"), tr.get(++i).select(".session-location"), tr.get(++i).select(".session-details"), event);
+			else if(event.get(event.size() - 1) == EventCategory.SESSION)
+				addPosterSessionInfo(tr.get(++i).select(".poster-sub-session"), event);
+
+			result.add(event);
+		}
+
+		return result;
+	}
+
+	/**
+	 * Parses ACL 2018's workshop schedule.
+	 * Some of this is hardcoded because why not
+	 * @param result The resulting arraylist with the complete workshop data
+	 */
+	private ArrayList<ArrayList<Object>> parseWorkshops(ArrayList<ArrayList<Object>> result) {
+		try {
+			Document doc = Jsoup.connect(workshopPage).get();
+			Elements content = doc.select(".post-content");
+			Elements days = content.select("ul");
+
+			//looping through both of the days at which workshops are happening
+			for(int i = 0; i < days.size(); i++) {
+				Element day = days.get(i);
+				Elements workshops = day.select("li");
+
+				//looping through all workshop elements in the current day
+				for(Element workshop : workshops) {
+					//conference, date, begin time, end time, title, (host,) place, description, category, list of sessions
+					ArrayList<Object> event = new ArrayList<>();
+					String[] dayMonth = content.select("h4").get(i).text().split(" ", 2)[1].split(" ");
+					String[] titleRoom = workshop.text().split(": ");
+					String description = workshop.selectFirst("a").attr("href");//just the workshop link for now
+
+					event.add("ACL 2018");
+					event.add(LocalDate.of(2018, CrawlerToolset.getMonthIndex(dayMonth[1]), Integer.parseInt(dayMonth[0])));
+					event.add(LocalTime.of(9, 0));
+					event.add(LocalTime.of(17, 0)); //assume 5pm, because the schedule table is not 100% proportional
+					event.add(titleRoom[0]);
+					event.add(titleRoom[1]);
+					event.add(description);
+					event.add(EventCategory.WORKSHOP);
+					event.add(null);
+					result.add(event);
+				}
+			}
+		}
+		catch(IOException e) {
+			e.printStackTrace();
+		}
+
+		return result;
+	}
+
+	/**
+	 * Adds general information about an event, such as name, timeframe, location etc.
+	 * @param el The event header element of the website
+	 * @param event The arraylist with the resulting event's information
+	 * @param monthDay The month (index 0) and day (index 1) where this event happens
+	 */
+	private void addGeneralEventInfo(Element el, ArrayList<Object> event, String[] monthDay) {
+		event.add("ACL 2018");
+		event.add(LocalDate.of(2018, CrawlerToolset.getMonthIndex(monthDay[0]), Integer.parseInt(monthDay[1])));
+
+		if(el.id().startsWith("session")) {
+			String[] time = el.select(".session-times").text().split("–"); //NOT A HYPHEN!!! IT'S AN 'EN DASH'
+			String[] begin = time[0].split(":");
+			String[] end = time[1].split(":");
+			String title = el.select(".session-name").text();
+			String desc = el.select(".session-suffix").text();
+			Elements place = el.select(".session-location");
+			EventCategory category = null;
+
+			if(!desc.isEmpty())
+				title = title.replace(desc, "");
+
+			event.add(LocalTime.of(Integer.parseInt(begin[0]), Integer.parseInt(begin[1])));
+			event.add(LocalTime.of(Integer.parseInt(end[0]), Integer.parseInt(end[1])));
+			event.add(title);
+			event.add(place.isEmpty() ? "?" : (place.get(0).text().isEmpty() ? "?" : place.get(0).text()));
+			event.add(desc);
+			title = title.toLowerCase();
+
+			if(title.startsWith("tutorial"))
+				category = EventCategory.TUTORIAL;
+			else if(title.contains("welcome"))
+				category = EventCategory.WELCOME;
+			else if(title.startsWith("lunch") || title.contains("break"))
+				category = EventCategory.BREAK;
+			else if(title.contains("oral"))
+				category = EventCategory.PRESENTATION;
+			else if(title.contains("poster"))
+				category = EventCategory.SESSION;
+			else if(title.contains("recruitment"))
+				category = EventCategory.RECRUITMENT;
+			else if(title.contains("talk"))
+				category = EventCategory.TALK;
+			else if(title.contains("meeting"))
+				category = EventCategory.MEETING;
+			else if(title.contains("social"))
+				category = EventCategory.SOCIAL;
+			else if(title.contains("award") || title.contains("achievement"))
+				category = EventCategory.CEREMONY;
+
+			event.add(category);
+		}
+	}
+
+	/**
+	 * Adds all available information about an oral presentation section
+	 * @param sessions The elements containing session information
+	 * @param rooms The elements containing room information per session
+	 * @param presentations The elements containing the presentations per session
+	 * @param event The arraylist with the resulting oral presentation's information
+	 */
+	private void addOralPresentationInfo(Elements sessions, Elements rooms, Elements presentations, ArrayList<Object> event) {
+		ArrayList<SessionStore> sessionList = new ArrayList<>();
+
+		//looping through the different columns of the OP table
+		for(int i = 0; i < presentations.size(); i++) { //seems like sessions, rooms, and presentations all have the same size, always
+			Element sessEl = sessions.get(i);
+			SessionStore session = new SessionStore();
+			String[] sessTitleDesc = sessEl.selectFirst(".conc-session-name").text().split(":");
+			String sessTitle = sessTitleDesc[0].trim();
+			String sessDesc = sessTitleDesc[1].trim();
+			String sessChair = sessEl.selectFirst(".session-speakers").text().split(":")[1].trim();
+			String sessPlace = rooms.get(i).text();
+			ArrayList<SubsessionStore> subsessions = new ArrayList<>();
+
+			//looping through the rows of the current column
+			for(Element subEl : presentations.get(i).select(".talk")) {
+				SubsessionStore subsession = new SubsessionStore();
+				String[] subTime = subEl.selectFirst(".talk-time").text().split(":");
+				LocalTime subStart = LocalTime.of(Integer.parseInt(subTime[0]), Integer.parseInt(subTime[1]));
+				LocalTime subEnd = subStart.plusMinutes(25);
+				Element subTitleEl = subEl.selectFirst(".talk-title");
+				String subTitle = subTitleEl.text();
+				Element subDescEl = subTitleEl.select("a").get(2);
+				boolean tacl = subDescEl.selectFirst(".tacl-badge") != null; //is paper hosted on tacl
+				String subDescHref = subTitleEl.select("a").get(2).attr("href"); //let's hope it's always the third :D
+				String subDesc = getDescriptionFromHref(subDescHref, tacl);
+
+				subsession.begin = subStart;
+				subsession.end = subEnd;
+				subsession.title = subTitle;
+				subsession.desc = subDesc;
+				subsessions.add(subsession);
+			}
+
+			session.title = sessTitle;
+			session.desc = sessDesc;
+			session.chair = sessChair;
+			session.place = sessPlace;
+			session.subsessions = subsessions;
+			sessionList.add(session);
+		}
+
+		event.add(sessionList);
+	}
+
+	/**
+	 * Adds all available information about a poster session
+	 * @param sessions The elements containing the "sub"session information
+	 * @param event The arraylist with the resulting poster session's information
+	 */
+	private void addPosterSessionInfo(Elements sessions, ArrayList<Object> event) {
+		ArrayList<SessionStore> sessionList = new ArrayList<>();
+		LocalTime eventStart = (LocalTime)event.get(2);
+		LocalTime eventEnd = (LocalTime)event.get(3);
+
+		//looping through the poster sessions
+		for(Element sessEl : sessions) {
+			SessionStore session = new SessionStore();
+			String[] sessTitleDesc = sessEl.selectFirst(".poster-session-name").text().split(":");
+			String sessTitle = sessTitleDesc[0].trim();
+			String sessDesc = sessTitleDesc[1].trim();
+			ArrayList<SubsessionStore> subsessions = new ArrayList<>();
+
+			//looping through all papers that are part of this PS
+			for(Element subEl : sessEl.select(".poster-name")) {
+				SubsessionStore subsession = new SubsessionStore();
+				Element subTitleDescEl = subEl.select("a").get(1); //let's hope it's always the second :D
+				String title = subTitleDescEl.text().trim();
+				boolean tacl = subTitleDescEl.selectFirst(".tacl-badge") != null; //is paper hosted on tacl
+				String subDescHref = subTitleDescEl.attr("href");
+				String subDesc = getDescriptionFromHref(subDescHref, tacl);
+
+				subsession.begin = eventStart;
+				subsession.end = eventEnd;
+				subsession.title = title;
+				subsession.desc = subDesc;
+				subsessions.add(subsession);
+			}
+
+			session.title = sessTitle;
+			session.desc = sessDesc;
+			session.subsessions = subsessions;
+			sessionList.add(session);
+		}
+
+		event.add(sessionList);
+	}
+
+	/**
+	 * Gets a paper's description from the given href. Might be relative to https://acl2018.org or a complete link to a tacl page. If latter, set tacl to true
+	 * @param href The (relative) link
+	 * @param tacl Whether href is a tacl link or not
+	 * @return The description found in the href, ? if an IOException occured or no description has been found
+	 */
+	private String getDescriptionFromHref(String href, boolean tacl) {
+		try {
+			//there's the "title" attribute, but not all entries have it filled out completely (for instance ones marked with tacl)
+			if(tacl)
+			{
+				Document taclDoc = Jsoup.connect(href).get();
+
+				//rerouted to index page, because paper page probably threw 404
+				if(taclDoc.select("head > title").text().equals("Transactions of the Association for Computational Linguistics"))
+					return "?";
+				else
+					return taclDoc.select("#articleAbstract > div").get(0).text().trim();
+			}
+			else
+				return Jsoup.connect("https://acl2018.org" + href).get().selectFirst(".paper-abstract").text().trim();
+		}
+		catch(IOException e) {
+			System.err.println("Error while trying to get paper description from href");
+			e.printStackTrace();
+			return "?";
+		}
 	}
 }

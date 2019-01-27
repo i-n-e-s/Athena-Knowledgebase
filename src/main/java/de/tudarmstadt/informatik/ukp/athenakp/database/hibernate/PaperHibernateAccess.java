@@ -11,7 +11,7 @@ import de.tudarmstadt.informatik.ukp.athenakp.database.access.PaperCommonAccess;
 import de.tudarmstadt.informatik.ukp.athenakp.database.models.Paper;
 
 /**
- * @author Daniel Lehmann, Jonas Hake
+ * @author Daniel Lehmann
  */
 @Deprecated
 public class PaperHibernateAccess implements PaperCommonAccess {
@@ -21,19 +21,12 @@ public class PaperHibernateAccess implements PaperCommonAccess {
 	}
 
 	@Override
-	public List<Paper> getByAuthor(String author) {
-		List<Paper> result;
-		Session session = HibernateUtils.getSessionFactory().openSession();
-		Criteria paperCriteria = session.createCriteria(Paper.class);
-		Criteria authorCriteria = paperCriteria.createCriteria("authors");
-		authorCriteria.add(Restrictions.eq("fullName",author));
-		result = authorCriteria.list();
-		session.close();
-		return result;
+	public List<Paper> getByAuthor(String author) { //TODO: implement this
+		return null;
 	}
 
 	@Override
-	public List<Paper> getByReleaseDate(Integer year, Integer month, Integer day) { //TODO: do we need day still? papers seem to only be stored by release year/month
+	public List<Paper> getByReleaseDate(Integer year, Integer month, Integer day) {
 		return getBy("releaseDate", LocalDate.of(year, month, day));
 	}
 
