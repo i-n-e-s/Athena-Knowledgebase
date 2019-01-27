@@ -328,6 +328,7 @@ class ACL18WebParser extends AbstractCrawler{
 		String[] monthDay = day.selectFirst(".day").text().split(":")[1].trim().split(" "); //the text has the form of "Sunday: July 15"
 		Elements tr = day.select("tr");
 
+		//looping through all table rows, each contains an event
 		for(int i = 0; i < tr.size(); i++) {
 			Element el = tr.get(i);
 			//conference, date, begin time, end time, title, (host,) place, description, category, list of sessions
@@ -341,6 +342,7 @@ class ACL18WebParser extends AbstractCrawler{
 				Elements tutorials = row.select(".poster-name");
 				ArrayList<SessionStore> sessions = new ArrayList<>();
 
+				//the table row might contain several tutorials in the same timeframe, so loop through those
 				for(Element session : tutorials) {
 					SessionStore sessionStore = new SessionStore();
 
@@ -366,6 +368,7 @@ class ACL18WebParser extends AbstractCrawler{
 		String[] monthDay = day.selectFirst(".day").text().split(":")[1].trim().split(" "); //the text has the form of "Sunday: July 15"
 		Elements tr = day.select("tr");
 
+		//looping through all table rows, each contains an event
 		for(int i = 0; i < tr.size(); i++) {
 			Element el = tr.get(i);
 			//conference, date, begin time, end time, title, (host,) place, description, category, list of sessions
@@ -398,10 +401,12 @@ class ACL18WebParser extends AbstractCrawler{
 			Elements content = doc.select(".post-content");
 			Elements days = content.select("ul");
 
+			//looping through both of the days at which workshops are happening
 			for(int i = 0; i < days.size(); i++) {
 				Element day = days.get(i);
 				Elements workshops = day.select("li");
 
+				//looping through all workshop elements in the current day
 				for(Element workshop : workshops) {
 					//conference, date, begin time, end time, title, (host,) place, description, category, list of sessions
 					ArrayList<Object> event = new ArrayList<>();
@@ -493,7 +498,8 @@ class ACL18WebParser extends AbstractCrawler{
 	private void addOralPresentationInfo(Elements sessions, Elements rooms, Elements presentations, ArrayList<Object> event) {
 		ArrayList<SessionStore> sessionList = new ArrayList<>();
 
-		for(int i = 0; i < presentations.size(); i++) {//seems like sessions, rooms, and presentations all have the same size, always
+		//looping through the different columns of the OP table
+		for(int i = 0; i < presentations.size(); i++) { //seems like sessions, rooms, and presentations all have the same size, always
 			Element sessEl = sessions.get(i);
 			SessionStore session = new SessionStore();
 			String[] sessTitleDesc = sessEl.selectFirst(".conc-session-name").text().split(":");
@@ -503,6 +509,7 @@ class ACL18WebParser extends AbstractCrawler{
 			String sessPlace = rooms.get(i).text();
 			ArrayList<SubsessionStore> subsessions = new ArrayList<>();
 
+			//looping through the rows of the current column
 			for(Element subEl : presentations.get(i).select(".talk")) {
 				SubsessionStore subsession = new SubsessionStore();
 				String[] subTime = subEl.selectFirst(".talk-time").text().split(":");
@@ -543,6 +550,7 @@ class ACL18WebParser extends AbstractCrawler{
 		LocalTime eventStart = (LocalTime)event.get(2);
 		LocalTime eventEnd = (LocalTime)event.get(3);
 
+		//looping through the poster sessions
 		for(Element sessEl : sessions) {
 			SessionStore session = new SessionStore();
 			String[] sessTitleDesc = sessEl.selectFirst(".poster-session-name").text().split(":");
@@ -550,6 +558,7 @@ class ACL18WebParser extends AbstractCrawler{
 			String sessDesc = sessTitleDesc[1].trim();
 			ArrayList<SubsessionStore> subsessions = new ArrayList<>();
 
+			//looping through all papers that are part of this PS
 			for(Element subEl : sessEl.select(".poster-name")) {
 				SubsessionStore subsession = new SubsessionStore();
 				Element subTitleDescEl = subEl.select("a").get(1); //let's hope it's always the second :D
