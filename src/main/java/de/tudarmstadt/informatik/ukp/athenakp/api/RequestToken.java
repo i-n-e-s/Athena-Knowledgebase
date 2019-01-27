@@ -4,13 +4,15 @@ package de.tudarmstadt.informatik.ukp.athenakp.api;
  * Represents a token that is part of the request string
  */
 public class RequestToken {
-	/**The type of this token*/
 	public final RequestTokenType type;
-	/*The actual token as it was found in the request string**/
 	public final String actual;
 	public final int index;
 
-	public RequestToken(RequestTokenType type, String actual) {
+	/**
+	 * @param type The type of this token
+	 * @param actual The actual token as it was found in the request string
+	 * @param index The index in the request string that this token starts at (used for error handling)
+	 */
 	public RequestToken(RequestTokenType type, String actual, int index) {
 		this.type = type;
 		this.actual = actual;
@@ -28,14 +30,14 @@ public class RequestToken {
 	}
 
 	public enum RequestTokenType {
-		ATTR_EQ,
-		ATTR_SEPERATOR,
-		ATTR_SPECIFIER,
-		ERROR,
-		HIERARCHY_SEPERATOR,
-		JOIN,
-		NAME,
-		NUMBER,
-		SPACE;
+		ATTR_EQ, // =
+		ATTR_SEPERATOR, // &
+		ATTR_SPECIFIER, // :
+		ERROR, //an error (duh!)
+		HIERARCHY_SEPERATOR, // /
+		JOIN, // $
+		NAME, //an entity or attribute name
+		NUMBER, //a number (duh!)
+		SPACE; // +
 	}
 }
