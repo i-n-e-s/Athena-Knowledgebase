@@ -8,20 +8,23 @@ public class RequestToken {
 	public final RequestTokenType type;
 	/*The actual token as it was found in the request string**/
 	public final String actual;
+	public final int index;
 
 	public RequestToken(RequestTokenType type, String actual) {
+	public RequestToken(RequestTokenType type, String actual, int index) {
 		this.type = type;
 		this.actual = actual;
+		this.index = index;
 	}
 
 	@Override
 	public String toString() {
-		return "[" + type + ", " + actual +"]";
+		return "[" + type + ", " + actual + ", " + index + "]";
 	}
 
 	@Override
 	public boolean equals(Object obj) {
-		return obj instanceof RequestToken && type == ((RequestToken)obj).type && actual.equals(((RequestToken)obj).actual);
+		return obj instanceof RequestToken && type == ((RequestToken)obj).type && actual.equals(((RequestToken)obj).actual) && index == ((RequestToken)obj).index;
 	}
 
 	public enum RequestTokenType {

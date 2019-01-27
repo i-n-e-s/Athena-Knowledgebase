@@ -7,6 +7,7 @@ import de.tudarmstadt.informatik.ukp.athenakp.api.RequestToken.RequestTokenType;
 
 public class RequestScanner {
 	private char[] request;
+	private int tokenStart = 0;
 	private int currentIndex = 0;
 	private String currentActualToken;
 
@@ -39,7 +40,8 @@ public class RequestScanner {
 
 			currentActualToken = "";
 			type = scanToken();
-			tokens.add(new RequestToken(type, currentActualToken));
+			tokens.add(new RequestToken(type, currentActualToken, tokenStart));
+			tokenStart = currentIndex;
 		}
 
 		return tokens;
