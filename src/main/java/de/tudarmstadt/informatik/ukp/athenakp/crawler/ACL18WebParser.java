@@ -373,9 +373,9 @@ class ACL18WebParser extends AbstractCrawler{
 
 			addGeneralEventInfo(el, event, monthDay);
 
-			if(((EventCategory)event.get(event.size() - 1)) == EventCategory.PRESENTATION)
+			if(event.get(event.size() - 1) == EventCategory.PRESENTATION)
 				addOralPresentationInfo(tr.get(++i).select(".conc-session"), tr.get(++i).select(".session-location"), tr.get(++i).select(".session-details"), event);
-			else if(((EventCategory)event.get(event.size() - 1)) == EventCategory.SESSION)
+			else if(event.get(event.size() - 1) == EventCategory.SESSION)
 				addPosterSessionInfo(tr.get(++i).select(".poster-sub-session"), event);
 
 			result.add(event);
