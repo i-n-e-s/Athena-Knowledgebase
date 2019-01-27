@@ -13,6 +13,7 @@ import de.tudarmstadt.informatik.ukp.athenakp.database.models.Paper;
 /**
  * @author Daniel Lehmann
  */
+@Deprecated
 public class PaperHibernateAccess implements PaperCommonAccess {
 	@Override
 	public List<Paper> getByPaperID(Long paperID) {
@@ -25,7 +26,7 @@ public class PaperHibernateAccess implements PaperCommonAccess {
 	}
 
 	@Override
-	public List<Paper> getByReleaseDate(Integer year, Integer month, Integer day) { //TODO: do we need day still? papers seem to only be stored by release year/month
+	public List<Paper> getByReleaseDate(Integer year, Integer month, Integer day) {
 		return getBy("releaseDate", LocalDate.of(year, month, day));
 	}
 

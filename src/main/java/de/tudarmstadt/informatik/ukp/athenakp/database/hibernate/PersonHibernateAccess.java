@@ -14,6 +14,7 @@ import de.tudarmstadt.informatik.ukp.athenakp.database.models.Person;
  *
  * @author Tristan Wettich, Daniel Lehmann
  */
+@Deprecated
 public class PersonHibernateAccess implements PersonCommonAccess {
 
 	/**
@@ -60,8 +61,8 @@ public class PersonHibernateAccess implements PersonCommonAccess {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public List<Person> getByInstitutionID(String institutionID) { //TODO implement this
-		return null;
+	public List<Person> getByInstitutionID(long institutionID) { //TODO implement this
+		return getBy("institutionID", institutionID);
 	}
 
 	/**

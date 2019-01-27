@@ -2,6 +2,7 @@ package de.tudarmstadt.informatik.ukp.athenakp.crawler;
 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -359,6 +360,7 @@ class ACL18WebParser extends AbstractCrawler{
 		String[] monthDay = day.selectFirst(".day").text().split(":")[1].trim().split(" "); //the text has the form of "Sunday: July 15"
 		Elements tr = day.select("tr");
 
+		//looping through all table rows, each contains an event
 		for(int i = 0; i < tr.size(); i++) {
 			Element el = tr.get(i);
 			//conference, date, begin time, end time, title, (host,) place, description, category, list of sessions
@@ -371,6 +373,7 @@ class ACL18WebParser extends AbstractCrawler{
 				Element row = tr.get(++i);
 				Elements tutorials = row.select(".poster-name");
 
+				//the table row might contain several tutorials in the same timeframe, so loop through those
 				for(Element sessionEl : tutorials) {
 					Session session = new Session();
 
@@ -394,6 +397,7 @@ class ACL18WebParser extends AbstractCrawler{
 		String[] monthDay = day.selectFirst(".day").text().split(":")[1].trim().split(" "); //the text has the form of "Sunday: July 15"
 		Elements tr = day.select("tr");
 
+		//looping through all table rows, each contains an event
 		for(int i = 0; i < tr.size(); i++) {
 			Element el = tr.get(i);
 			//conference, date, begin time, end time, title, (host,) place, description, category, list of sessions
@@ -412,9 +416,6 @@ class ACL18WebParser extends AbstractCrawler{
 		return result;
 	}
 
-	//TODO: Some workshops have a parseable schedule, which would result in each workshop consisting of events again, which seems weird from a database point of view. How to counteract this?
-	// 		Currently workshop schedules are not saved because of this. The events do also not contain the lunch break, as each workshop seems to do them slightly differently.
-	//		It took quite a bit of experimenting and my time to realize that this issue is not easily solvable and better be discussed in the group.
 	/**
 	 * Parses ACL 2018's workshop schedule.
 	 * Some of this is hardcoded because why not
@@ -426,20 +427,21 @@ class ACL18WebParser extends AbstractCrawler{
 			Elements content = doc.select(".post-content");
 			Elements days = content.select("ul");
 
+			//looping through both of the days at which workshops are happening
 			for(int i = 0; i < days.size(); i++) {
 				Element day = days.get(i);
 				Elements workshops = day.select("li");
 
+				//looping through all workshop elements in the current day
 				for(Element workshop : workshops) {
 					Event event = new Event();
 					String[] dayMonth = content.select("h4").get(i).text().split(" ", 2)[1].split(" ");
 					String[] titleRoom = workshop.text().split(": ");
 					String description = workshop.selectFirst("a").attr("href");//just the workshop link for now
 
-					event.setConference("ACL 2018");
-					event.setDate(LocalDate.of(2018, CrawlerToolset.getMonthIndex(dayMonth[1]), Integer.parseInt(dayMonth[0])));
-					event.setBegin(LocalTime.of(9, 0));
-					event.setEnd(LocalTime.of(17, 0)); //assume 5pm, because the schedule table is not 100% proportional
+					event.setConferenceName("ACL 2018");
+					event.setBegin(LocalDateTime.of(2018, CrawlerToolset.getMonthIndex(dayMonth[1]), Integer.parseInt(dayMonth[0]), 9, 0));
+					event.setEnd(LocalDateTime.of(2018, CrawlerToolset.getMonthIndex(dayMonth[1]), Integer.parseInt(dayMonth[0]), 17, 0)); //assume 5pm, because the schedule table is not 100% proportional
 					event.setTitle(titleRoom[0]);
 					event.setPlace(titleRoom[1]);
 					event.setDescription(description);
@@ -462,8 +464,7 @@ class ACL18WebParser extends AbstractCrawler{
 	 * @param monthDay The month (index 0) and day (index 1) where this event happens
 	 */
 	private void addGeneralEventInfo(Element el, Event event, String[] monthDay) {
-		event.setConference("ACL 2018");
-		event.setDate(LocalDate.of(2018, CrawlerToolset.getMonthIndex(monthDay[0]), Integer.parseInt(monthDay[1])));
+		event.setConferenceName("ACL 2018");
 
 		if(el.id().startsWith("session")) {
 			String[] time = el.select(".session-times").text().split("–"); //NOT A HYPHEN!!! IT'S AN 'EN DASH'
@@ -477,8 +478,8 @@ class ACL18WebParser extends AbstractCrawler{
 			if(!desc.isEmpty())
 				title = title.replace(desc, "");
 
-			event.setBegin(LocalTime.of(Integer.parseInt(begin[0]), Integer.parseInt(begin[1])));
-			event.setEnd(LocalTime.of(Integer.parseInt(end[0]), Integer.parseInt(end[1])));
+			event.setBegin(LocalDateTime.of(2018, CrawlerToolset.getMonthIndex(monthDay[0]), Integer.parseInt(monthDay[1]), Integer.parseInt(begin[0]), Integer.parseInt(begin[1])));
+			event.setEnd(LocalDateTime.of(2018, CrawlerToolset.getMonthIndex(monthDay[0]), Integer.parseInt(monthDay[1]), Integer.parseInt(end[0]), Integer.parseInt(end[1])));
 			event.setTitle(title);
 			event.setPlace(place.isEmpty() ? "?" : (place.get(0).text().isEmpty() ? "?" : place.get(0).text()));
 			event.setDescription(desc);
@@ -518,7 +519,8 @@ class ACL18WebParser extends AbstractCrawler{
 	 */
 	private void addOralPresentationInfo(Elements sessions, Elements rooms, Elements presentations, Event event) {
 
-		for(int i = 0; i < presentations.size(); i++) {//seems like sessions, rooms, and presentations all have the same size, always
+		//looping through the different columns of the OP table
+		for(int i = 0; i < presentations.size(); i++) { //seems like sessions, rooms, and presentations all have the same size, always
 			Element sessEl = sessions.get(i);
 			Session session = new Session();
 			String[] sessTitleDesc = sessEl.selectFirst(".conc-session-name").text().split(":");
@@ -527,11 +529,12 @@ class ACL18WebParser extends AbstractCrawler{
 			//			String sessChair = sessEl.selectFirst(".session-speakers").text().split(":")[1].trim();
 			String sessPlace = rooms.get(i).text();
 
+			//looping through the rows of the current column
 			for(Element subEl : presentations.get(i).select(".talk")) {
 				Subsession subsession = new Subsession();
 				String[] subTime = subEl.selectFirst(".talk-time").text().split(":");
-				LocalTime subStart = LocalTime.of(Integer.parseInt(subTime[0]), Integer.parseInt(subTime[1]));
-				LocalTime subEnd = subStart.plusMinutes(25);
+				LocalDateTime subStart = LocalDateTime.of(event.getBegin().toLocalDate(), LocalTime.of(Integer.parseInt(subTime[0]), Integer.parseInt(subTime[1])));
+				LocalDateTime subEnd = subStart.plusMinutes(25);
 				Element subTitleEl = subEl.selectFirst(".talk-title");
 				String subTitle = subTitleEl.text();
 				Element subDescEl = subTitleEl.select("a").get(2);
@@ -560,12 +563,14 @@ class ACL18WebParser extends AbstractCrawler{
 	 * @param event The arraylist with the resulting poster session's information
 	 */
 	private void addPosterSessionInfo(Elements sessions, Event event) {
+		//looping through the poster sessions
 		for(Element sessEl : sessions) {
 			Session session = new Session();
 			String[] sessTitleDesc = sessEl.selectFirst(".poster-session-name").text().split(":");
 			String sessTitle = sessTitleDesc[0].trim();
 			String sessDesc = sessTitleDesc[1].trim();
 
+			//looping through all papers that are part of this PS
 			for(Element subEl : sessEl.select(".poster-name")) {
 				Subsession subsession = new Subsession();
 				Element subTitleDescEl = subEl.select("a").get(1); //let's hope it's always the second :D

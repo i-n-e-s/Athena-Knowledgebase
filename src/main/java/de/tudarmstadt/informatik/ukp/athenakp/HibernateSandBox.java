@@ -1,8 +1,7 @@
 package de.tudarmstadt.informatik.ukp.athenakp;
 
 import java.time.LocalDate;
-import java.time.LocalTime;
-import java.util.Date;
+import java.time.LocalDateTime;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -22,17 +21,17 @@ import de.tudarmstadt.informatik.ukp.athenakp.database.models.Institution;
 import de.tudarmstadt.informatik.ukp.athenakp.database.models.Paper;
 
 @SpringBootApplication
-public class Application {
+public class HibernateSandBox {
 
 	public static void main(String[] args) {
-		SpringApplication.run(Application.class, args);
+		SpringApplication.run(HibernateSandBox.class, args);
 
 		Institution dummyInstitution = new Institution();
 		dummyInstitution.setName("Black Mesa");
 
 		Author dummyAuthor = new Author();
 		dummyAuthor.setFullName("Rumpo Derpel");
-		dummyAuthor.setBirthdate(new Date(2010, 10, 10));
+		dummyAuthor.setBirthdate(LocalDate.of(2010, 10, 10));
 
 		Author dummyAuthor2 = new Author();
 		dummyAuthor2.setPrefix("Prof. Dr.");
@@ -46,8 +45,8 @@ public class Application {
 		// 		i am not sure if the
 		//		alternatives proposed in the linked stackoverflow thread will work with hibernate, gotta test that
 		//		-Daniel
-		dummyAuthor2.setBirthdate(new Date(1970 - 1900, 1 - 1, 1));
-		dummyAuthor2.setObit(new Date(2038 - 1900, 1 - 1, 19));
+		dummyAuthor2.setBirthdate(LocalDate.of(1970 - 1900, 1 - 1, 1));
+		dummyAuthor2.setObit(LocalDate.of(2038 - 1900, 1 - 1, 19));
 		//				p2.setInstitution(i); FIXME if a person has this, a query with a result containing this person will result in an error
 
 		Paper dummyPaper = new Paper();
@@ -100,9 +99,8 @@ public class Application {
 
 		Event dummyEvent = new Event();
 		dummyEvent.setTitle("reeeing in public - how to channel your inner frog");
-		dummyEvent.setDate(LocalDate.of(2017, 8, 2));
-		dummyEvent.setBegin(LocalTime.of(14, 30));
-		dummyEvent.setEnd(LocalTime.of(15, 0));
+		dummyEvent.setBegin(LocalDateTime.of(2017, 8, 2, 14, 30));
+		dummyEvent.setEnd(LocalDateTime.of(2017, 8, 2, 15, 0));
 
 	}
 }

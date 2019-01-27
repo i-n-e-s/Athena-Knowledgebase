@@ -7,7 +7,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import de.tudarmstadt.informatik.ukp.athenakp.database.hibernate.PaperHibernateAccess;
+import de.tudarmstadt.informatik.ukp.athenakp.database.access.PaperCommonAccess;
+import de.tudarmstadt.informatik.ukp.athenakp.database.jpa.PaperJPAAccess;
 import de.tudarmstadt.informatik.ukp.athenakp.database.models.Author;
 import de.tudarmstadt.informatik.ukp.athenakp.database.models.Paper;
 
@@ -20,7 +21,7 @@ import de.tudarmstadt.informatik.ukp.athenakp.database.models.Paper;
 @RestController
 @RequestMapping("/papers")
 public class PaperController {
-	private final PaperHibernateAccess access = new PaperHibernateAccess();
+	private final PaperCommonAccess access = new PaperJPAAccess();
 
 	/**
 	 * @return All papers in the database

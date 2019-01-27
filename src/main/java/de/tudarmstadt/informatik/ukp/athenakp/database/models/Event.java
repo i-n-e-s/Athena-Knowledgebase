@@ -1,7 +1,6 @@
 package de.tudarmstadt.informatik.ukp.athenakp.database.models;
 
-import java.time.LocalDate;
-import java.time.LocalTime;
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -28,17 +27,14 @@ public class Event {
 	@Column(name="eventID")
 	private long eventID;
 	/*Name of conference this event belongs to*/
-	@Column(name="conference")
-	private String conference;
-	/*The date of this event*/
-	@Column(name="date")
-	private LocalDate date;
+	@Column(name="conferenceName")
+	private String conferenceName;
 	/*Start time*/
 	@Column(name="begin")
-	private LocalTime begin;
+	private LocalDateTime begin;
 	/*End time*/
 	@Column(name="end")
-	private LocalTime end;
+	private LocalDateTime end;
 	/*Host*/
 	//	@Column(name = "host") //FIXME: crashes - perhaps save id?
 	//	private Person host;                //TODO Person von Author abstrahieren
@@ -86,39 +82,23 @@ public class Event {
 	 * Gets the conference name this event belongs to
 	 * @return The conference this event belongs to
 	 */
-	public String getConference() {
-		return conference;
+	public String getConferenceName() {
+		return conferenceName;
 	}
 
 	/**
 	 * Sets this event's conference's name
-	 * @param conference The new conference
+	 * @param conferenceName The new conference
 	 */
-	public void setConference(String conference) {
-		this.conference = conference;
-	}
-
-	/**
-	 * Gets the date this event happens on
-	 * @return This event's date
-	 */
-	public LocalDate getDate() {
-		return date;
-	}
-
-	/**
-	 * Sets the date this event happens on
-	 * @param date The date this event happens on
-	 */
-	public void setDate(LocalDate date) {
-		this.date = date;
+	public void setConferenceName(String conferenceName) {
+		this.conferenceName = conferenceName;
 	}
 
 	/**
 	 * Gets the time this event begins
 	 * @return This event's begin time
 	 */
-	public LocalTime getBegin() {
+	public LocalDateTime getBegin() {
 		return begin;
 	}
 
@@ -126,7 +106,7 @@ public class Event {
 	 * Sets the time this event begins
 	 * @param begin The time this event begins
 	 */
-	public void setBegin(LocalTime begin) {
+	public void setBegin(LocalDateTime begin) {
 		this.begin = begin;
 	}
 
@@ -134,7 +114,7 @@ public class Event {
 	 * Gets the time this event ends
 	 * @return This event's new end time
 	 */
-	public LocalTime getEnd() {
+	public LocalDateTime getEnd() {
 		return end;
 	}
 
@@ -142,7 +122,7 @@ public class Event {
 	 * Sets the time this event ends
 	 * @param end the new time this event ends
 	 */
-	public void setEnd(LocalTime end) {
+	public void setEnd(LocalDateTime end) {
 		this.end = end;
 	}
 

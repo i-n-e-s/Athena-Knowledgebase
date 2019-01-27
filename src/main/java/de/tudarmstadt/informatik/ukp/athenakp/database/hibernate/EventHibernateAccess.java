@@ -1,7 +1,6 @@
 package de.tudarmstadt.informatik.ukp.athenakp.database.hibernate;
 
-import java.time.LocalDate;
-import java.time.LocalTime;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.hibernate.Criteria;
@@ -15,33 +14,28 @@ import de.tudarmstadt.informatik.ukp.athenakp.database.models.EventCategory;
 /**
  * @author Daniel Lehmann
  */
+@Deprecated
 public class EventHibernateAccess implements EventCommonAccess {
 	@Override
-	public List<Event> getById(Long id) {
+	public List<Event> getByEventId(Long id) {
 		return getBy("eventID", id);
 	}
 
 	@Override
-	public List<Event> getByConference(String conference) {
-		return getBy("conference", conference);
+	public List<Event> getByConferenceName(String conferenceName) {
+		return getBy("conferenceName", conferenceName);
 	}
 
 	@Override
-	public List<Event> getByDate(Integer year, Integer month, Integer day) {
-		LocalDate localDate = LocalDate.of(year, month, day);
-		return getBy("date", localDate);
+	public List<Event> getByStartTime(Integer year, Integer month, Integer day, Integer hour, Integer minute) {
+		LocalDateTime localDateTime = LocalDateTime.of(year, month, day, hour, minute);
+		return getBy("begin", localDateTime);
 	}
 
 	@Override
-	public List<Event> getByStartTime(Integer hour, Integer minute) {
-		LocalTime localTime = LocalTime.of(hour, minute);
-		return getBy("begin", localTime);
-	}
-
-	@Override
-	public List<Event> getByEndTime(Integer hour, Integer minute) {
-		LocalTime localTime = LocalTime.of(hour, minute);
-		return getBy("end", localTime);
+	public List<Event> getByEndTime(Integer year, Integer month, Integer day, Integer hour, Integer minute) {
+		LocalDateTime localDateTime = LocalDateTime.of(year, month, day, hour, minute);
+		return getBy("end", localDateTime);
 	}
 
 	@Override

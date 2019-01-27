@@ -1,0 +1,30 @@
+Beginn: 8:50
+Ende:	
+Protokollant: Julian Steitz
+
+
+Daniel stellt Event/Workshopstruktur vor. (Ersichtlich im Branch)
+Philipp zeigt Semantic Scholar API - Implementation (")
+
+
+semantic scholar Abfragen nur als Reaktion auf reale Anfragen. Timeout zwischen Anfragen.
+Streetmaps - kostenlos aber limitierte Anfragen + keine Bewertungen und Öffnungszeiten von Entitäten
+
+JPA Umsetzung bietet Funktionalität von altem Master (at time of branch)
+	neue Hibernate Dependency die Metaklassen generiert - Tristan
+		Metaklasse - Hilfsklasse (interne Pfadangaben etc) 
+Testsuite - Jonas (Dummydaten: Autor1, Autor2, ...)
+
+Philipp fragt: ich hole mir ein paper mit einem Hashset von Autoren und ändere etwas an diesen Autoren. Wird das in hibernate auch so 
+widergespiegelt?
+
+Toiletten Angabe openstreetmaps auf Anfrage - Julian
+
+Nächster Termin:
+(Jonas sucht Tinder für Freunde - momentan behilfsmäßig die Uni)
+
+
+Problemheft/Projekttagebuch:
+Server?  Git?
+
+14.01.2019 (Montag) 14:00 (Raum unklar)

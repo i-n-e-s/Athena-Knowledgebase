@@ -1,0 +1,55 @@
+Beginn: 14:00
+Ende:	16:00
+
+Programm:
+	Wie gehen wir mit Bugs um, die erst später erscheinen?
+	Vorstellung Code-Reviews
+	
+	UnitTests - in Memory - passiert über Maven - im Branch von Jonas
+	
+
+HibernateBeziehungen ManyToMany OneToMany innerhalb von Autoren: troubleshooting
+
+Vorstellung Code Review Jonas, Julian des erstellten Google-Sheets
+	CountLinesofCode
+	Ausnahmen werden besprochen an konkreten Codebeispielen
+
+Travis-CI build von anderen branches starten
+	Travis-yaml Datei in jedem Branch - einfach in Git hauen
+		Ab nächster Iteration automatisch
+
+Sheets muss man nicht in Trello verlinken - Von Ready to Review zu Finished bedeutet, dass alle "x"e gesetzt sind, wie würden also sowieso 
+identisch aussehen
+
+	Review: Best-of in Trello 
+
+Bughandling:
+	Wie gehen wir damit um? Gruppeninternes Meeting?
+		Jonas anschreiben und auf die Tagesordnung setzen
+	Slack-Bug-Channel mit Tickets und Threads
+	BugTrelloBoard: sprintübergreifend - 
+
+Tests:
+Jonas Test-suite bietet Tests für alles pre-Sprint
+
+Branch-Vielzahl möglichst vermeiden, trotzdem Branches für Bugs
+	BugTest wird designed, wenn dieser durchläuft, kann direkt auf den master gepushed werden.
+ 
+
+Jonas:
+	Wann ist ein (Unit) Test ein guter Test?
+	Wann ist ein (Integration) Test ein guter Test?
+	
+	Utility:
+		Auch Edge-Cases müssen getestet werden - Input vorhersagen
+	Datenbankkontroller nur als Integrationstest testbar
+Auch oder teilweise nur:
+Integrationstest: testet die ganze Klasse/das ganze Package als Ganzes
+
+Branch-Coverage ist das Ziel
+
+
+
+Aufgabe: Regeln für Tests an Jonas schicken - bestmöglich bis heute Abend - in hübsch
+	 Branch-Coverage, Integrationstests und Edge-Cases/Input vorhersagen
+		- Daniel versucht nach Quellen zu schauen

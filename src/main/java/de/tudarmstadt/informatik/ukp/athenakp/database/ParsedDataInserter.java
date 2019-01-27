@@ -2,8 +2,6 @@ package de.tudarmstadt.informatik.ukp.athenakp.database;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.TimeZone;
 
 import javax.annotation.PostConstruct;
@@ -11,15 +9,15 @@ import javax.annotation.PostConstruct;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-import de.tudarmstadt.informatik.ukp.athenakp.Application;
+import de.tudarmstadt.informatik.ukp.athenakp.JPASandBox;
 import de.tudarmstadt.informatik.ukp.athenakp.crawler.CrawlerFacade;
 import de.tudarmstadt.informatik.ukp.athenakp.crawler.SupportedConferences;
 import de.tudarmstadt.informatik.ukp.athenakp.database.access.ConferenceCommonAccess;
 import de.tudarmstadt.informatik.ukp.athenakp.database.access.EventCommonAccess;
 import de.tudarmstadt.informatik.ukp.athenakp.database.access.PaperCommonAccess;
-import de.tudarmstadt.informatik.ukp.athenakp.database.hibernate.ConferenceHibernateAccess;
-import de.tudarmstadt.informatik.ukp.athenakp.database.hibernate.EventHibernateAccess;
-import de.tudarmstadt.informatik.ukp.athenakp.database.hibernate.PaperHibernateAccess;
+import de.tudarmstadt.informatik.ukp.athenakp.database.jpa.ConferenceJPAAccess;
+import de.tudarmstadt.informatik.ukp.athenakp.database.jpa.EventJPAAccess;
+import de.tudarmstadt.informatik.ukp.athenakp.database.jpa.PaperJPAAccess;
 import de.tudarmstadt.informatik.ukp.athenakp.database.models.Conference;
 import de.tudarmstadt.informatik.ukp.athenakp.database.models.Event;
 import de.tudarmstadt.informatik.ukp.athenakp.database.models.Paper;
@@ -55,13 +53,12 @@ public class ParsedDataInserter {
 	}
 
 	public static void main(String[] args) {
-		SpringApplication.run(Application.class, args);
+		SpringApplication.run(JPASandBox.class, args);
 		ParsedDataInserter parsedDataInserter;
 
-		List<String> argList = Arrays.asList(args);
 		String beginYear = "2018", endYear = "2018";
 
-		for(String arg : argList) {
+		for(String arg : args) {
 			if(arg.startsWith("-beginYear=")) {
 				String year = arg.split("=")[1];
 
@@ -101,8 +98,8 @@ public class ParsedDataInserter {
 		System.out.println(" - this can take a couple of minutes..");
 		ArrayList<Paper> papers = acl18WebParser.getPaperAuthor();
 		System.out.println("Done scraping! Inserting data into database...");
-		PaperCommonAccess paperFiler = new PaperHibernateAccess();
-		// PersonCommonAccess personfiler = new PersonHibernateAccess();
+		PaperCommonAccess paperFiler = new PaperJPAAccess();
+		// PersonCommonAccess personfiler = new PersonJPAAccess();
 
 		for (Paper paper : papers) {
 			paperFiler.add(paper);
@@ -113,7 +110,7 @@ public class ParsedDataInserter {
 	 * Stores the acl2018 conference into the database
 	 */
 	private void acl2018StoreConferenceInformation() {
-		ConferenceCommonAccess conferenceCommonAccess = new ConferenceHibernateAccess();
+		ConferenceCommonAccess conferenceCommonAccess = new ConferenceJPAAccess();
 		try{
 			Conference acl2018 = acl18WebParser.getConferenceInformation();
 			conferenceCommonAccess.add(acl2018);
@@ -127,7 +124,7 @@ public class ParsedDataInserter {
 	 * Stores the acl2018 conference's timetable into the database
 	 */
 	private void acl2018StoreEventInformation() {
-		EventCommonAccess eventCommonAccess = new EventHibernateAccess();
+		EventCommonAccess eventCommonAccess = new EventJPAAccess();
 
 		try {
 			ArrayList<Event> events = acl18WebParser.getSchedule();

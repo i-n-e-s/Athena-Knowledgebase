@@ -13,6 +13,7 @@ import org.hibernate.service.ServiceRegistry;
  *
  * @author Tristan Wettich
  */
+@Deprecated
 public class HibernateUtils {
 
 	private static final SessionFactory sessionFactory = buildSessionFactory();
