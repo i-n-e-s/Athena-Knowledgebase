@@ -31,7 +31,8 @@ public abstract class Model {
 					if(field.get(this)==null) {//Both are null?
 						if(!(field.get(model) == null)) { 
 							if(!wasAccessible) field.setAccessible(false);
-							return false;}
+							return false;
+						}
 					}else if(!(field.get(this).equals(field.get(model)))) {
 						if(!wasAccessible) field.setAccessible(false);
 						return false;
@@ -52,18 +53,13 @@ public abstract class Model {
 	 * 
 	 * @param model A model, preferably of the same class of the object from which called
 	 * @return true if all fields, except the one referencing other objects, are equal false if the given object is null, not the same class ore a field is different
-	 * @throws IllegalArgumentException Should not be thrown, if it works correctly
-	 * @throws IllegalAccessException Should not be thrown, if it works correctly
-	 * @throws NoSuchFieldException Should not be thrown, if it works correctly
-	 * @throws SecurityException Should not be thrown, if it works correctly
 	 */
-	public boolean  equalsNullAsWildcard(Object model) throws IllegalArgumentException, IllegalAccessException, NoSuchFieldException, SecurityException {
+	public boolean  equalsNullAsWildcard(Object model) {
 		if (model == null) return false;
 
 		if (!this.getClass().equals(model.getClass())) return false;
 
 		Field fields[] = getAllFields(this);
-		Field modelFields[] = getAllFields((Model)model);
 
 		for (Field field : fields) {
 			boolean wasAccessible= field.isAccessible();
