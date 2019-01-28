@@ -15,7 +15,7 @@ import org.junit.Test;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 
-import de.tudarmstadt.informatik.ukp.athenakp.database.Testdatabase;
+import de.tudarmstadt.informatik.ukp.athenakp.database.HibernateTestdatabase;
 import de.tudarmstadt.informatik.ukp.athenakp.database.models.Author;
 import de.tudarmstadt.informatik.ukp.athenakp.database.models.Institution;
 import de.tudarmstadt.informatik.ukp.athenakp.database.models.Paper;
@@ -24,7 +24,7 @@ import de.tudarmstadt.informatik.ukp.athenakp.database.models.Person;
 @SuppressWarnings("javadoc")
 public class PersonHibernateAccessIntegrationTest {//TODO Only Tested with Author instance. May use other Persons to
 
-	static Testdatabase testDB;
+	static HibernateTestdatabase testDB;
 	static PersonHibernateAccess uut;
 	static Person testValue;
 	static Paper testPaper1;
@@ -35,8 +35,8 @@ public class PersonHibernateAccessIntegrationTest {//TODO Only Tested with Autho
 
 	@BeforeClass
 	public static void setUpDatabase() {
-		ctx = SpringApplication.run(Testdatabase.class,"");
-		testDB = new Testdatabase();
+		ctx = SpringApplication.run(HibernateTestdatabase.class,"");
+		testDB = new HibernateTestdatabase();
 		uut = new PersonHibernateAccess();
 		testDB.createDB();
 	}
@@ -111,7 +111,7 @@ public class PersonHibernateAccessIntegrationTest {//TODO Only Tested with Autho
 	
 	@Test
 	public void getByInstitute() {
-		List<Person> returnValues = uut.getByInstitutionID("803");
+		List<Person> returnValues = uut.getByInstitutionID(803);
 		assertNotNull(returnValues);
 		if(returnValues.size() < 10) fail("return of existing Database is to small or empty");
 		if(returnValues.size() > 10) fail("more than expected returnValues");

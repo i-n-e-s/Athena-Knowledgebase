@@ -15,13 +15,13 @@ import org.junit.Test;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 
-import de.tudarmstadt.informatik.ukp.athenakp.database.Testdatabase;
+import de.tudarmstadt.informatik.ukp.athenakp.database.HibernateTestdatabase;
 import de.tudarmstadt.informatik.ukp.athenakp.database.models.Conference;
 
 @SuppressWarnings("javadoc")
 public class ConferenceHibernateAccessIntegrationTest {
 
-	static Testdatabase testDB;
+	static HibernateTestdatabase testDB;
 	static ConferenceHibernateAccess uut;
 	static Conference testValue;
 	
@@ -29,8 +29,8 @@ public class ConferenceHibernateAccessIntegrationTest {
 	
 	@BeforeClass
 	public static void setUpDatabase() {
-		ctx = SpringApplication.run(Testdatabase.class,"");
-		testDB = new Testdatabase();
+		ctx = SpringApplication.run(HibernateTestdatabase.class,"");
+		testDB = new HibernateTestdatabase();
 		uut = new ConferenceHibernateAccess();
 		testDB.createDB();
 	}

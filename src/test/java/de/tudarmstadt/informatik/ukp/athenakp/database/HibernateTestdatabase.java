@@ -30,8 +30,9 @@ import de.tudarmstadt.informatik.ukp.athenakp.database.models.Paper;
  * @author Jonas Hake
  *
  */
+@Deprecated
 @SpringBootApplication
-public class Testdatabase {
+public class HibernateTestdatabase {
 
 	private int conferenceQuantity;
 	private int institutionQuantity;
@@ -45,7 +46,7 @@ public class Testdatabase {
 	Paper papers[];
 	Event events[];
 
-	public Testdatabase() {
+	public HibernateTestdatabase() {
 		setDefaultParameters();
 	}
 
@@ -55,8 +56,8 @@ public class Testdatabase {
 	}
 
 	public static void main(String[] args) {
-		SpringApplication.run(Testdatabase.class,"");
-		Testdatabase testdb = new Testdatabase();
+		SpringApplication.run(HibernateTestdatabase.class,"");
+		HibernateTestdatabase testdb = new HibernateTestdatabase();
 		testdb.createDB();
 	}
 

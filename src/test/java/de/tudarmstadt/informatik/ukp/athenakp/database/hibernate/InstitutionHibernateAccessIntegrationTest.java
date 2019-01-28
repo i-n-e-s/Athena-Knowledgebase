@@ -13,13 +13,13 @@ import org.junit.Test;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 
-import de.tudarmstadt.informatik.ukp.athenakp.database.Testdatabase;
+import de.tudarmstadt.informatik.ukp.athenakp.database.HibernateTestdatabase;
 import de.tudarmstadt.informatik.ukp.athenakp.database.models.Institution;
 import de.tudarmstadt.informatik.ukp.athenakp.database.models.Person;
 
 public class InstitutionHibernateAccessIntegrationTest {
 	
-	static Testdatabase testDB;
+	static HibernateTestdatabase testDB;
 	static InstitutionHibernateAccess uut;
 	static Institution testValue;
 	
@@ -27,8 +27,8 @@ public class InstitutionHibernateAccessIntegrationTest {
 	
 	@BeforeClass
 	public static void setUpDatabase() {
-		ctx = SpringApplication.run(Testdatabase.class,"");
-		testDB = new Testdatabase();
+		ctx = SpringApplication.run(HibernateTestdatabase.class,"");
+		testDB = new HibernateTestdatabase();
 		uut = new InstitutionHibernateAccess();
 		testDB.createDB();
 	}
