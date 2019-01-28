@@ -8,8 +8,9 @@ import java.time.LocalDate;
 import org.junit.Test;
 
 @SuppressWarnings("javadoc")
-public class ModelsTest {//Branchcoverage can't be reached yet, because we don't hava fields which are accessible 
-
+public class ModelsTest {
+	/*Branchcoverage can't be reached yet, because we don't have fields which are accessible 
+	Also catch (IllegalArgumentException | IllegalAccessException e) should never be reached because it's checked before */
 	Model uut;
 
 	Model testData;
@@ -127,4 +128,46 @@ public class ModelsTest {//Branchcoverage can't be reached yet, because we don't
 		assertTrue(uut.equalsWithoutID(author1));
 	}
 
+	@Test 
+	public void equalsNullAsWildcardNullTest() {
+		uut = new Author();
+		assertFalse(uut.equalsNullAsWildcard(null));
+	}
+	
+	@Test
+	public void equalsNullAsWildcardWrongGivenClassTest() {
+		Author uut = new Author();
+		Paper paper1 = new Paper();
+		assertFalse(uut.equalsWithoutID(paper1));
+	}
+	
+	@Test
+	public void equalsNullAsWildcardNullFieldTest() {
+		Conference uut = new Conference();
+		Conference testConference1 = new Conference();
+		uut.setName("test1");
+		testConference1.setName("test1");
+		testConference1.setStartDate(LocalDate.of(12, 12, 12));
+		assertTrue(uut.equalsNullAsWildcard(testConference1));
+		testConference1.setStartDate(null);
+		uut.setStartDate(LocalDate.of(11, 11, 11));
+	}
+	
+	@Test
+	public void equalsNullAsWildcardDifferentDataTest() {
+		uut = new Author();
+		((Author)uut).setFullName("testName");
+		Author author1 = new Author();
+		author1.setFullName("differentName");
+		assertFalse(uut.equalsNullAsWildcard(author1));
+		author1.setFullName(((Author)uut).getFullName());
+		assertTrue(uut.equalsNullAsWildcard(author1));
+	}
+	
+	@Test
+	public void equalsNullAsWildcardDifferentClass() {
+		uut = new Author();
+		Paper paper1 = new Paper();
+		assertFalse(uut.equalsNullAsWildcard(paper1));
+	}
 }
