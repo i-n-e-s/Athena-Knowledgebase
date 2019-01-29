@@ -1,14 +1,19 @@
 package de.tudarmstadt.informatik.ukp.athenakp.database.models;
 
-import java.util.Date;
+import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 
 import org.hibernate.annotations.GenericGenerator;
 
@@ -19,38 +24,50 @@ public class Event {
 	@Id
 	@GeneratedValue(generator="increment")
 	@GenericGenerator(name="increment", strategy="increment")
-	@Column(name="id")
-	private long id;
+	@Column(name="eventID")
+	private long eventID;
+	/*Name of conference this event belongs to*/
+	@Column(name="conferenceName")
+	private String conferenceName;
 	/*Start time*/
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name="begin_date")
-	private Date begin;
+	@Column(name="begin")
+	private LocalDateTime begin;
 	/*End time*/
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name="end_date")
-	private Date end;
+	@Column(name="end")
+	private LocalDateTime end;
 	/*Host*/
-	//private Person host;                //TODO Person von Author abstrahieren
-	/* Place where this event happens */
+	//	@Column(name = "host") //FIXME: crashes - perhaps save id?
+	//	private Person host;                //TODO Person von Author abstrahieren
+	/* Place where this event happens, if empty look in sessions */
 	@Column(name = "place")
 	private String place;
 	/* Title */
 	@Column(name = "title")
 	private String title;
 	/* Brief Description */
-	@Column(name = "short_description")
-	private String shortDescription;
-	/* Attendees */
-	//private Set<Person> attendees;      //TODO Hibernatemäßige Setter für alle Set<> oder List<> fehlen
+	@Column(name = "description")
+	private String description;
 	/* Category */
-	private EventCategory category;   //TODO Hibernatemäßige Getter/Setter für diese ENUM implementieren
+	@Column(name = "category")
+	private EventCategory category;
+	/* Papers, if any */
+	//	@Column(name = "papers")
+	//	private Set<Paper> papers;
+	/* Sessions, if any */
+	@OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER)
+	@JoinTable(
+			name = "event_session",
+			joinColumns = { @JoinColumn(name = "eventID") },
+			inverseJoinColumns = { @JoinColumn(name = "sessionID") }
+			)
+	private Set<Session> sessions = new HashSet<>();
 
 	/**
 	 * Gets the unique id of this event
 	 * @return The unique id of this event
 	 */
 	public long getId() {
-		return id;
+		return eventID;
 	}
 
 	/**
@@ -58,14 +75,30 @@ public class Event {
 	 * @param id The new id
 	 */
 	public void setId(long id) {
-		this.id = id;
+		this.eventID = id;
+	}
+
+	/**
+	 * Gets the conference name this event belongs to
+	 * @return The conference this event belongs to
+	 */
+	public String getConferenceName() {
+		return conferenceName;
+	}
+
+	/**
+	 * Sets this event's conference's name
+	 * @param conferenceName The new conference
+	 */
+	public void setConferenceName(String conferenceName) {
+		this.conferenceName = conferenceName;
 	}
 
 	/**
 	 * Gets the time this event begins
-	 * @return This event's begin time/date
+	 * @return This event's begin time
 	 */
-	public Date getBegin() {
+	public LocalDateTime getBegin() {
 		return begin;
 	}
 
@@ -73,15 +106,15 @@ public class Event {
 	 * Sets the time this event begins
 	 * @param begin The time this event begins
 	 */
-	public void setBegin(Date begin) {
+	public void setBegin(LocalDateTime begin) {
 		this.begin = begin;
 	}
 
 	/**
 	 * Gets the time this event ends
-	 * @return This event's new end time/date
+	 * @return This event's new end time
 	 */
-	public Date getEnd() {
+	public LocalDateTime getEnd() {
 		return end;
 	}
 
@@ -89,9 +122,25 @@ public class Event {
 	 * Sets the time this event ends
 	 * @param end the new time this event ends
 	 */
-	public void setEnd(Date end) {
+	public void setEnd(LocalDateTime end) {
 		this.end = end;
 	}
+
+	//	/**
+	//	 * Gets the person who manages this event
+	//	 * @return This event's manager
+	//	 */
+	//	public Person getHost() {
+	//		return host;
+	//	}
+	//
+	//	/**
+	//	 * Sets the person who manages this event
+	//	 * @param This event's new manager
+	//	 */
+	//	public void setHost(Person host) {
+	//		this.host = host;
+	//	}
 
 	/**
 	 * Gets the place where this event happens
@@ -130,21 +179,77 @@ public class Event {
 	}
 
 	/**
-	 * Gets a short description of the event
+	 * Gets a description of the event
 	 *
-	 * @return A short description of the event
+	 * @return A description of the event
 	 */
-	public String getShortDescription() {
-		return shortDescription;
+	public String getDescription() {
+		return description;
 	}
 
 	/**
-	 * Sets a short description of the event
+	 * Sets a description of the event
 	 *
-	 * @param shortDescription A new short description of the event
+	 * @param description A new description of the event
 	 */
-	public void setShortDescription(String shortDescription) {
-		this.shortDescription = shortDescription;
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	/**
+	 * Gets this event's category
+	 * @return This event's category
+	 */
+	public EventCategory getCategory() {
+		return category;
+	}
+
+	/**
+	 * Sets this event's category
+	 * @return This event's new category
+	 */
+	public void setCategory(EventCategory category) {
+		this.category = category;
+	}
+
+	//	/**
+	//	 * Gets this event's papers (if any, usually used in poster sessions)
+	//	 * @param papers This event's papers
+	//	 */
+	//	public Set<Paper> getPapers() {
+	//		return papers;
+	//	}
+	//
+	//	/**
+	//	 * Sets this event's papers (if any, usually used in poster sessions)
+	//	 * @return This event's new papers
+	//	 */
+	//	public void setPapers(Set<Paper> papers) {
+	//		this.papers = papers;
+	//	}
+
+	/**
+	 * Gets this event's sessions (if any)
+	 * @return This event's sessions
+	 */
+	public Set<Session> getSessions() {
+		return sessions;
+	}
+
+	/**
+	 * Sets this event's sessions (if any)
+	 * @param sessions This event's new sessions
+	 */
+	public void setSessions(Set<Session> sessions) {
+		this.sessions = sessions;
+	}
+
+	/**
+	 * Adds a session to this event's session list
+	 * @param s The sessin to add
+	 */
+	public void addSession(Session s) {
+		sessions.add(s);
 	}
 
 	/**
@@ -158,8 +263,4 @@ public class Event {
         return attendees;
     }
 	 */
-
-
-
-
 }

@@ -85,21 +85,4 @@ public class CrawlerToolset {
 
 		return -1;
 	}
-
-	/**
-	 * Temporarily stores information about a paper
-	 * title: The complete title of the paper
-	 * year: The year the paper was released in
-	 * month: The month the paper was released in
-	 */
-	public static class PaperStore
-	{
-		public String title, year, month;
-
-		@Override
-		public String toString()
-		{
-			return title + ";;" + year + ";;" + month;
-		}
-	}
 }

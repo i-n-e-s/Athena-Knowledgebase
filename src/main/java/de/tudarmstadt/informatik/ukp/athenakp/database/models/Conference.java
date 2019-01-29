@@ -1,12 +1,16 @@
 package de.tudarmstadt.informatik.ukp.athenakp.database.models;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.ManyToMany;
+import javax.persistence.Table;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name="conference")
@@ -37,6 +41,7 @@ public class Conference {
 	@JsonIgnore
 	@Column(name="papers")
 	private Set<Paper> papers = new HashSet<Paper>();
+
 	//TODO: Workshops? Other data? How about Duration? java.time would make that possible
 
 	/**

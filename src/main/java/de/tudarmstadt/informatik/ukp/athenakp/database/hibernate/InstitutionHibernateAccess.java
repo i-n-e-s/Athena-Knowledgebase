@@ -12,6 +12,7 @@ import de.tudarmstadt.informatik.ukp.athenakp.database.models.Institution;
 /**
  * @author Daniel Lehmann
  */
+@Deprecated
 public class InstitutionHibernateAccess implements InstitutionCommonAccess {
 	@Override
 	public List<Institution> getByInstitutionID(Long institutionID) {
@@ -24,8 +25,8 @@ public class InstitutionHibernateAccess implements InstitutionCommonAccess {
 	}
 
 	@Override
-	public List<Institution> getByPerson(String person) { //TODO: implement
-		return null;
+	public List<Institution> getByPersonID(long person) { //TODO: implement
+		throw new UnsupportedOperationException("Not supported yet.");
 	}
 
 	/**
