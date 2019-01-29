@@ -11,7 +11,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Entity
-@Table(name="institutions")
+@Table(name="institution")
 public class Institution extends Model {
 
 	/*Unique institutionID*/

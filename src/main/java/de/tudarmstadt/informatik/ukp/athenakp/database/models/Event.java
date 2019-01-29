@@ -18,7 +18,7 @@ import javax.persistence.Table;
 import org.hibernate.annotations.GenericGenerator;
 
 @Entity
-@Table(name="events")
+@Table(name="event")
 public class Event extends Model {
 	/*Unique id*/
 	@Id
