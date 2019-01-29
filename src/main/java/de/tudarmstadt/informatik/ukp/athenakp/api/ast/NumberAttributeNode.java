@@ -31,6 +31,20 @@ public class NumberAttributeNode extends AttributeNode {
 		values.add(node);
 	}
 
+	/**
+	 * Generates a string of all values of this node
+	 * @return All values of this node concatenated with a +
+	 */
+	public String valuesToString() {
+		String result = "";
+
+		for(NumberNode node : values) {
+			result += node.getValue() + "+";
+		}
+
+		return result.substring(0, result.length() - 1); //remove last +
+	}
+
 	@Override
 	public String toString() {
 		String result = "<" + tokenIndex +">" + name + "=";

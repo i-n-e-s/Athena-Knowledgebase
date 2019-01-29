@@ -1,5 +1,8 @@
 package de.tudarmstadt.informatik.ukp.athenakp.exception;
 
+/**
+ * Used when the syntax of an API request is incorrect
+ */
 public class SyntaxException extends Exception {
 	/**
 	 * @param index The point in the request at which the error occured
