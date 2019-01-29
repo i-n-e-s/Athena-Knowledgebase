@@ -13,14 +13,9 @@ import java.io.IOException;
 public class StreetMapsController {
 
 	@RequestMapping("/byBox/{amenity}")
-	public String returnAmenities(@PathVariable("amenity")String amenity){
-	openStreetRequestBuilder streetRequestBuilder = new openStreetRequestBuilder(amenity, 48.5657094,
-			13.4490548, 48.5662416, 13.4501676, 150);
-	try {
+	public String returnAmenities(@PathVariable("amenity") String amenity) {
+		openStreetRequestBuilder streetRequestBuilder = new openStreetRequestBuilder(amenity, 48.5657094,
+				13.4490548, 48.5662416, 13.4501676, 150);
 		return streetRequestBuilder.run();
-	}
-		catch (IOException e){
-		return null;
-		}
 	}
 }
