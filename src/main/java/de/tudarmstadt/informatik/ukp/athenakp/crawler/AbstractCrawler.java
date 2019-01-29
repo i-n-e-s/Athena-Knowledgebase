@@ -17,7 +17,7 @@ import de.tudarmstadt.informatik.ukp.athenakp.database.models.Paper;
  */
 abstract class AbstractCrawler {
 	/**
-	 * Returns all authors who published in the year 2018
+	 * Returns all authors who published in the year range given to the crawler facade
 	 *
 	 * @return A list of all authors, an empty list when data not available
 	 * @throws IOException if Jsoup.connect fails
@@ -25,7 +25,7 @@ abstract class AbstractCrawler {
 	public abstract ArrayList<Author> getAuthors() throws IOException;
 
 	/**
-	 * Returns all papers which were published in the year 2018
+	 * Returns all papers which were published n the year range given to the crawler facade
 	 *
 	 * @return A list of all papers, an empty list when data not available
 	 * @throws IOException if Jsoup.connect fails
