@@ -1,5 +1,8 @@
 package de.tudarmstadt.informatik.ukp.athenakp.crawler.OpenStreetMaps;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -46,7 +49,7 @@ public class openStreetRequestBuilder {
 				"];out;";
 	}
 
-	public String run() {
+	public JSONArray run() {
 		// instead of wasting 3+ hours on implementing a dynamic conversion from xml to json,
 		// the undocumented [out:json]; command works just as well.
 		// I Have No Mouth But I Must Scream
@@ -71,8 +74,11 @@ public class openStreetRequestBuilder {
 				buf.write((byte) result2);
 				result2 = bis.read();
 			}
+			JSONObject jsonObject = new JSONObject(buf.toString());
+			JSONArray locations = jsonObject.getJSONArray("elements");
 			recentResponseCode = connection.getResponseCode();
-			return buf.toString();
+			// return buf.toString();
+			return locations;
 		}catch (IOException e){
 			return null;
 		}
