@@ -153,12 +153,14 @@ class ACL18WebParser extends AbstractCrawler {
 		System.out.println("Fetching webpages...");
 		List<Document> webpages = fetchWebpages(startURLPaper);
 		System.out.println("Preparing data and starting 4 scraper threads...");
+		//in the following lines the list gets split into 4 roughly equal parts so that each list part can be handled in a seperate thread (it's faster this way)
 		int quarterSize = (int)Math.ceil(webpages.size() / 4);
 		List<Document> input1 = webpages.subList(0, quarterSize);
 		List<Document> input2 = webpages.subList(quarterSize, quarterSize * 2);
 		List<Document> input3 = webpages.subList(quarterSize * 2, quarterSize * 3);
 		List<Document> input4 = webpages.subList(quarterSize * 3, webpages.size());
 		ArrayList<Paper> result = new ArrayList<>();
+		//setup and start those threads
 		ExecutorService executor = Executors.newFixedThreadPool(4);
 		Future<ArrayList<Paper>> f1 = executor.submit(() -> extractPaperAuthor(input1));
 		Future<ArrayList<Paper>> f2 = executor.submit(() -> extractPaperAuthor(input2));
@@ -166,6 +168,7 @@ class ACL18WebParser extends AbstractCrawler {
 		Future<ArrayList<Paper>> f4 = executor.submit(() -> extractPaperAuthor(input4));
 		System.out.println("Waiting for thread results...");
 
+		//wait for the thread results and add all of those to the result list (.get() is blocking)
 		try {
 			result.addAll(f1.get());
 			result.addAll(f2.get());
@@ -173,7 +176,7 @@ class ACL18WebParser extends AbstractCrawler {
 			result.addAll(f4.get());
 			System.out.println("Gathered all results!");
 		}
-		catch(InterruptedException | ExecutionException e) {
+		catch(InterruptedException | ExecutionException e) { //thread exceptions
 			System.err.println("Error while gathering results!");
 			e.printStackTrace();
 		}
@@ -241,12 +244,13 @@ class ACL18WebParser extends AbstractCrawler {
 	private void extractPaperRelease(Element paper, Paper thePaper) {
 		try {
 			Document doc = Jsoup.connect("https://aclanthology.coli.uni-saarland.de" + paper.select("a").attr("href")).get();
-			ArrayList<Element> data = doc.select(".dl-horizontal").get(0).children();
+			ArrayList<Element> data = doc.select(".dl-horizontal").get(0).children(); //somewhere in those children is the date
 			String year = "0";
 			String month = "0";
 
+			//find the different parts of the date
 			for(int i = 0; i < data.size(); i++) {
-				if(data.get(i).text().startsWith("Month")) {
+				if(data.get(i).text().startsWith("Month")) { //the line contains the month
 					month = data.get(i + 1).text();
 
 					if(month.contains("-")) //some papers have a release month of e.g. "October-November", assume the first month as the release month
@@ -257,14 +261,14 @@ class ACL18WebParser extends AbstractCrawler {
 					if(month.equals("-1"))
 						month = "1"; //resort to january if no month is found
 				}
-				else if(data.get(i).text().startsWith("Year")) {
+				else if(data.get(i).text().startsWith("Year")) { //the line contains the year
 					year = data.get(i + 1).text().substring(0, 4); //hope that every year is given in 1234 format
 				}
 			}
 
 			thePaper.setReleaseDate(LocalDate.of(Integer.parseInt(year), Integer.parseInt(month), 1));
 		}
-		catch(IOException e) {
+		catch(IOException e) { //jsoup exception
 			e.printStackTrace();
 		}
 	}
@@ -465,25 +469,33 @@ class ACL18WebParser extends AbstractCrawler {
 	private void addGeneralEventInfo(Element el, Event event, String[] monthDay) {
 		event.setConferenceName("ACL 2018");
 
+		//only try to extract the information when the table row is the header of an event and is not the more detailed description
+		//the header is something like "09:00-10:00 		Welcome Session & Presidential Address 			PLENARY, MCEC"
 		if(el.id().startsWith("session")) {
+			//start extracting the data from the table row
 			String[] time = el.select(".session-times").text().split("–"); //NOT A HYPHEN!!! IT'S AN 'EN DASH'
 			String[] begin = time[0].split(":");
 			String[] end = time[1].split(":");
 			String title = el.select(".session-name").text();
+			//sometimes there is a suffix (after a ':'), use it as the event description
+			//e.g. Oral Presentations [title]: Long Papers and TACL Papers) [suffix aka description]
 			String desc = el.select(".session-suffix").text();
 			Elements place = el.select(".session-location");
 			EventCategory category = null;
 
+			//the title string contains everything, so remove the description to avoid duplicate data
 			if(!desc.isEmpty())
 				title = title.replace(desc, "");
 
+			//set the extracted data
 			event.setBegin(LocalDateTime.of(2018, CrawlerToolset.getMonthIndex(monthDay[0]), Integer.parseInt(monthDay[1]), Integer.parseInt(begin[0]), Integer.parseInt(begin[1])));
 			event.setEnd(LocalDateTime.of(2018, CrawlerToolset.getMonthIndex(monthDay[0]), Integer.parseInt(monthDay[1]), Integer.parseInt(end[0]), Integer.parseInt(end[1])));
 			event.setTitle(title);
 			event.setPlace(place.isEmpty() ? "?" : (place.get(0).text().isEmpty() ? "?" : place.get(0).text()));
 			event.setDescription(desc);
-			title = title.toLowerCase();
+			title = title.toLowerCase(); //easier to work with this way
 
+			//decide which kind of category this event belongs to
 			if(title.startsWith("tutorial"))
 				category = EventCategory.TUTORIAL;
 			else if(title.contains("welcome"))
