@@ -30,7 +30,7 @@ import de.tudarmstadt.informatik.ukp.athenakp.database.models.Subsession;
  *
  * @author Jonas Hake, Julian Steitz, Daniel Lehmann
  */
-class ACL18WebParser extends AbstractCrawler{
+class ACL18WebParser extends AbstractCrawler {
 
 	private String startURLAuthors;
 	private String startURLPaper;
@@ -43,8 +43,7 @@ class ACL18WebParser extends AbstractCrawler{
 	 * @param beginYear The first year to get data from
 	 * @param endYear The last year to get data from
 	 */
-	public ACL18WebParser(String beginYear, String endYear)
-	{
+	public ACL18WebParser(String beginYear, String endYear) {
 		startURLAuthors = String.format("https://aclanthology.coli.uni-saarland.de/catalog/facet/author?"// get a list of all authors
 				+ "commit=facet.page=1&"// get first page of search
 				+ "facet.sort=index&" // sort author list alphabetically
@@ -601,8 +600,7 @@ class ACL18WebParser extends AbstractCrawler{
 	private String getDescriptionFromHref(String href, boolean tacl) {
 		try {
 			//there's the "title" attribute, but not all entries have it filled out completely (for instance ones marked with tacl)
-			if(tacl)
-			{
+			if(tacl) {
 				Document taclDoc = Jsoup.connect(href).get();
 
 				//rerouted to index page, because paper page probably threw 404
