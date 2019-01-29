@@ -1,5 +1,7 @@
 package de.tudarmstadt.informatik.ukp.athenakp.crawler.OpenStreetMaps;
 
+import jdk.nashorn.internal.parser.JSONParser;
+
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -51,7 +53,7 @@ class RequestBuilder {
 		// I Have No Mouth But I Must Scream
 		String searchRequestURL = buildRequestURL();
 
-		//Create Connection and set basic parameters
+		// Create Connection and set basic parameters
 		URL url = new URL(searchRequestURL);
 		HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 		connection.setDoOutput(true);
