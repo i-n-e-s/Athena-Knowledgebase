@@ -25,9 +25,16 @@ public class RequestNode extends BaseNode {
 		joins.add(node);
 	}
 
+	/**
+	 * @return The parts of the request that were previously seperated by a $
+	 */
+	public List<RequestJoinNode> getJoins() {
+		return joins;
+	}
+
 	@Override
 	public String toString() {
-		String result = "<" + tokenIndex +">" + "/";
+		String result = "<0>/";
 
 		for(RequestJoinNode node : joins) {
 			result += node.toString() + "$";
