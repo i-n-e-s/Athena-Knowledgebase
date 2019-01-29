@@ -67,7 +67,7 @@ public class RequestScanner {
 		if(Character.isAlphabetic(request[currentIndex])) {
 			appendCharacter();
 
-			while(Character.isAlphabetic(request[currentIndex]) && appendCharacter())
+			while(currentIndex < request.length && Character.isAlphabetic(request[currentIndex]) && appendCharacter())
 				; //no operation while loop as the operations are all in the condition
 
 			return RequestTokenType.NAME;
@@ -75,7 +75,7 @@ public class RequestScanner {
 		else if(Character.isDigit(request[currentIndex])) {
 			appendCharacter();
 
-			while(Character.isDigit(request[currentIndex]) && appendCharacter())
+			while(currentIndex < request.length && Character.isDigit(request[currentIndex]) && appendCharacter())
 				; //no operation while loop as the operations are all in the condition
 
 			return RequestTokenType.NUMBER;
