@@ -1,5 +1,6 @@
 package de.tudarmstadt.informatik.ukp.athenakp.crawler.OpenStreetMaps;
 
+import de.tudarmstadt.informatik.ukp.athenakp.database.models.Location;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -8,6 +9,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.net.HttpURLConnection;
+import java.util.List;
 
 public class openStreetRequestBuilder {
 
@@ -82,6 +84,9 @@ public class openStreetRequestBuilder {
 		}catch (IOException e){
 			return null;
 		}
+	}
+	private List<Location> resolveJson(JSONArray locations){
+		return null;
 	}
 }
 
