@@ -58,11 +58,11 @@ public class openStreetRequestBuilder {
 			HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 			connection.setDoOutput(true);
 			connection.setInstanceFollowRedirects(false);
-			connection.setConnectTimeout(30 * 1000);        //30s
-			connection.setUseCaches(false);                 //Don't cache anything
+			connection.setConnectTimeout(30 * 1000);        // 30s
+			connection.setUseCaches(false);                 // Don't cache anything
 
 			connection.setRequestMethod("GET");
-			System.out.println(connection.getInputStream());
+
 			BufferedInputStream bis = new BufferedInputStream(connection.getInputStream());
 			ByteArrayOutputStream buf = new ByteArrayOutputStream();
 			int result2 = bis.read();
