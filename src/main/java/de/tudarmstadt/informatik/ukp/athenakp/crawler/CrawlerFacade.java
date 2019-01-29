@@ -28,7 +28,7 @@ public class CrawlerFacade extends AbstractCrawler{
 		super();
 		switch(conference) {
 			case ACL:
-				crawler = new ACL18WebParser(beginYear, endYear);
+				crawler = new ACLWebCrawler(beginYear, endYear);
 				break;
 		}
 	}

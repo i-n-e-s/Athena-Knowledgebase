@@ -30,7 +30,7 @@ import de.tudarmstadt.informatik.ukp.athenakp.database.models.Subsession;
  *
  * @author Jonas Hake, Julian Steitz, Daniel Lehmann
  */
-class ACL18WebParser extends AbstractCrawler {
+class ACLWebCrawler extends AbstractCrawler {
 
 	private String startURLAuthors;
 	private String startURLPaper;
@@ -43,7 +43,7 @@ class ACL18WebParser extends AbstractCrawler {
 	 * @param beginYear The first year to get data from
 	 * @param endYear The last year to get data from
 	 */
-	public ACL18WebParser(String beginYear, String endYear) {
+	public ACLWebCrawler(String beginYear, String endYear) {
 		startURLAuthors = String.format("https://aclanthology.coli.uni-saarland.de/catalog/facet/author?"// get a list of all authors
 				+ "commit=facet.page=1&"// get first page of search
 				+ "facet.sort=index&" // sort author list alphabetically
