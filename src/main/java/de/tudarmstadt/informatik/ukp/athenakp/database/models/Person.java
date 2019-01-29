@@ -1,6 +1,6 @@
 package de.tudarmstadt.informatik.ukp.athenakp.database.models;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
@@ -15,8 +15,6 @@ import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 
 /**
  * @author Tristan Wettich
@@ -41,12 +39,10 @@ public class Person extends Model {
 	private String fullName;
 
 	/*Birthday and day of death*/
-	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "birthday")
-	private Date birthdate;
-	@Temporal(TemporalType.TIMESTAMP)
+	private LocalDate birthdate;
 	@Column(name = "obit")
-	private Date obit;
+	private LocalDate obit;
 
 	/*The person's institution, eg. an university or a company*/
 	//@Column(name = "institution")
@@ -106,7 +102,7 @@ public class Person extends Model {
 	 * Gets the person's birthday.
 	 * @return The person's birthday
 	 */
-	public Date getBirthdate() {
+	public LocalDate getBirthdate() {
 		return birthdate;
 	}
 
@@ -114,7 +110,7 @@ public class Person extends Model {
 	 * Sets the person's birthday
 	 * @param birthdate The person's birthday
 	 */
-	public void setBirthdate(Date birthdate) {
+	public void setBirthdate(LocalDate birthdate) {
 		this.birthdate = birthdate;
 	}
 
@@ -122,7 +118,7 @@ public class Person extends Model {
 	 * Gets the person's day of death.
 	 * @return The person's day of death
 	 */
-	public Date getObit() {
+	public LocalDate getObit() {
 		return obit;
 	}
 
@@ -130,7 +126,7 @@ public class Person extends Model {
 	 * Sets the person's day of death.
 	 * @param obit The person's day of death
 	 */
-	public void setObit(Date obit) {
+	public void setObit(LocalDate obit) {
 		this.obit = obit;
 	}
 

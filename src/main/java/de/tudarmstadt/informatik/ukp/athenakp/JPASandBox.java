@@ -2,7 +2,6 @@ package de.tudarmstadt.informatik.ukp.athenakp;
 
 import java.time.LocalDate;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 
 import org.springframework.boot.SpringApplication;
@@ -26,7 +25,7 @@ public class JPASandBox {
 
 		Author dummyAuthor = new Author();
 		dummyAuthor.setFullName("Rumpo Derpel");
-		dummyAuthor.setBirthdate(new Date(2010, 10, 10));
+		dummyAuthor.setBirthdate(LocalDate.of(2010, 10, 10));
 		pca.add(dummyAuthor);
 
 		List<Person> authors = pca.getByFullName("Rumpo Derpel");
