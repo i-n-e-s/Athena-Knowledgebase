@@ -1,6 +1,7 @@
 package de.tudarmstadt.informatik.ukp.athenakp.database.models;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -59,7 +60,7 @@ public class Event {
 			joinColumns = { @JoinColumn(name = "eventID") },
 			inverseJoinColumns = { @JoinColumn(name = "sessionID") }
 			)
-	private Set<Session> sessions;
+	private Set<Session> sessions = new HashSet<>();
 
 	/**
 	 * Gets the unique id of this event
@@ -241,6 +242,14 @@ public class Event {
 	 */
 	public void setSessions(Set<Session> sessions) {
 		this.sessions = sessions;
+	}
+
+	/**
+	 * Adds a session to this event's session list
+	 * @param s The sessin to add
+	 */
+	public void addSession(Session s) {
+		sessions.add(s);
 	}
 
 	/**

@@ -1,5 +1,6 @@
 package de.tudarmstadt.informatik.ukp.athenakp.database.models;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -40,7 +41,7 @@ public class Session{ //TODO: chair
 			joinColumns = { @JoinColumn(name = "sessionID") },
 			inverseJoinColumns = { @JoinColumn(name = "subsessionID") }
 			)
-	private Set<Subsession> subsessions;
+	private Set<Subsession> subsessions = new HashSet<>();
 
 	/**
 	 * Gets the unique id of this session
@@ -120,5 +121,13 @@ public class Session{ //TODO: chair
 	 */
 	public void setSubsessions(Set<Subsession> subsessions) {
 		this.subsessions = subsessions;
+	}
+
+	/**
+	 * Adds a subsession to this session's subsession list
+	 * @param s The subsession to add
+	 */
+	public void addSubsession(Subsession s) {
+		subsessions.add(s);
 	}
 }
