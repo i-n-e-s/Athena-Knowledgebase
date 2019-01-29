@@ -52,7 +52,7 @@ public class openStreetRequestBuilder {
 				"];out;";
 	}
 
-	public JSONArray run() {
+	public List<Location> run() {
 		// instead of wasting 3+ hours on implementing a dynamic conversion from xml to json,
 		// the undocumented [out:json]; command works just as well.
 		// I Have No Mouth But I Must Scream
@@ -81,7 +81,8 @@ public class openStreetRequestBuilder {
 			JSONArray locations = jsonObject.getJSONArray("elements");
 			recentResponseCode = connection.getResponseCode();
 			// return buf.toString();
-			return locations;
+			System.out.println(locations);
+			return resolveJson(locations);
 		}catch (IOException e){
 			return null;
 		}
@@ -92,10 +93,12 @@ public class openStreetRequestBuilder {
 		for (int i = 0; i < jsonLength; i++) {
 			JSONObject curObject = locations.getJSONObject(i);
 			Location curLocation = new Location();
-			curLocation.setId(curObject.getInt("id"));
+			curLocation.setId(curObject.getLong("id"));
 			curLocation.setLon(curObject.getDouble("lon"));
 			curLocation.setLat(curObject.getDouble("lat"));
 			curLocation.setType(curObject.getString("type"));
+			JSONObject tags = (JSONObject) curObject.get("tags");
+			curLocation.setAmenity(tags.getString("amenity"));
 			locationObjects.add(curLocation);
 		}
 		return locationObjects;

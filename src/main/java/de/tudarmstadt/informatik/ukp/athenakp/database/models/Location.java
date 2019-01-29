@@ -2,9 +2,18 @@ package de.tudarmstadt.informatik.ukp.athenakp.database.models;
 
 public class Location {
 	private double lon;
-	private int id;
+	private long id;
 	private String type;
 	private double lat;
+	private String amenity;
+
+	public String getAmenity() {
+		return amenity;
+	}
+
+	public void setAmenity(String amenity) {
+		this.amenity = amenity;
+	}
 
 	public double getLon() {
 		return lon;
@@ -14,11 +23,11 @@ public class Location {
 		this.lon = lon;
 	}
 
-	public int getId() {
+	public long getId() {
 		return id;
 	}
 
-	public void setId(int id) {
+	public void setId(long id) {
 		this.id = id;
 	}
 
