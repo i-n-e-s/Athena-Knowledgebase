@@ -13,9 +13,9 @@ import de.tudarmstadt.informatik.ukp.athenakp.api.ast.StringNode;
 import de.tudarmstadt.informatik.ukp.athenakp.exception.SyntaxException;
 
 public class RequestParserTest {
-	private RequestParser uut1 = new RequestParser(new RequestScanner("/paper:Author=Daniel+Klingbein&Topic=vogonpoetry$author:Obit=1993+05+22").scan()); //syntactically correct
-	private RequestParser uut2 = new RequestParser(new RequestScanner("/paper:Author=Daniel+Klingbein&Topic|vogonpoetry$author:Obit=1993+05+22").scan()); //syntactically incorrect, unknown symbol in the middle (|)
-	private RequestParser uut3 = new RequestParser(new RequestScanner("/paper:Author=Daniel+Klingbein&Topic&vogonpoetry$author:Obit=1993+05+22").scan()); //syntactically incorrect, symbol at incorrect position (& instead of = in the middle)
+	private RequestParser uut1 = new RequestParser(new RequestScanner("/paper:author=Daniel+Klingbein&topic=vogonpoetry$author:obit=1993+05+22").scan()); //syntactically correct
+	private RequestParser uut2 = new RequestParser(new RequestScanner("/paper:author=Daniel+Klingbein&topic|vogonpoetry$author:obit=1993+05+22").scan()); //syntactically incorrect, unknown symbol in the middle (|)
+	private RequestParser uut3 = new RequestParser(new RequestScanner("/paper:author=Daniel+Klingbein&topic&vogonpoetry$author:obit=1993+05+22").scan()); //syntactically incorrect, symbol at incorrect position (& instead of = in the middle)
 
 	@Test
 	public void testCorrectParse() throws SyntaxException {
@@ -42,7 +42,7 @@ public class RequestParserTest {
 		obitAttrVal3.setValue(22);
 		obitAttrVal2.setValue(5);
 		obitAttrVal1.setValue(1993);
-		obitAttrName.setValue("Obit");
+		obitAttrName.setValue("obit");
 		obitAttr.addValue(obitAttrVal1);
 		obitAttr.addValue(obitAttrVal2);
 		obitAttr.addValue(obitAttrVal3);
@@ -52,11 +52,11 @@ public class RequestParserTest {
 		right.setEntityName(rightJoinNodeName);
 
 		topicAttrVal.setValue("vogonpoetry");
-		topicAttrName.setValue("Topic");
+		topicAttrName.setValue("topic");
 		topicAttr.setValue(topicAttrVal);
 		topicAttr.setName(topicAttrName);
 		authorAttrVal.setValue("Daniel Klingbein");
-		authorAttrName.setValue("Author");
+		authorAttrName.setValue("author");
 		authorAttr.setValue(authorAttrVal);
 		authorAttr.setName(authorAttrName);
 		left.addAttributeNode(authorAttr);
