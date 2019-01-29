@@ -9,6 +9,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.net.HttpURLConnection;
+import java.util.ArrayList;
 import java.util.List;
 
 public class openStreetRequestBuilder {
@@ -86,7 +87,18 @@ public class openStreetRequestBuilder {
 		}
 	}
 	private List<Location> resolveJson(JSONArray locations){
-		return null;
+		int jsonLength = locations.length();
+		List <Location> locationObjects = new ArrayList<>();
+		for (int i = 0; i < jsonLength; i++) {
+			JSONObject curObject = locations.getJSONObject(i);
+			Location curLocation = new Location();
+			curLocation.setId(curObject.getInt("id"));
+			curLocation.setLon(curObject.getDouble("lon"));
+			curLocation.setLat(curObject.getDouble("lat"));
+			curLocation.setType(curObject.getString("type"));
+			locationObjects.add(curLocation);
+		}
+		return locationObjects;
 	}
 }
 
