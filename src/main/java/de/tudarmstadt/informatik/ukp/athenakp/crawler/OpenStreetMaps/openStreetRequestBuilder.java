@@ -1,14 +1,12 @@
 package de.tudarmstadt.informatik.ukp.athenakp.crawler.OpenStreetMaps;
 
-import jdk.nashorn.internal.parser.JSONParser;
-
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.net.HttpURLConnection;
 
-class RequestBuilder {
+public class openStreetRequestBuilder {
 
 
 	private String amenity;
@@ -17,8 +15,9 @@ class RequestBuilder {
 	private Double west;
 	private Double south;
 	private Integer radiusSizeOfInterest;
+	Integer recentResponseCode;
 
-	RequestBuilder(String amenity, Double east, Double north, Double west, Double south, Integer radiusSizeOfInterest) {
+	public openStreetRequestBuilder(String amenity, Double east, Double north, Double west, Double south, Integer radiusSizeOfInterest) {
 		this.amenity = amenity;
 		this.east = east;
 		this.north = north;
@@ -47,7 +46,7 @@ class RequestBuilder {
 				"];out;";
 	}
 
-	Integer run() throws IOException {
+	public String run() throws IOException {
 		// instead of wasting 3+ hours on implementing a dynamic conversion from xml to json,
 		// the undocumented [out:json]; command works just as well.
 		// I Have No Mouth But I Must Scream
@@ -71,8 +70,10 @@ class RequestBuilder {
 			buf.write((byte) result2);
 			result2 = bis.read();
 		}
+
 		System.out.println(buf);
-		return connection.getResponseCode();
+		recentResponseCode = connection.getResponseCode();
+		return buf.toString();
 	}
 }
 

@@ -6,13 +6,14 @@ import java.io.IOException;
 
 import static org.junit.Assert.*;
 
-public class RequestBuilderTest {
+public class openStreetRequestBuilderTest {
 	@Test
 	public void run() {
-		RequestBuilder hark = new RequestBuilder("toilets", 48.5657094, 13.4490548, 48.5662416, 13.4501676, 150);
+		openStreetRequestBuilder hark = new openStreetRequestBuilder("toilets", 48.5657094, 13.4490548, 48.5662416, 13.4501676, 150);
 		int response;
 		try {
-			response = hark.run();
+			hark.run();
+			response = hark.recentResponseCode;
 		}catch (IOException e){
 			fail();
 			response = 0;
