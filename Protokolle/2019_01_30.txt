@@ -1,0 +1,75 @@
+Beginn: 9:00 Uhr
+Ende: 	10:57 Uhr
+
+Team stellt Arbeitsstand vor:
+
+
+Zitate nicht nötig - oder ignoriert: Einfach hinweisen was es für Probleme gibt
+Text + Bildunterschriften
+
+
+
+Nicht vergessen für die finale Abgabe: alles auf englisch
+
+Wiki:
+	Thomas schaut sich es genauer an und gibt Feedback nächstes Mal
+Wie viel hat jmd. zu einem Bereich geschrieben?
+	Thomas findet es sehr interessant
+Pipedream: kleine Zusammenfassung von einem Autor zu einem Thema
+
+
+jeder kann ins Wiki schreiben
+
+Server:
+	Wir scheinen eine UKP-VPN zu benötigen
+		Thomas zeigt seine Lösung, die auch ein "auth-failed" aufwirft - gibt die Fehlermeldung weiter
+			jetzt fixed
+	Ein User pro Gruppe den man sharen kann
+Treffen:
+	pünktlich nächster Donnerstag (07.02.2019) ab 13:00 Uhr:
+	Raum S202/B120 
+	informeller Charakter - reines Interesse mal in die Codestruktur zu schauen
+	"2-3 Slides" + Einblick in den Code
+		Feedback + Ideen können dann aufkommen
+	
+	Tristan und Jonas kommen
+		
+
+
+Nach dem Arbeitgebertreffen:
+Heute Vorabgabe an Clemens von QS
+
+
+Teamtreffen:
+	Website auf Server: bräuchte einen seperaten Port oder TomCat magic in Spring
+		
+	Entwicklerwiki wird erstellt (Tristan)
+	Jonas hat sich um Datenbanktests gekümmert
+	ACL18Crawler muss durchgetestet werden: Mockito und Co müssen eingesetzt werden
+		"Was eigentlich nötig ist" einfach mal Googlen
+	Daniel hat alte User-Stories umgeschrieben
+
+
+
+	Wer erkundigt sich, wie man Trello-Karten exportieren kann?
+		Jonas macht Screenshots
+
+	Wenn Funktionalität für die User.Story fählt, einfach implementieren in neuer User Story und alte auf blocked setzen
+----------
+	Checklist Nutzen exemplarisch zeigen
+----------
+	konkrete Belege kommen am Ende
+
+Philipp:
+	Was machen wir wenn eine Person plötzlich zum Author wird?
+
+
+jeder Dateneintrag kriegt autogenerierte ID
+
+
+Offline - Online usecase
+	Thomas fragen
+
+
+Wie speichern wir pdfs:
+	locallink und pdf-link
