@@ -4,16 +4,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Represents attribute information about a specific entity
+ * Represents attribute information about a specific entity (the parts separated by $)
  */
-public class RequestJoinNode extends BaseNode {
+public class RequestEntityNode extends BaseNode {
 	private StringNode entity;
 	private final List<AttributeNode> attributes = new ArrayList<>();
 
 	/**
 	 * @see {@link BaseNode#BaseNode(int) BaseNode}
 	 */
-	public RequestJoinNode(int tokenIndex) {
+	public RequestEntityNode(int tokenIndex) {
 		super(tokenIndex);
 	}
 
@@ -61,6 +61,6 @@ public class RequestJoinNode extends BaseNode {
 
 	@Override
 	public boolean equals(Object obj) {
-		return super.equals(obj) && obj instanceof RequestJoinNode && entity.equals(((RequestJoinNode)obj).entity) && attributes.equals(((RequestJoinNode)obj).attributes);
+		return super.equals(obj) && obj instanceof RequestEntityNode && entity.equals(((RequestEntityNode)obj).entity) && attributes.equals(((RequestEntityNode)obj).attributes);
 	}
 }

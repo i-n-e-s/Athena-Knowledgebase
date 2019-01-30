@@ -6,7 +6,8 @@ import org.junit.Test;
 
 import de.tudarmstadt.informatik.ukp.athenakp.api.ast.NumberAttributeNode;
 import de.tudarmstadt.informatik.ukp.athenakp.api.ast.NumberNode;
-import de.tudarmstadt.informatik.ukp.athenakp.api.ast.RequestJoinNode;
+import de.tudarmstadt.informatik.ukp.athenakp.api.ast.RequestEntityNode;
+import de.tudarmstadt.informatik.ukp.athenakp.api.ast.RequestHierarchyNode;
 import de.tudarmstadt.informatik.ukp.athenakp.api.ast.RequestNode;
 import de.tudarmstadt.informatik.ukp.athenakp.api.ast.StringAttributeNode;
 import de.tudarmstadt.informatik.ukp.athenakp.api.ast.StringNode;
@@ -20,9 +21,10 @@ public class RequestParserTest {
 	@Test
 	public void testCorrectParse() throws SyntaxException {
 		RequestNode actual = uut1.parse();
-		RequestNode expected = new RequestNode(1);
+		RequestNode expected = new RequestNode(0);
 
-		RequestJoinNode left = new RequestJoinNode(1);
+		RequestHierarchyNode theOneAndOnly = new RequestHierarchyNode(0);
+		RequestEntityNode left = new RequestEntityNode(1);
 		StringNode leftJoinNodeName = new StringNode(1);
 		StringAttributeNode authorAttr = new StringAttributeNode(7);
 		StringNode authorAttrName = new StringNode(7);
@@ -31,7 +33,7 @@ public class RequestParserTest {
 		StringNode topicAttrName = new StringNode(31);
 		StringNode topicAttrVal = new StringNode(37);
 
-		RequestJoinNode right = new RequestJoinNode(49);
+		RequestEntityNode right = new RequestEntityNode(49);
 		StringNode rightJoinNodeName = new StringNode(49);
 		NumberAttributeNode obitAttr = new NumberAttributeNode(56);
 		StringNode obitAttrName = new StringNode(56);
@@ -64,8 +66,9 @@ public class RequestParserTest {
 		leftJoinNodeName.setValue("paper");
 		left.setEntityName(leftJoinNodeName);
 
-		expected.addJoin(left);
-		expected.addJoin(right);
+		theOneAndOnly.addEntity(left);
+		theOneAndOnly.addEntity(right);
+		expected.addHierarchyNode(theOneAndOnly);
 		assertEquals("ASTs are not the same!", expected, actual);
 	}
 

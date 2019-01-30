@@ -6,13 +6,13 @@ import de.tudarmstadt.informatik.ukp.athenakp.api.RequestToken.RequestTokenType;
 import de.tudarmstadt.informatik.ukp.athenakp.api.ast.AttributeNode;
 import de.tudarmstadt.informatik.ukp.athenakp.api.ast.NumberAttributeNode;
 import de.tudarmstadt.informatik.ukp.athenakp.api.ast.NumberNode;
-import de.tudarmstadt.informatik.ukp.athenakp.api.ast.RequestJoinNode;
+import de.tudarmstadt.informatik.ukp.athenakp.api.ast.RequestEntityNode;
+import de.tudarmstadt.informatik.ukp.athenakp.api.ast.RequestHierarchyNode;
 import de.tudarmstadt.informatik.ukp.athenakp.api.ast.RequestNode;
 import de.tudarmstadt.informatik.ukp.athenakp.api.ast.StringAttributeNode;
 import de.tudarmstadt.informatik.ukp.athenakp.api.ast.StringNode;
 import de.tudarmstadt.informatik.ukp.athenakp.exception.SyntaxException;
 
-//TODO: as the parser is now, it does not 100% support hierarchies, only a single join
 public class RequestParser {
 	private final Deque<RequestToken> tokens;
 	private RequestToken currentToken;
@@ -31,18 +31,35 @@ public class RequestParser {
 	 * @throws SyntaxException When an ERROR or unexpected token appears
 	 */
 	public RequestNode parse() throws SyntaxException {
-		RequestNode root = new RequestNode(tokens.peek().index);
+		RequestNode root = new RequestNode(currentToken.index);
 
 		while(currentToken.type != RequestTokenType.END) {
-			switch(currentToken.type) {
-				case HIERARCHY_SEPERATOR: accept(); break;
-				case JOIN: accept(); break;
-				case NAME: root.addJoin(parseRequestJoin()); break;
-				default: throw new SyntaxException(currentToken.index, currentToken.actual);
-			}
+			root.addHierarchyNode(parseHierarchyEntry());
 		}
 
 		return root;
+	}
+
+	/**
+	 * Parses a part of a hierarchy (/x:y=z(...)$a:b=c(...))
+	 * @return The abstract syntax tree representing this construct
+	 * @throws SyntaxException When an ERROR or unexpected token appears
+	 */
+	private RequestHierarchyNode parseHierarchyEntry() throws SyntaxException {
+		RequestHierarchyNode node = new RequestHierarchyNode(currentToken.index);
+
+		accept();
+
+		if(currentToken.type == RequestTokenType.NAME) {
+			node.addEntity(parseRequestEntity());
+		}
+
+		while(currentToken.type == RequestTokenType.JOIN) {
+			accept();
+			node.addEntity(parseRequestEntity());
+		}
+
+		return node;
 	}
 
 	/**
@@ -50,8 +67,8 @@ public class RequestParser {
 	 * @return The abstract syntax tree representing this construct
 	 * @throws SyntaxException When an ERROR or unexpected token appears
 	 */
-	private RequestJoinNode parseRequestJoin() throws SyntaxException {
-		RequestJoinNode node = new RequestJoinNode(currentToken.index);
+	private RequestEntityNode parseRequestEntity() throws SyntaxException {
+		RequestEntityNode node = new RequestEntityNode(currentToken.index);
 		StringNode stringNode = new StringNode(currentToken.index);
 		String name = accept(RequestTokenType.NAME);
 

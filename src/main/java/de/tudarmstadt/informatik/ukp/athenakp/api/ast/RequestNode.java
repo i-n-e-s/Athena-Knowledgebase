@@ -8,7 +8,7 @@ import java.util.List;
  */
 public class RequestNode extends BaseNode {
 	/**Join tables from left to right*/ //TODO: does this make sense with more than two '$'?
-	private final List<RequestJoinNode> joins = new ArrayList<>();
+	private final List<RequestHierarchyNode> hierarchy = new ArrayList<>();
 
 	/**
 	 * @see {@link BaseNode#BaseNode(int) BaseNode}
@@ -18,33 +18,33 @@ public class RequestNode extends BaseNode {
 	}
 
 	/**
-	 * Adds a new node to join to the list
+	 * Adds an attribute node to this node
 	 * @param node The node to add
 	 */
-	public void addJoin(RequestJoinNode node) {
-		joins.add(node);
+	public void addHierarchyNode(RequestHierarchyNode node) {
+		hierarchy.add(node);
 	}
 
 	/**
-	 * @return The parts of the request that were previously seperated by a $
+	 * @return The parts of the request that were previously separated by /
 	 */
-	public List<RequestJoinNode> getJoins() {
-		return joins;
+	public List<RequestHierarchyNode> getHierarchy() {
+		return hierarchy;
 	}
 
 	@Override
 	public String toString() {
-		String result = "<0>/";
+		String result = "<0>";
 
-		for(RequestJoinNode node : joins) {
-			result += node.toString() + "$";
+		for(RequestHierarchyNode node : hierarchy) {
+			result += node.toString();
 		}
 
-		return result.substring(0, result.length() - 1); //remove last $
+		return result;
 	}
 
 	@Override
 	public boolean equals(Object obj) {
-		return super.equals(obj) && obj instanceof RequestNode && joins.equals(((RequestNode)obj).joins);
+		return super.equals(obj) && obj instanceof RequestNode && hierarchy.equals(((RequestNode)obj).hierarchy);
 	}
 }

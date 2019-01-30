@@ -11,7 +11,8 @@ import org.springframework.web.servlet.HandlerMapping;
 
 import de.tudarmstadt.informatik.ukp.athenakp.api.ast.AttributeNode;
 import de.tudarmstadt.informatik.ukp.athenakp.api.ast.NumberAttributeNode;
-import de.tudarmstadt.informatik.ukp.athenakp.api.ast.RequestJoinNode;
+import de.tudarmstadt.informatik.ukp.athenakp.api.ast.RequestEntityNode;
+import de.tudarmstadt.informatik.ukp.athenakp.api.ast.RequestHierarchyNode;
 import de.tudarmstadt.informatik.ukp.athenakp.api.ast.RequestNode;
 import de.tudarmstadt.informatik.ukp.athenakp.api.ast.StringAttributeNode;
 import de.tudarmstadt.informatik.ukp.athenakp.exception.SyntaxException;
@@ -76,21 +77,23 @@ public class APIController {
 	 */
 	public void verifyRequest(RequestNode tree) throws VerificationFailedException {
 		//loop through the joins to get to the attributes
-		for(RequestJoinNode join : tree.getJoins()) {
-			String entity = join.getEntityName().getValue();
+		for(RequestHierarchyNode hierarchyEntry : tree.getHierarchy()) {
+			for(RequestEntityNode entity : hierarchyEntry.getEntities()) {
+				String entityName = entity.getEntityName().getValue();
 
-			//loop through the attributes and check each attribute's value of validity
-			for(AttributeNode attr : join.getAttributes()) {
-				if(attr instanceof NumberAttributeNode && NUMERICAL_FIELDS.containsKey(entity)) {
-					if(!entityContainsNumericalField(entity, attr.getName().getValue()))
-						throw new VerificationFailedException("Expected a string for attribute " + attr.getName().getValue() + " but got " + ((NumberAttributeNode)attr).valuesToString());
-					else if(((NumberAttributeNode)attr).getValues().size() != NUMERICAL_FIELDS.get(entity).get(attr.getName().getValue()))
-						throw new VerificationFailedException("Unexpected amount of numbers given for attribute " + attr.getName().getValue() + ". " +
-								"Got " + ((NumberAttributeNode)attr).getValues().size() + ", need " + NUMERICAL_FIELDS.get(entity).get(attr.getName().getValue()));
-				}
-				else if(attr instanceof StringAttributeNode && NUMERICAL_FIELDS.containsKey(entity)) {
-					if(entityContainsNumericalField(entity, attr.getName().getValue()))
-						throw new VerificationFailedException("Expected (multiple) number(s) for attribute " + attr.getName().getValue() + " but got " + ((StringAttributeNode)attr).getValue().getValue());
+				//loop through the attributes and check each attribute's value of validity
+				for(AttributeNode attr : entity.getAttributes()) {
+					if(attr instanceof NumberAttributeNode && NUMERICAL_FIELDS.containsKey(entityName)) {
+						if(!entityContainsNumericalField(entityName, attr.getName().getValue()))
+							throw new VerificationFailedException("Expected a string for attribute " + attr.getName().getValue() + " but got " + ((NumberAttributeNode)attr).valuesToString());
+						else if(((NumberAttributeNode)attr).getValues().size() != NUMERICAL_FIELDS.get(entityName).get(attr.getName().getValue()))
+							throw new VerificationFailedException("Unexpected amount of numbers given for attribute " + attr.getName().getValue() + ". " +
+									"Got " + ((NumberAttributeNode)attr).getValues().size() + ", need " + NUMERICAL_FIELDS.get(entityName).get(attr.getName().getValue()));
+					}
+					else if(attr instanceof StringAttributeNode && NUMERICAL_FIELDS.containsKey(entityName)) {
+						if(entityContainsNumericalField(entityName, attr.getName().getValue()))
+							throw new VerificationFailedException("Expected (multiple) number(s) for attribute " + attr.getName().getValue() + " but got " + ((StringAttributeNode)attr).getValue().getValue());
+					}
 				}
 			}
 		}
