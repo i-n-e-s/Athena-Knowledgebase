@@ -97,10 +97,9 @@ class ACLWebCrawler extends AbstractCrawler {
 
 	/**
 	 * Extracts all authors from a given list of webpages, which are in the ACL
-	 * search form (e.g. {@link here
-	 * https://aclanthology.coli.uni-saarland.de/catalog/facet/author?commit=facet.page%3D1&facet.page=1})
+	 * search form (e.g. <a href="https://aclanthology.coli.uni-saarland.de/catalog/facet/author?commit=facet.page%3D1&facet.page=1">here</a>)
 	 *
-	 * @param a list of webpages
+	 * @param webpages a list of webpages
 	 * @return a list of authors with the name field set
 	 */
 	private ArrayList<Author> extractAuthors(ArrayList<Document> webpages) {
@@ -125,10 +124,9 @@ class ACLWebCrawler extends AbstractCrawler {
 
 	/**
 	 * Extracts all papers from a given list of webpages, which are in the ACL search
-	 * form (e.g. {@link here
-	 * https://aclanthology.coli.uni-saarland.de/catalog/facet/author?commit=facet.page%3D1&facet.page=1})
+	 * form (e.g. <a href="https://aclanthology.coli.uni-saarland.de/catalog/facet/author?commit=facet.page%3D1&facet.page=1">here</a>)
 	 *
-	 * @param a list of webpages
+	 * @param webpages a list of webpages
 	 * @return a list of papers
 	 */
 	private ArrayList<Paper> extractPapers(ArrayList<Document> webpages) {
@@ -187,10 +185,9 @@ class ACLWebCrawler extends AbstractCrawler {
 
 	/**
 	 * Extracts all papers and authors from a given list of webpages, which are in
-	 * the ACL search form (e.g. {@link here
-	 * https://aclanthology.coli.uni-saarland.de/catalog/facet/author?commit=facet.page%3D1&facet.page=1})
+	 * the ACL search form (e.g. <a href="https://aclanthology.coli.uni-saarland.de/catalog/facet/author?commit=facet.page%3D1&facet.page=1">here</a>)
 	 *
-	 * @param a list of webpages
+	 * @param webpages a list of webpages
 	 * @return a list of papers
 	 */
 	private ArrayList<Paper> extractPaperAuthor(List<Document> webpages) {
@@ -211,7 +208,7 @@ class ACLWebCrawler extends AbstractCrawler {
 
 					paper.setTitle(paperTitle);
 					paper.setAnthology(anthology);
-					paper.setHref("http://aclweb.org/anthology/" + anthology); //wow that was easy
+					paper.setRemoteLink("http://aclweb.org/anthology/" + anthology); //wow that was easy
 					extractPaperRelease(elmnt, paper);
 
 					// find authors and add them to a list

@@ -50,7 +50,7 @@ public class HibernateSandBox {
 		//				p2.setInstitution(i); FIXME if a person has this, a query with a result containing this person will result in an error
 
 		Paper dummyPaper = new Paper();
-		dummyPaper.setHref("https://example.org");
+		dummyPaper.setRemoteLink("https://example.org");
 		dummyPaper.setPdfFileSize(123456);
 		dummyPaper.setReleaseDate(LocalDate.of(2018, 11, 16));
 		dummyPaper.setTopic("The Life, the Universe and Everything");
@@ -58,7 +58,7 @@ public class HibernateSandBox {
 		dummyPaper.setAnthology("C2PO");
 
 		Paper dummyPaper2 = new Paper();
-		dummyPaper2.setHref("https://example.org");
+		dummyPaper2.setRemoteLink("https://example.org");
 		dummyPaper2.setPdfFileSize(654321);
 		dummyPaper2.setReleaseDate(LocalDate.of(2000, 7, 29));
 		dummyPaper2.setTopic("Fiction");

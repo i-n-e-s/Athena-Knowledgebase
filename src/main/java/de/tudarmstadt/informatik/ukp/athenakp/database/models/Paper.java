@@ -39,8 +39,10 @@ public class Paper {
 	@Column(name = "title", columnDefinition = "VARCHAR(1000)") //fixes titles that are too long for being storable in the column
 	private String title;
 	/*URL to PDF*/
-	@Column(name = "href")
-	private String href;
+	@Column(name = "remoteLink")
+	private String remoteLink;
+	@Column(name = "localLink")
+	private String localLink;
 	/*PDF filesize in Bytes*/
 	@Column(name = "pdfFileSize")
 	private int pdfFileSize;
@@ -137,21 +139,39 @@ public class Paper {
 	}
 
 	/**
-	 * Gets the link to this papers PDF file
+	 * Gets the remote link to this papers PDF file
 	 *
-	 * @return The link to this papers PDF file
+	 * @return The remote link to this papers PDF file
 	 */
-	public String getHref() {
-		return href;
+	public String getRemoteLink() {
+		return remoteLink;
 	}
 
 	/**
-	 * Sets the link to this papers PDF file
+	 * Sets the remote link to this papers PDF file
 	 *
-	 * @param href The new link to this papers PDF file
+	 * @param remoteLink The new remote link to this papers PDF file
 	 */
-	public void setHref(String href) {
-		this.href = href;
+	public void setRemoteLink(String remoteLink) {
+		this.remoteLink = remoteLink;
+	}
+
+	/**
+	 * Gets the local link to this papers PDF file
+	 *
+	 * @return The local link to this papers PDF file
+	 */
+	public String getLocalLink() {
+		return localLink;
+	}
+
+	/**
+	 * Sets the local link to this PDF file
+	 *
+	 * @param localLink The new local link to this papers PDF file
+	 */
+	public void setLocalLink(String localLink) {
+		this.localLink = localLink;
 	}
 
 	/**
