@@ -27,7 +27,6 @@
         <mapping class="de.tudarmstadt.informatik.ukp.athenakp.database.models.Conference" />
         <mapping class="de.tudarmstadt.informatik.ukp.athenakp.database.models.Event" />
         <mapping class="de.tudarmstadt.informatik.ukp.athenakp.database.models.Session" />
-        <mapping class="de.tudarmstadt.informatik.ukp.athenakp.database.models.Subsession" />
         <!--<mapping class="/roseindia/Employee" />-->
 
     </session-factory>
