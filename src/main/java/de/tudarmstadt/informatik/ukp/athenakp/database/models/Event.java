@@ -26,21 +26,6 @@ public class Event {
 	@GenericGenerator(name="increment", strategy="increment")
 	@Column(name="eventID")
 	private long eventID;
-	/*Name of conference this event belongs to*/
-	@Column(name="conferenceName")
-	private String conferenceName;
-	/*Start time*/
-	@Column(name="begin")
-	private LocalDateTime begin;
-	/*End time*/
-	@Column(name="end")
-	private LocalDateTime end;
-	/*Host*/
-	//	@Column(name = "host") //FIXME: crashes - perhaps save id?
-	//	private Person host;                //TODO Person von Author abstrahieren
-	/* Place where this event happens, if empty look in sessions */
-	@Column(name = "place")
-	private String place;
 	/* Title */
 	@Column(name = "title")
 	private String title;
@@ -50,6 +35,24 @@ public class Event {
 	/* Category */
 	@Column(name = "category")
 	private EventCategory category;
+	/*Name of conference this event belongs to TODO: Make proper relation to Conference*/
+	@Column(name="conferenceName")
+	private String conferenceName;
+
+	/*Start time*/
+	@Column(name="begin")
+	private LocalDateTime begin;
+	/*End time*/
+	@Column(name="end")
+	private LocalDateTime end;
+
+	/*Host*/
+	//	@Column(name = "host") //FIXME: crashes - perhaps save id?
+	//	private Person host;                //TODO Person von Author abstrahieren
+	/* Place where this event happens, if empty look in sessions */
+	@Column(name = "place")
+	private String place;
+
 	/* Papers, if any */
 	//	@Column(name = "papers")
 	//	private Set<Paper> papers;

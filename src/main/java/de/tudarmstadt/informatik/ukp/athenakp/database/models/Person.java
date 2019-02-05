@@ -32,7 +32,7 @@ public class Person {
 
 	/*Birthday and day of death*/
 	@Column(name = "birthday")
-	private LocalDate birthdate;
+	private LocalDate birth;
 	@Column(name = "obit")
 	private LocalDate obit;
 
@@ -104,16 +104,16 @@ public class Person {
 	 * Gets the person's birthday.
 	 * @return The person's birthday
 	 */
-	public LocalDate getBirthdate() {
-		return birthdate;
+	public LocalDate getBirth() {
+		return birth;
 	}
 
 	/**
 	 * Sets the person's birthday
-	 * @param birthdate The person's birthday
+	 * @param birth The person's birthday
 	 */
-	public void setBirthdate(LocalDate birthdate) {
-		this.birthdate = birthdate;
+	public void setBirth(LocalDate birth) {
+		this.birth = birth;
 	}
 
 	/**

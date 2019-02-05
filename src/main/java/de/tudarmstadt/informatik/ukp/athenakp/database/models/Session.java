@@ -28,16 +28,19 @@ public class Session{ //TODO: chair
 	/* Brief Description */
 	@Column(name = "description", columnDefinition = "VARCHAR(1000)") //fixes titles that are too long for being storable in the column
 	private String description;
+
 	/*Start time*/
 	@Column(name="begin")
 	private LocalDateTime begin;
 	/*End time*/
 	@Column(name="end")
 	private LocalDateTime end;
+
 	/* Place where this session happens */
 	@Column(name = "place")
 	private String place;
-	/* Subessions, if any */
+
+	/* Associated papers */
 	@Column(name = "paperTitles")
 	@ElementCollection
 	private Set<String> paperTitles = new HashSet<>();

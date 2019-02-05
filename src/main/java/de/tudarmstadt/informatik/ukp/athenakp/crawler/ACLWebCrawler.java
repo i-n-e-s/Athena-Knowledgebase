@@ -256,7 +256,7 @@ class ACLWebCrawler extends AbstractCrawler {
 				}
 			}
 
-			thePaper.setReleaseDate(LocalDate.of(Integer.parseInt(year), Integer.parseInt(month), 1));
+			thePaper.setRelease(LocalDate.of(Integer.parseInt(year), Integer.parseInt(month), 1));
 		}
 		catch(IOException e) { //jsoup exception
 			e.printStackTrace();
@@ -296,8 +296,8 @@ class ACLWebCrawler extends AbstractCrawler {
 		// TODO: talk about timezones and how to handle them
 		// ZoneId timeZone = ZoneId.of("GMT+11");
 
-		currentConference.setStartDate(conferenceStartDate);
-		currentConference.setEndDate(conferenceEndDate);
+		currentConference.setBegin(conferenceStartDate);
+		currentConference.setEnd(conferenceEndDate);
 
 		String[] cityCountry = cityCountryInformation.split(", ");
 		String conferenceCity = cityCountry[0];

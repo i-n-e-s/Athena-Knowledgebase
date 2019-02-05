@@ -22,17 +22,20 @@ public class Conference {
 	@Column(name="name")
 	private String name;
 	/*First day of conference no need for the temporal annotation with java.time (indeed this would break it)*/
-	@Column (name="startDate")
-	private LocalDate startDate;
+
+	@Column (name="begin")
+	private LocalDate begin;
 	/*Last day of conference*/
-	@Column(name="endDate")
-	private LocalDate endDate;
+	@Column(name="end")
+	private LocalDate end;
+
 	@Column(name="country")
 	private String country;
 	@Column (name = "city")
 	private String city;
 	@Column(name = "address")
 	private String address;
+
 	/*Authors that talked*/
 	@ManyToMany
 	@JsonIgnore
@@ -82,32 +85,32 @@ public class Conference {
 	 * Gets the date of the day this conference started
 	 * @return The date of the day this conference started
 	 */
-	public LocalDate getStartDate() {
-		return startDate;
+	public LocalDate getBegin() {
+		return begin;
 	}
 
 	/**
 	 * Sets the date of the day this conference started
-	 * @param startDate The new start date
+	 * @param begin The new start date
 	 */
-	public void setStartDate(LocalDate startDate) {
-		this.startDate = startDate;
+	public void setBegin(LocalDate begin) {
+		this.begin = begin;
 	}
 
 	/**
 	 * Gets the date of the day this conference ended
 	 * @return The date of the day this conference ended
 	 */
-	public LocalDate getEndDate() {
-		return endDate;
+	public LocalDate getEnd() {
+		return end;
 	}
 
 	/**
 	 * Sets the date of the day this conference ended
-	 * @param endDate The new end date
+	 * @param end The new end date
 	 */
-	public void setEndDate(LocalDate endDate) {
-		this.endDate = endDate;
+	public void setEnd(LocalDate end) {
+		this.end = end;
 	}
 
 	/**

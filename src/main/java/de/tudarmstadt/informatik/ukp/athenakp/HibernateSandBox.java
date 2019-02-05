@@ -27,7 +27,7 @@ public class HibernateSandBox {
 
 		Person dummyAuthor = new Person();
 		dummyAuthor.setFullName("Rumpo Derpel");
-		dummyAuthor.setBirthdate(LocalDate.of(2010, 10, 10));
+		dummyAuthor.setBirth(LocalDate.of(2010, 10, 10));
 
 		Person dummyAuthor2 = new Person();
 		dummyAuthor2.setPrefix("Prof. Dr.");
@@ -41,14 +41,14 @@ public class HibernateSandBox {
 		// 		i am not sure if the
 		//		alternatives proposed in the linked stackoverflow thread will work with hibernate, gotta test that
 		//		-Daniel
-		dummyAuthor2.setBirthdate(LocalDate.of(1970 - 1900, 1 - 1, 1));
+		dummyAuthor2.setBirth(LocalDate.of(1970 - 1900, 1 - 1, 1));
 		dummyAuthor2.setObit(LocalDate.of(2038 - 1900, 1 - 1, 19));
 		//				p2.setInstitution(i); FIXME if a person has this, a query with a result containing this person will result in an error
 
 		Paper dummyPaper = new Paper();
 		dummyPaper.setRemoteLink("https://example.org");
 		dummyPaper.setPdfFileSize(123456);
-		dummyPaper.setReleaseDate(LocalDate.of(2018, 11, 16));
+		dummyPaper.setRelease(LocalDate.of(2018, 11, 16));
 		dummyPaper.setTopic("The Life, the Universe and Everything");
 		dummyPaper.setTitle("42");
 		dummyPaper.setAnthology("C2PO");
@@ -56,7 +56,7 @@ public class HibernateSandBox {
 		Paper dummyPaper2 = new Paper();
 		dummyPaper2.setRemoteLink("https://example.org");
 		dummyPaper2.setPdfFileSize(654321);
-		dummyPaper2.setReleaseDate(LocalDate.of(2000, 7, 29));
+		dummyPaper2.setRelease(LocalDate.of(2000, 7, 29));
 		dummyPaper2.setTopic("Fiction");
 		dummyPaper2.setTitle("Why Hoverboards will exist by 2015");
 
@@ -84,10 +84,10 @@ public class HibernateSandBox {
 
 		// is supposed to illustrate how handy .parse might be after scraping
 		Conference dummyConference = new Conference();
-		dummyConference.setStartDate(LocalDate.parse("2012-06-30"));
-		dummyConference.setEndDate(LocalDate.now());
-		//		dummyConference.setStartDate(new Date(2017 - 1900, 8 - 1, 15));
-		//		dummyConference.setEndDate(new Date(2017 - 1900, 9 - 1, 2));
+		dummyConference.setBegin(LocalDate.parse("2012-06-30"));
+		dummyConference.setEnd(LocalDate.now());
+		//		dummyConference.setBegin(new Date(2017 - 1900, 8 - 1, 15));
+		//		dummyConference.setEnd(new Date(2017 - 1900, 9 - 1, 2));
 		dummyConference.setName("Conference of Nerds");
 
 		ConferenceCommonAccess conferenceAccess = new ConferenceHibernateAccess();

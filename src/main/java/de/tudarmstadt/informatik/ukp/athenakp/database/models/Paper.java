@@ -25,24 +25,27 @@ public class Paper {
 	@Column(name = "paperID", updatable = false, nullable = false)
 	private long paperID;
 
+	/*Title of the paper*/
+	@Column(name = "title", columnDefinition = "VARCHAR(1000)") //fixes titles that are too long for being storable in the column
+	private String title;
+	/*Topic of the paper*/
+	@Column(name = "topic")
+	private String topic;
 	/*Paper's authors*/
 	@JsonIgnore //fixes infinite recursion
 	@ManyToMany(cascade = { CascadeType.ALL }, mappedBy = "papers", fetch = FetchType.EAGER)
 	private Set<Person> authors = new HashSet<>();
+
 	/*Release date*/
-	@Column(name = "releaseDate")
-	private LocalDate releaseDate;
-	/*Topic of the paper*/
-	@Column(name = "topic")
-	private String topic;
-	/*Title of the paper*/
-	@Column(name = "title", columnDefinition = "VARCHAR(1000)") //fixes titles that are too long for being storable in the column
-	private String title;
+	@Column(name = "release")
+	private LocalDate release;
+
 	/*URL to PDF*/
 	@Column(name = "remoteLink")
 	private String remoteLink;
 	@Column(name = "localLink")
 	private String localLink;
+
 	/*PDF filesize in Bytes*/
 	@Column(name = "pdfFileSize")
 	private int pdfFileSize;
@@ -90,16 +93,16 @@ public class Paper {
 	 * Gets this paper's release date
 	 * @return This paper's release date
 	 */
-	public LocalDate getReleaseDate() {
-		return releaseDate;
+	public LocalDate getRelease() {
+		return release;
 	}
 
 	/**
 	 * Sets this paper's release date
-	 * @param releaseDate The new release date of this paper
+	 * @param release The new release date of this paper
 	 */
-	public void setReleaseDate(LocalDate releaseDate) {
-		this.releaseDate = releaseDate;
+	public void setRelease(LocalDate release) {
+		this.release = release;
 	}
 
 	/**

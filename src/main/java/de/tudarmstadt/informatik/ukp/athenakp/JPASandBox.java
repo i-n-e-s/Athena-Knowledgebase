@@ -24,7 +24,7 @@ public class JPASandBox {
 
 		Person dummyAuthor = new Person();
 		dummyAuthor.setFullName("Rumpo Derpel");
-		dummyAuthor.setBirthdate(LocalDate.of(2010, 10, 10));
+		dummyAuthor.setBirth(LocalDate.of(2010, 10, 10));
 		pca.add(dummyAuthor);
 
 		List<Person> authors = pca.getByFullName("Rumpo Derpel");
@@ -34,15 +34,15 @@ public class JPASandBox {
 		PaperCommonAccess paca = new PaperJPAAccess();
 
 		Paper dummyPaper1 = new Paper();
-		dummyPaper1.setReleaseDate(LocalDate.of(2018, 8, 1));
+		dummyPaper1.setRelease(LocalDate.of(2018, 8, 1));
 		Paper dummyPaper2 = new Paper();
-		dummyPaper2.setReleaseDate(LocalDate.of(2018, 9, 1));
+		dummyPaper2.setRelease(LocalDate.of(2018, 9, 1));
 		Paper dummyPaper3 = new Paper();
-		dummyPaper3.setReleaseDate(LocalDate.of(2018, 10, 1));
+		dummyPaper3.setRelease(LocalDate.of(2018, 10, 1));
 		Paper dummyPaper4 = new Paper();
-		dummyPaper4.setReleaseDate(LocalDate.of(2018, 11, 1));
+		dummyPaper4.setRelease(LocalDate.of(2018, 11, 1));
 		Paper dummyPaper5 = new Paper();
-		dummyPaper5.setReleaseDate(LocalDate.of(2018, 12, 1));
+		dummyPaper5.setRelease(LocalDate.of(2018, 12, 1));
 		paca.add(dummyPaper1);
 		paca.add(dummyPaper2);
 		paca.add(dummyPaper3);
