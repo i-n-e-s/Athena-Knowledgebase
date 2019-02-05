@@ -22,7 +22,6 @@ import de.tudarmstadt.informatik.ukp.athenakp.database.models.Event;
 import de.tudarmstadt.informatik.ukp.athenakp.database.models.EventCategory;
 import de.tudarmstadt.informatik.ukp.athenakp.database.models.Paper;
 import de.tudarmstadt.informatik.ukp.athenakp.database.models.Session;
-import de.tudarmstadt.informatik.ukp.athenakp.database.models.Subsession;
 
 /**
  * A class, which holds the capability to return a List of all authors, which
@@ -331,7 +330,7 @@ class ACLWebCrawler extends AbstractCrawler {
 		Future<ArrayList<Event>> f2 = executor.submit(() -> parseOtherDays(days.get(1), new ArrayList<Event>()));
 		Future<ArrayList<Event>> f3 = executor.submit(() -> parseOtherDays(days.get(2), new ArrayList<Event>()));
 		Future<ArrayList<Event>> f4 = executor.submit(() -> parseOtherDays(days.get(3), new ArrayList<Event>()));
-		Future<ArrayList<Event>> f5 = executor.submit(() -> parseWorkshops(new ArrayList<Event>()));
+		//		Future<ArrayList<Event>> f5 = executor.submit(() -> parseWorkshops(new ArrayList<Event>()));
 		System.out.println("Waiting for thread results...");
 
 		try {
@@ -339,7 +338,7 @@ class ACLWebCrawler extends AbstractCrawler {
 			result.addAll(f2.get());
 			result.addAll(f3.get());
 			result.addAll(f4.get());
-			result.addAll(f5.get());
+			//			result.addAll(f5.get());
 			System.out.println("Gathered all results!");
 		}
 		catch(InterruptedException | ExecutionException e) {
@@ -530,38 +529,24 @@ class ACLWebCrawler extends AbstractCrawler {
 		//looping through the different columns of the OP table
 		for(int i = 0; i < presentations.size(); i++) { //seems like sessions, rooms, and presentations all have the same size, always
 			Element sessEl = sessions.get(i);
-			Session session = new Session();
-			String[] sessTitleDesc = sessEl.selectFirst(".conc-session-name").text().split(":");
-			String sessTitle = sessTitleDesc[0].trim();
-			String sessDesc = sessTitleDesc[1].trim();
-			//			String sessChair = sessEl.selectFirst(".session-speakers").text().split(":")[1].trim();
+			String sessTitle = sessEl.selectFirst(".conc-session-name").text();
 			String sessPlace = rooms.get(i).text();
 
 			//looping through the rows of the current column
 			for(Element subEl : presentations.get(i).select(".talk")) {
-				Subsession subsession = new Subsession();
-				String[] subTime = subEl.selectFirst(".talk-time").text().split(":");
-				LocalDateTime subStart = LocalDateTime.of(event.getBegin().toLocalDate(), LocalTime.of(Integer.parseInt(subTime[0]), Integer.parseInt(subTime[1])));
-				LocalDateTime subEnd = subStart.plusMinutes(25);
-				Element subTitleEl = subEl.selectFirst(".talk-title");
-				String subTitle = subTitleEl.text();
-				Element subDescEl = subTitleEl.select("a").get(2);
-				boolean tacl = subDescEl.selectFirst(".tacl-badge") != null; //is paper hosted on tacl
-				String subDescHref = subTitleEl.select("a").get(2).attr("href"); //let's hope it's always the third :D
-				String subDesc = getDescriptionFromHref(subDescHref, tacl);
+				Session session = new Session();
+				String[] sessTime = subEl.selectFirst(".talk-time").text().split(":");
+				LocalDateTime sessStart = LocalDateTime.of(event.getBegin().toLocalDate(), LocalTime.of(Integer.parseInt(sessTime[0]), Integer.parseInt(sessTime[1])));
+				LocalDateTime sessEnd = sessStart.plusMinutes(25);
+				String sessDesc = subEl.selectFirst(".talk-title").text();
 
-				subsession.setBegin(subStart);
-				subsession.setEnd(subEnd);
-				subsession.setTitle(subTitle);
-				subsession.setDescription(subDesc);
-				session.addSubsession(subsession);
+				session.setTitle(sessTitle);
+				session.setDescription(sessDesc);
+				session.setBegin(sessStart);
+				session.setEnd(sessEnd);
+				session.setPlace(sessPlace);
+				event.addSession(session);
 			}
-
-			session.setTitle(sessTitle);
-			session.setDescription(sessDesc);
-			//			session.setChair(sessChair);
-			session.setPlace(sessPlace);
-			event.addSession(session);
 		}
 	}
 
@@ -580,51 +565,17 @@ class ACLWebCrawler extends AbstractCrawler {
 
 			//looping through all papers that are part of this PS
 			for(Element subEl : sessEl.select(".poster-name")) {
-				Subsession subsession = new Subsession();
-				Element subTitleDescEl = subEl.select("a").get(1); //let's hope it's always the second :D
-				String title = subTitleDescEl.text().trim();
-				boolean tacl = subTitleDescEl.selectFirst(".tacl-badge") != null; //is paper hosted on tacl
-				String subDescHref = subTitleDescEl.attr("href");
-				String subDesc = getDescriptionFromHref(subDescHref, tacl);
+				String posterTitle = subEl.select("a").get(1).text().trim(); //let's hope it's always the second :D
 
-				subsession.setBegin(event.getBegin());
-				subsession.setEnd(event.getEnd());
-				subsession.setTitle(title);
-				subsession.setDescription(subDesc);
-				session.addSubsession(subsession);
+				session.addPaperTitle(posterTitle);
 			}
 
 			session.setTitle(sessTitle);
 			session.setDescription(sessDesc);
+			session.setBegin(event.getBegin());
+			session.setEnd(event.getEnd());
+			session.setPlace(event.getPlace());
 			event.addSession(session);
-		}
-	}
-
-	/**
-	 * Gets a paper's description from the given href. Might be relative to https://acl2018.org or a complete link to a tacl page. If latter, set tacl to true
-	 * @param href The (relative) link
-	 * @param tacl Whether href is a tacl link or not
-	 * @return The description found in the href, "?" if an IOException occured or no description has been found
-	 */
-	private String getDescriptionFromHref(String href, boolean tacl) {
-		try {
-			//there's the "title" attribute, but not all entries have it filled out completely (for instance ones marked with tacl)
-			if(tacl) {
-				Document taclDoc = Jsoup.connect(href).get();
-
-				//rerouted to index page, because paper page probably threw 404
-				if(taclDoc.select("head > title").text().equals("Transactions of the Association for Computational Linguistics"))
-					return "?";
-				else
-					return taclDoc.select("#articleAbstract > div").get(0).text().trim();
-			}
-			else
-				return Jsoup.connect("https://acl2018.org" + href).get().selectFirst(".paper-abstract").text().trim();
-		}
-		catch(IOException e) {
-			System.err.println("Error while trying to get paper description from href");
-			e.printStackTrace();
-			return "?";
 		}
 	}
 }

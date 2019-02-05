@@ -1,17 +1,14 @@
 package de.tudarmstadt.informatik.ukp.athenakp.database.models;
 
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.GenericGenerator;
@@ -31,17 +28,19 @@ public class Session{ //TODO: chair
 	/* Brief Description */
 	@Column(name = "description", columnDefinition = "VARCHAR(1000)") //fixes titles that are too long for being storable in the column
 	private String description;
+	/*Start time*/
+	@Column(name="begin")
+	private LocalDateTime begin;
+	/*End time*/
+	@Column(name="end")
+	private LocalDateTime end;
 	/* Place where this session happens */
 	@Column(name = "place")
 	private String place;
 	/* Subessions, if any */
-	@OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER)
-	@JoinTable(
-			name = "session_subsession",
-			joinColumns = { @JoinColumn(name = "sessionID") },
-			inverseJoinColumns = { @JoinColumn(name = "subsessionID") }
-			)
-	private Set<Subsession> subsessions = new HashSet<>();
+	@Column(name = "paperTitles")
+	@ElementCollection
+	private Set<String> paperTitles = new HashSet<>();
 
 	/**
 	 * Gets the unique id of this session
@@ -73,6 +72,38 @@ public class Session{ //TODO: chair
 	 */
 	public void setPlace(String place) {
 		this.place = place;
+	}
+
+	/**
+	 * Gets the time this session begins
+	 * @return This session's begin time
+	 */
+	public LocalDateTime getBegin() {
+		return begin;
+	}
+
+	/**
+	 * Sets the time this session begins
+	 * @param begin The time this session begins
+	 */
+	public void setBegin(LocalDateTime begin) {
+		this.begin = begin;
+	}
+
+	/**
+	 * Gets the time this session ends
+	 * @return This session's new end time
+	 */
+	public LocalDateTime getEnd() {
+		return end;
+	}
+
+	/**
+	 * Sets the time this session ends
+	 * @param end the new time this session ends
+	 */
+	public void setEnd(LocalDateTime end) {
+		this.end = end;
 	}
 
 	/**
@@ -108,26 +139,26 @@ public class Session{ //TODO: chair
 	}
 
 	/**
-	 * Gets this session's subsessions (if any)
-	 * @return This session's subsessions
+	 * Gets this session's paper's titles (if any)
+	 * @return This session's paper's titles
 	 */
-	public Set<Subsession> getSubsessions() {
-		return subsessions;
+	public Set<String> getPaperTitles() {
+		return paperTitles;
 	}
 
 	/**
-	 * Sets this session's subsessions (if any)
-	 * @param subsessions This session's new subsessions
+	 * Sets this session's paper's titles (if any)
+	 * @param paperTitles This session's new paper's titles
 	 */
-	public void setSubsessions(Set<Subsession> subsessions) {
-		this.subsessions = subsessions;
+	public void setPaperTitles(Set<String> paperTitles) {
+		this.paperTitles = paperTitles;
 	}
 
 	/**
-	 * Adds a subsession to this session's subsession list
-	 * @param s The subsession to add
+	 * Adds a paper title to this session's paper's titles list
+	 * @param s The paper title to add
 	 */
-	public void addSubsession(Subsession s) {
-		subsessions.add(s);
+	public void addPaperTitle(String s) {
+		paperTitles.add(s);
 	}
 }
