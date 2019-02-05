@@ -1,6 +1,6 @@
 Code Conventions:
-
-Bracket style: Gleiche zeile {
-}
-
-Whitespace: Tabs mit 4 Spaces
+All submitted code should follow the Google Java Guide Lines, except the following Changes:
+- (Section 2.3.1)	Tabs are used for indentation
+- 					Tabs should be represented with 4 whitespace characters
+- (Section 4.2) 	Each time a new block or block-like construct is opened, the indent increases by one Tab
+- (Section 4.4) 	The column limit doesn't have to be followed //This is done because some of the frameworks have very long names, so you would often have to rip apart your code without adding readability
