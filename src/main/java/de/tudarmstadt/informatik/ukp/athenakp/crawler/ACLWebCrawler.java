@@ -11,17 +11,11 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
+import de.tudarmstadt.informatik.ukp.athenakp.database.models.*;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-
-import de.tudarmstadt.informatik.ukp.athenakp.database.models.Author;
-import de.tudarmstadt.informatik.ukp.athenakp.database.models.Conference;
-import de.tudarmstadt.informatik.ukp.athenakp.database.models.Event;
-import de.tudarmstadt.informatik.ukp.athenakp.database.models.EventCategory;
-import de.tudarmstadt.informatik.ukp.athenakp.database.models.Paper;
-import de.tudarmstadt.informatik.ukp.athenakp.database.models.Session;
 
 /**
  * A class, which holds the capability to return a List of all authors, which
@@ -90,7 +84,7 @@ class ACLWebCrawler extends AbstractCrawler {
 	}
 
 	@Override
-	public ArrayList<Author> getAuthors() throws IOException {
+	public ArrayList<Person> getAuthors() throws IOException {
 		return extractAuthors(fetchWebpages(startURLAuthors));
 	}
 
@@ -101,13 +95,13 @@ class ACLWebCrawler extends AbstractCrawler {
 	 * @param webpages a list of webpages
 	 * @return a list of authors with the name field set
 	 */
-	private ArrayList<Author> extractAuthors(ArrayList<Document> webpages) {
-		ArrayList<Author> authors = new ArrayList<>();
+	private ArrayList<Person> extractAuthors(ArrayList<Document> webpages) {
+		ArrayList<Person> authors = new ArrayList<>();
 		// extract the authors from all webpages
 		for (Document doc : webpages) {
 			Elements authorListElements = doc.select("li");// authors are the only <li> Elements on the Page
 			for (Element elmnt : authorListElements) {
-				Author author = new Author();
+				Person author = new Person();
 
 				author.setFullName(elmnt.child(0).ownText());
 				authors.add(author);
@@ -213,7 +207,7 @@ class ACLWebCrawler extends AbstractCrawler {
 					// find authors and add them to a list
 					Elements authorElements = elmnt.parent().parent().children().select("span").select("a");
 					for (Element authorEl : authorElements) {
-						Author author = new Author();
+						Person author = new Person();
 
 						// because acl2018 seems to not employ prefixes (e.g. Prof. Dr.), we do not need to scan them
 						// scanning them might make for a good user story

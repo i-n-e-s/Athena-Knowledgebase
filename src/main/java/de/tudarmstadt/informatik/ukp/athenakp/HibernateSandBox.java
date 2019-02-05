@@ -3,6 +3,7 @@ package de.tudarmstadt.informatik.ukp.athenakp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+import de.tudarmstadt.informatik.ukp.athenakp.database.models.*;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
@@ -14,11 +15,6 @@ import de.tudarmstadt.informatik.ukp.athenakp.database.hibernate.ConferenceHiber
 import de.tudarmstadt.informatik.ukp.athenakp.database.hibernate.InstitutionHibernateAccess;
 import de.tudarmstadt.informatik.ukp.athenakp.database.hibernate.PaperHibernateAccess;
 import de.tudarmstadt.informatik.ukp.athenakp.database.hibernate.PersonHibernateAccess;
-import de.tudarmstadt.informatik.ukp.athenakp.database.models.Author;
-import de.tudarmstadt.informatik.ukp.athenakp.database.models.Conference;
-import de.tudarmstadt.informatik.ukp.athenakp.database.models.Event;
-import de.tudarmstadt.informatik.ukp.athenakp.database.models.Institution;
-import de.tudarmstadt.informatik.ukp.athenakp.database.models.Paper;
 
 @SpringBootApplication
 public class HibernateSandBox {
@@ -29,11 +25,11 @@ public class HibernateSandBox {
 		Institution dummyInstitution = new Institution();
 		dummyInstitution.setName("Black Mesa");
 
-		Author dummyAuthor = new Author();
+		Person dummyAuthor = new Person();
 		dummyAuthor.setFullName("Rumpo Derpel");
 		dummyAuthor.setBirthdate(LocalDate.of(2010, 10, 10));
 
-		Author dummyAuthor2 = new Author();
+		Person dummyAuthor2 = new Person();
 		dummyAuthor2.setPrefix("Prof. Dr.");
 		dummyAuthor2.setFullName("John T. Smith");
 		//		Date seems to be deprecated and its time segment can cause problems (does for me) if ignored

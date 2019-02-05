@@ -1,20 +1,12 @@
 package de.tudarmstadt.informatik.ukp.athenakp.database.models;
 
-import java.time.LocalDate;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import javax.persistence.Column;
-import javax.persistence.DiscriminatorColumn;
-import javax.persistence.DiscriminatorType;
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.persistence.*;
 
 /**
  * @author Tristan Wettich
@@ -49,6 +41,16 @@ public class Person {
 	@ManyToOne
 	@JoinColumn(name = "institutionID")
 	private Institution institution;
+
+	/*Written papers*/
+	@JsonIgnore //fixes infinite recursion
+	@ManyToMany(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER)
+	@JoinTable(
+			name = "author_paper",
+			joinColumns = { @JoinColumn(name = "authorID") },
+			inverseJoinColumns = { @JoinColumn(name = "paperID") }
+	)
+	private Set<Paper> papers = new HashSet<>();
 
 	/**
 	 * Gets the unique id of the person.
@@ -144,6 +146,30 @@ public class Person {
 	 */
 	public void setInstitution(Institution institution) {
 		this.institution = institution;
+	}
+
+	/**
+	 * Gets the papers this author has written
+	 * @return The papers this author has written
+	 */
+	public Set<Paper> getPapers() {
+		return papers;
+	}
+
+	/**
+	 * Sets this author's papers
+	 * @param papers The new paper of this author
+	 */
+	public void setPapers(Set<Paper> papers) {
+		this.papers = papers;
+	}
+
+	/**
+	 * Adds a paper to this author's paper list
+	 * @param p The paper to add
+	 */
+	public void addPaper(Paper p) {
+		papers.add(p);
 	}
 
 }

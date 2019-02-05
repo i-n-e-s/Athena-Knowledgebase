@@ -258,7 +258,7 @@ public class Event {
 
     @ManyToMany
     @Column(name="attendees")
-    public Set<Author> getAttendees()
+    public Set<Person> getAttendees()
     {
         return attendees;
     }

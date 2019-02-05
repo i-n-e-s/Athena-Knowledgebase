@@ -3,10 +3,7 @@ package de.tudarmstadt.informatik.ukp.athenakp.crawler;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import de.tudarmstadt.informatik.ukp.athenakp.database.models.Author;
-import de.tudarmstadt.informatik.ukp.athenakp.database.models.Conference;
-import de.tudarmstadt.informatik.ukp.athenakp.database.models.Event;
-import de.tudarmstadt.informatik.ukp.athenakp.database.models.Paper;
+import de.tudarmstadt.informatik.ukp.athenakp.database.models.*;
 
 /**
  *
@@ -22,7 +19,7 @@ abstract class AbstractCrawler {
 	 * @return A list of all authors, an empty list when data not available
 	 * @throws IOException if Jsoup.connect fails
 	 */
-	public abstract ArrayList<Author> getAuthors() throws IOException;
+	public abstract ArrayList<Person> getAuthors() throws IOException;
 
 	/**
 	 * Returns all papers which were published n the year range given to the crawler facade

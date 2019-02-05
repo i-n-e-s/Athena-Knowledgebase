@@ -3,10 +3,7 @@ package de.tudarmstadt.informatik.ukp.athenakp.crawler;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import de.tudarmstadt.informatik.ukp.athenakp.database.models.Author;
-import de.tudarmstadt.informatik.ukp.athenakp.database.models.Conference;
-import de.tudarmstadt.informatik.ukp.athenakp.database.models.Event;
-import de.tudarmstadt.informatik.ukp.athenakp.database.models.Paper;
+import de.tudarmstadt.informatik.ukp.athenakp.database.models.*;
 
 /**
  *
@@ -34,7 +31,7 @@ public class CrawlerFacade extends AbstractCrawler{
 	}
 
 	@Override
-	public ArrayList<Author> getAuthors() throws IOException {
+	public ArrayList<Person> getAuthors() throws IOException {
 		return crawler.getAuthors();
 	}
 

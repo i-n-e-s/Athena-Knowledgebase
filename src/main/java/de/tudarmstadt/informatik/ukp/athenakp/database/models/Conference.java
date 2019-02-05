@@ -37,7 +37,7 @@ public class Conference {
 	@ManyToMany
 	@JsonIgnore
 	@Column(name="authors")
-	private Set<Author> authors = new HashSet<Author>();
+	private Set<Person> authors = new HashSet<Person>();
 	/*Shown papers*/
 	@ManyToMany
 	@JsonIgnore
@@ -162,7 +162,7 @@ public class Conference {
 	 * Gets the authors that talked at this conference
 	 * @return The authors that talked at this conference
 	TODO: fix, see above at authors attribute
-	public Set<Author> getAuthors() {
+	public Set<Person> getAuthors() {
 		return authors;
 	}*/
 

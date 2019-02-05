@@ -3,13 +3,13 @@ package de.tudarmstadt.informatik.ukp.athenakp.api;
 import java.util.List;
 import java.util.Set;
 
+import de.tudarmstadt.informatik.ukp.athenakp.database.models.Person;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import de.tudarmstadt.informatik.ukp.athenakp.database.access.PaperCommonAccess;
 import de.tudarmstadt.informatik.ukp.athenakp.database.jpa.PaperJPAAccess;
-import de.tudarmstadt.informatik.ukp.athenakp.database.models.Author;
 import de.tudarmstadt.informatik.ukp.athenakp.database.models.Paper;
 
 /**
@@ -45,7 +45,7 @@ public class PaperController {
 	 * @return All author that took part in writing the paper with the given ID
 	 */
 	@RequestMapping("/byPaperID/{value}/getAuthors")
-	public Set<Author> getAuthors(@PathVariable("value")Long value) {
+	public Set<Person> getAuthors(@PathVariable("value")Long value) {
 		List<Paper> papers = byPaperID(value);
 
 		if(papers.size() > 0)
@@ -62,7 +62,7 @@ public class PaperController {
 		List<Paper> papers = byPaperID(value);
 
 		if(papers.size() > 0)
-			return papers.get(0).getHref();
+			return papers.get(0).getRemoteLink();
 		else return null;
 	}
 

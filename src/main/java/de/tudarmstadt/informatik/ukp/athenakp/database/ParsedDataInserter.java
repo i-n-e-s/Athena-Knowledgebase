@@ -87,7 +87,7 @@ public class ParsedDataInserter {
 	}
 
 	/**
-	 * Constructs Author and Paper Objects from ACL18Webparser().getPaperAuthor() and adds them to the database
+	 * Constructs Person (Author) and Paper Objects from ACL18Webparser().getPaperAuthor() and adds them to the database
 	 * see its documentation for its makeup
 	 *
 	 * @throws IOException if jsoup was interrupted in the scraping process (during getPaperAuthor())

@@ -28,7 +28,7 @@ public class Paper {
 	/*Paper's authors*/
 	@JsonIgnore //fixes infinite recursion
 	@ManyToMany(cascade = { CascadeType.ALL }, mappedBy = "papers", fetch = FetchType.EAGER)
-	private Set<Author> authors = new HashSet<>();
+	private Set<Person> authors = new HashSet<>();
 	/*Release date*/
 	@Column(name = "releaseDate")
 	private LocalDate releaseDate;
@@ -66,7 +66,7 @@ public class Paper {
 	 * Gets List of this paper's authors
 	 * @return List of this paper's authors
 	 */
-	public Set<Author> getAuthors() {
+	public Set<Person> getAuthors() {
 		return authors;
 	}
 
@@ -74,16 +74,16 @@ public class Paper {
 	 * Sets this paper's authors
 	 * @param authors The new author of this paper
 	 */
-	public void setAuthors(Set<Author> authors) {
+	public void setAuthors(Set<Person> authors) {
 		this.authors = authors;
 	}
 
 	/**
 	 * Adds an author to this paper's author list
-	 * @param a The author to add
+	 * @param author The author to add
 	 */
-	public void addAuthor(Author a) {
-		authors.add(a);
+	public void addAuthor(Person author) {
+		authors.add(author);
 	}
 
 	/**

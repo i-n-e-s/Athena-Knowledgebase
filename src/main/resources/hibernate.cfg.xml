@@ -22,7 +22,6 @@
 
         <!--Mapping files entries-->
         <mapping class="de.tudarmstadt.informatik.ukp.athenakp.database.models.Person" />
-        <mapping class="de.tudarmstadt.informatik.ukp.athenakp.database.models.Author" />
         <mapping class="de.tudarmstadt.informatik.ukp.athenakp.database.models.Institution" />
         <mapping class="de.tudarmstadt.informatik.ukp.athenakp.database.models.Paper" />
         <mapping class="de.tudarmstadt.informatik.ukp.athenakp.database.models.Conference" />
