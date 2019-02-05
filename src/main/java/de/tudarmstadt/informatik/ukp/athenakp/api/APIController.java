@@ -29,7 +29,6 @@ public class APIController {
 		Map<String,Integer> eventMap = new HashMap<>();
 		Map<String,Integer> paperMap = new HashMap<>();
 		Map<String,Integer> personMap = new HashMap<>();
-		Map<String,Integer> subsessionMap = new HashMap<>();
 
 		conferenceMap.put("startDate", 3);
 		conferenceMap.put("endDate", 3);
@@ -43,9 +42,6 @@ public class APIController {
 		personMap.put("obit", 3);
 		NUMERICAL_FIELDS.put("person", personMap);
 		NUMERICAL_FIELDS.put("author", personMap);
-		subsessionMap.put("begin", 5);
-		subsessionMap.put("end", 5);
-		NUMERICAL_FIELDS.put("subsession", subsessionMap);
 	}
 
 	@RequestMapping("/**") //matches the complete path (containing all subpaths), just make sure that there are no ? in there!!

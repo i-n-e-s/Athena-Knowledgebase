@@ -22,7 +22,7 @@ public class RequestParser {
 	 */
 	public RequestParser(Deque<RequestToken> tokens) {
 		this.tokens = tokens;
-		currentToken = tokens.poll();
+		currentToken = tokens.poll(); //load the first token
 	}
 
 	/**
@@ -33,7 +33,8 @@ public class RequestParser {
 	public RequestNode parse() throws SyntaxException {
 		RequestNode root = new RequestNode(currentToken.index);
 
-		while(currentToken.type != RequestTokenType.END) {
+		//as long as there are tokens in the queue
+		while(currentToken != null && currentToken.type != RequestTokenType.END) { //can be null if the last thing was an entity name (before the :), poll returns null if the deque is empty
 			root.addHierarchyNode(parseHierarchyEntry());
 		}
 
@@ -48,14 +49,17 @@ public class RequestParser {
 	private RequestHierarchyNode parseHierarchyEntry() throws SyntaxException {
 		RequestHierarchyNode node = new RequestHierarchyNode(currentToken.index);
 
+		//accept the /
 		accept();
 
+		//the first part of a request is always an entity name
 		if(currentToken.type == RequestTokenType.NAME) {
 			node.addEntity(parseRequestEntity());
 		}
 
+		//the rest can only be started by joins
 		while(currentToken.type == RequestTokenType.JOIN) {
-			accept();
+			accept(); //accept the $
 			node.addEntity(parseRequestEntity());
 		}
 
@@ -74,14 +78,23 @@ public class RequestParser {
 
 		stringNode.setValue(name);
 		node.setEntityName(stringNode);
-		accept(RequestTokenType.ATTR_SPECIFIER);
+		//up until this point the name got saved to the node
 
-		node.addAttributeNode(parseAttribute()); //need this here so the first attribute gets parsed, otherwhise the parser would check for /name:&attr=val
+		if(currentToken.type == RequestTokenType.ATTR_SPECIFIER)
+		{
+			accept(); //accept the :
 
-		while(currentToken.type == RequestTokenType.ATTR_SEPERATOR) {
-			accept(RequestTokenType.ATTR_SEPERATOR);
-			node.addAttributeNode(parseAttribute());
+			//now parse the first attribute
+			node.addAttributeNode(parseAttribute()); //need this here so the first attribute gets parsed, otherwhise the parser would check for /name:&attr=val
+
+			//parse any other attributes
+			while(currentToken.type == RequestTokenType.ATTR_SEPERATOR) {
+				accept(RequestTokenType.ATTR_SEPERATOR);
+				node.addAttributeNode(parseAttribute());
+			}
 		}
+		else
+			accept(RequestTokenType.END); //if there are no attributes, it should be the end of the request
 
 		return node;
 	}
@@ -100,13 +113,14 @@ public class RequestParser {
 		stringNode.setValue(name);
 		accept(RequestTokenType.ATTR_EQ);
 
+		//attributes either consist of strings or numbers
 		switch(currentToken.type) {
 			case NAME: node = parseStringAttribute(attrIndex); break;
 			case NUMBER: node = parseNumberAttribute(attrIndex); break;
 			default: throw new SyntaxException(currentToken.index, currentToken.actual);
 		}
 
-		node.setName(stringNode);
+		node.setName(stringNode); //there's no way to know the node type beforehand, so setting the name will happen here
 		return node;
 	}
 
@@ -121,9 +135,11 @@ public class RequestParser {
 		StringNode stringNode = new StringNode(currentToken.index);
 		String value = "";
 
+		//while there is a string...
 		while(currentToken.type == RequestTokenType.NAME) {
-			value += accept(RequestTokenType.NAME) + " ";
+			value += accept(RequestTokenType.NAME) + " "; //...add it to the attribute existing value...
 
+			//...and check for more parts in the attribute
 			if(currentToken.type == RequestTokenType.SPACE) //if it's not a SPACE, then it will be something else and be catched by the while condition
 				accept();
 		}
@@ -142,13 +158,16 @@ public class RequestParser {
 	private NumberAttributeNode parseNumberAttribute(int attrIndex) throws SyntaxException {
 		NumberAttributeNode node = new NumberAttributeNode(attrIndex);
 
+		//while there is a number...
 		while(currentToken.type == RequestTokenType.NUMBER) {
+			//...make a number node...
 			NumberNode numberNode = new NumberNode(currentToken.index);
-			int val = Integer.parseInt(accept(RequestTokenType.NUMBER));
+			int val = Integer.parseInt(accept(RequestTokenType.NUMBER)); //parseInt won't throw a NumberFormatException as the scanner already took care of checking whether the contents are digits
 
 			numberNode.setValue(val);
-			node.addValue(numberNode); //parseInt won't throw a NumberFormatException as the scanner already took care of checking whether the contents are digits
+			node.addValue(numberNode);
 
+			//...and check for more parts in the attribute
 			if(currentToken.type == RequestTokenType.SPACE) //if it's not a SPACE, then it will be something else and be catched by the while condition
 				accept();
 		}
@@ -161,8 +180,9 @@ public class RequestParser {
 	 * @throws SyntaxException When an ERROR or unexpected token appears
 	 */
 	private void accept() throws SyntaxException {
-		currentToken = tokens.poll();
+		currentToken = tokens.poll(); //get the next token
 
+		//if it's an error, throw an exception
 		if(currentToken.type == RequestTokenType.ERROR)
 			throw new SyntaxException(currentToken.index, currentToken.actual);
 	}
@@ -174,9 +194,9 @@ public class RequestParser {
 	 * @throws SyntaxException When an ERROR or unexpected token appears
 	 */
 	private String accept(RequestTokenType tokenType) throws SyntaxException {
-		RequestToken token = currentToken;
+		RequestToken token = currentToken; //save the current token so its actual can be returned
 
-		if(token.type != tokenType)
+		if(token.type != tokenType) //if the token does not match the expected type, throw an exception
 			throw new SyntaxException(currentToken.index, currentToken.actual);
 
 		accept();

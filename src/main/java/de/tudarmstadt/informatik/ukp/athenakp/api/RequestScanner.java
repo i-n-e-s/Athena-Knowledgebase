@@ -35,15 +35,18 @@ public class RequestScanner {
 	public Deque<RequestToken> scan() {
 		Deque<RequestToken> tokens = new ArrayDeque<>();
 
+		//for each character
 		while(currentIndex < request.length) {
 			RequestTokenType type;
 
+			//reset the actual token
 			currentActualToken = "";
-			type = scanToken();
-			tokens.add(new RequestToken(type, currentActualToken, tokenStart));
+			type = scanToken(); //determine the type...
+			tokens.add(new RequestToken(type, currentActualToken, tokenStart)); //...and add it to the token deque
 			tokenStart = currentIndex;
 		}
 
+		//manually add the end token
 		tokens.add(new RequestToken(RequestTokenType.END, "<end>", tokenStart));
 		return tokens;
 	}
@@ -53,9 +56,8 @@ public class RequestScanner {
 	 * @return true, if there is a next character available, false if the end of the array has been reached
 	 */
 	private boolean appendCharacter() {
-		currentActualToken += request[currentIndex];
-		currentIndex++;
-
+		//the current character is part of a bigger token, so add it to the actual token and increase the work index
+		currentActualToken += request[currentIndex++]; //sneaky increment
 		return currentIndex < request.length;
 	}
 
@@ -64,23 +66,26 @@ public class RequestScanner {
 	 * @return the {@link RequestTokenType} of the current token
 	 */
 	private RequestTokenType scanToken() {
+		//if it's alphabetic, there is a name of some sort,
 		if(Character.isAlphabetic(request[currentIndex])) {
 			appendCharacter();
 
-			while(currentIndex < request.length && Character.isAlphabetic(request[currentIndex]) && appendCharacter())
+			while(currentIndex < request.length && Character.isAlphabetic(request[currentIndex]) && appendCharacter()) //add remaining characters to complete token
 				; //no operation while loop as the operations are all in the condition
 
 			return RequestTokenType.NAME;
 		}
+		//if it's a digit, there is a number (duh!)
 		else if(Character.isDigit(request[currentIndex])) {
 			appendCharacter();
 
-			while(currentIndex < request.length && Character.isDigit(request[currentIndex]) && appendCharacter())
+			while(currentIndex < request.length && Character.isDigit(request[currentIndex]) && appendCharacter())  //add remaining characters to complete token
 				; //no operation while loop as the operations are all in the condition
 
 			return RequestTokenType.NUMBER;
 		}
 
+		//if none of the above applies, select the proper token type here
 		switch(request[currentIndex]) {
 			case '=':
 				appendCharacter();
