@@ -4,19 +4,21 @@ import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.ManyToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.hibernate.annotations.GenericGenerator;
 
 @Entity
 @Table(name="conference")
 public class Conference {
-	/*Name of conference*/
+	/*Unique id*/
 	@Id
+	@GeneratedValue(generator="increment")
+	@GenericGenerator(name="increment", strategy="increment")
+	@Column(name="eventID")
+	private long conferenceID;
+	/*Name of conference*/
 	@Column(name="name")
 	private String name;
 	/*First day of conference no need for the temporal annotation with java.time (indeed this would break it)*/
@@ -43,6 +45,22 @@ public class Conference {
 	private Set<Paper> papers = new HashSet<Paper>();
 
 	//TODO: Workshops? Other data? How about Duration? java.time would make that possible
+
+	/**
+	 * Gets the unique id of this conference
+	 * @return The unique id of this conference
+	 */
+	public long getId() {
+		return conferenceID;
+	}
+
+	/**
+	 * Sets this conference's id
+	 * @param id The new id
+	 */
+	public void setId(long id) {
+		this.conferenceID = id;
+	}
 
 	/**
 	 * Gets the name of this conference
