@@ -48,7 +48,7 @@ public class HibernateSandBox {
 		Paper dummyPaper = new Paper();
 		dummyPaper.setRemoteLink("https://example.org");
 		dummyPaper.setPdfFileSize(123456);
-		dummyPaper.setRelease(LocalDate.of(2018, 11, 16));
+		dummyPaper.setReleaseDate(LocalDate.of(2018, 11, 16));
 		dummyPaper.setTopic("The Life, the Universe and Everything");
 		dummyPaper.setTitle("42");
 		dummyPaper.setAnthology("C2PO");
@@ -56,7 +56,7 @@ public class HibernateSandBox {
 		Paper dummyPaper2 = new Paper();
 		dummyPaper2.setRemoteLink("https://example.org");
 		dummyPaper2.setPdfFileSize(654321);
-		dummyPaper2.setRelease(LocalDate.of(2000, 7, 29));
+		dummyPaper2.setReleaseDate(LocalDate.of(2000, 7, 29));
 		dummyPaper2.setTopic("Fiction");
 		dummyPaper2.setTitle("Why Hoverboards will exist by 2015");
 

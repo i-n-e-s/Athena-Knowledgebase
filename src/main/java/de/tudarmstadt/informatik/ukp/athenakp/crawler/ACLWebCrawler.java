@@ -256,7 +256,7 @@ class ACLWebCrawler extends AbstractCrawler {
 				}
 			}
 
-			thePaper.setRelease(LocalDate.of(Integer.parseInt(year), Integer.parseInt(month), 1));
+			thePaper.setReleaseDate(LocalDate.of(Integer.parseInt(year), Integer.parseInt(month), 1));
 		}
 		catch(IOException e) { //jsoup exception
 			e.printStackTrace();

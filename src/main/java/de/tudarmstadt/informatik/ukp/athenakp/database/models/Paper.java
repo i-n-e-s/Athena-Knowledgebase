@@ -9,24 +9,25 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.hibernate.annotations.GenericGenerator;
 
 @Entity
 @Table(name="paper")
 public class Paper {
 	/*Identifier*/
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(generator="increment")
+	@GenericGenerator(name="increment", strategy="increment")
 	@Column(name = "paperID", updatable = false, nullable = false)
 	private long paperID;
 
 	/*Title of the paper*/
-	@Column(name = "title", columnDefinition = "VARCHAR(1000)") //fixes titles that are too long for being storable in the column
+	@Column(name = "title", columnDefinition = "varchar(1023)") //fixes titles that are too long for being storable in the column
 	private String title;
 	/*Topic of the paper*/
 	@Column(name = "topic")
@@ -37,8 +38,8 @@ public class Paper {
 	private Set<Person> authors = new HashSet<>();
 
 	/*Release date*/
-	@Column(name = "release")
-	private LocalDate release;
+	@Column(name = "releaseDate")
+	private LocalDate releaseDate;
 
 	/*URL to PDF*/
 	@Column(name = "remoteLink")
@@ -90,19 +91,19 @@ public class Paper {
 	}
 
 	/**
-	 * Gets this paper's release date
-	 * @return This paper's release date
+	 * Gets this paper's releaseDate date
+	 * @return This paper's releaseDate date
 	 */
-	public LocalDate getRelease() {
-		return release;
+	public LocalDate getReleaseDate() {
+		return releaseDate;
 	}
 
 	/**
-	 * Sets this paper's release date
-	 * @param release The new release date of this paper
+	 * Sets this paper's releaseDate date
+	 * @param releaseDate The new releaseDate date of this paper
 	 */
-	public void setRelease(LocalDate release) {
-		this.release = release;
+	public void setReleaseDate(LocalDate releaseDate) {
+		this.releaseDate = releaseDate;
 	}
 
 	/**
