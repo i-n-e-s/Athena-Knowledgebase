@@ -91,16 +91,16 @@ public class Paper {
 	}
 
 	/**
-	 * Gets this paper's releaseDate date
-	 * @return This paper's releaseDate date
+	 * Gets this paper's release date
+	 * @return This paper's release date
 	 */
 	public LocalDate getReleaseDate() {
 		return releaseDate;
 	}
 
 	/**
-	 * Sets this paper's releaseDate date
-	 * @param releaseDate The new releaseDate date of this paper
+	 * Sets this paper's release date
+	 * @param releaseDate The new release date of this paper
 	 */
 	public void setReleaseDate(LocalDate releaseDate) {
 		this.releaseDate = releaseDate;
