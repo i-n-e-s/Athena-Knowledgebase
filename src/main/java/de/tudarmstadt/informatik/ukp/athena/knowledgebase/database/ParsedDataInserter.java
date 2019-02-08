@@ -119,8 +119,8 @@ public class ParsedDataInserter {
 		try {
 			Conference acl2018 = acl18WebParser.getConferenceInformation();
 
-			System.out.println("Inserting conference into database...");
 			acl2018.setSessions(new HashSet<Session>(acl2018StoreSchedule())); //acl2018StoreSchedule returns a list, passing that to the hashset initializes the set with the list elements
+			System.out.println("Inserting conference into database...");
 			conferenceCommonAccess.add(acl2018);
 			System.out.println("Done inserting!");
 		}
