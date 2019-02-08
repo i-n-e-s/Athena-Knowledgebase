@@ -53,7 +53,7 @@ public class Session {
 
 	/* Associated papers */
 	@Column(name = "paperTitles")
-	@ElementCollection
+	@ElementCollection //similar to @JoinTable, but for model -> datatype relations instead of model -> model
 	private Set<String> paperTitles = new HashSet<>();
 
 	/* Papers, if any */
