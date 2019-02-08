@@ -1,5 +1,6 @@
 package de.tudarmstadt.informatik.ukp.athenakp.database.jpa;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -9,6 +10,7 @@ import javax.persistence.criteria.Root;
 
 import de.tudarmstadt.informatik.ukp.athenakp.database.access.SessionCommonAccess;
 import de.tudarmstadt.informatik.ukp.athenakp.database.models.Session;
+import de.tudarmstadt.informatik.ukp.athenakp.database.models.SessionCategory;
 
 /**
  * @author Daniel Lehmann
@@ -34,8 +36,30 @@ public class SessionJPAAccess implements SessionCommonAccess {
 	}
 
 	@Override
-	public List<Session> getById(Long id) {
+	public List<Session> getBySessionId(Long id) {
 		return getBy("sessionID", id);
+	}
+
+	@Override
+	public List<Session> getByConferenceName(String conferenceName) {
+		return getBy("conferenceName", conferenceName);
+	}
+
+	@Override
+	public List<Session> getByStartTime(Integer year, Integer month, Integer day, Integer hour, Integer minute) {
+		LocalDateTime localDateTime = LocalDateTime.of(year, month, day, hour, minute);
+		return getBy("begin", localDateTime);
+	}
+
+	@Override
+	public List<Session> getByEndTime(Integer year, Integer month, Integer day, Integer hour, Integer minute) {
+		LocalDateTime localDateTime = LocalDateTime.of(year, month, day, hour, minute);
+		return getBy("end", localDateTime);
+	}
+
+	@Override
+	public List<Session> getByPlace(String place) {
+		return getBy("place", place);
 	}
 
 	@Override
@@ -49,8 +73,8 @@ public class SessionJPAAccess implements SessionCommonAccess {
 	}
 
 	@Override
-	public List<Session> getByPlace(String place) {
-		return getBy("place", place);
+	public List<Session> getByCategory(SessionCategory category) {
+		return getBy("category", category);
 	}
 
 	@Override

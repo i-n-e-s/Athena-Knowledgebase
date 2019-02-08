@@ -13,13 +13,13 @@ import de.tudarmstadt.informatik.ukp.athenakp.JPASandBox;
 import de.tudarmstadt.informatik.ukp.athenakp.crawler.CrawlerFacade;
 import de.tudarmstadt.informatik.ukp.athenakp.crawler.SupportedConferences;
 import de.tudarmstadt.informatik.ukp.athenakp.database.access.ConferenceCommonAccess;
-import de.tudarmstadt.informatik.ukp.athenakp.database.access.EventCommonAccess;
+import de.tudarmstadt.informatik.ukp.athenakp.database.access.SessionCommonAccess;
 import de.tudarmstadt.informatik.ukp.athenakp.database.access.PaperCommonAccess;
 import de.tudarmstadt.informatik.ukp.athenakp.database.jpa.ConferenceJPAAccess;
-import de.tudarmstadt.informatik.ukp.athenakp.database.jpa.EventJPAAccess;
+import de.tudarmstadt.informatik.ukp.athenakp.database.jpa.SessionJPAAccess;
 import de.tudarmstadt.informatik.ukp.athenakp.database.jpa.PaperJPAAccess;
 import de.tudarmstadt.informatik.ukp.athenakp.database.models.Conference;
-import de.tudarmstadt.informatik.ukp.athenakp.database.models.Event;
+import de.tudarmstadt.informatik.ukp.athenakp.database.models.Session;
 import de.tudarmstadt.informatik.ukp.athenakp.database.models.Paper;
 
 
@@ -82,7 +82,7 @@ public class ParsedDataInserter {
 			e.printStackTrace();
 		}
 		parsedDataInserter.acl2018StoreConferenceInformation();
-		parsedDataInserter.acl2018StoreEventInformation();
+		parsedDataInserter.acl2018StoreSessionInformation();
 		System.out.println("Done!");
 	}
 
@@ -123,14 +123,14 @@ public class ParsedDataInserter {
 	/**
 	 * Stores the acl2018 conference's timetable into the database
 	 */
-	private void acl2018StoreEventInformation() {
-		EventCommonAccess eventCommonAccess = new EventJPAAccess();
+	private void acl2018StoreSessionInformation() {
+		SessionCommonAccess sessionCommonAccess = new SessionJPAAccess();
 
 		try {
-			ArrayList<Event> events = acl18WebParser.getSchedule();
+			ArrayList<Session> sessions = acl18WebParser.getSchedule();
 
-			for(Event event : events) {
-				eventCommonAccess.add(event);
+			for(Session session : sessions) {
+				sessionCommonAccess.add(session);
 			}
 
 		}

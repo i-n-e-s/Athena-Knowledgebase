@@ -3,7 +3,10 @@ package de.tudarmstadt.informatik.ukp.athenakp.crawler;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import de.tudarmstadt.informatik.ukp.athenakp.database.models.*;
+import de.tudarmstadt.informatik.ukp.athenakp.database.models.Conference;
+import de.tudarmstadt.informatik.ukp.athenakp.database.models.Paper;
+import de.tudarmstadt.informatik.ukp.athenakp.database.models.Person;
+import de.tudarmstadt.informatik.ukp.athenakp.database.models.Session;
 
 /**
  *
@@ -47,9 +50,9 @@ abstract class AbstractCrawler {
 	public abstract Conference getConferenceInformation() throws IOException;
 
 	/**
-	 * Returns a list of events.
-	 * @return A list of events, an empty list when data not available
+	 * Returns a list of sessions.
+	 * @return A list of sessions, an empty list when data not available
 	 * @throws IOException if Jsoup.connect fails
 	 */
-	public abstract ArrayList<Event> getSchedule() throws IOException;
+	public abstract ArrayList<Session> getSchedule() throws IOException;
 }

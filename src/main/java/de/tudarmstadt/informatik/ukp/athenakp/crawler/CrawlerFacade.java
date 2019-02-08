@@ -51,7 +51,7 @@ public class CrawlerFacade extends AbstractCrawler{
 	}
 
 	@Override
-	public ArrayList<Event> getSchedule() throws IOException {
+	public ArrayList<Session> getSchedule() throws IOException {
 		return crawler.getSchedule();
 	}
 }

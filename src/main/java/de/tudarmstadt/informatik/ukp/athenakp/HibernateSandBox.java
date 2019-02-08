@@ -93,10 +93,10 @@ public class HibernateSandBox {
 		ConferenceCommonAccess conferenceAccess = new ConferenceHibernateAccess();
 		conferenceAccess.add(dummyConference);
 
-		Event dummyEvent = new Event();
-		dummyEvent.setTitle("reeeing in public - how to channel your inner frog");
-		dummyEvent.setBegin(LocalDateTime.of(2017, 8, 2, 14, 30));
-		dummyEvent.setEnd(LocalDateTime.of(2017, 8, 2, 15, 0));
+		Session dummySession = new Session();
+		dummySession.setTitle("reeeing in public - how to channel your inner frog");
+		dummySession.setBegin(LocalDateTime.of(2017, 8, 2, 14, 30));
+		dummySession.setEnd(LocalDateTime.of(2017, 8, 2, 15, 0));
 
 	}
 }

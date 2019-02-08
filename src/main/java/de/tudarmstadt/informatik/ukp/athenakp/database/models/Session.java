@@ -4,18 +4,22 @@ import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
-import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.GenericGenerator;
 
 @Entity
-@Table(name="session")
-public class Session{ //TODO: chair
+@Table(name="sessions")
+public class Session {
 	/*Unique id*/
 	@Id
 	@GeneratedValue(generator="increment")
@@ -26,8 +30,14 @@ public class Session{ //TODO: chair
 	@Column(name = "title")
 	private String title;
 	/* Brief Description */
-	@Column(name = "description", columnDefinition = "VARCHAR(1000)") //fixes titles that are too long for being storable in the column
+	@Column(name = "description")
 	private String description;
+	/* Category */
+	@Column(name = "category")
+	private SessionCategory category;
+	/*Name of conference this session belongs to TODO: Make proper relation to Conference*/
+	@Column(name="conferenceName")
+	private String conferenceName;
 
 	/*Start time*/
 	@Column(name="begin")
@@ -36,14 +46,24 @@ public class Session{ //TODO: chair
 	@Column(name="end")
 	private LocalDateTime end;
 
-	/* Place where this session happens */
+	/*Host*/
+	//	@Column(name = "host") //FIXME: crashes - perhaps save id?
+	//	private Person host;
+	/* Place where this session happens, if empty look in sessions */
 	@Column(name = "place")
 	private String place;
 
-	/* Associated papers */
-	@Column(name = "paperTitles")
-	@ElementCollection
-	private Set<String> paperTitles = new HashSet<>();
+	/* Papers, if any */
+	//	@Column(name = "papers")
+	//	private Set<Paper> papers;
+	/* Sessions, if any */
+	@OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER)
+	@JoinTable(
+			name = "session_sessionParts",
+			joinColumns = { @JoinColumn(name = "sessionID") },
+			inverseJoinColumns = { @JoinColumn(name = "sessionPartID") }
+			)
+	private Set<SessionPart> sessionParts = new HashSet<>();
 
 	/**
 	 * Gets the unique id of this session
@@ -62,19 +82,19 @@ public class Session{ //TODO: chair
 	}
 
 	/**
-	 * Gets the place where this session happens
-	 * @return The place where this session happens
+	 * Gets the conference name this session belongs to
+	 * @return The conference name this session belongs to
 	 */
-	public String getPlace() {
-		return place;
+	public String getConferenceName() {
+		return conferenceName;
 	}
 
 	/**
-	 * Sets the place where this session happens
-	 * @param place The new place where this session happens
+	 * Sets this session's conference's name
+	 * @param conferenceName The new conference name
 	 */
-	public void setPlace(String place) {
-		this.place = place;
+	public void setConferenceName(String conferenceName) {
+		this.conferenceName = conferenceName;
 	}
 
 	/**
@@ -103,10 +123,42 @@ public class Session{ //TODO: chair
 
 	/**
 	 * Sets the time this session ends
-	 * @param end the new time this session ends
+	 * @param end The new time this session ends
 	 */
 	public void setEnd(LocalDateTime end) {
 		this.end = end;
+	}
+
+	//	/**
+	//	 * Gets the person who manages this session
+	//	 * @return This session's manager
+	//	 */
+	//	public Person getHost() {
+	//		return host;
+	//	}
+	//
+	//	/**
+	//	 * Sets the person who manages this session
+	//	 * @param This session's new manager
+	//	 */
+	//	public void setHost(Person host) {
+	//		this.host = host;
+	//	}
+
+	/**
+	 * Gets the place where this session happens
+	 * @return The place where this session happens
+	 */
+	public String getPlace() {
+		return place;
+	}
+
+	/**
+	 * Sets the place where this session happens
+	 * @param place The new place where this session happens
+	 */
+	public void setPlace(String place) {
+		this.place = place;
 	}
 
 	/**
@@ -142,26 +194,58 @@ public class Session{ //TODO: chair
 	}
 
 	/**
-	 * Gets this session's paper's titles (if any)
-	 * @return This session's paper's titles
+	 * Gets this session's category
+	 * @return This session's category
 	 */
-	public Set<String> getPaperTitles() {
-		return paperTitles;
+	public SessionCategory getCategory() {
+		return category;
 	}
 
 	/**
-	 * Sets this session's paper's titles (if any)
-	 * @param paperTitles This session's new paper's titles
+	 * Sets this session's category
+	 * @return This session's new category
 	 */
-	public void setPaperTitles(Set<String> paperTitles) {
-		this.paperTitles = paperTitles;
+	public void setCategory(SessionCategory category) {
+		this.category = category;
+	}
+
+	//	/**
+	//	 * Gets this session's papers (if any, usually used in poster sessions)
+	//	 * @param papers This session's papers
+	//	 */
+	//	public Set<Paper> getPapers() {
+	//		return papers;
+	//	}
+	//
+	//	/**
+	//	 * Sets this session's papers (if any, usually used in poster sessions)
+	//	 * @return This session's new papers
+	//	 */
+	//	public void setPapers(Set<Paper> papers) {
+	//		this.papers = papers;
+	//	}
+
+	/**
+	 * Gets this session's session parts (if any)
+	 * @return This session's session parts
+	 */
+	public Set<SessionPart> getSessionParts() {
+		return sessionParts;
 	}
 
 	/**
-	 * Adds a paper title to this session's paper's titles list
-	 * @param s The paper title to add
+	 * Sets this session's session parts (if any)
+	 * @param sessions This session's new session parts
 	 */
-	public void addPaperTitle(String s) {
-		paperTitles.add(s);
+	public void setSessionParts(Set<SessionPart> sessionParts) {
+		this.sessionParts = sessionParts;
+	}
+
+	/**
+	 * Adds a session part to this session's session part list
+	 * @param s The session part to add
+	 */
+	public void addSessionPart(SessionPart s) {
+		sessionParts.add(s);
 	}
 }
