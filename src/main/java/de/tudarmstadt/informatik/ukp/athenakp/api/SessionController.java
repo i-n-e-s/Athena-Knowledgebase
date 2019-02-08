@@ -55,15 +55,6 @@ public class SessionController {
 	}
 
 	/**
-	 * @param value The session's conference's name
-	 * @return All sessions held at the conference with the given name
-	 */
-	@RequestMapping("/byConference/{value}")
-	public List<Session> byConference(@PathVariable("value")String value) {
-		return access.getByConferenceName(value);
-	}
-
-	/**
 	 * @param year The year in which the session started
 	 * @param month The month in which the session started
 	 * @param day The day on which the session started

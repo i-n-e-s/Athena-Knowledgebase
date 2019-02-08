@@ -81,8 +81,7 @@ public class ParsedDataInserter {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		parsedDataInserter.acl2018StoreConferenceInformation();
-		parsedDataInserter.acl2018StoreSessionInformation();
+		parsedDataInserter.acl2018StoreConferenceInformation(); //automatically saves the schedule as well
 		System.out.println("Done!");
 	}
 
@@ -107,35 +106,42 @@ public class ParsedDataInserter {
 	}
 
 	/**
-	 * Stores the acl2018 conference into the database
+	 * Stores the acl2018 conference including the schedule into the database
 	 */
 	private void acl2018StoreConferenceInformation() {
 		ConferenceCommonAccess conferenceCommonAccess = new ConferenceJPAAccess();
-		try{
+
+		try {
 			Conference acl2018 = acl18WebParser.getConferenceInformation();
+
+			acl2018.setSessions(new HashSet<Session>(acl2018StoreSchedule())); //acl2018StoreSchedule returns a list, passing that to the hashset initializes the set with the list elements
 			conferenceCommonAccess.add(acl2018);
 		}
-		catch (IOException e){
+		catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
 
 	/**
-	 * Stores the acl2018 conference's timetable into the database
+	 * Stores the acl2018 conference's schedule into the database
+	 * @return The scraped and stored sessions
 	 */
-	private void acl2018StoreSessionInformation() {
+	private List<Session> acl2018StoreSchedule() {
 		SessionCommonAccess sessionCommonAccess = new SessionJPAAccess();
+		List<Session> sessions = new ArrayList<>(); //initialize in case anything fails
 
 		try {
-			ArrayList<Session> sessions = acl18WebParser.getSchedule();
+			sessions = acl18WebParser.getSchedule();
 
+			//add to database
 			for(Session session : sessions) {
 				sessionCommonAccess.add(session);
 			}
-
 		}
 		catch(IOException e){
 			e.printStackTrace();
 		}
+
+		return sessions;
 	}
 }

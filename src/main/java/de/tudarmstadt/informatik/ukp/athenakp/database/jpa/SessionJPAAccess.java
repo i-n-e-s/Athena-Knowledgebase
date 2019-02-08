@@ -41,11 +41,6 @@ public class SessionJPAAccess implements SessionCommonAccess {
 	}
 
 	@Override
-	public List<Session> getByConferenceName(String conferenceName) {
-		return getBy("conferenceName", conferenceName);
-	}
-
-	@Override
 	public List<Session> getByStartTime(Integer year, Integer month, Integer day, Integer hour, Integer minute) {
 		LocalDateTime localDateTime = LocalDateTime.of(year, month, day, hour, minute);
 		return getBy("begin", localDateTime);

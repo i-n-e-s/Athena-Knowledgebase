@@ -436,7 +436,6 @@ class ACLWebCrawler extends AbstractCrawler {
 					String[] titleRoom = workshop.text().split(": ");
 					String description = workshop.selectFirst("a").attr("href");//just the workshop link for now
 
-					session.setConferenceName("ACL 2018");
 					session.setBegin(LocalDateTime.of(2018, CrawlerToolset.getMonthIndex(dayMonth[1]), Integer.parseInt(dayMonth[0]), 9, 0));
 					session.setEnd(LocalDateTime.of(2018, CrawlerToolset.getMonthIndex(dayMonth[1]), Integer.parseInt(dayMonth[0]), 17, 0)); //assume 5pm, because the schedule table is not 100% proportional
 					session.setTitle(titleRoom[0]);
@@ -461,8 +460,6 @@ class ACLWebCrawler extends AbstractCrawler {
 	 * @param monthDay The month (index 0) and day (index 1) where this session happens
 	 */
 	private void addGeneralSessionInfo(Element el, Session session, String[] monthDay) {
-		session.setConferenceName("ACL 2018");
-
 		//only try to extract the information when the table row is the header of an session and is not the more detailed description
 		//the header is something like "09:00-10:00 		Welcome Session & Presidential Address 			PLENARY, MCEC"
 		if(el.id().startsWith("session")) {

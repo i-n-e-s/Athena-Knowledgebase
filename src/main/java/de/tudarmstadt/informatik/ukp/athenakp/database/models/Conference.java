@@ -8,7 +8,9 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.GenericGenerator;
@@ -27,8 +29,8 @@ public class Conference {
 	/*Name of conference*/
 	@Column(name="name")
 	private String name;
-	/*First day of conference no need for the temporal annotation with java.time (indeed this would break it)*/
 
+	/*First day of conference no need for the temporal annotation with java.time (indeed this would break it)*/
 	@Column (name="begin")
 	private LocalDate begin;
 	/*Last day of conference*/
@@ -37,18 +39,22 @@ public class Conference {
 
 	@Column(name="country")
 	private String country;
-	@Column (name = "city")
+	@Column (name="city")
 	private String city;
-	@Column(name = "address")
+	@Column(name="address")
 	private String address;
 
 	/*Authors that talked*/
 	@ManyToMany
 	@JsonIgnore
 	@Column(name="authors")
-	private Set<Person> authors = new HashSet<Person>();
+	private Set<Person> authors = new HashSet<>();
 
-	//TODO: Workshops? Other data? How about Duration? java.time would make that possible
+	/*Basically the schedule*/;
+	@OneToMany(orphanRemoval=true)     //unidirectional relationship which
+	@JoinColumn(name="conferenceID")   //is saved in the Session table
+	@Column(name="sessions")
+	private Set<Session> sessions = new HashSet<>();
 
 	/**
 	 * Gets the unique id of this conference
@@ -147,7 +153,7 @@ public class Conference {
 	}
 
 	/**
-	 * gets the building address of the conference
+	 * Gets the building address of the conference
 	 * @return the building address
 	 */
 	public String getAddress() {
@@ -155,11 +161,27 @@ public class Conference {
 	}
 
 	/**
-	 * sets the conference's building address
+	 * Sets the conference's building address
 	 * @param address the conference's building address
 	 */
 	public void setAddress(String address) {
 		this.address = address;
+	}
+
+	/**
+	 * Gets the sessions making up this conference's schedule
+	 * @return The sessions making up this conference's schedule
+	 */
+	public Set<Session> getSessions(){
+		return sessions;
+	}
+
+	/**
+	 * Sets the sessions making up this conference's schedule
+	 * @param sessions The new sessions making up this conference's schedule
+	 */
+	public void setSessions(Set<Session> sessions){
+		this.sessions = sessions;
 	}
 
 	/*

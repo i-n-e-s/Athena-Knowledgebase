@@ -17,13 +17,6 @@ public interface SessionCommonAccess extends CommonAccess<Session> {
 	public List<Session> getBySessionId(Long id);
 
 	/**
-	 * Get all sessions with specified conference.
-	 * @param conferenceName The session's conference's name.
-	 * @return A List of all sessions with the specified conference.
-	 */
-	public List<Session> getByConferenceName(String conferenceName);
-
-	/**
 	 * Get all session with specified start time.
 	 * @param year The session's start year.
 	 * @param month The session's start month.

@@ -36,9 +36,6 @@ public class Session {
 	/* Category */
 	@Column(name = "category")
 	private SessionCategory category;
-	/*Name of conference this session belongs to TODO: Make proper relation to Conference*/
-	@Column(name="conferenceName")
-	private String conferenceName;
 
 	/*Start time*/
 	@Column(name="begin")
@@ -85,22 +82,6 @@ public class Session {
 	 */
 	public void setId(long id) {
 		this.sessionID = id;
-	}
-
-	/**
-	 * Gets the conference name this session belongs to
-	 * @return The conference name this session belongs to
-	 */
-	public String getConferenceName() {
-		return conferenceName;
-	}
-
-	/**
-	 * Sets this session's conference's name
-	 * @param conferenceName The new conference name
-	 */
-	public void setConferenceName(String conferenceName) {
-		this.conferenceName = conferenceName;
 	}
 
 	/**
