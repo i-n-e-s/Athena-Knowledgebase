@@ -30,7 +30,7 @@ abstract class AbstractCrawler {
 	 * @return A list of all papers, an empty list when data not available
 	 * @throws IOException if Jsoup.connect fails
 	 */
-	public abstract ArrayList<Paper> getPaperTitles() throws IOException;
+	public abstract ArrayList<Paper> getPapers() throws IOException;
 
 	/**
 	 * Returns a list of papers. Each object contains the paper's title and its authors

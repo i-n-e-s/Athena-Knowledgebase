@@ -36,8 +36,8 @@ public class CrawlerFacade extends AbstractCrawler{
 	}
 
 	@Override
-	public ArrayList<Paper> getPaperTitles() throws IOException {
-		return crawler.getPaperTitles();
+	public ArrayList<Paper> getPapers() throws IOException {
+		return crawler.getPapers();
 	}
 
 	@Override

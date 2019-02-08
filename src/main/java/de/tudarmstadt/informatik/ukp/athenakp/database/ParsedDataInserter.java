@@ -15,14 +15,14 @@ import de.tudarmstadt.informatik.ukp.athenakp.JPASandBox;
 import de.tudarmstadt.informatik.ukp.athenakp.crawler.CrawlerFacade;
 import de.tudarmstadt.informatik.ukp.athenakp.crawler.SupportedConferences;
 import de.tudarmstadt.informatik.ukp.athenakp.database.access.ConferenceCommonAccess;
-import de.tudarmstadt.informatik.ukp.athenakp.database.access.SessionCommonAccess;
 import de.tudarmstadt.informatik.ukp.athenakp.database.access.PaperCommonAccess;
+import de.tudarmstadt.informatik.ukp.athenakp.database.access.SessionCommonAccess;
 import de.tudarmstadt.informatik.ukp.athenakp.database.jpa.ConferenceJPAAccess;
-import de.tudarmstadt.informatik.ukp.athenakp.database.jpa.SessionJPAAccess;
 import de.tudarmstadt.informatik.ukp.athenakp.database.jpa.PaperJPAAccess;
+import de.tudarmstadt.informatik.ukp.athenakp.database.jpa.SessionJPAAccess;
 import de.tudarmstadt.informatik.ukp.athenakp.database.models.Conference;
-import de.tudarmstadt.informatik.ukp.athenakp.database.models.Session;
 import de.tudarmstadt.informatik.ukp.athenakp.database.models.Paper;
+import de.tudarmstadt.informatik.ukp.athenakp.database.models.Session;
 
 
 @SpringBootApplication
@@ -76,7 +76,7 @@ public class ParsedDataInserter {
 		}
 
 		parsedDataInserter = new ParsedDataInserter(beginYear, endYear);
-		System.out.printf("Scraping years %s through %s", beginYear, endYear);
+		System.out.printf("Scraping years %s through %s - this can take a couple of minutes...\n", beginYear, endYear);
 
 		try {
 			parsedDataInserter.aclStorePapersAndAuthors();
@@ -96,15 +96,18 @@ public class ParsedDataInserter {
 	 * TODO: implement saveandupdate in Common Access? Otherwise implement check if entry exist. Expensive?
 	 */
 	private void aclStorePapersAndAuthors() throws IOException {
-		System.out.println(" - this can take a couple of minutes..");
+		System.out.println("Scraping papers and authors...");
 		ArrayList<Paper> papers = acl18WebParser.getPaperAuthor();
-		System.out.println("Done scraping! Inserting data into database...");
 		PaperCommonAccess paperFiler = new PaperJPAAccess();
 		// PersonCommonAccess personfiler = new PersonJPAAccess();
 
-		for (Paper paper : papers) {
+		System.out.println("Inserting papers and authors into database...");
+
+		for(Paper paper : papers) {
 			paperFiler.add(paper);
 		}
+
+		System.out.println("Done inserting papers and authors!");
 	}
 
 	/**
@@ -116,8 +119,10 @@ public class ParsedDataInserter {
 		try {
 			Conference acl2018 = acl18WebParser.getConferenceInformation();
 
+			System.out.println("Inserting conference into database...");
 			acl2018.setSessions(new HashSet<Session>(acl2018StoreSchedule())); //acl2018StoreSchedule returns a list, passing that to the hashset initializes the set with the list elements
 			conferenceCommonAccess.add(acl2018);
+			System.out.println("Done inserting!");
 		}
 		catch (IOException e) {
 			e.printStackTrace();
@@ -135,10 +140,12 @@ public class ParsedDataInserter {
 		try {
 			sessions = acl18WebParser.getSchedule();
 
+			System.out.println("Inserting schedule into database...");
 			//add to database
 			for(Session session : sessions) {
 				sessionCommonAccess.add(session);
 			}
+			System.out.println("Done inserting!");
 		}
 		catch(IOException e){
 			e.printStackTrace();
