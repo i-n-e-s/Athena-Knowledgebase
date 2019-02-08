@@ -16,7 +16,7 @@ public class Conference {
 	@Id
 	@GeneratedValue(generator="increment")
 	@GenericGenerator(name="increment", strategy="increment")
-	@Column(name="eventID")
+	@Column(name="conferenceID")
 	private long conferenceID;
 	/*Name of conference*/
 	@Column(name="name")
