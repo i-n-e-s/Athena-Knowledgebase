@@ -70,14 +70,6 @@ public class ConferenceJPAAccess implements ConferenceCommonAccess {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public List<Conference> getByPaper(long paperID) {
-		throw new UnsupportedOperationException("Not supported yet!");
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
 	public List<Conference> getByCountry(String country) {
 		return getBy("country", country);
 	}

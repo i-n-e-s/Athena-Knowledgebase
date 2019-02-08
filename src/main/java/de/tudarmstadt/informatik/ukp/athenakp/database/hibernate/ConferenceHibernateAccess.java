@@ -38,11 +38,6 @@ public class ConferenceHibernateAccess implements ConferenceCommonAccess {
 	}
 
 	@Override
-	public List<Conference> getByPaper(long paperID) { //TODO: implement this
-		return null;
-	}
-
-	@Override
 	public List<Conference> getByCity(String city) {
 		return getBy("city", city);
 	}

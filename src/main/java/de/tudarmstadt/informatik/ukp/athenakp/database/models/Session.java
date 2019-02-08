@@ -6,6 +6,7 @@ import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -52,6 +53,11 @@ public class Session {
 	/* Place where this session happens, if empty look in sessions */
 	@Column(name = "place")
 	private String place;
+
+	/* Associated papers */
+	@Column(name = "paperTitles")
+	@ElementCollection
+	private Set<String> paperTitles = new HashSet<>();
 
 	/* Papers, if any */
 	//	@Column(name = "papers")
@@ -209,21 +215,29 @@ public class Session {
 		this.category = category;
 	}
 
-	//	/**
-	//	 * Gets this session's papers (if any, usually used in poster sessions)
-	//	 * @param papers This session's papers
-	//	 */
-	//	public Set<Paper> getPapers() {
-	//		return papers;
-	//	}
-	//
-	//	/**
-	//	 * Sets this session's papers (if any, usually used in poster sessions)
-	//	 * @return This session's new papers
-	//	 */
-	//	public void setPapers(Set<Paper> papers) {
-	//		this.papers = papers;
-	//	}
+	/**
+	 * Gets this session's paper's titles (if any)
+	 * @return This session's paper's titles
+	 */
+	public Set<String> getPaperTitles() {
+		return paperTitles;
+	}
+
+	/**
+	 * Sets this session's paper's titles (if any)
+	 * @param paperTitles This session's new paper's titles
+	 */
+	public void setPaperTitles(Set<String> paperTitles) {
+		this.paperTitles = paperTitles;
+	}
+
+	/**
+	 * Adds a paper title to this session's paper's titles list
+	 * @param s The paper title to add
+	 */
+	public void addPaperTitle(String s) {
+		paperTitles.add(s);
+	}
 
 	/**
 	 * Gets this session's session parts (if any)

@@ -47,11 +47,6 @@ public class Conference {
 	@JsonIgnore
 	@Column(name="authors")
 	private Set<Person> authors = new HashSet<Person>();
-	/*Shown papers*/
-	@ManyToMany
-	@JsonIgnore
-	@Column(name="papers")
-	private Set<Paper> papers = new HashSet<Paper>();
 
 	//TODO: Workshops? Other data? How about Duration? java.time would make that possible
 
@@ -173,14 +168,5 @@ public class Conference {
 	TODO: fix, see above at authors attribute
 	public Set<Person> getAuthors() {
 		return authors;
-	}*/
-
-	/*
-	 * Gets the papers that were shown at this conference
-	 * @return The papers that were shown at this conference
-	 * TODO: implement then uncomment (see above)
-	 */
-	/* public Set<Paper> getPapers() {
-		return papers;
 	}*/
 }

@@ -1,11 +1,8 @@
 package de.tudarmstadt.informatik.ukp.athenakp.database.models;
 
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.Set;
 
 import javax.persistence.Column;
-import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -40,10 +37,6 @@ public class SessionPart{
 	@Column(name = "place")
 	private String place;
 
-	/* Associated papers */
-	@Column(name = "paperTitles")
-	@ElementCollection
-	private Set<String> paperTitles = new HashSet<>();
 
 	/**
 	 * Gets the unique id of this session part
@@ -139,29 +132,5 @@ public class SessionPart{
 	 */
 	public void setDescription(String description) {
 		this.description = description;
-	}
-
-	/**
-	 * Gets this session part's paper's titles (if any)
-	 * @return This session part's paper's titles
-	 */
-	public Set<String> getPaperTitles() {
-		return paperTitles;
-	}
-
-	/**
-	 * Sets this session part's paper's titles (if any)
-	 * @param paperTitles This session part's new paper's titles
-	 */
-	public void setPaperTitles(Set<String> paperTitles) {
-		this.paperTitles = paperTitles;
-	}
-
-	/**
-	 * Adds a paper title to this session part's paper's titles list
-	 * @param s The paper title to add
-	 */
-	public void addPaperTitle(String s) {
-		paperTitles.add(s);
 	}
 }

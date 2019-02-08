@@ -535,10 +535,10 @@ class ACLWebCrawler extends AbstractCrawler {
 				String[] sessTime = subEl.selectFirst(".talk-time").text().split(":");
 				LocalDateTime sessStart = LocalDateTime.of(session.getBegin().toLocalDate(), LocalTime.of(Integer.parseInt(sessTime[0]), Integer.parseInt(sessTime[1])));
 				LocalDateTime sessEnd = sessStart.plusMinutes(25);
-				String sessDesc = subEl.selectFirst(".talk-title").text();
+				String sessPaperTitle = subEl.selectFirst(".talk-title").text();
 
 				sessionPart.setTitle(sessTitle);
-				sessionPart.setDescription(sessDesc);
+				session.addPaperTitle(sessPaperTitle);
 				sessionPart.setBegin(sessStart);
 				sessionPart.setEnd(sessEnd);
 				sessionPart.setPlace(sessPlace);
@@ -562,9 +562,9 @@ class ACLWebCrawler extends AbstractCrawler {
 
 			//looping through all papers that are part of this PS
 			for(Element subEl : sessEl.select(".poster-name")) {
-				String posterTitle = subEl.select("a").get(1).text().trim(); //let's hope it's always the second :D
+				String paperTitle = subEl.select("a").get(1).text().trim(); //let's hope it's always the second :D
 
-				sessionPart.addPaperTitle(posterTitle);
+				session.addPaperTitle(paperTitle);
 			}
 
 			sessionPart.setTitle(sessTitle);
