@@ -54,6 +54,7 @@ public class Event extends Model {
 	//	@Column(name = "papers")
 	//	private Set<Paper> papers;
 	/* Sessions, if any */
+	@Hierarchy(entityName="session")
 	@OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER)
 	@JoinTable(
 			name = "event_session",

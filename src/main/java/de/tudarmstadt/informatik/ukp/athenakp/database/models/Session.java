@@ -35,6 +35,7 @@ public class Session extends Model { //TODO: chair
 	@Column(name = "place")
 	private String place;
 	/* Subessions, if any */
+	@Hierarchy(entityName="subsession")
 	@OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER)
 	@JoinTable(
 			name = "session_subsession",

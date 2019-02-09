@@ -26,6 +26,7 @@ public class Paper extends Model {
 	private long paperID;
 
 	/*Paper's authors*/
+	@Hierarchy(entityName="author")
 	@JsonIgnore //fixes infinite recursion
 	@ManyToMany(cascade = { CascadeType.ALL }, mappedBy = "papers", fetch = FetchType.EAGER)
 	private Set<Author> authors = new HashSet<>();
