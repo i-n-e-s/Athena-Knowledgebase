@@ -41,7 +41,7 @@ public class APIController {
 					+ "<div style=\"padding-left:20px\">";
 
 			for(StackTraceElement ste : e.getStackTrace()) {
-				errorMessage += "	at " + ste.toString() + "<br>";
+				errorMessage += "at " + ste.toString() + "<br>";
 			}
 
 			return errorMessage + "</div></div>";
