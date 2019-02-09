@@ -25,18 +25,23 @@ public class APIController {
 			RequestParser parser = new RequestParser(tokens);
 			RequestNode tree = parser.parse();
 
-			try {
-				RequestVerifier.verify(tree); //if no exception is thrown, the verification was successful
-			}
-			catch(VerificationFailedException e) {
-				return e.getMessage();
-			}
-
+			RequestVerifier.verify(tree); //if no exception is thrown, the verification was successful
 			return tree.toString();
 		}
-		catch(SyntaxException e) {
-			e.printStackTrace();
-			return e.getMessage();
+		catch(SyntaxException | VerificationFailedException e) {
+			String errorMessage = "<h4>" + e.getMessage() + "</h4>"
+					+ "<u>Stacktrace:</u>"
+					+ "<br>"
+					+ "<div style=\"padding-left:20px\">"
+					+ e.toString()
+					+ "<br>"
+					+ "<div style=\"padding-left:20px\">";
+
+			for(StackTraceElement ste : e.getStackTrace()) {
+				errorMessage += "	at " + ste.toString() + "<br>";
+			}
+
+			return errorMessage + "</div></div>";
 		}
 	}
 }
