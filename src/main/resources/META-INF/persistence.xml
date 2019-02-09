@@ -30,8 +30,9 @@
             <property name="hibernate.show_sql"
                       value="false" />
 
-            <property name="hibernate.hbm2ddl.auto"
+<!--        <property name="hibernate.hbm2ddl.auto"
                       value="create-drop" />
+this is bad for api testing                      -->
 
         </properties>
 
