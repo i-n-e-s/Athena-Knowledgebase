@@ -7,7 +7,7 @@ import java.util.List;
  * Represents attribute information about a specific entity (the parts separated by $)
  */
 public class RequestEntityNode extends BaseNode {
-	private StringNode entity;
+	private StringNode entityName;
 	private final List<AttributeNode> attributes = new ArrayList<>();
 
 	/**
@@ -22,15 +22,15 @@ public class RequestEntityNode extends BaseNode {
 	 * @return The node for the name of the entity that gets specified here
 	 */
 	public StringNode getEntityName() {
-		return entity;
+		return entityName;
 	}
 
 	/**
 	 * Sets the node for the name of the entity that gets specified here
-	 * @param entity The name to set in this node
+	 * @param node The name to set in this node
 	 */
 	public void setEntityName(StringNode node) {
-		this.entity = node;
+		this.entityName = node;
 	}
 
 	/**
@@ -50,7 +50,7 @@ public class RequestEntityNode extends BaseNode {
 
 	@Override
 	public String toString() {
-		String result = "<" + tokenIndex +">" + entity.toString() + ":";
+		String result = "<" + tokenIndex +">" + entityName.toString() + ":";
 
 		for(AttributeNode node : attributes) {
 			result += node.toString() + "&";
@@ -61,6 +61,6 @@ public class RequestEntityNode extends BaseNode {
 
 	@Override
 	public boolean equals(Object obj) {
-		return super.equals(obj) && obj instanceof RequestEntityNode && entity.equals(((RequestEntityNode)obj).entity) && attributes.equals(((RequestEntityNode)obj).attributes);
+		return super.equals(obj) && obj instanceof RequestEntityNode && entityName.equals(((RequestEntityNode)obj).entityName) && attributes.equals(((RequestEntityNode)obj).attributes);
 	}
 }

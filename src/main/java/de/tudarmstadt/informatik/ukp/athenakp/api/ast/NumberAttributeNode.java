@@ -7,7 +7,7 @@ import java.util.List;
  * Represents an attribute note that has integer values
  */
 public class NumberAttributeNode extends AttributeNode {
-	private List<NumberNode> values = new ArrayList<>();
+	private List<NumberNode> numbers = new ArrayList<>();
 
 	/**
 	 * @see {@link AttributeNode#AttributeNode(int, StringNode) AttributeNode}
@@ -19,16 +19,16 @@ public class NumberAttributeNode extends AttributeNode {
 	/**
 	 * @return the values (previously seperated by + in the request) of this node
 	 */
-	public List<NumberNode> getValues() {
-		return values;
+	public List<NumberNode> getNumbers() {
+		return numbers;
 	}
 
 	/**
 	 * Adds an integer to the list of numbers of this attribute's value
-	 * @param val The node to add
+	 * @param node The node to add
 	 */
-	public void addValue(NumberNode node) {
-		values.add(node);
+	public void addNumber(NumberNode node) {
+		numbers.add(node);
 	}
 
 	/**
@@ -38,8 +38,8 @@ public class NumberAttributeNode extends AttributeNode {
 	public String valuesToString() {
 		String result = "";
 
-		for(NumberNode node : values) {
-			result += node.getValue() + "+";
+		for(NumberNode node : numbers) {
+			result += node.getNumber() + "+";
 		}
 
 		return result.substring(0, result.length() - 1); //remove last +
@@ -49,7 +49,7 @@ public class NumberAttributeNode extends AttributeNode {
 	public String toString() {
 		String result = "<" + tokenIndex +">" + name + "=";
 
-		for(NumberNode node : values) {
+		for(NumberNode node : numbers) {
 			result += node.toString() + "+";
 		}
 
@@ -58,6 +58,6 @@ public class NumberAttributeNode extends AttributeNode {
 
 	@Override
 	public boolean equals(Object obj) {
-		return super.equals(obj) && obj instanceof NumberAttributeNode && values.equals(((NumberAttributeNode)obj).values);
+		return super.equals(obj) && obj instanceof NumberAttributeNode && numbers.equals(((NumberAttributeNode)obj).numbers);
 	}
 }

@@ -22,7 +22,7 @@ public class StringAttributeNode extends AttributeNode {
 
 	/**
 	 * Sets this node's attribute value
-	 * @param val The attribute value to set
+	 * @param node The attribute value to set
 	 */
 	public void setValue(StringNode node) {
 		this.value = node;

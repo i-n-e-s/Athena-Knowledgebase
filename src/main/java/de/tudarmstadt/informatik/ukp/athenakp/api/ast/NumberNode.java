@@ -4,7 +4,7 @@ package de.tudarmstadt.informatik.ukp.athenakp.api.ast;
  * Represents a numeric value (whole number)
  */
 public class NumberNode extends BaseNode {
-	private int val;
+	private int number;
 
 	/**
 	 * @see {@link BaseNode#BaseNode(int) BaseNode}
@@ -16,25 +16,25 @@ public class NumberNode extends BaseNode {
 	/**
 	 * @return This node's value
 	 */
-	public int getValue() {
-		return val;
+	public int getNumber() {
+		return number;
 	}
 
 	/**
 	 * Sets this node's value
 	 * @param val The value to set
 	 */
-	public void setValue(int val) {
-		this.val = val;
+	public void setNumber(int val) {
+		this.number = val;
 	}
 
 	@Override
 	public String toString() {
-		return "<" + tokenIndex +">" + val;
+		return "<" + tokenIndex +">" + number;
 	}
 
 	@Override
 	public boolean equals(Object obj) {
-		return super.equals(obj) && obj instanceof NumberNode && val == ((NumberNode)obj).val;
+		return super.equals(obj) && obj instanceof NumberNode && number == ((NumberNode)obj).number;
 	}
 }

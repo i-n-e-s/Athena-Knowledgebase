@@ -41,29 +41,29 @@ public class RequestParserTest {
 		NumberNode obitAttrVal2 = new NumberNode(66);
 		NumberNode obitAttrVal3 = new NumberNode(69);
 
-		obitAttrVal3.setValue(22);
-		obitAttrVal2.setValue(5);
-		obitAttrVal1.setValue(1993);
-		obitAttrName.setValue("obit");
-		obitAttr.addValue(obitAttrVal1);
-		obitAttr.addValue(obitAttrVal2);
-		obitAttr.addValue(obitAttrVal3);
+		obitAttrVal3.setNumber(22);
+		obitAttrVal2.setNumber(5);
+		obitAttrVal1.setNumber(1993);
+		obitAttrName.setString("obit");
+		obitAttr.addNumber(obitAttrVal1);
+		obitAttr.addNumber(obitAttrVal2);
+		obitAttr.addNumber(obitAttrVal3);
 		obitAttr.setName(obitAttrName);
 		right.addAttributeNode(obitAttr);
-		rightJoinNodeName.setValue("author");
+		rightJoinNodeName.setString("author");
 		right.setEntityName(rightJoinNodeName);
 
-		topicAttrVal.setValue("vogonpoetry");
-		topicAttrName.setValue("topic");
+		topicAttrVal.setString("vogonpoetry");
+		topicAttrName.setString("topic");
 		topicAttr.setValue(topicAttrVal);
 		topicAttr.setName(topicAttrName);
-		authorAttrVal.setValue("Daniel Klingbein");
-		authorAttrName.setValue("author");
+		authorAttrVal.setString("Daniel Klingbein");
+		authorAttrName.setString("author");
 		authorAttr.setValue(authorAttrVal);
 		authorAttr.setName(authorAttrName);
 		left.addAttributeNode(authorAttr);
 		left.addAttributeNode(topicAttr);
-		leftJoinNodeName.setValue("paper");
+		leftJoinNodeName.setString("paper");
 		left.setEntityName(leftJoinNodeName);
 
 		theOneAndOnly.addEntity(left);

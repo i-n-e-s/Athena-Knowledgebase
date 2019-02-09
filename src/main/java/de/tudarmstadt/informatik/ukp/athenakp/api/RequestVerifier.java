@@ -44,7 +44,7 @@ public class RequestVerifier {
 		//loop through the joins to get to the attributes
 		for(RequestHierarchyNode hierarchyEntry : tree.getHierarchy()) {
 			for(RequestEntityNode entity : hierarchyEntry.getEntities()) {
-				String entityName = entity.getEntityName().getValue();
+				String entityName = entity.getEntityName().getString();
 				boolean hasNumericalFields = NUMERICAL_FIELDS.containsKey(entityName);
 
 
@@ -54,17 +54,17 @@ public class RequestVerifier {
 
 					//check correct value
 					if(!hasNumericalFields && attr instanceof NumberAttributeNode)
-						throw new VerificationFailedException("Expected a string for attribute " + attr.getName().getValue() + " but got " + ((NumberAttributeNode)attr).valuesToString());
+						throw new VerificationFailedException("Expected a string for attribute " + attr.getName().getString() + " but got " + ((NumberAttributeNode)attr).valuesToString());
 					else if(hasNumericalFields && attr instanceof NumberAttributeNode) {
-						if(!entityContainsNumericalField(entityName, attr.getName().getValue()))
-							throw new VerificationFailedException("Expected a string for attribute " + attr.getName().getValue() + " but got " + ((NumberAttributeNode)attr).valuesToString());
-						else if(((NumberAttributeNode)attr).getValues().size() != NUMERICAL_FIELDS.get(entityName).get(attr.getName().getValue()))
-							throw new VerificationFailedException("Unexpected amount of numbers given for attribute " + attr.getName().getValue() + ". " +
-									"Got " + ((NumberAttributeNode)attr).getValues().size() + ", need " + NUMERICAL_FIELDS.get(entityName).get(attr.getName().getValue()));
+						if(!entityContainsNumericalField(entityName, attr.getName().getString()))
+							throw new VerificationFailedException("Expected a string for attribute " + attr.getName().getString() + " but got " + ((NumberAttributeNode)attr).valuesToString());
+						else if(((NumberAttributeNode)attr).getNumbers().size() != NUMERICAL_FIELDS.get(entityName).get(attr.getName().getString()))
+							throw new VerificationFailedException("Unexpected amount of numbers given for attribute " + attr.getName().getString() + ". " +
+									"Got " + ((NumberAttributeNode)attr).getNumbers().size() + ", need " + NUMERICAL_FIELDS.get(entityName).get(attr.getName().getString()));
 					}
 					else if(hasNumericalFields && attr instanceof StringAttributeNode) {
-						if(entityContainsNumericalField(entityName, attr.getName().getValue()))
-							throw new VerificationFailedException("Expected " + NUMERICAL_FIELDS.get(entityName).get(attr.getName().getValue()) +" number(s) for attribute " + attr.getName().getValue() + " but got " + ((StringAttributeNode)attr).getValue().getValue());
+						if(entityContainsNumericalField(entityName, attr.getName().getString()))
+							throw new VerificationFailedException("Expected " + NUMERICAL_FIELDS.get(entityName).get(attr.getName().getString()) +" number(s) for attribute " + attr.getName().getString() + " but got " + ((StringAttributeNode)attr).getValue().getString());
 					}
 				}
 			}

@@ -22,7 +22,7 @@ public class AttributeNode extends BaseNode {
 
 	/**
 	 * Sets this node's attribute name
-	 * @param val The attribute name to set
+	 * @param node The attribute name to set
 	 */
 	public void setName(StringNode node) {
 		this.name = node;

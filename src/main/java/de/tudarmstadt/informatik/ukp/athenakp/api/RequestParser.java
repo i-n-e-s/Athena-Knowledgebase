@@ -76,7 +76,7 @@ public class RequestParser {
 		StringNode stringNode = new StringNode(currentToken.index);
 		String name = accept(RequestTokenType.NAME);
 
-		stringNode.setValue(name);
+		stringNode.setString(name);
 		node.setEntityName(stringNode);
 		//up until this point the name got saved to the node
 
@@ -110,7 +110,7 @@ public class RequestParser {
 		StringNode stringNode = new StringNode(attrIndex);
 		String name = accept(RequestTokenType.NAME);
 
-		stringNode.setValue(name);
+		stringNode.setString(name);
 		accept(RequestTokenType.ATTR_EQ);
 
 		//attributes either consist of strings or numbers
@@ -144,7 +144,7 @@ public class RequestParser {
 				accept();
 		}
 
-		stringNode.setValue(value.trim()); //trim off the last space
+		stringNode.setString(value.trim()); //trim off the last space
 		node.setValue(stringNode);
 		return node;
 	}
@@ -164,8 +164,8 @@ public class RequestParser {
 			NumberNode numberNode = new NumberNode(currentToken.index);
 			int val = Integer.parseInt(accept(RequestTokenType.NUMBER)); //parseInt won't throw a NumberFormatException as the scanner already took care of checking whether the contents are digits
 
-			numberNode.setValue(val);
-			node.addValue(numberNode);
+			numberNode.setNumber(val);
+			node.addNumber(numberNode);
 
 			//...and check for more parts in the attribute
 			if(currentToken.type == RequestTokenType.SPACE) //if it's not a SPACE, then it will be something else and be catched by the while condition
