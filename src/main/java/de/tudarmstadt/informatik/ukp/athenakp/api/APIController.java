@@ -1,6 +1,7 @@
 package de.tudarmstadt.informatik.ukp.athenakp.api;
 
 import java.util.Deque;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -24,10 +25,15 @@ public class APIController {
 			RequestScanner scanner = new RequestScanner(apiRequest);
 			Deque<RequestToken> tokens = scanner.scan();
 			RequestParser parser = new RequestParser(tokens);
-			tree = parser.parse();
 
+			tree = parser.parse();
 			RequestVerifier.verify(tree); //if no exception is thrown, the verification was successful
-			return RequestBuilder.build(tree);
+
+			QueryManager queryManager = new QueryManager();
+			List<?> result = queryManager.manage(tree);
+
+			queryManager.close();
+			return result;
 		}
 		catch(SyntaxException | VerificationFailedException e) {
 			String errorMessage = "<h4>" + e.getMessage() + "</h4>"
