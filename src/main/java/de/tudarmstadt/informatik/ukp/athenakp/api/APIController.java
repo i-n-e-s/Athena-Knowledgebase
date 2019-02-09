@@ -31,7 +31,6 @@ public class APIController {
 		}
 		catch(SyntaxException | VerificationFailedException e) {
 			String errorMessage = "<h4>" + e.getMessage() + "</h4>"
-					+ "<br><br>"
 					+ (tree == null ? "" : tree.toString())
 					+ "<br><br>"
 					+ "<u>Stacktrace:</u>"
