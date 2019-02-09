@@ -15,7 +15,6 @@ public class RequestVerifier {
 	//					     entity		field name   number amount
 	private static final Map<String,Map<String		,Integer		>> NUMERICAL_FIELDS = new HashMap<>(); //denotes which fields (value) of an entity (key) only accept numerical values
 
-	//TODO use "most efficient" map
 	static { //preprocessing of number attributes, everything else accepts strings
 		Map<String,Integer> conferenceMap = new HashMap<>();
 		Map<String,Integer> eventMap = new HashMap<>();
@@ -46,19 +45,26 @@ public class RequestVerifier {
 		for(RequestHierarchyNode hierarchyEntry : tree.getHierarchy()) {
 			for(RequestEntityNode entity : hierarchyEntry.getEntities()) {
 				String entityName = entity.getEntityName().getValue();
+				boolean hasNumericalFields = NUMERICAL_FIELDS.containsKey(entityName);
+
 
 				//loop through the attributes and check each attribute's value of validity
 				for(AttributeNode attr : entity.getAttributes()) {
-					if(attr instanceof NumberAttributeNode && NUMERICAL_FIELDS.containsKey(entityName)) {
+					//check correct name
+
+					//check correct value
+					if(!hasNumericalFields && attr instanceof NumberAttributeNode)
+						throw new VerificationFailedException("Expected a string for attribute " + attr.getName().getValue() + " but got " + ((NumberAttributeNode)attr).valuesToString());
+					else if(hasNumericalFields && attr instanceof NumberAttributeNode) {
 						if(!entityContainsNumericalField(entityName, attr.getName().getValue()))
 							throw new VerificationFailedException("Expected a string for attribute " + attr.getName().getValue() + " but got " + ((NumberAttributeNode)attr).valuesToString());
 						else if(((NumberAttributeNode)attr).getValues().size() != NUMERICAL_FIELDS.get(entityName).get(attr.getName().getValue()))
 							throw new VerificationFailedException("Unexpected amount of numbers given for attribute " + attr.getName().getValue() + ". " +
 									"Got " + ((NumberAttributeNode)attr).getValues().size() + ", need " + NUMERICAL_FIELDS.get(entityName).get(attr.getName().getValue()));
 					}
-					else if(attr instanceof StringAttributeNode && NUMERICAL_FIELDS.containsKey(entityName)) {
+					else if(hasNumericalFields && attr instanceof StringAttributeNode) {
 						if(entityContainsNumericalField(entityName, attr.getName().getValue()))
-							throw new VerificationFailedException("Expected (multiple) number(s) for attribute " + attr.getName().getValue() + " but got " + ((StringAttributeNode)attr).getValue().getValue());
+							throw new VerificationFailedException("Expected " + NUMERICAL_FIELDS.get(entityName).get(attr.getName().getValue()) +" number(s) for attribute " + attr.getName().getValue() + " but got " + ((StringAttributeNode)attr).getValue().getValue());
 					}
 				}
 			}
