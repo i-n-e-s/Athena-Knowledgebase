@@ -19,7 +19,7 @@ import javax.persistence.Table;
 import org.hibernate.annotations.GenericGenerator;
 
 @Entity
-@Table(name="sessions")
+@Table(name="session")
 public class Session {
 	/*Unique id*/
 	@Id
