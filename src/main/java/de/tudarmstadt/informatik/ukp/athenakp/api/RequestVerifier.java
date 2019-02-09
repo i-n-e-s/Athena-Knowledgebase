@@ -70,7 +70,7 @@ public class RequestVerifier {
 				}
 				else if(field.isAnnotationPresent(JoinTable.class) && field.isAnnotationPresent(Hierarchy.class)) {
 					if(fieldTypeName.equals(java.util.Set.class.getName()))
-						setAttributeMap.put(field.getName(), field.getAnnotation(Hierarchy.class).entityName());
+						setAttributeMap.put(field.getAnnotation(Hierarchy.class).entityName(), field.getName());
 				}
 			}
 
@@ -106,6 +106,8 @@ public class RequestVerifier {
 					throw new VerificationFailedException("Entity " + previousEntityName + " does not have a hierarchical relationship with entity " + entityName + "!");
 
 				boolean hasNumericalFields = NUMERICAL_ATTRIBUTES.containsKey(entityName);
+
+				previousEntityName = entityName;
 
 				//loop through the attributes and check each attribute's value of validity
 				for(AttributeNode attr : entity.getAttributes()) {
