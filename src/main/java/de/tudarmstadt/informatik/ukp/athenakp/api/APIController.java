@@ -16,6 +16,7 @@ import de.tudarmstadt.informatik.ukp.athenakp.exception.VerificationFailedExcept
 public class APIController {
 	@RequestMapping("/**") //matches the complete path (containing all subpaths), just make sure that there are no ? in there!!
 	public Object apiConnector(HttpServletRequest request) { //the argument contains everything that was not matched to any other argument
+		RequestNode tree = null;
 
 		try {
 			//scan and parse the request
@@ -23,13 +24,16 @@ public class APIController {
 			RequestScanner scanner = new RequestScanner(apiRequest);
 			Deque<RequestToken> tokens = scanner.scan();
 			RequestParser parser = new RequestParser(tokens);
-			RequestNode tree = parser.parse();
+			tree = parser.parse();
 
 			RequestVerifier.verify(tree); //if no exception is thrown, the verification was successful
-			return tree.toString();
+			return RequestBuilder.build(tree);
 		}
 		catch(SyntaxException | VerificationFailedException e) {
 			String errorMessage = "<h4>" + e.getMessage() + "</h4>"
+					+ "<br><br>"
+					+ (tree == null ? "" : tree.toString())
+					+ "<br><br>"
 					+ "<u>Stacktrace:</u>"
 					+ "<br>"
 					+ "<div style=\"padding-left:20px\">"
