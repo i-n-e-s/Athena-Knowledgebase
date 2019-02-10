@@ -60,6 +60,7 @@ public class Session {
 	//	@Column(name = "papers")
 	//	private Set<Paper> papers;
 	/* Sessions, if any */
+	@Hierarchy(entityName="sessionpart")
 	@OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER)
 	@JoinTable(
 			name = "session_sessionParts",

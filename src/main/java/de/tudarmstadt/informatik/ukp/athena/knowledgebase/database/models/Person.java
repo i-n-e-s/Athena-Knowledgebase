@@ -1,12 +1,28 @@
 package de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.DiscriminatorColumn;
+import javax.persistence.DiscriminatorType;
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  * @author Tristan Wettich
@@ -43,13 +59,14 @@ public class Person extends Model {
 	private Institution institution;
 
 	/*Written papers*/
+	@Hierarchy(entityName="paper")
 	@JsonIgnore //fixes infinite recursion
 	@ManyToMany(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER)
 	@JoinTable(
 			name = "author_paper",
 			joinColumns = { @JoinColumn(name = "authorID") },
 			inverseJoinColumns = { @JoinColumn(name = "paperID") }
-	)
+			)
 	private Set<Paper> papers = new HashSet<>();
 
 	/**
