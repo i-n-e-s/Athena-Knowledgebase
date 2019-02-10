@@ -27,18 +27,8 @@ public class QueryManager {
 	 * Sanitizes user input, builds the SQL query and sends the request to the database
 	 * @param tree The request tree to build the request from
 	 * @return The result list of the query
-	 */
+	 */ //size of 40 lines is exceeded in favor of readability (=> normalEntityName, entityName, entityVar etc. could be removed to meet the requirement)
 	public List<?> manage(RequestNode tree) {
-		if(tree.getHierarchy().size() == 1)
-			return buildSimpleQuery(tree);
-		else return buildComplexQuery(tree);
-	}
-
-	/**
-	 * Creates a request with a hierarchy
-	 * @see QueryManager#manage(RequestNode)
-	 */
-	private List<?> buildComplexQuery(RequestNode tree) {
 		List<String> queryList = new ArrayList<>();
 		Map<String,Object> sqlVars = new HashMap<>(); //replace key with value later, this is user input
 		String previousEntityVar = null; //used for hierarchical relationship
@@ -64,7 +54,8 @@ public class QueryManager {
 			previousEntityVar = entityVar;
 		}
 
-		queryList.add("WHERE");
+		if(tree.getHierarchy().get(0).getEntity().getAttributes().size() > 0) //this is only the case if the request is not something like /paper to get all the papers
+			queryList.add("WHERE");
 
 		//now set the attributes
 		for(RequestHierarchyNode hierarchyNode : tree.getHierarchy()) {
@@ -84,34 +75,6 @@ public class QueryManager {
 
 		if(queryList.get(queryList.size() - 1).equals("and")) //remove the last and if there is one
 			queryList.remove(queryList.size() - 1);
-
-		return createQuery(queryList, sqlVars).getResultList();
-	}
-
-	/**
-	 * Creates a request without a hierarchy
-	 * @see QueryManager#manage(RequestNode)
-	 */
-	private List<?> buildSimpleQuery(RequestNode tree) {
-		List<String> queryList = new ArrayList<>(); //the parts of the query string, to be built in createQuery below
-		Map<String,Object> sqlVars = new HashMap<>(); //replace key with value later, this is user input
-
-		RequestEntityNode entity = tree.getHierarchy().get(0).getEntity();
-		String entityName = capitalizeFirstLetter(entity.getEntityName().getString()); //needs to be capitalized because the entities are mapped that way
-
-		queryList.add("FROM " + entityName);
-
-		if(entity.getAttributes().size() > 0) //this is only the case if the request is not something like /paper to get all the papers
-			queryList.add("WHERE");
-
-		//loop through the attributes (if any)
-		for(AttributeNode attr : entity.getAttributes()) {
-			String attrName = attr.getName().getString();
-			String sqlVar = entityName + "_" + attrName; //used later to replace with actual user input after it was automatically sanitized
-
-			queryList.add(attrName + "=:" + sqlVar);
-			setAttributeCorrectly(attr, sqlVars, sqlVar);
-		}
 
 		return createQuery(queryList, sqlVars).getResultList();
 	}
