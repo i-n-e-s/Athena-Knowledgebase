@@ -102,6 +102,12 @@ public class openStreetRequestBuilder {
 			return null;
 		}
 	}
+
+	/**
+	 * Builds a list of Locations from the JSON data
+	 * @param locations a JSONArray of nodes in the openStreetMap sense, not null
+	 * @return a list of Locations which are then collected from the API
+	 */
 	private List<Location> resolveJson(JSONArray locations){
 		int jsonLength = locations.length();
 		List <Location> locationObjects = new ArrayList<>();
