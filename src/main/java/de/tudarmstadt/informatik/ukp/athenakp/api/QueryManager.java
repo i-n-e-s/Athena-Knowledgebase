@@ -41,9 +41,8 @@ public class QueryManager {
 		Map<String,Object> sqlVars = new HashMap<>(); //replace key with value later, this is user input
 
 		for(RequestEntityNode entity : tree.getHierarchy().get(0).getEntities()) {
-			String entityName = entity.getEntityName().getString();
+			String entityName = capitalizeFirstLetter(entity.getEntityName().getString()); //needs to be capitalized because the entities are mapped that way
 
-			entityName = Character.toUpperCase(entityName.charAt(0)) + entityName.substring(1);
 			queryList.add("FROM " + entityName);
 
 			if(entity.getAttributes().size() > 0)
@@ -108,5 +107,18 @@ public class QueryManager {
 	 */
 	public void close() {
 		entityManager.close();
+	}
+
+	/**
+	 * Capitalizes the first letter of a string
+	 * @param string The string
+	 * @return The string as it was fed into the method, but with its first character capitalized. If the string is null or empty, an empty string will be returned.
+	 */
+	private String capitalizeFirstLetter(String string) {
+		if(string == null || string.isEmpty())
+			return "";
+		else if(string.length() == 1) //just to be safe
+			return "" + Character.toUpperCase(string.charAt(0));
+		else return Character.toUpperCase(string.charAt(0)) + string.substring(1);
 	}
 }
