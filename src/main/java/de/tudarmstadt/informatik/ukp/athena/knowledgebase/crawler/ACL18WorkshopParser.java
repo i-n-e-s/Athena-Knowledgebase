@@ -30,6 +30,7 @@ public class ACL18WorkshopParser {
 	 */
 	public static ArrayList<ScheduleEntry> parseWorkshops() {
 		ArrayList<ScheduleEntry> result = new ArrayList<>();
+		String userAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.82 Safari/537.36 Viv/2.3.1440.41";
 
 		try {
 			Document doc = Jsoup.connect(workshopPage).get();
@@ -60,13 +61,13 @@ public class ACL18WorkshopParser {
 					//the CALCS workshop has a schedule, but it's in pdf form. some hours went by trying to find a proper library
 					//	for pdf reading, but to no avail
 					switch(workshop.getAbbreviation()) {
-						case "MSR": parseMSR(Jsoup.connect(wsLink).get(), workshop); break;
-						case "MRQA": parseMRQA(Jsoup.connect(wsLink).get(), workshop); break;
-						case "RELNLP": parseRELNLP(Jsoup.connect(wsLink).get(), workshop); break;
+						case "MSR": parseMSR(Jsoup.connect(wsLink).userAgent(userAgent).get(), workshop); break;
+						case "MRQA": parseMRQA(Jsoup.connect(wsLink).userAgent(userAgent).get(), workshop); break;
+						case "RELNLP": parseRELNLP(Jsoup.connect(wsLink).userAgent(userAgent).get(), workshop); break;
 						case "ECONLP": parseECONLP(Jsoup.connect("https://julielab.de/econlp/2018/").get(), workshop); break; //direct link because wsLink is a redirect in this case
-						case "MML_Challenge": parseMML(Jsoup.connect(wsLink).get(), workshop); break;
-						case "SocialNLP": parseSocialNLP(Jsoup.connect(wsLink).get(), workshop); break;
-						case "NLPOSS": parseNLPOSS(Jsoup.connect(wsLink).get(), workshop); break;
+						case "MML_Challenge": parseMML(Jsoup.connect(wsLink).userAgent(userAgent).get(), workshop); break;
+						case "SocialNLP": parseSocialNLP(Jsoup.connect(wsLink).userAgent(userAgent).get(), workshop); break;
+						case "NLPOSS": parseNLPOSS(Jsoup.connect(wsLink).userAgent(userAgent).get(), workshop); break;
 					}
 
 					result.add(workshop);
