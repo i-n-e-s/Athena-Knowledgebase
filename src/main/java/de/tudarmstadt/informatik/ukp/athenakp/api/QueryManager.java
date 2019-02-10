@@ -37,7 +37,7 @@ public class QueryManager {
 	 * @see QueryManager#manage(RequestNode)
 	 */
 	private List<?> buildSimpleQuery(RequestNode tree) {
-		List<String> queryList = new ArrayList<>();
+		List<String> queryList = new ArrayList<>(); //the parts of the query string, to be built in createQuery below
 		Map<String,Object> sqlVars = new HashMap<>(); //replace key with value later, this is user input
 
 		for(RequestEntityNode entity : tree.getHierarchy().get(0).getEntities()) {
@@ -45,10 +45,10 @@ public class QueryManager {
 
 			queryList.add("FROM " + entityName);
 
-			if(entity.getAttributes().size() > 0)
+			if(entity.getAttributes().size() > 0) //this is only the case if the request is not something like /paper to get all the papers
 				queryList.add("WHERE");
 
-			//loop through the attributes
+			//loop through the attributes (if any)
 			for(AttributeNode attr : entity.getAttributes()) {
 				String attrName = attr.getName().getString();
 				String sqlVar = entityName + "_" + attrName; //used later to replace with actual user input after it was automatically sanitized
@@ -62,6 +62,7 @@ public class QueryManager {
 				else if(attr instanceof NumberAttributeNode) {
 					List<NumberNode> numbers = ((NumberAttributeNode)attr).getNumbers();
 
+					//yes, vars can be any object
 					switch(numbers.size()) {
 						case 5:
 							sqlVars.put(sqlVar, LocalDateTime.of(numbers.get(0).getNumber(), numbers.get(1).getNumber(), numbers.get(2).getNumber(), numbers.get(3).getNumber(), numbers.get(4).getNumber()));
@@ -95,7 +96,8 @@ public class QueryManager {
 
 		Query query = entityManager.createQuery(qlString); //create the base query
 
-		for(String key : sqlVars.keySet()) { //sanitize user input
+		//sanitize user input
+		for(String key : sqlVars.keySet()) {
 			query = query.setParameter(key, sqlVars.get(key));
 		}
 
