@@ -71,7 +71,7 @@ public class QueryManager {
 							sqlVars.put(sqlVar, LocalDate.of(numbers.get(0).getNumber(), numbers.get(1).getNumber(), numbers.get(2).getNumber()).toString());
 							break;
 						case 1:
-							sqlVars.put(sqlVar, numbers.get(0).getNumber());
+							sqlVars.put(sqlVar, EventCategory.values()[numbers.get(0).getNumber()]);
 							break;
 					}
 				}
