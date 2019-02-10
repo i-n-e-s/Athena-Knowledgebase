@@ -93,6 +93,7 @@ public class RequestVerifier {
 	 */
 	public static void verify(RequestNode tree) throws VerificationFailedException {
 		String previousEntityName = null;
+
 		//loop through the joins to get to the attributes
 		for(RequestHierarchyNode hierarchyEntry : tree.getHierarchy()) {
 			RequestEntityNode entity = hierarchyEntry.getEntity();

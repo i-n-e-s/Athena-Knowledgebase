@@ -49,8 +49,7 @@ public class RequestParser {
 	private RequestHierarchyNode parseHierarchyEntry() throws SyntaxException {
 		RequestHierarchyNode node = new RequestHierarchyNode(currentToken.index);
 
-		//accept the /
-		accept();
+		accept(RequestTokenType.HIERARCHY_SEPERATOR);
 
 		//the first part of a request is always an entity name
 		if(currentToken.type == RequestTokenType.NAME)
@@ -132,13 +131,16 @@ public class RequestParser {
 		while(currentToken.type == RequestTokenType.NAME || currentToken.type == RequestTokenType.NUMBER) { //ACL+2018 should be considered a string token as well
 			//...add it to the attribute existing value...
 			if(currentToken.type == RequestTokenType.NAME)
-				value += accept(RequestTokenType.NAME) + " ";
+				value += accept(RequestTokenType.NAME);
 			else if(currentToken.type == RequestTokenType.NUMBER)
-				value += accept(RequestTokenType.NUMBER) + " ";
+				value += accept(RequestTokenType.NUMBER);
 
 			//...and check for more parts in the attribute
 			if(currentToken.type == RequestTokenType.SPACE) //if it's not a SPACE, then it will be something else and be catched by the while condition
+			{
 				accept();
+				value += " ";
+			}
 		}
 
 		stringNode.setString(value.trim()); //trim off the last space
