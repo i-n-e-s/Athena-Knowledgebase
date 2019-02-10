@@ -1,0 +1,110 @@
+Aktueller Stand zur Datenbank-Normalisierung, 12.12.2018
+
+Glossar:
+PA := Primär-Attribute
+NA := Nicht-Primär-Attribute
+NF := Normalform
+
+Atributsangaben 
+
+name:Datentyp
+
+Normalformen:
+1.NF: Alle Attribute atomar.
+2.NF: Jedes NA muss vollständig von allen PA abhängig sein, nicht nur von einem Teil der PA.
+3.NF: Kein NA ist transitiv von einem PA (Teil, nicht alle PA) abhängig. Bzw. kein NA ist von einem anderen NA funktional abhängig.
+
+
+Normalisierung nach Tabelle, alle Tabellen der aktuellen Struktur, alphabetisch:
+
+
+Tabelle "author_paper"
+PA: authorID:INT, paperID:INT
+NA: -
+1.NF: Ja, alle Attribute atomar, 
+		da lediglich Zwischentabelle mit IDs
+2.NF: Ja, keine NA
+3.NF: ja, keine NA
+
+Tabelle "conference"
+PA: name:STRING
+NA: address:STRING, city:STRING, country:STRING, startDate:ISO-8601-DATE, endDate:ISO-8601-DATE
+1.NF: Ja, alle Attribute atomar
+		name enthält nur den Namen der Konferenz
+		address getrennte Änderung von Straßenname und Hausnummer zwar möglich aber unwahrscheinlich und Adresse ist in vielen Formaten vorhanden, darum atomar
+		city enthält nur den Namen der abhaltenen Stadt
+		country enthält nur den Namen des abhaltenen Landes
+		ISO-8601-DATEs werden sytemintern immer als ganzes Datum verarbeitet, daher sind Änderung lediglich am Tag, Monat oder Jahr nicht möglich => atomar
+2.NF: Ja, da nur ein PA
+3.NF: Ja, alle NA sind direkt vom PA abhängig und nicht transitiv
+
+Tabelle "conference_paper"
+PA: Conference_name:STRING, papers_paperID:INT
+NA: -
+1.NF: Ja, alle Attribute atomar
+		da lediglich Zwischentabelle mit IDs
+2.NF: Ja, keine NA
+3.NF: ja, keine NA
+
+Tabelle "conference_person"
+PA: Conference_name:STRING, authors_personID:INT
+NA: -
+1.NF: Ja, alle Attribute atomar
+		da lediglich Zwischentabelle mit IDs
+2.NF: Ja, keine NA
+3.NF: Ja, keine NA
+
+Tabelle "events"
+PA: id:INT
+NA: title:STRING, category:STRING, place:STRING, short_description:STRING, begin_date:ISO-8601-DATE, end_date:ISO-8601-DATE
+1.NF: Ja, alle Attribute atomar
+		INT ist per definition atomar
+		ISO-8601-DATEs werden sytemintern immer als ganzes Datum verarbeitet, daher sind Änderung lediglich am Tag, Monat oder Jahr nicht möglich => atomar
+		title enthält lediglich den Titel der Veranstaltung
+		category enthält lediglich die Kategoriebezeichnung der Veranstaltung
+		place enthält die Raumbezeichnung o.ä., hier ist teilweise Änderung,wie Raumänderung in einem Gebäude, zwar möglich aber selten und so werden alle Formen Räumebezeichnungen darzustellen abgedeckt darum atomar
+		short_description keine Möglichkeit semantisch aufzubrechen, da nur in Fließtext verfügbar
+2.NF: Ja, da nur ein PA
+3.NF: Ja, alle NA sind direkt vom PA abhängig und nicht transitiv
+
+Tabelle "hibernate_sequence"
+PA: -
+NA: next_val:INT
+1.NF: Ja, alle Attribute atomar
+		INT ist per definition atomar
+2.NF: Ja, nur ein Attribut
+3.NF: Ja, nur ein Attribut
+
+Tabelle "institutions"
+PA: institutionID
+NA: name:String
+1.NF: Ja, alle Attribute atomar
+		name enthält lediglich den Namen eines Instituts
+2.NF: Ja, nur ein PA
+3.NF: Ja, nur ein NA
+
+Tabelle "paper"
+PA: paperID:INT
+NA: title:String, topic:String, anthology:String, href:string, pdfFileSize:INT, releaseDate:ISO-8601-DATE
+1.NF: Ja, alle Attribute atomar
+		INT ist per definition atomar
+		ISO-8601-DATEs werden sytemintern immer als ganzes Datum verarbeitet, daher sind Änderung lediglich am Tag, Monat oder Jahr nicht möglich => atomar
+		title enthält lediglich den Titel des Papers
+		topic enthält lediglich das behandelte Forschungsgebiet
+		anthology enthält lediglich den Title der Sammlung unter der das Paper zur Verfügung steht
+		href ist lediglich der Link auf das komplette Paper
+2.NF: Ja, nur ein PA
+3.NF: Ja, keine NA transitiv von PA abhängig.
+
+Tabelle "person"
+PA: personID:INT
+NA: type:String, fullName:String, prefix:String, birthday:ISO-8601-DATE, obit:ISO-8601-DATE, institutionID:INT
+1.NF: Ja, alle Attribute atomar, solange fullName als atomar definiert ist.
+		INT ist per definition atomar
+		ISO-8601-DATEs werden sytemintern immer als ganzes Datum verarbeitet, daher sind Änderung lediglich am Tag, Monat oder Jahr nicht möglich => atomar
+		type Enthält lediglich die Rolle, die eine Person auf der Konferenz einnimmt z.B. Author
+		fullName solange der volle Name als atomar definiert ist. Dies ist sinnvoll, da Namensänderungen selten vorkommen und so Internationalisierung vereifacht wird
+		prefix enthält zur Zeit nur einen Namenprefix => atomar		
+2.NF: Ja, nur ein PA
+3.NF: Ja, keine NA transitiv von PA abhängig.
+
