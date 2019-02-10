@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.persistence.Column;
+import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.api.ast.AttributeNode;
@@ -32,6 +33,7 @@ public class RequestVerifier {
 	//					     entity		entity being stored	 field name
 	private static final Map<String,Map<String				,String		>> SET_ATTRIBUTES = new HashMap<>(); //denotes which fields (value) of an entity (key) are sets
 
+
 	static { //preprocessing of attributes for verification, this code only runs once
 		Class<?>[] models = {
 				Conference.class,
@@ -48,9 +50,11 @@ public class RequestVerifier {
 			Map<String,Integer> numberAttributeMap = new HashMap<>();
 			Map<String,String> setAttributeMap = new HashMap<>();
 
+			//search through the fields in the above entity...
 			for(Field field : clazz.getDeclaredFields()) {
 				String fieldTypeName = field.getType().getName();
 
+				//...to see which one is a column in the database
 				if(field.isAnnotationPresent(Column.class)) {
 					String columnName = field.getAnnotation(Column.class).name();
 
@@ -64,7 +68,8 @@ public class RequestVerifier {
 					else if(fieldTypeName.equals(de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.SessionCategory.class.getName()) || fieldTypeName.equals("long"))
 						numberAttributeMap.put(field.getName(), 1);
 				}
-				else if(field.isAnnotationPresent(JoinTable.class) && field.isAnnotationPresent(Hierarchy.class)) {
+				//custom annotation to manage hierarchy between entities and collections
+				else if((field.isAnnotationPresent(JoinTable.class) || field.isAnnotationPresent(JoinColumn.class)) && field.isAnnotationPresent(Hierarchy.class)) {
 					if(fieldTypeName.equals(java.util.Set.class.getName()))
 						setAttributeMap.put(field.getAnnotation(Hierarchy.class).entityName(), field.getName());
 				}
