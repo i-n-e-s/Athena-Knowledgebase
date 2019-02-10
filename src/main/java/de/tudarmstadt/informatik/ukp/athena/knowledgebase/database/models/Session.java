@@ -230,7 +230,7 @@ public class Session {
 
 	/**
 	 * Sets this session's session parts (if any)
-	 * @param sessions This session's new session parts
+	 * @param sessionParts This session's new session parts
 	 */
 	public void setSessionParts(Set<SessionPart> sessionParts) {
 		this.sessionParts = sessionParts;
