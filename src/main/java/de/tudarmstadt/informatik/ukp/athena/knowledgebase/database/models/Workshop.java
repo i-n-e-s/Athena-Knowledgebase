@@ -26,32 +26,34 @@ public class Workshop implements ScheduleEntry {
 	@GenericGenerator(name="increment", strategy="increment")
 	@Column(name="workshopID")
 	private long workshopID;
-	/*Name of conference this workshop belongs to*/
-	@Column(name="conferenceName")
-	private String conferenceName;
-	/*Start time*/
-	@Column(name="begin")
-	private LocalDateTime begin;
-	/*End time*/
-	@Column(name="end")
-	private LocalDateTime end;
-	/* Place where this workshop happens */
-	@Column(name = "place")
-	private String place;
 	/* Title */
 	@Column(name = "title")
 	private String title;
 	/* Abbreviation */
 	@Column(name = "abbreviation")
 	private String abbreviation;
+	/*Name of conference this workshop belongs to*/
+	@Column(name="conferenceName")
+	private String conferenceName;
+
+	/*Start time*/
+	@Column(name="begin")
+	private LocalDateTime begin;
+	/*End time*/
+	@Column(name="end")
+	private LocalDateTime end;
+
+	/* Place where this workshop happens */
+	@Column(name = "place")
+	private String place;
 	/* Events, not all workshops provide easily scrapable schedule*/
 	@OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER)
 	@JoinTable(
-			name = "workshop_event",
+			name = "workshop_session",
 			joinColumns = { @JoinColumn(name = "workshopID") },
-			inverseJoinColumns = { @JoinColumn(name = "eventID") }
+			inverseJoinColumns = { @JoinColumn(name = "sessionID") }
 			)
-	private Set<Event> events = new HashSet<>();
+	private Set<Session> sessions = new HashSet<>();
 
 	/**
 	 * Gets the unique id of this workshop
@@ -119,7 +121,6 @@ public class Workshop implements ScheduleEntry {
 
 	/**
 	 * Gets the place where this workshop happens
-	 *
 	 * @return The place where this workshop happens
 	 */
 	public String getPlace() {
@@ -128,7 +129,6 @@ public class Workshop implements ScheduleEntry {
 
 	/**
 	 * Sets the place where this workshop happens
-	 *
 	 * @param place The new place where this workshop happens
 	 */
 	public void setPlace(String place) {
@@ -137,7 +137,6 @@ public class Workshop implements ScheduleEntry {
 
 	/**
 	 * Gets the title of this workshop
-	 *
 	 * @return The title of this workshop
 	 */
 	public String getTitle() {
@@ -146,7 +145,6 @@ public class Workshop implements ScheduleEntry {
 
 	/**
 	 * Sets the title of this workshop
-	 *
 	 * @param title The new title of this workshop
 	 */
 	public void setTitle(String title) {
@@ -154,18 +152,16 @@ public class Workshop implements ScheduleEntry {
 	}
 
 	/**
-	 * Gets a abbreviation of the workshop
-	 *
-	 * @return A abbreviation of the workshop
+	 * Gets the abbreviation of the workshop
+	 * @return The abbreviation of the workshop
 	 */
 	public String getAbbreviation() {
 		return abbreviation;
 	}
 
 	/**
-	 * Sets a abbreviation of the workshop
-	 *
-	 * @param description A new abbreviation of the workshop
+	 * Sets the abbreviation of the workshop
+	 * @param description The new abbreviation of the workshop
 	 */
 	public void setAbbreviation(String abbreviation) {
 		this.abbreviation = abbreviation;
@@ -175,23 +171,23 @@ public class Workshop implements ScheduleEntry {
 	 * Gets this workshop's sessions (if any)
 	 * @return This workshop's sessions
 	 */
-	public Set<Event> getEvents() {
-		return events;
+	public Set<Session> getSessions() {
+		return sessions;
 	}
 
 	/**
-	 * Sets this workshop's events (if any)
-	 * @param sessions This workshop's new events
+	 * Sets this workshop's sessions (if any)
+	 * @param sessions This workshop's new sessions
 	 */
-	public void setEvents(Set<Event> events) {
-		this.events = events;
+	public void setSessions(Set<Session> sessions) {
+		this.sessions = sessions;
 	}
 
 	/**
 	 * Adds a session to this workshop's session list
 	 * @param s The session to add
 	 */
-	public void addEvent(Event e) {
-		events.add(e);
+	public void addSession(Session s) {
+		sessions.add(s);
 	}
 }

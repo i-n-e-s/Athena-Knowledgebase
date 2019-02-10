@@ -17,12 +17,16 @@ import de.tudarmstadt.informatik.ukp.athena.knowledgebase.crawler.SupportedConfe
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.access.ConferenceCommonAccess;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.access.PaperCommonAccess;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.access.SessionCommonAccess;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.access.WorkshopCommonAccess;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.jpa.ConferenceJPAAccess;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.jpa.PaperJPAAccess;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.jpa.SessionJPAAccess;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.jpa.WorkshopJPAAccess;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Conference;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Paper;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.ScheduleEntry;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Session;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Workshop;
 
 
 @SpringBootApplication
@@ -119,7 +123,7 @@ public class ParsedDataInserter {
 		try {
 			Conference acl2018 = acl18WebParser.getConferenceInformation();
 
-			acl2018.setSessions(new HashSet<Session>(acl2018StoreSchedule())); //acl2018StoreSchedule returns a list, passing that to the hashset initializes the set with the list elements
+			acl2018.setSessions(new HashSet<ScheduleEntry>(acl2018StoreSchedule())); //acl2018StoreSchedule returns a list, passing that to the hashset initializes the set with the list elements
 			System.out.println("Inserting conference into database...");
 			conferenceCommonAccess.add(acl2018);
 			System.out.println("Done inserting!");
@@ -133,19 +137,19 @@ public class ParsedDataInserter {
 	 * Stores the acl2018 conference's schedule into the database
 	 * @return The scraped and stored sessions
 	 */
-	private List<Session> acl2018StoreSchedule() {
+	private List<ScheduleEntry> acl2018StoreSchedule() {
 		SessionCommonAccess sessionCommonAccess = new SessionJPAAccess();
 		WorkshopCommonAccess workshopCommonAccess = new WorkshopJPAAccess();
-		List<ScheduleEntry> sessions = new ArrayList<>(); //initialize in case anything fails
+		List<ScheduleEntry> entries = new ArrayList<>(); //initialize in case anything fails
 
 		try {
-			sessions = acl18WebParser.getSchedule();
+			entries = acl18WebParser.getSchedule();
 
 			System.out.println("Inserting schedule into database...");
 			//add to database
 			for(ScheduleEntry entry : entries) {
-				if(entry instanceof Event)
-					eventCommonAccess.add((Event)entry);
+				if(entry instanceof Session)
+					sessionCommonAccess.add((Session)entry);
 				else if(entry instanceof Workshop)
 					workshopCommonAccess.add((Workshop)entry);
 			}
@@ -155,6 +159,6 @@ public class ParsedDataInserter {
 			e.printStackTrace();
 		}
 
-		return sessions;
+		return entries;
 	}
 }

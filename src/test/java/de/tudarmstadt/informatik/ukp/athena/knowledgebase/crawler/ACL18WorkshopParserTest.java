@@ -8,8 +8,7 @@ import java.time.LocalTime;
 
 import org.junit.Test;
 
-import de.tudarmstadt.informatik.ukp.athena.knowledgebase.crawler.ACL18WorkshopParser;
-import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Event;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Session;
 
 public class ACL18WorkshopParserTest {
 	@Test
@@ -31,12 +30,12 @@ public class ACL18WorkshopParserTest {
 		};
 		LocalDate beginDate = LocalDate.of(2018, 7, 7);
 		LocalDate endDate = LocalDate.of(2018, 7, 8);
-		Event event = new Event();
+		Session session = new Session();
 
-		ACL18WorkshopParser.setEventBeginEnd(input, beginDate, endDate, event);
-		assertEquals(beginDate, event.getBegin().toLocalDate());
-		assertEquals(endDate, event.getEnd().toLocalDate());
-		assertEquals(input[0], event.getBegin().toLocalTime());
-		assertEquals(input[1], event.getEnd().toLocalTime());
+		ACL18WorkshopParser.setSessionBeginEnd(input, beginDate, endDate, session);
+		assertEquals(beginDate, session.getBegin().toLocalDate());
+		assertEquals(endDate, session.getEnd().toLocalDate());
+		assertEquals(input[0], session.getBegin().toLocalTime());
+		assertEquals(input[1], session.getEnd().toLocalTime());
 	}
 }

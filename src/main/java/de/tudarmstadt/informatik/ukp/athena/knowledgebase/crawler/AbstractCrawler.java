@@ -7,7 +7,6 @@ import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Confer
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Paper;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Person;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.ScheduleEntry;
-import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Session;
 
 /**
  *

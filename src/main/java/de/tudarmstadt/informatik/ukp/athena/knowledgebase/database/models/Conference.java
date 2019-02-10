@@ -54,7 +54,7 @@ public class Conference {
 	@OneToMany(orphanRemoval=true)     //unidirectional relationship which
 	@JoinColumn(name="conferenceID")   //is saved in the Session table
 	@Column(name="sessions")
-	private Set<Session> sessions = new HashSet<>();
+	private Set<ScheduleEntry> sessions = new HashSet<>();
 
 	/**
 	 * Gets the unique id of this conference
@@ -172,7 +172,7 @@ public class Conference {
 	 * Gets the sessions making up this conference's schedule
 	 * @return The sessions making up this conference's schedule
 	 */
-	public Set<Session> getSessions(){
+	public Set<ScheduleEntry> getSessions(){
 		return sessions;
 	}
 
@@ -180,7 +180,7 @@ public class Conference {
 	 * Sets the sessions making up this conference's schedule
 	 * @param sessions The new sessions making up this conference's schedule
 	 */
-	public void setSessions(Set<Session> sessions){
+	public void setSessions(Set<ScheduleEntry> sessions){
 		this.sessions = sessions;
 	}
 

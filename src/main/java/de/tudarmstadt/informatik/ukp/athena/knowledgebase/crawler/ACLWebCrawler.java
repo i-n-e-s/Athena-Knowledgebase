@@ -19,6 +19,7 @@ import org.jsoup.select.Elements;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Conference;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Paper;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Person;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.ScheduleEntry;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Session;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.SessionCategory;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.SessionPart;
@@ -35,7 +36,6 @@ class ACLWebCrawler extends AbstractCrawler {
 	private String startURLPaper;
 	private String schedulePage = "https://acl2018.org/programme/schedule/";
 	private String aboutPage = "https://acl2018.org/";
-	private String workshopPage = "https://acl2018.org/workshops/";
 
 	/**
 	 * Only parses in the given year range. If only one year is needed, use the same input for both
@@ -333,19 +333,19 @@ class ACLWebCrawler extends AbstractCrawler {
 	}
 
 	@Override
-	public ArrayList<Session> getSchedule() throws IOException {
+	public ArrayList<ScheduleEntry> getSchedule() throws IOException {
 		System.out.println("Scraping conference schedule...");
-		ArrayList<Session> result = new ArrayList<>();
+		ArrayList<ScheduleEntry> result = new ArrayList<>();
 		System.out.println("Preparing data and starting 5 scraper threads...");
 		Element schedule = Jsoup.connect(schedulePage).get().select("#schedule").get(0);
 		Elements days = schedule.select(".day-schedule");
 		//threading :DD - takes about 1 minute 20 seconds without, 30 seconds with
 		ExecutorService executor = Executors.newFixedThreadPool(5);
-		Future<ArrayList<Session>> f1 = executor.submit(() -> parseFirstDay(days.get(0), new ArrayList<Session>()));
-		Future<ArrayList<Session>> f2 = executor.submit(() -> parseOtherDays(days.get(1), new ArrayList<Session>()));
-		Future<ArrayList<Session>> f3 = executor.submit(() -> parseOtherDays(days.get(2), new ArrayList<Session>()));
-		Future<ArrayList<Session>> f4 = executor.submit(() -> parseOtherDays(days.get(3), new ArrayList<Session>()));
-		Future<ArrayList<Session>> f5 = executor.submit(() -> parseWorkshops(new ArrayList<Session>()));
+		Future<ArrayList<ScheduleEntry>> f1 = executor.submit(() -> parseFirstDay(days.get(0), new ArrayList<ScheduleEntry>()));
+		Future<ArrayList<ScheduleEntry>> f2 = executor.submit(() -> parseOtherDays(days.get(1), new ArrayList<ScheduleEntry>()));
+		Future<ArrayList<ScheduleEntry>> f3 = executor.submit(() -> parseOtherDays(days.get(2), new ArrayList<ScheduleEntry>()));
+		Future<ArrayList<ScheduleEntry>> f4 = executor.submit(() -> parseOtherDays(days.get(3), new ArrayList<ScheduleEntry>()));
+		Future<ArrayList<ScheduleEntry>> f5 = executor.submit(ACL18WorkshopParser::parseWorkshops);
 		System.out.println("Waiting for thread results...");
 
 		try {
@@ -370,7 +370,7 @@ class ACLWebCrawler extends AbstractCrawler {
 	 * @param day The day element of the website
 	 * @param result The resulting arraylist with the complete sessions of the first day
 	 */
-	private ArrayList<Session> parseFirstDay(Element day, ArrayList<Session> result) {
+	private ArrayList<ScheduleEntry> parseFirstDay(Element day, ArrayList<ScheduleEntry> result) {
 		String[] monthDay = day.selectFirst(".day").text().split(":")[1].trim().split(" "); //the text has the form of "Sunday: July 15"
 		Elements tr = day.select("tr");
 
@@ -406,7 +406,7 @@ class ACLWebCrawler extends AbstractCrawler {
 	 * @param day The day element of the website
 	 * @param result The resulting arraylist with the complete sessions of the given day
 	 */
-	private ArrayList<Session> parseOtherDays(Element day, ArrayList<Session> result) {
+	private ArrayList<ScheduleEntry> parseOtherDays(Element day, ArrayList<ScheduleEntry> result) {
 		String[] monthDay = day.selectFirst(".day").text().split(":")[1].trim().split(" "); //the text has the form of "Sunday: July 15"
 		Elements tr = day.select("tr");
 
@@ -423,45 +423,6 @@ class ACLWebCrawler extends AbstractCrawler {
 				addPosterSessionInfo(tr.get(++i).select(".poster-sub-session"), session);
 
 			result.add(session);
-		}
-
-		return result;
-	}
-
-	/**
-	 * Parses ACL 2018's workshop schedule.
-	 * @param result The resulting arraylist with the complete workshop data
-	 */
-	private ArrayList<Session> parseWorkshops(ArrayList<Session> result) {
-		try {
-			Document doc = Jsoup.connect(workshopPage).get();
-			Elements content = doc.select(".post-content");
-			Elements days = content.select("ul");
-
-			//looping through both of the days at which workshops are happening
-			for(int i = 0; i < days.size(); i++) {
-				Element day = days.get(i);
-				Elements workshops = day.select("li");
-
-				//looping through all workshop elements in the current day
-				for(Element workshop : workshops) {
-					Session session = new Session();
-					String[] dayMonth = content.select("h4").get(i).text().split(" ", 2)[1].split(" ");
-					String[] titleRoom = workshop.text().split(": ");
-					String description = workshop.selectFirst("a").attr("href");//just the workshop link for now
-
-					session.setBegin(LocalDateTime.of(2018, CrawlerToolset.getMonthIndex(dayMonth[1]), Integer.parseInt(dayMonth[0]), 9, 0));
-					session.setEnd(LocalDateTime.of(2018, CrawlerToolset.getMonthIndex(dayMonth[1]), Integer.parseInt(dayMonth[0]), 17, 0)); //assume 5pm, because the schedule table is not 100% proportional
-					session.setTitle(titleRoom[0]);
-					session.setPlace(titleRoom[1]);
-					session.setDescription(description);
-					session.setCategory(SessionCategory.WORKSHOP);
-					result.add(session);
-				}
-			}
-		}
-		catch(IOException e) {
-			e.printStackTrace();
 		}
 
 		return result;
