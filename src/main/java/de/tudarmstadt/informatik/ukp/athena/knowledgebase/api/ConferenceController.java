@@ -87,13 +87,4 @@ public class ConferenceController {
 	public List<Conference> byAuthor(@PathVariable("value")long value) {
 		return access.getByAuthor(value);
 	}
-
-	/**
-	 * @param value The name of a paper that was shown at a conference
-	 * @return The conferences where the specified paper was shown at
-	 */
-	@RequestMapping("/byPaper/{value}") //TODO: perhaps arguments for finer control?
-	public List<Conference> byPaper(@PathVariable("value")long value) {
-		return access.getByPaper(value);
-	}
 }

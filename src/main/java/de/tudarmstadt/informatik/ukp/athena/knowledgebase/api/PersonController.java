@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.access.PersonCommonAccess;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.jpa.PersonJPAAccess;
-import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Author;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Paper;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Person;
 
@@ -49,8 +48,10 @@ public class PersonController {
 	public Set<Paper> getAuthors(@PathVariable("value")Long value) {
 		List<Person> persons = byPersonID(value);
 
-		if(persons.size() > 0 && persons.get(0) instanceof Author)
-			return ((Author)persons.get(0)).getPapers();
+		// TODO: Needs to be tested!
+
+		if(persons.size() > 0)
+			return (persons.get(0)).getPapers();
 		else return null;
 	}
 

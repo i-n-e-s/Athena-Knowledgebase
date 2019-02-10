@@ -3,10 +3,11 @@ package de.tudarmstadt.informatik.ukp.athena.knowledgebase.crawler;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Author;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Conference;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Paper;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Person;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.ScheduleEntry;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Session;
 
 /**
  *
@@ -17,20 +18,20 @@ import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Schedu
  */
 abstract class AbstractCrawler {
 	/**
-	 * Returns all authors who published in the year 2018
+	 * Returns all authors who published in the year range given to the crawler facade
 	 *
 	 * @return A list of all authors, an empty list when data not available
 	 * @throws IOException if Jsoup.connect fails
 	 */
-	public abstract ArrayList<Author> getAuthors() throws IOException;
+	public abstract ArrayList<Person> getAuthors() throws IOException;
 
 	/**
-	 * Returns all papers which were published in the year 2018
+	 * Returns all papers which were published n the year range given to the crawler facade
 	 *
 	 * @return A list of all papers, an empty list when data not available
 	 * @throws IOException if Jsoup.connect fails
 	 */
-	public abstract ArrayList<Paper> getPaperTitles() throws IOException;
+	public abstract ArrayList<Paper> getPapers() throws IOException;
 
 	/**
 	 * Returns a list of papers. Each object contains the paper's title and its authors
@@ -50,8 +51,8 @@ abstract class AbstractCrawler {
 	public abstract Conference getConferenceInformation() throws IOException;
 
 	/**
-	 * Returns a list of events.
-	 * @return A list of events, an empty list when data not available
+	 * Returns a list of sessions.
+	 * @return A list of sessions, an empty list when data not available
 	 * @throws IOException if Jsoup.connect fails
 	 */
 	public abstract ArrayList<ScheduleEntry> getSchedule() throws IOException;

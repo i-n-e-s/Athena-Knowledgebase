@@ -38,11 +38,6 @@ public class ConferenceHibernateAccess implements ConferenceCommonAccess {
 	}
 
 	@Override
-	public List<Conference> getByPaper(long paperID) { //TODO: implement this
-		return null;
-	}
-
-	@Override
 	public List<Conference> getByCity(String city) {
 		return getBy("city", city);
 	}
@@ -56,7 +51,7 @@ public class ConferenceHibernateAccess implements ConferenceCommonAccess {
 	 * Common code used by all get methods above
 	 * @param name The name of the column to restrict
 	 * @param value The value to restrict the selection to
-	 * @return A List of all persons with the given restriction
+	 * @return A List of all conferences with the given restriction
 	 */
 	private List<Conference> getBy(String name, Object value) {
 		Session session = HibernateUtils.getSessionFactory().openSession();

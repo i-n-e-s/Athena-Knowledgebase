@@ -6,12 +6,12 @@ import java.time.LocalDate;
 import org.junit.Assert;
 import org.junit.Test;
 
-import de.tudarmstadt.informatik.ukp.athena.knowledgebase.crawler.ACL18WebParser;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.crawler.ACLWebCrawler;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Conference;
 
 
 public class ACL18WebParserTest {
-	private ACL18WebParser acl18WebParser = new ACL18WebParser("2018", "2018");
+	private ACLWebCrawler acl18WebParser = new ACLWebCrawler("2018", "2018");
 	private Conference crawledConference = acl18WebParser.getConferenceInformation();
 
 	public ACL18WebParserTest() throws IOException {
@@ -24,8 +24,8 @@ public class ACL18WebParserTest {
 	}
 	@Test
 	public void testConferenceDates(){
-		Assert.assertEquals(LocalDate.of(2018,7,15), crawledConference.getStartDate());
-		Assert.assertEquals(LocalDate.of(2018,7,20), crawledConference.getEndDate());
+		Assert.assertEquals(LocalDate.of(2018,7,15), crawledConference.getBegin());
+		Assert.assertEquals(LocalDate.of(2018,7,20), crawledConference.getEnd());
 	}
 	@Test
 	public void testConferenceAddress(){

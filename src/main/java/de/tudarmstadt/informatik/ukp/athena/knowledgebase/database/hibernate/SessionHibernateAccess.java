@@ -1,5 +1,6 @@
 package de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.hibernate;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.hibernate.Criteria;
@@ -7,6 +8,7 @@ import org.hibernate.criterion.Restrictions;
 
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.access.SessionCommonAccess;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Session;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.SessionCategory;
 
 /**
  * @author Daniel Lehmann
@@ -14,8 +16,25 @@ import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Sessio
 @Deprecated
 public class SessionHibernateAccess implements SessionCommonAccess {
 	@Override
-	public List<Session> getById(Long id) {
+	public List<Session> getBySessionId(Long id) {
 		return getBy("sessionID", id);
+	}
+
+	@Override
+	public List<Session> getByStartTime(Integer year, Integer month, Integer day, Integer hour, Integer minute) {
+		LocalDateTime localDateTime = LocalDateTime.of(year, month, day, hour, minute);
+		return getBy("begin", localDateTime);
+	}
+
+	@Override
+	public List<Session> getByEndTime(Integer year, Integer month, Integer day, Integer hour, Integer minute) {
+		LocalDateTime localDateTime = LocalDateTime.of(year, month, day, hour, minute);
+		return getBy("end", localDateTime);
+	}
+
+	@Override
+	public List<Session> getByPlace(String place) {
+		return getBy("place", place);
 	}
 
 	@Override
@@ -29,15 +48,15 @@ public class SessionHibernateAccess implements SessionCommonAccess {
 	}
 
 	@Override
-	public List<Session> getByPlace(String place) {
-		return getBy("place", place);
+	public List<Session> getByCategory(SessionCategory category) {
+		return getBy("category", category);
 	}
 
 	/**
 	 * Common code used by all get methods above
 	 * @param name The name of the column to restrict
 	 * @param value The value to restrict the selection to
-	 * @return A List of all persons with the given restriction
+	 * @return A List of all sessions with the given restriction
 	 */
 	private List<Session> getBy(String name, Object value) {
 		org.hibernate.Session session = HibernateUtils.getSessionFactory().openSession();

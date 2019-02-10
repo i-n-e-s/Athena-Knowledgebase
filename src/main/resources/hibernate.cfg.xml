@@ -21,15 +21,13 @@
         <!--<property name="hibernate.connection.pool_size">32</property>-->
 
         <!--Mapping files entries-->
-        <mapping class="de.tudarmstadt.informatik.ukp.athenakp.database.models.Person" />
-        <mapping class="de.tudarmstadt.informatik.ukp.athenakp.database.models.Author" />
-        <mapping class="de.tudarmstadt.informatik.ukp.athenakp.database.models.Institution" />
-        <mapping class="de.tudarmstadt.informatik.ukp.athenakp.database.models.Paper" />
-        <mapping class="de.tudarmstadt.informatik.ukp.athenakp.database.models.Conference" />
-        <mapping class="de.tudarmstadt.informatik.ukp.athenakp.database.models.Event" />
-        <mapping class="de.tudarmstadt.informatik.ukp.athenakp.database.models.Session" />
-        <mapping class="de.tudarmstadt.informatik.ukp.athenakp.database.models.Subsession" />
-        <mapping class="de.tudarmstadt.informatik.ukp.athenakp.database.models.Workshop" />
+        <mapping class="de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Conference" />
+        <mapping class="de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Institution" />
+        <mapping class="de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Paper" />
+        <mapping class="de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Person" />
+        <mapping class="de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Session" />
+        <mapping class="de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.SessionPart" />
+        <mapping class="de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Workshop" />
         <!--<mapping class="/roseindia/Employee" />-->
 
     </session-factory>

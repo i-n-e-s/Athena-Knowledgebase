@@ -2,7 +2,7 @@ package de.tudarmstadt.informatik.ukp.athena.knowledgebase.database;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.TimeZone;
 
@@ -15,18 +15,14 @@ import de.tudarmstadt.informatik.ukp.athena.knowledgebase.JPASandBox;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.crawler.CrawlerFacade;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.crawler.SupportedConferences;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.access.ConferenceCommonAccess;
-import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.access.EventCommonAccess;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.access.PaperCommonAccess;
-import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.access.WorkshopCommonAccess;
-import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.hibernate.ConferenceHibernateAccess;
-import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.jpa.EventJPAAccess;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.access.SessionCommonAccess;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.jpa.ConferenceJPAAccess;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.jpa.PaperJPAAccess;
-import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.jpa.WorkshopJPAAccess;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.jpa.SessionJPAAccess;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Conference;
-import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Event;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Paper;
-import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.ScheduleEntry;
-import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Workshop;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Session;
 
 
 @SpringBootApplication
@@ -62,10 +58,9 @@ public class ParsedDataInserter {
 		SpringApplication.run(JPASandBox.class, args);
 		ParsedDataInserter parsedDataInserter;
 
-		List<String> argList = Arrays.asList(args);
 		String beginYear = "2018", endYear = "2018";
 
-		for(String arg : argList) {
+		for(String arg : args) {
 			if(arg.startsWith("-beginYear=")) {
 				String year = arg.split("=")[1];
 
@@ -81,20 +76,19 @@ public class ParsedDataInserter {
 		}
 
 		parsedDataInserter = new ParsedDataInserter(beginYear, endYear);
-		System.out.printf("Scraping years %s through %s", beginYear, endYear);
+		System.out.printf("Scraping years %s through %s - this can take a couple of minutes...\n", beginYear, endYear);
 
-		//		try {
-		//			parsedDataInserter.aclStorePapersAndAuthors();
-		//		} catch (IOException e) {
-		//			e.printStackTrace();
-		//		}
-		//		parsedDataInserter.acl2018StoreConferenceInformation();
-		parsedDataInserter.acl2018StoreEventInformation();
+		try {
+			parsedDataInserter.aclStorePapersAndAuthors();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		parsedDataInserter.acl2018StoreConferenceInformation(); //automatically saves the schedule as well
 		System.out.println("Done!");
 	}
 
 	/**
-	 * Constructs Author and Paper Objects from ACL18Webparser().getPaperAuthor() and adds them to the database
+	 * Constructs Person (Author) and Paper Objects from ACL18Webparser().getPaperAuthor() and adds them to the database
 	 * see its documentation for its makeup
 	 *
 	 * @throws IOException if jsoup was interrupted in the scraping process (during getPaperAuthor())
@@ -102,51 +96,65 @@ public class ParsedDataInserter {
 	 * TODO: implement saveandupdate in Common Access? Otherwise implement check if entry exist. Expensive?
 	 */
 	private void aclStorePapersAndAuthors() throws IOException {
-		System.out.println(" - this can take a couple of minutes..");
+		System.out.println("Scraping papers and authors...");
 		ArrayList<Paper> papers = acl18WebParser.getPaperAuthor();
-		System.out.println("Done scraping! Inserting data into database...");
 		PaperCommonAccess paperFiler = new PaperJPAAccess();
 		// PersonCommonAccess personfiler = new PersonJPAAccess();
 
-		for (Paper paper : papers) {
+		System.out.println("Inserting papers and authors into database...");
+
+		for(Paper paper : papers) {
 			paperFiler.add(paper);
 		}
+
+		System.out.println("Done inserting papers and authors!");
 	}
 
 	/**
-	 * Stores the acl2018 conference into the database
+	 * Stores the acl2018 conference including the schedule into the database
 	 */
 	private void acl2018StoreConferenceInformation() {
-		ConferenceCommonAccess conferenceCommonAccess = new ConferenceHibernateAccess();
-		try{
+		ConferenceCommonAccess conferenceCommonAccess = new ConferenceJPAAccess();
+
+		try {
 			Conference acl2018 = acl18WebParser.getConferenceInformation();
+
+			acl2018.setSessions(new HashSet<Session>(acl2018StoreSchedule())); //acl2018StoreSchedule returns a list, passing that to the hashset initializes the set with the list elements
+			System.out.println("Inserting conference into database...");
 			conferenceCommonAccess.add(acl2018);
+			System.out.println("Done inserting!");
 		}
-		catch (IOException e){
+		catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
 
 	/**
-	 * Stores the acl2018 conference's timetable into the database
+	 * Stores the acl2018 conference's schedule into the database
+	 * @return The scraped and stored sessions
 	 */
-	private void acl2018StoreEventInformation() {
-		EventCommonAccess eventCommonAccess = new EventJPAAccess();
+	private List<Session> acl2018StoreSchedule() {
+		SessionCommonAccess sessionCommonAccess = new SessionJPAAccess();
 		WorkshopCommonAccess workshopCommonAccess = new WorkshopJPAAccess();
+		List<ScheduleEntry> sessions = new ArrayList<>(); //initialize in case anything fails
 
 		try {
-			ArrayList<ScheduleEntry> entries = acl18WebParser.getSchedule();
+			sessions = acl18WebParser.getSchedule();
 
+			System.out.println("Inserting schedule into database...");
+			//add to database
 			for(ScheduleEntry entry : entries) {
 				if(entry instanceof Event)
 					eventCommonAccess.add((Event)entry);
 				else if(entry instanceof Workshop)
 					workshopCommonAccess.add((Workshop)entry);
 			}
-
+			System.out.println("Done inserting!");
 		}
 		catch(IOException e){
 			e.printStackTrace();
 		}
+
+		return sessions;
 	}
 }
