@@ -53,7 +53,7 @@ public class Session {
 
 	/* Associated papers */
 	@Column(name = "paperTitles")
-	@ElementCollection //similar to @JoinTable, but for model -> datatype relations instead of model -> model
+	@ElementCollection(fetch = FetchType.EAGER) //similar to @JoinTable, but for model -> datatype relations instead of model -> model
 	private Set<String> paperTitles = new HashSet<>();
 
 	/* Papers, if any */
