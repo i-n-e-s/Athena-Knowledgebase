@@ -31,7 +31,61 @@ public class QueryManager {
 	public List<?> manage(RequestNode tree) {
 		if(tree.getHierarchy().size() == 1)
 			return buildSimpleQuery(tree);
-		return null;
+		else return buildComplexQuery(tree);
+	}
+
+	/**
+	 * Creates a request with a hierarchy
+	 * @see QueryManager#manage(RequestNode)
+	 */
+	private List<?> buildComplexQuery(RequestNode tree) {
+		List<String> queryList = new ArrayList<>();
+		Map<String,Object> sqlVars = new HashMap<>(); //replace key with value later, this is user input
+		String previousEntityVar = null; //used for hierarchical relationship
+
+		queryList.add("SELECT");
+		queryList.add(":entityVar"); //when initially building the query, it's not known which entity is placed last in the request
+		queryList.add("FROM");
+
+		//build the FROM statement
+		for(RequestHierarchyNode hierarchyNode : tree.getHierarchy()) {
+			String normalEntityName = hierarchyNode.getEntity().getEntityName().getString();
+			String entityName = capitalizeFirstLetter(normalEntityName);
+			String entityVar = normalEntityName.substring(0, 2);
+
+			sqlVars.put(":entityVar", "" + entityVar); //the last one will be in the output
+
+			//if it's the first entity, there shouldn't be a join
+			if(previousEntityVar == null)
+				queryList.add(entityName + " " + entityVar);
+			else //normal entity name because it's the name of the field
+				queryList.add("JOIN " + previousEntityVar + "." + normalEntityName + "s" + " " + entityVar); //TODO: this s is for the plural form, might want to rename the corresponding columns to singular just to not have to handle multiple plural forms
+
+			previousEntityVar = entityVar;
+		}
+
+		queryList.add("WHERE");
+
+		//now set the attributes
+		for(RequestHierarchyNode hierarchyNode : tree.getHierarchy()) {
+			RequestEntityNode entityNode = hierarchyNode.getEntity();
+			String entityVar = entityNode.getEntityName().getString().substring(0, 2);
+
+			//loop through the attributes (if any)
+			for(AttributeNode attr : entityNode.getAttributes()) {
+				String attrName = attr.getName().getString();
+				String sqlVar = entityVar + "_" + attrName; //used later to replace with actual user input after it was automatically sanitized
+
+				queryList.add(entityVar + "." + attrName + "=:" + sqlVar);
+				setAttributeCorrectly(attr, sqlVars, sqlVar);
+				queryList.add("and");
+			}
+		}
+
+		if(queryList.get(queryList.size() - 1).equals("and")) //remove the last and if there is one
+			queryList.remove(queryList.size() - 1);
+
+		return createQuery(queryList, sqlVars).getResultList();
 	}
 
 	/**
@@ -104,6 +158,10 @@ public class QueryManager {
 			qlString += s + " ";
 		}
 
+		//set the :entityVar variable manually as parameters are not supported in the SELECT part
+		if(sqlVars.containsKey(":entityVar"))
+			qlString = qlString.replace(":entityVar", (String)sqlVars.remove(":entityVar")); //remove returns the previously associated value as well
+
 		Query query = entityManager.createQuery(qlString); //create the base query
 
 		//sanitize user input
@@ -129,8 +187,6 @@ public class QueryManager {
 	private String capitalizeFirstLetter(String string) {
 		if(string == null || string.isEmpty())
 			return "";
-		else if(string.length() == 1) //just to be safe
-			return "" + Character.toUpperCase(string.charAt(0));
 		else return Character.toUpperCase(string.charAt(0)) + string.substring(1);
 	}
 }
