@@ -36,7 +36,6 @@ public class RequestToken {
 		END, //the end of the world (well, more like the request)
 		ERROR, //an error (duh!)
 		HIERARCHY_SEPERATOR, // /
-		JOIN, // $
 		NAME, //an entity or attribute name
 		NUMBER, //a number (duh!)
 		SPACE; // +

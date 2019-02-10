@@ -14,9 +14,11 @@ import de.tudarmstadt.informatik.ukp.athenakp.api.ast.AttributeNode;
 import de.tudarmstadt.informatik.ukp.athenakp.api.ast.NumberAttributeNode;
 import de.tudarmstadt.informatik.ukp.athenakp.api.ast.NumberNode;
 import de.tudarmstadt.informatik.ukp.athenakp.api.ast.RequestEntityNode;
+import de.tudarmstadt.informatik.ukp.athenakp.api.ast.RequestHierarchyNode;
 import de.tudarmstadt.informatik.ukp.athenakp.api.ast.RequestNode;
 import de.tudarmstadt.informatik.ukp.athenakp.api.ast.StringAttributeNode;
 import de.tudarmstadt.informatik.ukp.athenakp.database.jpa.PersistenceManager;
+import de.tudarmstadt.informatik.ukp.athenakp.database.models.EventCategory;
 
 public class QueryManager {
 	private EntityManager entityManager = PersistenceManager.getEntityManager();
@@ -33,52 +35,60 @@ public class QueryManager {
 	}
 
 	/**
-	 * Creates a request without joins or hierarchy
+	 * Creates a request without a hierarchy
 	 * @see QueryManager#manage(RequestNode)
 	 */
 	private List<?> buildSimpleQuery(RequestNode tree) {
 		List<String> queryList = new ArrayList<>(); //the parts of the query string, to be built in createQuery below
 		Map<String,Object> sqlVars = new HashMap<>(); //replace key with value later, this is user input
 
-		for(RequestEntityNode entity : tree.getHierarchy().get(0).getEntities()) {
-			String entityName = capitalizeFirstLetter(entity.getEntityName().getString()); //needs to be capitalized because the entities are mapped that way
+		RequestEntityNode entity = tree.getHierarchy().get(0).getEntity();
+		String entityName = capitalizeFirstLetter(entity.getEntityName().getString()); //needs to be capitalized because the entities are mapped that way
 
-			queryList.add("FROM " + entityName);
+		queryList.add("FROM " + entityName);
 
-			if(entity.getAttributes().size() > 0) //this is only the case if the request is not something like /paper to get all the papers
-				queryList.add("WHERE");
+		if(entity.getAttributes().size() > 0) //this is only the case if the request is not something like /paper to get all the papers
+			queryList.add("WHERE");
 
-			//loop through the attributes (if any)
-			for(AttributeNode attr : entity.getAttributes()) {
-				String attrName = attr.getName().getString();
-				String sqlVar = entityName + "_" + attrName; //used later to replace with actual user input after it was automatically sanitized
+		//loop through the attributes (if any)
+		for(AttributeNode attr : entity.getAttributes()) {
+			String attrName = attr.getName().getString();
+			String sqlVar = entityName + "_" + attrName; //used later to replace with actual user input after it was automatically sanitized
 
-				queryList.add(attrName + "=:" + sqlVar);
-
-				//nothing extra needs to be done for a string node other than assigning its value to the the sql var
-				if(attr instanceof StringAttributeNode)
-					sqlVars.put(sqlVar, ((StringAttributeNode)attr).getValue().getString());
-				//construct the sql value for the number node out of the numbers
-				else if(attr instanceof NumberAttributeNode) {
-					List<NumberNode> numbers = ((NumberAttributeNode)attr).getNumbers();
-
-					//yes, vars can be any object
-					switch(numbers.size()) {
-						case 5:
-							sqlVars.put(sqlVar, LocalDateTime.of(numbers.get(0).getNumber(), numbers.get(1).getNumber(), numbers.get(2).getNumber(), numbers.get(3).getNumber(), numbers.get(4).getNumber()));
-							break;
-						case 3:
-							sqlVars.put(sqlVar, LocalDate.of(numbers.get(0).getNumber(), numbers.get(1).getNumber(), numbers.get(2).getNumber()).toString());
-							break;
-						case 1:
-							sqlVars.put(sqlVar, EventCategory.values()[numbers.get(0).getNumber()]);
-							break;
-					}
-				}
-			}
+			queryList.add(attrName + "=:" + sqlVar);
+			setAttributeCorrectly(attr, sqlVars, sqlVar);
 		}
 
 		return createQuery(queryList, sqlVars).getResultList();
+	}
+
+	/**
+	 * Sets the SQL variable for the given attribute to the correct value
+	 * @param attr The attribute
+	 * @param sqlVars The data structure to store the SQL variable -> value mapping in
+	 * @param sqlVar The SQL variable name to use
+	 */
+	private void setAttributeCorrectly(AttributeNode attr, Map<String,Object> sqlVars, String sqlVar) {
+		//nothing extra needs to be done for a string node other than assigning its value to the the sql var
+		if(attr instanceof StringAttributeNode)
+			sqlVars.put(sqlVar, ((StringAttributeNode)attr).getValue().getString());
+		//construct the sql value for the number node out of the numbers
+		else if(attr instanceof NumberAttributeNode) {
+			List<NumberNode> numbers = ((NumberAttributeNode)attr).getNumbers();
+
+			//yes, vars can be any object
+			switch(numbers.size()) {
+				case 5:
+					sqlVars.put(sqlVar, LocalDateTime.of(numbers.get(0).getNumber(), numbers.get(1).getNumber(), numbers.get(2).getNumber(), numbers.get(3).getNumber(), numbers.get(4).getNumber()));
+					break;
+				case 3:
+					sqlVars.put(sqlVar, LocalDate.of(numbers.get(0).getNumber(), numbers.get(1).getNumber(), numbers.get(2).getNumber()).toString());
+					break;
+				case 1:
+					sqlVars.put(sqlVar, EventCategory.values()[numbers.get(0).getNumber()]);
+					break;
+			}
+		}
 	}
 
 	/**

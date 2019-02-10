@@ -99,9 +99,6 @@ public class RequestScanner {
 			case '/':
 				appendCharacter();
 				return RequestTokenType.HIERARCHY_SEPERATOR;
-			case '$':
-				appendCharacter();
-				return RequestTokenType.JOIN;
 			case '+':
 				appendCharacter();
 				return RequestTokenType.SPACE;

@@ -15,9 +15,9 @@ public class RequestScannerTest {
 
 	@Before
 	public void setup() {
-		uut1 = new RequestScanner("/paper:author=Daniel+Klingbein&topic=vogonpoetry$author:obit=1993+05+22"); //syntactically correct
-		uut2 = new RequestScanner("/paper:author=Daniel+Klingbein&topic|vogonpoetry$author:obit=1993+05+22"); //syntactically incorrect, unknown symbol in the middle (|)
-		uut3 = new RequestScanner("/paper:author=Daniel+Klingbein&topic&vogonpoetry$author:obit=1993+05+22"); //syntactically incorrect, symbol at incorrect position (& instead of = in the middle)
+		uut1 = new RequestScanner("/paper:author=Daniel+Klingbein&topic=vogonpoetry"); //syntactically correct
+		uut2 = new RequestScanner("/paper:author=Daniel+Klingbein&topic|vogonpoetry"); //syntactically incorrect, unknown symbol in the middle (|)
+		uut3 = new RequestScanner("/paper:author=Daniel+Klingbein&topic&vogonpoetry"); //syntactically incorrect, symbol at incorrect position (& instead of = in the middle)
 	}
 
 	@Test
@@ -38,17 +38,7 @@ public class RequestScannerTest {
 		expected.add(new RequestToken(RequestTokenType.NAME, "topic", 31));
 		expected.add(new RequestToken(RequestTokenType.ATTR_EQ, "=", 36));
 		expected.add(new RequestToken(RequestTokenType.NAME, "vogonpoetry", 37));
-		expected.add(new RequestToken(RequestTokenType.JOIN, "$", 48));
-		expected.add(new RequestToken(RequestTokenType.NAME, "author", 49));
-		expected.add(new RequestToken(RequestTokenType.ATTR_SPECIFIER, ":", 55));
-		expected.add(new RequestToken(RequestTokenType.NAME, "obit", 56));
-		expected.add(new RequestToken(RequestTokenType.ATTR_EQ, "=", 60));
-		expected.add(new RequestToken(RequestTokenType.NUMBER, "1993", 61));
-		expected.add(new RequestToken(RequestTokenType.SPACE, "+", 65));
-		expected.add(new RequestToken(RequestTokenType.NUMBER, "05", 66));
-		expected.add(new RequestToken(RequestTokenType.SPACE, "+", 68));
-		expected.add(new RequestToken(RequestTokenType.NUMBER, "22", 69));
-		expected.add(new RequestToken(RequestTokenType.END, "<end>", 71));
+		expected.add(new RequestToken(RequestTokenType.END, "<end>", 48));
 
 		assertEquals("Actual size is not equal to expected size!", expected.size(), actual.size());
 
@@ -72,17 +62,7 @@ public class RequestScannerTest {
 		expected.add(new RequestToken(RequestTokenType.NAME, "topic", 31));
 		expected.add(new RequestToken(RequestTokenType.ERROR, "|", 36));
 		expected.add(new RequestToken(RequestTokenType.NAME, "vogonpoetry", 37));
-		expected.add(new RequestToken(RequestTokenType.JOIN, "$", 48));
-		expected.add(new RequestToken(RequestTokenType.NAME, "author", 49));
-		expected.add(new RequestToken(RequestTokenType.ATTR_SPECIFIER, ":", 55));
-		expected.add(new RequestToken(RequestTokenType.NAME, "obit", 56));
-		expected.add(new RequestToken(RequestTokenType.ATTR_EQ, "=", 60));
-		expected.add(new RequestToken(RequestTokenType.NUMBER, "1993", 61));
-		expected.add(new RequestToken(RequestTokenType.SPACE, "+", 65));
-		expected.add(new RequestToken(RequestTokenType.NUMBER, "05", 66));
-		expected.add(new RequestToken(RequestTokenType.SPACE, "+", 68));
-		expected.add(new RequestToken(RequestTokenType.NUMBER, "22", 69));
-		expected.add(new RequestToken(RequestTokenType.END, "<end>", 71));
+		expected.add(new RequestToken(RequestTokenType.END, "<end>", 48));
 
 		assertEquals("Actual size is not equal to expected size!", expected.size(), actual.size());
 
@@ -106,17 +86,7 @@ public class RequestScannerTest {
 		expected.add(new RequestToken(RequestTokenType.NAME, "topic", 31));
 		expected.add(new RequestToken(RequestTokenType.ATTR_SEPERATOR, "&", 36));
 		expected.add(new RequestToken(RequestTokenType.NAME, "vogonpoetry", 37));
-		expected.add(new RequestToken(RequestTokenType.JOIN, "$", 48));
-		expected.add(new RequestToken(RequestTokenType.NAME, "author", 49));
-		expected.add(new RequestToken(RequestTokenType.ATTR_SPECIFIER, ":", 55));
-		expected.add(new RequestToken(RequestTokenType.NAME, "obit", 56));
-		expected.add(new RequestToken(RequestTokenType.ATTR_EQ, "=", 60));
-		expected.add(new RequestToken(RequestTokenType.NUMBER, "1993", 61));
-		expected.add(new RequestToken(RequestTokenType.SPACE, "+", 65));
-		expected.add(new RequestToken(RequestTokenType.NUMBER, "05", 66));
-		expected.add(new RequestToken(RequestTokenType.SPACE, "+", 68));
-		expected.add(new RequestToken(RequestTokenType.NUMBER, "22", 69));
-		expected.add(new RequestToken(RequestTokenType.END, "<end>", 71));
+		expected.add(new RequestToken(RequestTokenType.END, "<end>", 48));
 
 		assertEquals("Actual size is not equal to expected size!", expected.size(), actual.size());
 

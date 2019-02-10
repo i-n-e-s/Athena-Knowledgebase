@@ -53,15 +53,8 @@ public class RequestParser {
 		accept();
 
 		//the first part of a request is always an entity name
-		if(currentToken.type == RequestTokenType.NAME) {
-			node.addEntity(parseRequestEntity());
-		}
-
-		//the rest can only be started by joins
-		while(currentToken != null && currentToken.type == RequestTokenType.JOIN) {
-			accept(); //accept the $
-			node.addEntity(parseRequestEntity());
-		}
+		if(currentToken.type == RequestTokenType.NAME)
+			node.setEntity(parseRequestEntity());
 
 		return node;
 	}
