@@ -20,7 +20,7 @@ import de.tudarmstadt.informatik.ukp.athenakp.api.ast.StringAttributeNode;
 import de.tudarmstadt.informatik.ukp.athenakp.database.jpa.PersistenceManager;
 import de.tudarmstadt.informatik.ukp.athenakp.database.models.EventCategory;
 
-public class QueryManager {
+public class QueryBuilder {
 	private EntityManager entityManager = PersistenceManager.getEntityManager();
 
 	/**
@@ -28,7 +28,7 @@ public class QueryManager {
 	 * @param tree The request tree to build the request from
 	 * @return The result list of the query
 	 */ //size of 40 lines is exceeded in favor of readability (=> normalEntityName, entityName, entityVar etc. could be removed to meet the requirement)
-	public List<?> manage(RequestNode tree) {
+	public List<?> buildAndSend(RequestNode tree) {
 		List<String> queryList = new ArrayList<>();
 		Map<String,Object> sqlVars = new HashMap<>(); //replace key with value later, this is user input
 		String previousEntityVar = null; //used for hierarchical relationship

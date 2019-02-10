@@ -29,8 +29,8 @@ public class APIController {
 			tree = parser.parse();
 			RequestVerifier.verify(tree); //if no exception is thrown, the verification was successful
 
-			QueryManager queryManager = new QueryManager();
-			List<?> result = queryManager.manage(tree);
+			QueryBuilder queryManager = new QueryBuilder();
+			List<?> result = queryManager.buildAndSend(tree);
 
 			queryManager.close();
 			return result;
