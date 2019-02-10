@@ -1,17 +1,33 @@
 package de.tudarmstadt.informatik.ukp.athenakp.crawler.OpenStreetMaps;
 
+import org.junit.Before;
 import org.junit.Test;
 
 
 import static org.junit.Assert.*;
 
 public class openStreetRequestBuilderTest {
+	private openStreetRequestBuilder openStreetRequestBuilder;
+	@Test
+	@Before
+	public void setUp() throws Exception {
+		this.openStreetRequestBuilder = new openStreetRequestBuilder("toilets", 48.5657094, 13.4490548, 48.5662416, 13.4501676, 150);
+	}
 	@Test
 	public void run() {
-		openStreetRequestBuilder hark = new openStreetRequestBuilder("toilets", 48.5657094, 13.4490548, 48.5662416, 13.4501676, 150);
 		int response;
-		System.out.println(hark.run());
-		response = hark.recentResponseCode;
+		openStreetRequestBuilder.run();
+		response = openStreetRequestBuilder.recentResponseCode;
 		assertEquals(200, response);
+	}
+
+	@Test
+	public void run1() {
+		openStreetRequestBuilder.run();
+	}
+
+	@Test
+	public void resolveJsonNull() {
+		assertNull(openStreetRequestBuilder.resolveJson(null));
 	}
 }

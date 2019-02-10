@@ -48,6 +48,9 @@ public class openStreetRequestBuilder {
 	}
 
 	/**
+	 * this method builds a request URL which is used to query the overpass API
+	 * the order of minLat, minLong, maxLat, maxLong can be different for other geo-APIs (like Nominatim) but is the
+	 * standard for this API
 	 * @return the request URL, not null
 	 *
 	 */
@@ -67,6 +70,12 @@ public class openStreetRequestBuilder {
 				"];out;";
 	}
 
+	/**
+	 * This method uses the generated Request URL to obtain an input Stream, which it reads, translates it
+	 * into a JSON Array of Data from the Overpass API and finally resolves this data to a usable List of Locations for
+	 * the StreetMapsController
+	 * @return a list of Locations
+	 */
 	public List<Location> run() {
 		// instead of wasting 3+ hours on implementing a dynamic conversion from xml to json,
 		// the undocumented [out:json]; command works just as well.
@@ -74,31 +83,36 @@ public class openStreetRequestBuilder {
 		String searchRequestURL = buildRequestURL();
 
 		// Create Connection and set basic parameters
+		// if this fails, we return null and cry
 		try {
 			URL url = new URL(searchRequestURL);
 			HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+			// sourced from Philipp's work with the Semantic Scholar API
 			connection.setDoOutput(true);
 			connection.setInstanceFollowRedirects(false);
 			connection.setConnectTimeout(30 * 1000);        // 30s
 			connection.setUseCaches(false);                 // Don't cache anything
 
 			connection.setRequestMethod("GET");
-
 			BufferedInputStream bis = new BufferedInputStream(connection.getInputStream());
+			// starting here we read and resolve the InputStream
 			ByteArrayOutputStream buf = new ByteArrayOutputStream();
 			int result2 = bis.read();
-			// sourced from Philipp's work with the Semantic Scholar API
+
 			while (result2 != -1) {
 				buf.write((byte) result2);
 				result2 = bis.read();
 			}
+			// we create a JSON Object out of the buffer
 			JSONObject jsonObject = new JSONObject(buf.toString());
+			// because of how the Overpass Data is structured, we only care about this part
 			JSONArray locations = jsonObject.getJSONArray("elements");
+			// after having run the method, we can now call the recentResponseCode to troubleshoot if necessary
 			recentResponseCode = connection.getResponseCode();
-			// return buf.toString();
-			System.out.println(locations);
+			// finally, we call resolveJson our JSONArray of locations and return the result
 			return resolveJson(locations);
 		}catch (IOException e){
+			System.out.println("connection error, returned null");
 			return null;
 		}
 	}
@@ -108,11 +122,17 @@ public class openStreetRequestBuilder {
 	 * @param locations a JSONArray of nodes in the openStreetMap sense, not null
 	 * @return a list of Locations which are then collected from the API
 	 */
-	private List<Location> resolveJson(JSONArray locations){
-		int jsonLength = locations.length();
+	 List<Location> resolveJson(JSONArray locations){
+	 	// this should never happen
+	 	if (locations == null){
+	 		System.out.println("JSONArray of locations was null");
+	 		return null;
+		}
+		// instantiates a list of Locations that will be passed along by the controller method
 		List <Location> locationObjects = new ArrayList<>();
-		for (int i = 0; i < jsonLength; i++) {
+		for (int i = 0; i < locations.length(); i++) {
 			JSONObject curObject = locations.getJSONObject(i);
+			// creates a new Location and sets its attributes
 			Location curLocation = new Location();
 			curLocation.setId(curObject.getLong("id"));
 			curLocation.setLon(curObject.getDouble("lon"));
@@ -120,6 +140,7 @@ public class openStreetRequestBuilder {
 			curLocation.setType(curObject.getString("type"));
 			JSONObject tags = (JSONObject) curObject.get("tags");
 			curLocation.setAmenity(tags.getString("amenity"));
+			// add it to our list
 			locationObjects.add(curLocation);
 		}
 		return locationObjects;
