@@ -49,7 +49,6 @@ public class ACL18WorkshopParser {
 					String[] titleAbbr = complTitleRoom[0].split("\\(");
 					LocalDate date = LocalDate.of(2018, CrawlerToolset.getMonthIndex(dayMonth[1]), Integer.parseInt(dayMonth[0]));
 
-					workshop.setConferenceName("ACL 2018");
 					workshop.setBegin(LocalDateTime.of(date, LocalTime.of(9, 0)));
 					workshop.setEnd(LocalDateTime.of(date, LocalTime.of(17, 0))); //assume 5pm, because the schedule table is not 100% proportional
 					workshop.setTitle(titleAbbr[0].trim());

@@ -2,7 +2,6 @@ package de.tudarmstadt.informatik.ukp.athena.knowledgebase.database;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.TimeZone;
 
@@ -82,11 +81,11 @@ public class ParsedDataInserter {
 		parsedDataInserter = new ParsedDataInserter(beginYear, endYear);
 		System.out.printf("Scraping years %s through %s - this can take a couple of minutes...\n", beginYear, endYear);
 
-		try {
-			parsedDataInserter.aclStorePapersAndAuthors();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		//		try {
+		//			parsedDataInserter.aclStorePapersAndAuthors();
+		//		} catch (IOException e) {
+		//			e.printStackTrace();
+		//		}
 		parsedDataInserter.acl2018StoreConferenceInformation(); //automatically saves the schedule as well
 		System.out.println("Done!");
 	}
@@ -122,8 +121,15 @@ public class ParsedDataInserter {
 
 		try {
 			Conference acl2018 = acl18WebParser.getConferenceInformation();
+			List<ScheduleEntry> entries = acl2018StoreSchedule();
 
-			acl2018.setSessions(new HashSet<ScheduleEntry>(acl2018StoreSchedule())); //acl2018StoreSchedule returns a list, passing that to the hashset initializes the set with the list elements
+			for(ScheduleEntry entry : entries) {
+				if(entry instanceof Session)
+					acl2018.addSession((Session)entry);
+				else if(entry instanceof Workshop)
+					acl2018.addWorkshop((Workshop)entry);
+			}
+
 			System.out.println("Inserting conference into database...");
 			conferenceCommonAccess.add(acl2018);
 			System.out.println("Done inserting!");

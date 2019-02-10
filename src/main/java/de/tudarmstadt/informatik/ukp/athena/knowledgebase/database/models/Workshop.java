@@ -32,9 +32,6 @@ public class Workshop implements ScheduleEntry {
 	/* Abbreviation */
 	@Column(name = "abbreviation")
 	private String abbreviation;
-	/*Name of conference this workshop belongs to*/
-	@Column(name="conferenceName")
-	private String conferenceName;
 
 	/*Start time*/
 	@Column(name="begin")
@@ -69,22 +66,6 @@ public class Workshop implements ScheduleEntry {
 	 */
 	public void setId(long id) {
 		this.workshopID = id;
-	}
-
-	/**
-	 * Gets the conference name this workshop belongs to
-	 * @return The conference this workshop belongs to
-	 */
-	public String getConferenceName() {
-		return conferenceName;
-	}
-
-	/**
-	 * Sets this workshop's conference's name
-	 * @param conferenceName The new conference
-	 */
-	public void setConferenceName(String conferenceName) {
-		this.conferenceName = conferenceName;
 	}
 
 	/**

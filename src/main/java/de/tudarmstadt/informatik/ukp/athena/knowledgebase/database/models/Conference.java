@@ -54,7 +54,11 @@ public class Conference {
 	@OneToMany(orphanRemoval=true)     //unidirectional relationship which
 	@JoinColumn(name="conferenceID")   //is saved in the Session table
 	@Column(name="sessions")
-	private Set<ScheduleEntry> sessions = new HashSet<>();
+	private Set<Session> sessions = new HashSet<>();
+	/*The workshops*/;
+	@OneToMany(orphanRemoval=true)     //unidirectional relationship which
+	@JoinColumn(name="conferenceID")   //is saved in the Session table
+	private Set<Workshop> workshops = new HashSet<>();
 
 	/**
 	 * Gets the unique id of this conference
@@ -172,7 +176,7 @@ public class Conference {
 	 * Gets the sessions making up this conference's schedule
 	 * @return The sessions making up this conference's schedule
 	 */
-	public Set<ScheduleEntry> getSessions(){
+	public Set<Session> getSessions(){
 		return sessions;
 	}
 
@@ -180,8 +184,40 @@ public class Conference {
 	 * Sets the sessions making up this conference's schedule
 	 * @param sessions The new sessions making up this conference's schedule
 	 */
-	public void setSessions(Set<ScheduleEntry> sessions){
+	public void setSessions(Set<Session> sessions){
 		this.sessions = sessions;
+	}
+
+	/**
+	 * Adds a session to this conference's list of sessions
+	 * @param session The session
+	 */
+	public void addSession(Session session) {
+		sessions.add(session);
+	}
+
+	/**
+	 * Gets the workshops in this conference's schedule
+	 * @return The workshops in this conference's schedule
+	 */
+	public Set<Workshop> getWorkshops(){
+		return workshops;
+	}
+
+	/**
+	 * Sets the workshop in this conference's schedule
+	 * @param workshops The new workshops in this conference's schedule
+	 */
+	public void setWorkshops(Set<Workshop> workshops){
+		this.workshops = workshops;
+	}
+
+	/**
+	 * Adds a workshop to this conference's list of workshops
+	 * @param workshop The workshop
+	 */
+	public void addWorkshop(Workshop workshop) {
+		workshops.add(workshop);
 	}
 
 	/*
