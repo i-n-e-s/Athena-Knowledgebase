@@ -21,7 +21,6 @@ import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Instit
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Paper;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Person;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Session;
-import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.SessionCategory;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.SessionPart;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.exception.VerificationFailedException;
 
@@ -62,7 +61,7 @@ public class RequestVerifier {
 						numberAttributeMap.put(field.getName(), 5);
 					else if(fieldTypeName.equals(java.time.LocalDate.class.getName()))
 						numberAttributeMap.put(field.getName(), 3);
-					else if(fieldTypeName.equals(SessionCategory.class.getName()))
+					else if(fieldTypeName.equals(de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.SessionCategory.class.getName()) || fieldTypeName.equals("long"))
 						numberAttributeMap.put(field.getName(), 1);
 				}
 				else if(field.isAnnotationPresent(JoinTable.class) && field.isAnnotationPresent(Hierarchy.class)) {
