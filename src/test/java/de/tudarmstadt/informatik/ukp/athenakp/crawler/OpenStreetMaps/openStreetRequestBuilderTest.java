@@ -10,8 +10,10 @@ public class openStreetRequestBuilderTest {
 	private openStreetRequestBuilder openStreetRequestBuilder;
 	@Test
 	@Before
-	public void setUp() throws Exception {
-		this.openStreetRequestBuilder = new openStreetRequestBuilder("toilets", 48.5657094, 13.4490548, 48.5662416, 13.4501676, 150);
+	public void setUp() {
+		this.openStreetRequestBuilder = new openStreetRequestBuilder("toilets",
+				48.5657094, 13.4490548, 48.5662416,
+				13.4501676, 150);
 	}
 	@Test
 	public void run() {

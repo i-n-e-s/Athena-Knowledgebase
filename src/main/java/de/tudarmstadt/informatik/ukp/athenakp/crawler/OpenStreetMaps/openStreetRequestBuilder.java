@@ -1,6 +1,7 @@
 package de.tudarmstadt.informatik.ukp.athenakp.crawler.OpenStreetMaps;
 
 import de.tudarmstadt.informatik.ukp.athenakp.database.models.Location;
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -54,6 +55,7 @@ public class openStreetRequestBuilder {
 	 * @return the request URL, not null
 	 *
 	 */
+	@NotNull
 	private String buildRequestURL(){
 		return "http://overpass-api.de/api/interpreter?data=[out:json];node(" +
 				minLatitude.toString() +
