@@ -43,7 +43,8 @@ public class QueryManager {
 		for(RequestEntityNode entity : tree.getHierarchy().get(0).getEntities()) {
 			String entityName = entity.getEntityName().getString();
 
-			queryList.add("SELECT * FROM " + entityName);
+			entityName = Character.toUpperCase(entityName.charAt(0)) + entityName.substring(1);
+			queryList.add("FROM " + entityName);
 
 			if(entity.getAttributes().size() > 0)
 				queryList.add("WHERE");
@@ -62,8 +63,6 @@ public class QueryManager {
 				else if(attr instanceof NumberAttributeNode) {
 					List<NumberNode> numbers = ((NumberAttributeNode)attr).getNumbers();
 
-					//TODO: localdatetime does not work because of colons :(
-					//		escaping doesn't work either for some reason
 					switch(numbers.size()) {
 						case 5:
 							sqlVars.put(sqlVar, LocalDateTime.of(numbers.get(0).getNumber(), numbers.get(1).getNumber(), numbers.get(2).getNumber(), numbers.get(3).getNumber(), numbers.get(4).getNumber()));
@@ -95,7 +94,7 @@ public class QueryManager {
 			qlString += s + " ";
 		}
 
-		Query query = entityManager.createNativeQuery(qlString); //create the base query
+		Query query = entityManager.createQuery(qlString); //create the base query
 
 		for(String key : sqlVars.keySet()) { //sanitize user input
 			query = query.setParameter(key, sqlVars.get(key));
