@@ -67,7 +67,7 @@ public class Session {
 			joinColumns = { @JoinColumn(name = "sessionID") },
 			inverseJoinColumns = { @JoinColumn(name = "sessionPartID") }
 			)
-	private Set<SessionPart> sessionParts = new HashSet<>();
+	private Set<SessionPart> sessionparts = new HashSet<>(); //lowercase to make it work with the api
 
 	/**
 	 * Gets the unique id of this session
@@ -226,7 +226,7 @@ public class Session {
 	 * @return This session's session parts
 	 */
 	public Set<SessionPart> getSessionParts() {
-		return sessionParts;
+		return sessionparts;
 	}
 
 	/**
@@ -234,7 +234,7 @@ public class Session {
 	 * @param sessionParts This session's new session parts
 	 */
 	public void setSessionParts(Set<SessionPart> sessionParts) {
-		this.sessionParts = sessionParts;
+		this.sessionparts = sessionParts;
 	}
 
 	/**
@@ -242,6 +242,6 @@ public class Session {
 	 * @param s The session part to add
 	 */
 	public void addSessionPart(SessionPart s) {
-		sessionParts.add(s);
+		sessionparts.add(s);
 	}
 }
