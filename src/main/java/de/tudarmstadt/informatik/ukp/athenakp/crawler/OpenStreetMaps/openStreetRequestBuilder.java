@@ -12,6 +12,10 @@ import java.net.HttpURLConnection;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * is responsible for mapping our API calls to the Overpass Api
+ * @author Julian
+ */
 public class openStreetRequestBuilder {
 
 
@@ -22,8 +26,19 @@ public class openStreetRequestBuilder {
 	private Double maxLongitude;
 	private Integer radiusSizeOfInterest;
 	Integer recentResponseCode;
-
-	public openStreetRequestBuilder(String amenity, Double minLatitude, Double minLongitude, Double maxLatitude, Double maxLongitude, Integer radiusSizeOfInterest) {
+	/**
+	 * @param amenity the form of amenity we are searching from in form of a String. Example values include "tree",
+	 *                  "restaurant" or "toilet
+	 * The following parameters concern the concept of a bounding box. Because a GPS is never quite certain where it is
+	 * exactly, usually a range of latitudes is returned emulating a "margin of error"
+	 * @param maxLatitude the maximum Latitude of the bounding box, -90 to 90
+	 * @param maxLongitude the maximum Longitude of the bounding box,  -90 to 90
+	 * @param minLatitude the minimum Latitude of the bounding box ,  -90 to 90
+	 * @param minLongitude the minimum Longitude of the bounding box,  -90 to 90
+	 * @param radiusSizeOfInterest the radius in which the specified amenities are searched, specified in meters
+ 	*/
+	public openStreetRequestBuilder(String amenity, Double minLatitude, Double minLongitude, Double maxLatitude,
+									Double maxLongitude, Integer radiusSizeOfInterest) {
 		this.amenity = amenity;
 		this.minLatitude = minLatitude;
 		this.minLongitude = minLongitude;
@@ -72,7 +87,7 @@ public class openStreetRequestBuilder {
 			BufferedInputStream bis = new BufferedInputStream(connection.getInputStream());
 			ByteArrayOutputStream buf = new ByteArrayOutputStream();
 			int result2 = bis.read();
-			// TODO: rewrite
+			// sourced from Philipp's work with the Semantic Scholar API
 			while (result2 != -1) {
 				buf.write((byte) result2);
 				result2 = bis.read();
