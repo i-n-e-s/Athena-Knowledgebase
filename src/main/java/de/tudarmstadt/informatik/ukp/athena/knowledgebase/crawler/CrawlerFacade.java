@@ -3,10 +3,7 @@ package de.tudarmstadt.informatik.ukp.athena.knowledgebase.crawler;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Author;
-import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Conference;
-import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Event;
-import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Paper;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.*;
 
 /**
  *
@@ -34,13 +31,13 @@ public class CrawlerFacade extends AbstractCrawler{
 	}
 
 	@Override
-	public ArrayList<Author> getAuthors() throws IOException {
+	public ArrayList<Person> getAuthors() throws IOException {
 		return crawler.getAuthors();
 	}
 
 	@Override
-	public ArrayList<Paper> getPaperTitles() throws IOException {
-		return crawler.getPaperTitles();
+	public ArrayList<Paper> getPapers() throws IOException {
+		return crawler.getPapers();
 	}
 
 	@Override
@@ -54,7 +51,7 @@ public class CrawlerFacade extends AbstractCrawler{
 	}
 
 	@Override
-	public ArrayList<Event> getSchedule() throws IOException {
+	public ArrayList<Session> getSchedule() throws IOException {
 		return crawler.getSchedule();
 	}
 }

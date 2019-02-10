@@ -1,0 +1,36 @@
+Beginn: 	9:00
+Ende: 		11:20
+Protokolannt: 	Julian Steitz
+
+
+Wieso sind wir hier?
+	
+	Philipp Conference-Probleme: Was könnte der Grund sein?
+		IDs? Philipp benutzt kein XAMPP
+	Vortrag Jonas + Tristan
+	
+	clean_db userstory:
+		vllt hilft das?
+	entity already exists exception
+		returns a boolean now
+
+
+aufgezwungene QS-Deadline
+
+Selbstgewählte Deadline:
+	bis zum nächsten Treffen (13.02) muss der Server stehen
+
+
+Misc.
+	Julian ist am 20.02 (kein Arbeitsgebertreffen, aber ein Teamtreffen) nicht anwesend
+
+Threading:
+	Website laden
+	Entitäten einfügen innerhalb einer höflichen 3s Wartepause
+	nächste Website laden
+
+Was ist eine Userstory?
+
+Einzige Main-Klasse mit Optionen/flags
+
+Teambuilding

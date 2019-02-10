@@ -18,7 +18,7 @@ import de.tudarmstadt.informatik.ukp.athena.knowledgebase.api.ast.RequestHierarc
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.api.ast.RequestNode;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.api.ast.StringAttributeNode;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.jpa.PersistenceManager;
-import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.EventCategory;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.SessionCategory;
 
 public class QueryBuilder {
 	private EntityManager entityManager = PersistenceManager.getEntityManager();
@@ -102,7 +102,7 @@ public class QueryBuilder {
 					sqlVars.put(sqlVar, LocalDate.of(numbers.get(0).getNumber(), numbers.get(1).getNumber(), numbers.get(2).getNumber()).toString());
 					break;
 				case 1:
-					sqlVars.put(sqlVar, EventCategory.values()[numbers.get(0).getNumber()]);
+					sqlVars.put(sqlVar, SessionCategory.values()[numbers.get(0).getNumber()]);
 					break;
 			}
 		}

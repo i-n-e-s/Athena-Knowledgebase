@@ -9,39 +9,44 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.hibernate.annotations.GenericGenerator;
 
 @Entity
 @Table(name="paper")
-public class Paper extends Model {
+public class Paper {
 	/*Identifier*/
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(generator="increment")
+	@GenericGenerator(name="increment", strategy="increment")
 	@Column(name = "paperID", updatable = false, nullable = false)
 	private long paperID;
 
-	/*Paper's authors*/
-	@Hierarchy(entityName="author")
-	@JsonIgnore //fixes infinite recursion
-	@ManyToMany(cascade = { CascadeType.ALL }, mappedBy = "papers", fetch = FetchType.EAGER)
-	private Set<Author> authors = new HashSet<>();
-	/*Release date*/
-	@Column(name = "releaseDate")
-	private LocalDate releaseDate;
+	/*Title of the paper*/
+	@Column(name = "title", columnDefinition = "varchar(1023)") //fixes titles that are too long for being storable in the column
+	private String title;
 	/*Topic of the paper*/
 	@Column(name = "topic")
 	private String topic;
-	/*Title of the paper*/
-	@Column(name = "title", columnDefinition = "VARCHAR(1000)") //fixes titles that are too long for being storable in the column
-	private String title;
+	/*Paper's authors*/
+	@JsonIgnore //fixes infinite recursion
+	@ManyToMany(cascade = { CascadeType.ALL }, mappedBy = "papers", fetch = FetchType.EAGER)
+	private Set<Person> authors = new HashSet<>();
+
+	/*Release date*/
+	@Column(name = "releaseDate")
+	private LocalDate releaseDate;
+
 	/*URL to PDF*/
-	@Column(name = "href")
-	private String href;
+	@Column(name = "remoteLink")
+	private String remoteLink;
+	@Column(name = "localLink")
+	private String localLink;
+
 	/*PDF filesize in Bytes*/
 	@Column(name = "pdfFileSize")
 	private int pdfFileSize;
@@ -65,7 +70,7 @@ public class Paper extends Model {
 	 * Gets List of this paper's authors
 	 * @return List of this paper's authors
 	 */
-	public Set<Author> getAuthors() {
+	public Set<Person> getAuthors() {
 		return authors;
 	}
 
@@ -73,16 +78,16 @@ public class Paper extends Model {
 	 * Sets this paper's authors
 	 * @param authors The new author of this paper
 	 */
-	public void setAuthors(Set<Author> authors) {
+	public void setAuthors(Set<Person> authors) {
 		this.authors = authors;
 	}
 
 	/**
 	 * Adds an author to this paper's author list
-	 * @param a The author to add
+	 * @param author The author to add
 	 */
-	public void addAuthor(Author a) {
-		authors.add(a);
+	public void addAuthor(Person author) {
+		authors.add(author);
 	}
 
 	/**
@@ -138,21 +143,39 @@ public class Paper extends Model {
 	}
 
 	/**
-	 * Gets the link to this papers PDF file
+	 * Gets the remote link to this papers PDF file
 	 *
-	 * @return The link to this papers PDF file
+	 * @return The remote link to this papers PDF file
 	 */
-	public String getHref() {
-		return href;
+	public String getRemoteLink() {
+		return remoteLink;
 	}
 
 	/**
-	 * Sets the link to this papers PDF file
+	 * Sets the remote link to this papers PDF file
 	 *
-	 * @param href The new link to this papers PDF file
+	 * @param remoteLink The new remote link to this papers PDF file
 	 */
-	public void setHref(String href) {
-		this.href = href;
+	public void setRemoteLink(String remoteLink) {
+		this.remoteLink = remoteLink;
+	}
+
+	/**
+	 * Gets the local link to this papers PDF file
+	 *
+	 * @return The local link to this papers PDF file
+	 */
+	public String getLocalLink() {
+		return localLink;
+	}
+
+	/**
+	 * Sets the local link to this PDF file
+	 *
+	 * @param localLink The new local link to this papers PDF file
+	 */
+	public void setLocalLink(String localLink) {
+		this.localLink = localLink;
 	}
 
 	/**

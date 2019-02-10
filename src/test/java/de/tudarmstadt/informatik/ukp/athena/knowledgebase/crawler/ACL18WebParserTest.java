@@ -24,8 +24,8 @@ public class ACL18WebParserTest {
 	}
 	@Test
 	public void testConferenceDates(){
-		Assert.assertEquals(LocalDate.of(2018,7,15), crawledConference.getStartDate());
-		Assert.assertEquals(LocalDate.of(2018,7,20), crawledConference.getEndDate());
+		Assert.assertEquals(LocalDate.of(2018,7,15), crawledConference.getBegin());
+		Assert.assertEquals(LocalDate.of(2018,7,20), crawledConference.getEnd());
 	}
 	@Test
 	public void testConferenceAddress(){

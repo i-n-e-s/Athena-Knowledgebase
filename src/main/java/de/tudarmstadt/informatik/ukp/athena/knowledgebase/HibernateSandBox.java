@@ -14,11 +14,7 @@ import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.hibernate.Con
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.hibernate.InstitutionHibernateAccess;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.hibernate.PaperHibernateAccess;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.hibernate.PersonHibernateAccess;
-import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Author;
-import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Conference;
-import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Event;
-import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Institution;
-import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Paper;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.*;
 
 @SpringBootApplication
 public class HibernateSandBox {
@@ -29,11 +25,11 @@ public class HibernateSandBox {
 		Institution dummyInstitution = new Institution();
 		dummyInstitution.setName("Black Mesa");
 
-		Author dummyAuthor = new Author();
+		Person dummyAuthor = new Person();
 		dummyAuthor.setFullName("Rumpo Derpel");
-		dummyAuthor.setBirthdate(LocalDate.of(2010, 10, 10));
+		dummyAuthor.setBirth(LocalDate.of(2010, 10, 10));
 
-		Author dummyAuthor2 = new Author();
+		Person dummyAuthor2 = new Person();
 		dummyAuthor2.setPrefix("Prof. Dr.");
 		dummyAuthor2.setFullName("John T. Smith");
 		//		Date seems to be deprecated and its time segment can cause problems (does for me) if ignored
@@ -45,12 +41,12 @@ public class HibernateSandBox {
 		// 		i am not sure if the
 		//		alternatives proposed in the linked stackoverflow thread will work with hibernate, gotta test that
 		//		-Daniel
-		dummyAuthor2.setBirthdate(LocalDate.of(1970 - 1900, 1 - 1, 1));
+		dummyAuthor2.setBirth(LocalDate.of(1970 - 1900, 1 - 1, 1));
 		dummyAuthor2.setObit(LocalDate.of(2038 - 1900, 1 - 1, 19));
 		//				p2.setInstitution(i); FIXME if a person has this, a query with a result containing this person will result in an error
 
 		Paper dummyPaper = new Paper();
-		dummyPaper.setHref("https://example.org");
+		dummyPaper.setRemoteLink("https://example.org");
 		dummyPaper.setPdfFileSize(123456);
 		dummyPaper.setReleaseDate(LocalDate.of(2018, 11, 16));
 		dummyPaper.setTopic("The Life, the Universe and Everything");
@@ -58,7 +54,7 @@ public class HibernateSandBox {
 		dummyPaper.setAnthology("C2PO");
 
 		Paper dummyPaper2 = new Paper();
-		dummyPaper2.setHref("https://example.org");
+		dummyPaper2.setRemoteLink("https://example.org");
 		dummyPaper2.setPdfFileSize(654321);
 		dummyPaper2.setReleaseDate(LocalDate.of(2000, 7, 29));
 		dummyPaper2.setTopic("Fiction");
@@ -88,19 +84,19 @@ public class HibernateSandBox {
 
 		// is supposed to illustrate how handy .parse might be after scraping
 		Conference dummyConference = new Conference();
-		dummyConference.setStartDate(LocalDate.parse("2012-06-30"));
-		dummyConference.setEndDate(LocalDate.now());
-		//		dummyConference.setStartDate(new Date(2017 - 1900, 8 - 1, 15));
-		//		dummyConference.setEndDate(new Date(2017 - 1900, 9 - 1, 2));
+		dummyConference.setBegin(LocalDate.parse("2012-06-30"));
+		dummyConference.setEnd(LocalDate.now());
+		//		dummyConference.setBegin(new Date(2017 - 1900, 8 - 1, 15));
+		//		dummyConference.setEnd(new Date(2017 - 1900, 9 - 1, 2));
 		dummyConference.setName("Conference of Nerds");
 
 		ConferenceCommonAccess conferenceAccess = new ConferenceHibernateAccess();
 		conferenceAccess.add(dummyConference);
 
-		Event dummyEvent = new Event();
-		dummyEvent.setTitle("reeeing in public - how to channel your inner frog");
-		dummyEvent.setBegin(LocalDateTime.of(2017, 8, 2, 14, 30));
-		dummyEvent.setEnd(LocalDateTime.of(2017, 8, 2, 15, 0));
+		Session dummySession = new Session();
+		dummySession.setTitle("reeeing in public - how to channel your inner frog");
+		dummySession.setBegin(LocalDateTime.of(2017, 8, 2, 14, 30));
+		dummySession.setEnd(LocalDateTime.of(2017, 8, 2, 15, 0));
 
 	}
 }

@@ -15,15 +15,14 @@ import de.tudarmstadt.informatik.ukp.athena.knowledgebase.api.ast.RequestEntityN
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.api.ast.RequestHierarchyNode;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.api.ast.RequestNode;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.api.ast.StringAttributeNode;
-import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Author;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Conference;
-import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Event;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Hierarchy;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Institution;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Paper;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Person;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Session;
-import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Subsession;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.SessionCategory;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.SessionPart;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.exception.VerificationFailedException;
 
 public class RequestVerifier {
@@ -36,14 +35,12 @@ public class RequestVerifier {
 
 	static { //preprocessing of attributes for verification, this code only runs once
 		Class<?>[] models = {
-				Author.class,
 				Conference.class,
-				Event.class,
 				Institution.class,
 				Paper.class,
 				Person.class,
 				Session.class,
-				Subsession.class
+				SessionPart.class
 		};
 
 		for(Class<?> clazz : models) {
@@ -65,7 +62,7 @@ public class RequestVerifier {
 						numberAttributeMap.put(field.getName(), 5);
 					else if(fieldTypeName.equals(java.time.LocalDate.class.getName()))
 						numberAttributeMap.put(field.getName(), 3);
-					else if(fieldTypeName.equals(de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.EventCategory.class.getName()))
+					else if(fieldTypeName.equals(SessionCategory.class.getName()))
 						numberAttributeMap.put(field.getName(), 1);
 				}
 				else if(field.isAnnotationPresent(JoinTable.class) && field.isAnnotationPresent(Hierarchy.class)) {

@@ -1,43 +1,76 @@
 package de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+
+import org.hibernate.annotations.GenericGenerator;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name="conference")
-public class Conference extends Model {
-	/*Name of conference*/
+public class Conference {
+	/*Unique id*/
 	@Id
+	@GeneratedValue(generator="increment")
+	@GenericGenerator(name="increment", strategy="increment")
+	@Column(name="conferenceID")
+	private long conferenceID;
+	/*Name of conference*/
 	@Column(name="name")
 	private String name;
+
 	/*First day of conference no need for the temporal annotation with java.time (indeed this would break it)*/
-	@Column (name="startDate")
-	private LocalDate startDate;
+	@Column (name="begin")
+	private LocalDate begin;
 	/*Last day of conference*/
-	@Column(name="endDate")
-	private LocalDate endDate;
+	@Column(name="end")
+	private LocalDate end;
+
 	@Column(name="country")
 	private String country;
-	@Column (name = "city")
+	@Column (name="city")
 	private String city;
-	@Column(name = "address")
+	@Column(name="address")
 	private String address;
+
 	/*Authors that talked*/
 	@ManyToMany
 	@JsonIgnore
 	@Column(name="authors")
-	private Set<Author> authors = new HashSet<Author>();
-	/*Shown papers*/
-	@ManyToMany
-	@JsonIgnore
-	@Column(name="papers")
-	private Set<Paper> papers = new HashSet<Paper>();
-	//TODO: Workshops? Other data? How about Duration? java.time would make that possible
+	private Set<Person> authors = new HashSet<>();
+
+	/*Basically the schedule*/;
+	@OneToMany(orphanRemoval=true)     //unidirectional relationship which
+	@JoinColumn(name="conferenceID")   //is saved in the Session table
+	@Column(name="sessions")
+	private Set<Session> sessions = new HashSet<>();
+
+	/**
+	 * Gets the unique id of this conference
+	 * @return The unique id of this conference
+	 */
+	public long getId() {
+		return conferenceID;
+	}
+
+	/**
+	 * Sets this conference's id
+	 * @param id The new id
+	 */
+	public void setId(long id) {
+		this.conferenceID = id;
+	}
 
 	/**
 	 * Gets the name of this conference
@@ -59,32 +92,32 @@ public class Conference extends Model {
 	 * Gets the date of the day this conference started
 	 * @return The date of the day this conference started
 	 */
-	public LocalDate getStartDate() {
-		return startDate;
+	public LocalDate getBegin() {
+		return begin;
 	}
 
 	/**
 	 * Sets the date of the day this conference started
-	 * @param startDate The new start date
+	 * @param begin The new start date
 	 */
-	public void setStartDate(LocalDate startDate) {
-		this.startDate = startDate;
+	public void setBegin(LocalDate begin) {
+		this.begin = begin;
 	}
 
 	/**
 	 * Gets the date of the day this conference ended
 	 * @return The date of the day this conference ended
 	 */
-	public LocalDate getEndDate() {
-		return endDate;
+	public LocalDate getEnd() {
+		return end;
 	}
 
 	/**
 	 * Sets the date of the day this conference ended
-	 * @param endDate The new end date
+	 * @param end The new end date
 	 */
-	public void setEndDate(LocalDate endDate) {
-		this.endDate = endDate;
+	public void setEnd(LocalDate end) {
+		this.end = end;
 	}
 
 	/**
@@ -120,7 +153,7 @@ public class Conference extends Model {
 	}
 
 	/**
-	 * gets the building address of the conference
+	 * Gets the building address of the conference
 	 * @return the building address
 	 */
 	public String getAddress() {
@@ -128,27 +161,34 @@ public class Conference extends Model {
 	}
 
 	/**
-	 * sets the conference's building address
+	 * Sets the conference's building address
 	 * @param address the conference's building address
 	 */
 	public void setAddress(String address) {
 		this.address = address;
 	}
 
+	/**
+	 * Gets the sessions making up this conference's schedule
+	 * @return The sessions making up this conference's schedule
+	 */
+	public Set<Session> getSessions(){
+		return sessions;
+	}
+
+	/**
+	 * Sets the sessions making up this conference's schedule
+	 * @param sessions The new sessions making up this conference's schedule
+	 */
+	public void setSessions(Set<Session> sessions){
+		this.sessions = sessions;
+	}
+
 	/*
 	 * Gets the authors that talked at this conference
 	 * @return The authors that talked at this conference
 	TODO: fix, see above at authors attribute
-	public Set<Author> getAuthors() {
+	public Set<Person> getAuthors() {
 		return authors;
-	}*/
-
-	/*
-	 * Gets the papers that were shown at this conference
-	 * @return The papers that were shown at this conference
-	 * TODO: implement then uncomment (see above)
-	 */
-	/* public Set<Paper> getPapers() {
-		return papers;
 	}*/
 }

@@ -11,7 +11,6 @@ import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.access.PaperC
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.access.PersonCommonAccess;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.jpa.PaperJPAAccess;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.jpa.PersonJPAAccess;
-import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Author;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Paper;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Person;
 
@@ -23,9 +22,9 @@ public class JPASandBox {
 
 		PersonCommonAccess pca = new PersonJPAAccess();
 
-		Author dummyAuthor = new Author();
+		Person dummyAuthor = new Person();
 		dummyAuthor.setFullName("Rumpo Derpel");
-		dummyAuthor.setBirthdate(LocalDate.of(2010, 10, 10));
+		dummyAuthor.setBirth(LocalDate.of(2010, 10, 10));
 		pca.add(dummyAuthor);
 
 		List<Person> authors = pca.getByFullName("Rumpo Derpel");

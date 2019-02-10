@@ -33,7 +33,7 @@ public class InstitutionHibernateAccess implements InstitutionCommonAccess {
 	 * Common code used by all get methods above
 	 * @param name The name of the column to restrict
 	 * @param value The value to restrict the selection to
-	 * @return A List of all persons with the given restriction
+	 * @return A List of all institutions with the given restriction
 	 */
 	private List<Institution> getBy(String name, Object value) {
 		Session session = HibernateUtils.getSessionFactory().openSession();
