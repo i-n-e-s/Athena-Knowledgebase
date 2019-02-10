@@ -14,10 +14,20 @@ import java.util.List;
 @RequestMapping("/openStreetMaps")
 public class StreetMapsController {
 
-	@RequestMapping("/byBox/{amenity}/radiusInMeter/{radius}")
-	public List<Location> returnAmenities(@PathVariable("amenity") String amenity, @PathVariable("radius") Integer radius) {
-		openStreetRequestBuilder streetRequestBuilder = new openStreetRequestBuilder(amenity, 48.5657094,
-				13.4490548, 48.5662416, 13.4501676, radius);
+	@RequestMapping("/location/minLatitude/{minLatitude}/minLongitude/{minLongitude}/maxLatitude/{maxLatitude}/maxLongitude/{maxLongitude}/amenity/{amenity}/radiusInMeter/{radius}")
+	public List<Location> returnAmenities(@PathVariable("amenity") String amenity,
+										  @PathVariable("radius") Integer radius,
+										  @PathVariable("minLatitude") Double minLatitude,
+										  @PathVariable("minLongitude") Double minLongitude,
+										  @PathVariable("maxLatitude") Double maxLatitude,
+										  @PathVariable("maxLongitude") Double maxLongitude) {
+		openStreetRequestBuilder streetRequestBuilder = new openStreetRequestBuilder(amenity, minLatitude,
+				minLongitude, maxLatitude, maxLongitude, radius);
+
+		//		openStreetRequestBuilder streetRequestBuilder = new openStreetRequestBuilder(amenity, 48.5657094,
+		//				13.4490548, 48.5662416, 13.4501676, radius);
+		// working example:
+		// http://localhost:8080/openStreetMaps/location/minLatitude/48.5657094/minLongitude/13.4490548/maxLatitude/48.5662416/maxLongitude/13.4501676/amenity/restaurant/radiusInMeter/3000
 		return streetRequestBuilder.run();
 	}
 }

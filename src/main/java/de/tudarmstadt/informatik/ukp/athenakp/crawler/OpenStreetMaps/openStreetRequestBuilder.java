@@ -16,19 +16,19 @@ public class openStreetRequestBuilder {
 
 
 	private String amenity;
-	private Double east;
-	private Double north;
-	private Double west;
-	private Double south;
+	private Double minLatitude;
+	private Double minLongitude;
+	private Double maxLatitude;
+	private Double maxLongitude;
 	private Integer radiusSizeOfInterest;
 	Integer recentResponseCode;
 
-	public openStreetRequestBuilder(String amenity, Double east, Double north, Double west, Double south, Integer radiusSizeOfInterest) {
+	public openStreetRequestBuilder(String amenity, Double minLatitude, Double minLongitude, Double maxLatitude, Double maxLongitude, Integer radiusSizeOfInterest) {
 		this.amenity = amenity;
-		this.east = east;
-		this.north = north;
-		this.west = west;
-		this.south = south;
+		this.minLatitude = minLatitude;
+		this.minLongitude = minLongitude;
+		this.maxLatitude = maxLatitude;
+		this.maxLongitude = maxLongitude;
 		this.radiusSizeOfInterest = radiusSizeOfInterest;
 	}
 
@@ -38,13 +38,13 @@ public class openStreetRequestBuilder {
 	 */
 	private String buildRequestURL(){
 		return "http://overpass-api.de/api/interpreter?data=[out:json];node(" +
-				east.toString() +
+				minLatitude.toString() +
 				"," +
-				north.toString() +
+				minLongitude.toString() +
 				"," +
-				west.toString() +
+				maxLatitude.toString() +
 				"," +
-				south.toString() +
+				maxLongitude.toString() +
 				");node(around:" +
 				radiusSizeOfInterest.toString() +
 				")[amenity=" +
