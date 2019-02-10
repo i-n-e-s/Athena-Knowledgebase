@@ -41,7 +41,7 @@ public class QueryBuilder {
 		for(RequestHierarchyNode hierarchyNode : tree.getHierarchy()) {
 			String normalEntityName = hierarchyNode.getEntity().getEntityName().getString();
 			String entityName = capitalizeFirstLetter(normalEntityName);
-			String entityVar = normalEntityName.substring(0, 2);
+			String entityVar = normalEntityName.equals("sessionpart") ? "sp" : normalEntityName.substring(0, 2);
 
 			sqlVars.put(":entityVar", "" + entityVar); //the last one will be in the output
 
@@ -60,7 +60,7 @@ public class QueryBuilder {
 		//now set the attributes
 		for(RequestHierarchyNode hierarchyNode : tree.getHierarchy()) {
 			RequestEntityNode entityNode = hierarchyNode.getEntity();
-			String entityVar = entityNode.getEntityName().getString().substring(0, 2);
+			String entityVar = entityNode.getEntityName().getString().equals("sessionpart") ? "sp" : entityNode.getEntityName().getString().substring(0, 2);
 
 			//loop through the attributes (if any)
 			for(AttributeNode attr : entityNode.getAttributes()) {
@@ -102,7 +102,11 @@ public class QueryBuilder {
 					sqlVars.put(sqlVar, LocalDate.of(numbers.get(0).getNumber(), numbers.get(1).getNumber(), numbers.get(2).getNumber()).toString());
 					break;
 				case 1:
-					sqlVars.put(sqlVar, SessionCategory.values()[numbers.get(0).getNumber()]);
+					//differentiate between long and category
+					if(attr.getName().getString().toLowerCase().contains("category"))
+						sqlVars.put(sqlVar, SessionCategory.values()[numbers.get(0).getNumber()]);
+					else
+						sqlVars.put(sqlVar, new Long(numbers.get(0).getNumber())); //needs to be in a wrapper class or else it doesn't work
 					break;
 			}
 		}
