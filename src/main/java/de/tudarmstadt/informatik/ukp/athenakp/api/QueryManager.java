@@ -43,14 +43,17 @@ public class QueryManager {
 		for(RequestEntityNode entity : tree.getHierarchy().get(0).getEntities()) {
 			String entityName = entity.getEntityName().getString();
 
-			queryList.add("SELECT * FROM " + entityName + " WHERE");
+			queryList.add("SELECT * FROM " + entityName);
+
+			if(entity.getAttributes().size() > 0)
+				queryList.add("WHERE");
 
 			//loop through the attributes
 			for(AttributeNode attr : entity.getAttributes()) {
 				String attrName = attr.getName().getString();
-				String sqlVar = entityName + "_" + attrName;
+				String sqlVar = entityName + "_" + attrName; //used later to replace with actual user input after it was automatically sanitized
 
-				queryList.add(attrName + "=:" + sqlVar); //sqlVar is used later to replace with actual user input after it was automatically sanitized
+				queryList.add(attrName + "=:" + sqlVar);
 
 				//nothing extra needs to be done for a string node other than assigning its value to the the sql var
 				if(attr instanceof StringAttributeNode)
@@ -60,6 +63,7 @@ public class QueryManager {
 					List<NumberNode> numbers = ((NumberAttributeNode)attr).getNumbers();
 
 					//TODO: localdatetime does not work because of colons :(
+					//		escaping doesn't work either for some reason
 					switch(numbers.size()) {
 						case 5:
 							sqlVars.put(sqlVar, LocalDateTime.of(numbers.get(0).getNumber(), numbers.get(1).getNumber(), numbers.get(2).getNumber(), numbers.get(3).getNumber(), numbers.get(4).getNumber()));

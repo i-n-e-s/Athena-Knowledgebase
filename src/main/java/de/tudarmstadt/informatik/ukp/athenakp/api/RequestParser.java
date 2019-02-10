@@ -58,7 +58,7 @@ public class RequestParser {
 		}
 
 		//the rest can only be started by joins
-		while(currentToken.type == RequestTokenType.JOIN) {
+		while(currentToken != null && currentToken.type == RequestTokenType.JOIN) {
 			accept(); //accept the $
 			node.addEntity(parseRequestEntity());
 		}
@@ -187,7 +187,7 @@ public class RequestParser {
 		currentToken = tokens.poll(); //get the next token
 
 		//if it's an error, throw an exception
-		if(currentToken.type == RequestTokenType.ERROR)
+		if(currentToken != null && currentToken.type == RequestTokenType.ERROR)
 			throw new SyntaxException(currentToken.index, currentToken.actual);
 	}
 
