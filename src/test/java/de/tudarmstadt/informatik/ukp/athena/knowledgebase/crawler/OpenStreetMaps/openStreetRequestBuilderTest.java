@@ -1,6 +1,6 @@
 package de.tudarmstadt.informatik.ukp.athena.knowledgebase.crawler.OpenStreetMaps;
 
-import de.tudarmstadt.informatik.ukp.athenakp.database.models.Location;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Location;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.junit.Before;
