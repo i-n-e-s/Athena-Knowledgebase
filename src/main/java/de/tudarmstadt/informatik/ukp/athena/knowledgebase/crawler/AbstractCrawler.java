@@ -6,13 +6,13 @@ import java.util.ArrayList;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Conference;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Paper;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Person;
-import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Session;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.ScheduleEntry;
 
 /**
  *
  * This is the abstract base of the crawler
  *
- * @author Jonas Hake
+ * @author Jonas Hake, Daniel Lehmann
  *
  */
 abstract class AbstractCrawler {
@@ -54,5 +54,5 @@ abstract class AbstractCrawler {
 	 * @return A list of sessions, an empty list when data not available
 	 * @throws IOException if Jsoup.connect fails
 	 */
-	public abstract ArrayList<Session> getSchedule() throws IOException;
+	public abstract ArrayList<ScheduleEntry> getSchedule() throws IOException;
 }

@@ -27,6 +27,7 @@
         <mapping class="de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Person" />
         <mapping class="de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Session" />
         <mapping class="de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.SessionPart" />
+        <mapping class="de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Workshop" />
         <!--<mapping class="/roseindia/Employee" />-->
 
     </session-factory>

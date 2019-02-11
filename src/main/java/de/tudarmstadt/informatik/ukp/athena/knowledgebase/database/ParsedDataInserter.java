@@ -2,7 +2,6 @@ package de.tudarmstadt.informatik.ukp.athena.knowledgebase.database;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.TimeZone;
 
@@ -17,12 +16,16 @@ import de.tudarmstadt.informatik.ukp.athena.knowledgebase.crawler.SupportedConfe
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.access.ConferenceCommonAccess;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.access.PaperCommonAccess;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.access.SessionCommonAccess;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.access.WorkshopCommonAccess;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.jpa.ConferenceJPAAccess;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.jpa.PaperJPAAccess;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.jpa.SessionJPAAccess;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.jpa.WorkshopJPAAccess;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Conference;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Paper;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.ScheduleEntry;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Session;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Workshop;
 
 
 @SpringBootApplication
@@ -45,7 +48,7 @@ public class ParsedDataInserter {
 		acl18WebParser = new CrawlerFacade(SupportedConferences.ACL, beginYear, endYear);
 	}
 
-	// this makes it so everything written into the database is in UTC.
+	// This assures everything written into the database is in UTC.
 	// from https://aboullaite.me/spring-boot-time-zone-configuration-using-hibernate/
 	// took me far too long to find
 	// TODO: look into application.yml ?
@@ -118,8 +121,15 @@ public class ParsedDataInserter {
 
 		try {
 			Conference acl2018 = acl18WebParser.getConferenceInformation();
+			List<ScheduleEntry> entries = acl2018StoreSchedule();
 
-			acl2018.setSessions(new HashSet<Session>(acl2018StoreSchedule())); //acl2018StoreSchedule returns a list, passing that to the hashset initializes the set with the list elements
+			for(ScheduleEntry entry : entries) {
+				if(entry instanceof Session)
+					acl2018.addSession((Session)entry);
+				else if(entry instanceof Workshop)
+					acl2018.addWorkshop((Workshop)entry);
+			}
+
 			System.out.println("Inserting conference into database...");
 			conferenceCommonAccess.add(acl2018);
 			System.out.println("Done inserting!");
@@ -133,17 +143,21 @@ public class ParsedDataInserter {
 	 * Stores the acl2018 conference's schedule into the database
 	 * @return The scraped and stored sessions
 	 */
-	private List<Session> acl2018StoreSchedule() {
+	private List<ScheduleEntry> acl2018StoreSchedule() {
 		SessionCommonAccess sessionCommonAccess = new SessionJPAAccess();
-		List<Session> sessions = new ArrayList<>(); //initialize in case anything fails
+		WorkshopCommonAccess workshopCommonAccess = new WorkshopJPAAccess();
+		List<ScheduleEntry> entries = new ArrayList<>(); //initialize in case anything fails
 
 		try {
-			sessions = acl18WebParser.getSchedule();
+			entries = acl18WebParser.getSchedule();
 
 			System.out.println("Inserting schedule into database...");
 			//add to database
-			for(Session session : sessions) {
-				sessionCommonAccess.add(session);
+			for(ScheduleEntry entry : entries) {
+				if(entry instanceof Session)
+					sessionCommonAccess.add((Session)entry);
+				else if(entry instanceof Workshop)
+					workshopCommonAccess.add((Workshop)entry);
 			}
 			System.out.println("Done inserting!");
 		}
@@ -151,6 +165,6 @@ public class ParsedDataInserter {
 			e.printStackTrace();
 		}
 
-		return sessions;
+		return entries;
 	}
 }

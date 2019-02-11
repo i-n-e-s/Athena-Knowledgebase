@@ -56,6 +56,11 @@ public class Conference {
 	@OneToMany(orphanRemoval=true)     //unidirectional relationship which
 	@JoinColumn(name="conferenceID")   //is saved in the Session table
 	private Set<Session> sessions = new HashSet<>();
+	/*The workshops*/
+	@Hierarchy(entityName="workshop")
+	@OneToMany(orphanRemoval=true)     //unidirectional relationship which
+	@JoinColumn(name="conferenceID")   //is saved in the Session table
+	private Set<Workshop> workshops = new HashSet<>();
 
 	/**
 	 * Gets the unique id of this conference
@@ -183,6 +188,38 @@ public class Conference {
 	 */
 	public void setSessions(Set<Session> sessions){
 		this.sessions = sessions;
+	}
+
+	/**
+	 * Adds a session to this conference's list of sessions
+	 * @param session The session
+	 */
+	public void addSession(Session session) {
+		sessions.add(session);
+	}
+
+	/**
+	 * Gets the workshops in this conference's schedule
+	 * @return The workshops in this conference's schedule
+	 */
+	public Set<Workshop> getWorkshops(){
+		return workshops;
+	}
+
+	/**
+	 * Sets the workshop in this conference's schedule
+	 * @param workshops The new workshops in this conference's schedule
+	 */
+	public void setWorkshops(Set<Workshop> workshops){
+		this.workshops = workshops;
+	}
+
+	/**
+	 * Adds a workshop to this conference's list of workshops
+	 * @param workshop The workshop
+	 */
+	public void addWorkshop(Workshop workshop) {
+		workshops.add(workshop);
 	}
 
 	/*
