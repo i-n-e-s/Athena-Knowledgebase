@@ -29,7 +29,6 @@ public class RequestScanner {
 
 	/**
 	 * Converts the request string into a bunch of tokens that can be parsed
-	 * @param request The request string
 	 * @return A collection of tokens to be used for parsing
 	 */
 	public Deque<RequestToken> scan() {

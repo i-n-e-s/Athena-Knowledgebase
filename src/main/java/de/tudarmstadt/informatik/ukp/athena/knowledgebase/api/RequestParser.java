@@ -118,7 +118,7 @@ public class RequestParser {
 
 	/**
 	 * Parses a string attribute ("foo=bar" or "foo=b+a+r")
-	 * @param The attribute's index, as there was an accept() call before the call of this method (the name of the attr)
+	 * @param attrIndex The attribute's index, as there was an accept() call before the call of this method (the name of the attr)
 	 * @return The abstract syntax tree representing this construct
 	 * @throws SyntaxException When an ERROR or unexpected token appears
 	 */
@@ -150,7 +150,7 @@ public class RequestParser {
 
 	/**
 	 * Parses a number attribute ("foo=123" or "foo=1+2+3")
-	 * @param The attribute's index, as there was an accept() call before the call of this method (the name of the attr)
+	 * @param attrIndex The attribute's index, as there was an accept() call before the call of this method (the name of the attr)
 	 * @return The abstract syntax tree representing this construct
 	 * @throws SyntaxException When an ERROR or unexpected token appears
 	 */

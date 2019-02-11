@@ -10,7 +10,7 @@ public class NumberAttributeNode extends AttributeNode {
 	private List<NumberNode> numbers = new ArrayList<>();
 
 	/**
-	 * @see {@link AttributeNode#AttributeNode(int, StringNode) AttributeNode}
+	 * @see {@link AttributeNode #AttributeNode(int, StringNode) AttributeNode}
 	 */
 	public NumberAttributeNode(int tokenIndex) {
 		super(tokenIndex);
