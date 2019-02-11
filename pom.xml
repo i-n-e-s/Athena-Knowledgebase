@@ -64,7 +64,7 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
-                    <mainClass>de.tudarmstadt.informatik.ukp.athenakp.SpringStart</mainClass>
+                    <mainClass>de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.ParsedDataInserter</mainClass>
                 </configuration>
             </plugin>
             <plugin>
