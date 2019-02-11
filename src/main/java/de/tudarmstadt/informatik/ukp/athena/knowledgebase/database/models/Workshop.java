@@ -18,7 +18,7 @@ import javax.persistence.Table;
 import org.hibernate.annotations.GenericGenerator;
 
 @Entity
-@Table(name="workshops")
+@Table(name="workshop")
 public class Workshop implements ScheduleEntry {
 	/*Unique id*/
 	@Id
