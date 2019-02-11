@@ -1,10 +1,15 @@
 package de.tudarmstadt.informatik.ukp.athenakp.database.models;
 
 public class Location {
-	private double lon;
+	// the id of the location
 	private long id;
+	// the longitude of the location
+	private double longitude;
+	// the latitude of the location
+	private double latitude;
+	// the type of location
 	private String type;
-	private double lat;
+	// the type of amenity the location is (e.g. tree or restaurant)
 	private String amenity;
 
 	public String getAmenity() {
@@ -15,12 +20,15 @@ public class Location {
 		this.amenity = amenity;
 	}
 
-	public double getLon() {
-		return lon;
+	public double getLongitude() {
+		return longitude;
 	}
 
-	public void setLon(double lon) {
-		this.lon = lon;
+	public void setLongitude(double longitude) {
+		if (longitude > 180 || longitude < -180){
+			throw new IllegalArgumentException("value is not a valid longitude");
+		}
+		this.longitude = longitude;
 	}
 
 	public long getId() {
@@ -39,12 +47,15 @@ public class Location {
 		this.type = type;
 	}
 
-	public double getLat() {
-		return lat;
+	public double getLatitude() {
+		return latitude;
 	}
 
-	public void setLat(double lat) {
-		this.lat = lat;
+	public void setLatitude(double latitude) {
+		if (latitude >90 || latitude < -90){
+			throw new IllegalArgumentException("value is not a valid latitude");
+		}
+		this.latitude = latitude;
 	}
 
 	public Location() {

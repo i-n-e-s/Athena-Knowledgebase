@@ -3,6 +3,7 @@ package de.tudarmstadt.informatik.ukp.athenakp.crawler.OpenStreetMaps;
 import de.tudarmstadt.informatik.ukp.athenakp.database.models.Location;
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedInputStream;
@@ -26,7 +27,7 @@ public class openStreetRequestBuilder {
 	private Double maxLatitude;
 	private Double maxLongitude;
 	private Integer radiusSizeOfInterest;
-	Integer recentResponseCode;
+	private Integer recentResponseCode;
 	/**
 	 * @param amenity the form of amenity we are searching from in form of a String. Example values include "tree",
 	 *                  "restaurant" or "toilet
@@ -56,7 +57,7 @@ public class openStreetRequestBuilder {
 	 *
 	 */
 	@NotNull
-	private String buildRequestURL(){
+	String buildRequestURL(){
 		return "http://overpass-api.de/api/interpreter?data=[out:json];node(" +
 				minLatitude.toString() +
 				"," +
@@ -114,7 +115,7 @@ public class openStreetRequestBuilder {
 			// finally, we call resolveJson our JSONArray of locations and return the result
 			return resolveJson(locations);
 		}catch (IOException e){
-			System.out.println("connection error, returned null");
+			System.out.println("connection error, returned null - check if your Longs and Lats are right");
 			return null;
 		}
 	}
@@ -124,7 +125,7 @@ public class openStreetRequestBuilder {
 	 * @param locations a JSONArray of nodes in the openStreetMap sense, not null
 	 * @return a list of Locations which are then collected from the API
 	 */
-	 List<Location> resolveJson(JSONArray locations){
+	 List<Location> resolveJson(JSONArray locations) throws JSONException {
 	 	// this should never happen
 	 	if (locations == null){
 	 		System.out.println("JSONArray of locations was null");
@@ -137,15 +138,21 @@ public class openStreetRequestBuilder {
 			// creates a new Location and sets its attributes
 			Location curLocation = new Location();
 			curLocation.setId(curObject.getLong("id"));
-			curLocation.setLon(curObject.getDouble("lon"));
-			curLocation.setLat(curObject.getDouble("lat"));
+			curLocation.setLongitude(curObject.getDouble("lon"));
+			curLocation.setLatitude(curObject.getDouble("lat"));
 			curLocation.setType(curObject.getString("type"));
 			JSONObject tags = (JSONObject) curObject.get("tags");
 			curLocation.setAmenity(tags.getString("amenity"));
-			// add it to our list
+			// add it to our list of Locations
 			locationObjects.add(curLocation);
 		}
 		return locationObjects;
+	}
+
+	// this could sometimes be of interest - e.g. the commented test in openStreetRequestBuilderTest with a real API
+	// 	call
+	public Integer getRecentResponseCode() {
+		return recentResponseCode;
 	}
 }
 

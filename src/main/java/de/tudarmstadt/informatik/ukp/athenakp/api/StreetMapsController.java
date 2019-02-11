@@ -9,11 +9,26 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
-
+/**
+ * The REST API controller for StreetMap data
+ * currently /openStreetMaps is not mapped but might be extended in the future
+ */
 @RestController
 @RequestMapping("/openStreetMaps")
 public class StreetMapsController {
-
+	/**
+	 *
+	 * @param amenity the type of amentiy (e.g. restaurant or even tree)
+	 * @param radius the searchradius in meters
+	 * Since location data is almost never exact, overpass expects a bounding box which symbolises once rough location
+	 * if you have exact data (you shouldn't) simply add or subtract a small value from your Longitude and Latitude to
+	 * create a range
+	 * @param minLatitude the minimum Latitude for the bounding box
+	 * @param minLongitude the minimum Longitude for the bounding box
+	 * @param maxLatitude	the maximum Latitude for the bounding box
+	 * @param maxLongitude	the maximum Longitude for the bounding box
+	 * @return A list of Location Objects
+	 */
 	@RequestMapping("/location/minLatitude/{minLatitude}/minLongitude/{minLongitude}/maxLatitude/{maxLatitude}/maxLongitude/{maxLongitude}/amenity/{amenity}/radiusInMeter/{radius}")
 	public List<Location> returnAmenities(@PathVariable("amenity") String amenity,
 										  @PathVariable("radius") Integer radius,
