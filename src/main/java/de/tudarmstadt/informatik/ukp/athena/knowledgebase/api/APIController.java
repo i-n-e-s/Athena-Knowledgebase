@@ -15,7 +15,15 @@ import de.tudarmstadt.informatik.ukp.athena.knowledgebase.exception.Verification
 
 @RestController
 public class APIController {
-	@RequestMapping("/**") //matches the complete path (containing all subpaths), just make sure that there are no ? in there!!
+
+	/**
+	 * This method catches all requests made to the API that are not specified in a different request mapping.
+	 * If there are no questionmarks (?), request will contain the complete path (including all subpaths).
+	 * This method then calls various worker classes to validate and verify the request string and make sure that it's correct.
+	 * If that is the case, the request will be sent to the database and the result will be returned to the user.
+	 * If an error occurs, it will be returned to the user as well.
+	 */
+	@RequestMapping("/**")
 	public Object apiConnector(HttpServletRequest request) { //the argument contains everything that was not matched to any other argument
 		RequestNode tree = null;
 
