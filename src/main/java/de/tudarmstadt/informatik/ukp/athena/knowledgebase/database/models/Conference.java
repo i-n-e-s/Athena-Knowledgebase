@@ -45,15 +45,16 @@ public class Conference {
 	private String address;
 
 	/*Authors that talked*/
+	@Hierarchy(entityName="person")
 	@ManyToMany
 	@JsonIgnore
 	@Column(name="authors")
 	private Set<Person> authors = new HashSet<>();
 
-	/*Basically the schedule*/;
+	/*Basically the schedule*/
+	@Hierarchy(entityName="session")
 	@OneToMany(orphanRemoval=true)     //unidirectional relationship which
 	@JoinColumn(name="conferenceID")   //is saved in the Session table
-	@Column(name="sessions")
 	private Set<Session> sessions = new HashSet<>();
 	/*The workshops*/;
 	@OneToMany(orphanRemoval=true)     //unidirectional relationship which

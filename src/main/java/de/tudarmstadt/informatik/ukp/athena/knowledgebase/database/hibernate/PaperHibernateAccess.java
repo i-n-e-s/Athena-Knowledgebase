@@ -11,7 +11,7 @@ import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.access.PaperC
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Paper;
 
 /**
- * @author Daniel Lehmann
+ * @author Daniel Lehmann, Jonas Hake
  */
 @Deprecated
 public class PaperHibernateAccess implements PaperCommonAccess {
@@ -21,12 +21,19 @@ public class PaperHibernateAccess implements PaperCommonAccess {
 	}
 
 	@Override
-	public List<Paper> getByAuthor(String author) { //TODO: implement this
-		return null;
+	public List<Paper> getByAuthor(String author) {
+		List<Paper> result;
+		Session session = HibernateUtils.getSessionFactory().openSession();
+		Criteria paperCriteria = session.createCriteria(Paper.class);
+		Criteria authorCriteria = paperCriteria.createCriteria("authors");
+		authorCriteria.add(Restrictions.eq("fullName",author));
+		result = authorCriteria.list();
+		session.close();
+		return result;
 	}
 
 	@Override
-	public List<Paper> getByReleaseDate(Integer year, Integer month, Integer day) {
+	public List<Paper> getByReleaseDate(Integer year, Integer month, Integer day) { //TODO: do we need day still? papers seem to only be stored by release year/month
 		return getBy("releaseDate", LocalDate.of(year, month, day));
 	}
 
@@ -71,7 +78,7 @@ public class PaperHibernateAccess implements PaperCommonAccess {
 	 * Common code used by all get methods above
 	 * @param name The name of the column to restrict
 	 * @param value The value to restrict the selection to
-	 * @return A List of all papers with the given restriction
+	 * @return A List of all persons with the given restriction
 	 */
 	private List<Paper> getBy(String name, Object value) {
 		Session session = HibernateUtils.getSessionFactory().openSession();

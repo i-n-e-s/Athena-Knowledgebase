@@ -37,7 +37,6 @@ public class SessionPart{
 	@Column(name = "place")
 	private String place;
 
-
 	/**
 	 * Gets the unique id of this session part
 	 * @return The unique id of this session part

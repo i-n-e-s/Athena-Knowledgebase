@@ -32,6 +32,7 @@
 
             <property name="hibernate.hbm2ddl.auto"
                       value="update" />
+            <!-- this is bad for api testing, but required by native mariadb on linux-->
 
         </properties>
 
