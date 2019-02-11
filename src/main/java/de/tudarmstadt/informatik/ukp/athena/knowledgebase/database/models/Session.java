@@ -53,20 +53,21 @@ public class Session {
 
 	/* Associated papers */
 	@Column(name = "paperTitles")
-	@ElementCollection //similar to @JoinTable, but for model -> datatype relations instead of model -> model
+	@ElementCollection(fetch = FetchType.EAGER) //similar to @JoinTable, but for model -> datatype relations instead of model -> model
 	private Set<String> paperTitles = new HashSet<>();
 
 	/* Papers, if any */
 	//	@Column(name = "papers")
 	//	private Set<Paper> papers;
 	/* Sessions, if any */
+	@Hierarchy(entityName="sessionpart")
 	@OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER)
 	@JoinTable(
 			name = "session_sessionParts",
 			joinColumns = { @JoinColumn(name = "sessionID") },
 			inverseJoinColumns = { @JoinColumn(name = "sessionPartID") }
 			)
-	private Set<SessionPart> sessionParts = new HashSet<>();
+	private Set<SessionPart> sessionparts = new HashSet<>(); //lowercase to make it work with the api
 
 	/**
 	 * Gets the unique id of this session
@@ -225,7 +226,7 @@ public class Session {
 	 * @return This session's session parts
 	 */
 	public Set<SessionPart> getSessionParts() {
-		return sessionParts;
+		return sessionparts;
 	}
 
 	/**
@@ -233,7 +234,7 @@ public class Session {
 	 * @param sessionParts This session's new session parts
 	 */
 	public void setSessionParts(Set<SessionPart> sessionParts) {
-		this.sessionParts = sessionParts;
+		this.sessionparts = sessionParts;
 	}
 
 	/**
@@ -241,6 +242,6 @@ public class Session {
 	 * @param s The session part to add
 	 */
 	public void addSessionPart(SessionPart s) {
-		sessionParts.add(s);
+		sessionparts.add(s);
 	}
 }

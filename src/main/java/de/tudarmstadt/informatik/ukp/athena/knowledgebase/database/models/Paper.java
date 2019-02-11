@@ -13,8 +13,9 @@ import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.GenericGenerator;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name="paper")
@@ -33,6 +34,7 @@ public class Paper {
 	@Column(name = "topic")
 	private String topic;
 	/*Paper's authors*/
+	@Hierarchy(entityName="person")
 	@JsonIgnore //fixes infinite recursion
 	@ManyToMany(cascade = { CascadeType.ALL }, mappedBy = "papers", fetch = FetchType.EAGER)
 	private Set<Person> authors = new HashSet<>();
