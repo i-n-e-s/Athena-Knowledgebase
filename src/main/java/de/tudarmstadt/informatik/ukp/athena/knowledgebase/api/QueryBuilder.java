@@ -49,7 +49,7 @@ public class QueryBuilder {
 			if(previousEntityVar == null)
 				queryList.add(entityName + " " + entityVar);
 			else //normal entity name because it's the name of the field
-				queryList.add("JOIN " + previousEntityVar + "." + normalEntityName + "s" + " " + entityVar); //TODO: this s is for the plural form, might want to rename the corresponding columns to singular just to not have to handle multiple plural forms
+				queryList.add("JOIN " + previousEntityVar + "." + normalEntityName + "s" + " " + entityVar); //TODO: this s is for the plural form, might want to rename the corresponding columns to singular just to not have to handle multiple plural forms in the future
 
 			previousEntityVar = entityVar;
 		}
