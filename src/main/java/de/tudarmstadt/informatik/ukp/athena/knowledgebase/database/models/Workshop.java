@@ -43,7 +43,7 @@ public class Workshop implements ScheduleEntry {
 	/* Place where this workshop happens */
 	@Column(name = "place")
 	private String place;
-	/* Events, not all workshops provide easily scrapable schedule*/
+	/*Basically the schedule. Might be empty since not all workshops provide an easily scrapable schedule*/
 	@Hierarchy(entityName="session")
 	@OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER)
 	@JoinTable(
