@@ -1,4 +1,4 @@
-package de.tudarmstadt.informatik.ukp.athenakp.crawler.OpenStreetMaps;
+package de.tudarmstadt.informatik.ukp.athena.knowledgebase.crawler.OpenStreetMaps;
 
 import de.tudarmstadt.informatik.ukp.athenakp.database.models.Location;
 import org.jetbrains.annotations.NotNull;

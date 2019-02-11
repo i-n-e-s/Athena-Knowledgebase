@@ -1,7 +1,7 @@
-package de.tudarmstadt.informatik.ukp.athenakp.api;
+package de.tudarmstadt.informatik.ukp.athena.knowledgebase.api;
 
 
-import de.tudarmstadt.informatik.ukp.athenakp.crawler.OpenStreetMaps.openStreetRequestBuilder;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.crawler.OpenStreetMaps.openStreetRequestBuilder;
 import de.tudarmstadt.informatik.ukp.athenakp.database.models.Location;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PathVariable;
