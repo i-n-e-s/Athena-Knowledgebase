@@ -143,7 +143,7 @@ public class Workshop implements ScheduleEntry {
 
 	/**
 	 * Sets the abbreviation of the workshop
-	 * @param description The new abbreviation of the workshop
+	 * @param abbreviation The new abbreviation of the workshop
 	 */
 	public void setAbbreviation(String abbreviation) {
 		this.abbreviation = abbreviation;

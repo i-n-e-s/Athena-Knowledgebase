@@ -30,26 +30,41 @@ public class CrawlerFacade extends AbstractCrawler{
 		}
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public ArrayList<Person> getAuthors() throws IOException {
 		return crawler.getAuthors();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public ArrayList<Paper> getPapers() throws IOException {
 		return crawler.getPapers();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public ArrayList<Paper> getPaperAuthor() throws IOException{
 		return crawler.getPaperAuthor();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Conference getConferenceInformation() throws IOException {
 		return crawler.getConferenceInformation();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public ArrayList<ScheduleEntry> getSchedule() throws IOException {
 		return crawler.getSchedule();

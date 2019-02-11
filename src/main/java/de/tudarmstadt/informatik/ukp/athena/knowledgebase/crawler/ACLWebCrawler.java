@@ -90,6 +90,9 @@ class ACLWebCrawler extends AbstractCrawler {
 		return docs;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public ArrayList<Person> getAuthors() throws IOException {
 		System.out.println("Gathering all authors in the given year range...");
@@ -122,6 +125,9 @@ class ACLWebCrawler extends AbstractCrawler {
 		return authors;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public ArrayList<Paper> getPapers() throws IOException {
 		System.out.println("Gathering all papers in the given year range...");
@@ -156,6 +162,9 @@ class ACLWebCrawler extends AbstractCrawler {
 		return paperList;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public ArrayList<Paper> getPaperAuthor() throws IOException {
 		System.out.println("Gathering all paper author relationships...");
@@ -332,6 +341,9 @@ class ACLWebCrawler extends AbstractCrawler {
 		return currentConference;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public ArrayList<ScheduleEntry> getSchedule() throws IOException {
 		System.out.println("Scraping conference schedule...");

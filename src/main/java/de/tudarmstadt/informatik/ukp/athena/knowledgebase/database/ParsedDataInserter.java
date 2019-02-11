@@ -48,7 +48,7 @@ public class ParsedDataInserter {
 		acl18WebParser = new CrawlerFacade(SupportedConferences.ACL, beginYear, endYear);
 	}
 
-	// this makes it so everything written into the database is in UTC.
+	// This assures everything written into the database is in UTC.
 	// from https://aboullaite.me/spring-boot-time-zone-configuration-using-hibernate/
 	// took me far too long to find
 	// TODO: look into application.yml ?

@@ -60,7 +60,7 @@ public interface WorkshopCommonAccess extends CommonAccess<Workshop> {
 
 	/**
 	 * Get all workshops with specified abbreviation.
-	 * @param description The workshop's abbreviation.
+	 * @param abbreviation The workshop's abbreviation.
 	 * @return A List of all workshops with the specified abbreviation.
 	 */
 	public List<Workshop> getByAbbreviation(String abbreviation);

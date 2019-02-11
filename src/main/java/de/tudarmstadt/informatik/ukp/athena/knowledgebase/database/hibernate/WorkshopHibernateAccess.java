@@ -15,38 +15,60 @@ import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Worksh
  */
 @Deprecated
 public class WorkshopHibernateAccess implements WorkshopCommonAccess {
+
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public List<Workshop> getById(Long id) {
 		return getBy("id", id);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public List<Workshop> getByConferenceName(String conferenceName) {
 		return getBy("conferenceName", conferenceName);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public List<Workshop> getByStartTime(Integer year, Integer month, Integer day, Integer hour, Integer minute) {
 		LocalDateTime localDateTime = LocalDateTime.of(year, month, day, hour, minute);
 		return getBy("begin", localDateTime);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public List<Workshop> getByEndTime(Integer year, Integer month, Integer day, Integer hour, Integer minute) {
 		LocalDateTime localDateTime = LocalDateTime.of(year, month, day, hour, minute);
 		return getBy("end", localDateTime);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public List<Workshop> getByPlace(String place) {
 		return getBy("place", place);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public List<Workshop> getByTitle(String title) {
 		return getBy("title", title);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public List<Workshop> getByAbbreviation(String abbreviation) {
 		return getBy("abbreviation", abbreviation);
@@ -69,6 +91,9 @@ public class WorkshopHibernateAccess implements WorkshopCommonAccess {
 		return result;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void add(Workshop data) {
 		Session session = HibernateUtils.getSessionFactory().openSession();
@@ -79,6 +104,9 @@ public class WorkshopHibernateAccess implements WorkshopCommonAccess {
 		session.close();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void update(Workshop data) {
 		Session session = HibernateUtils.getSessionFactory().openSession();
@@ -89,6 +117,9 @@ public class WorkshopHibernateAccess implements WorkshopCommonAccess {
 		session.close();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void delete(Workshop data) {
 		Session session = HibernateUtils.getSessionFactory().openSession();
@@ -99,6 +130,9 @@ public class WorkshopHibernateAccess implements WorkshopCommonAccess {
 		session.close();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public List<Workshop> get() {
 		Session session = HibernateUtils.getSessionFactory().openSession();

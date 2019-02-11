@@ -26,7 +26,7 @@ public class ACL18WorkshopParser {
 	/**
 	 * Parses ACL 2018's workshop schedule.
 	 * Some of this is hardcoded because why not
-	 * @param result The resulting arraylist with the complete workshop data
+	 * @return The resulting arraylist with the complete workshop data
 	 */
 	public static ArrayList<ScheduleEntry> parseWorkshops() {
 		ArrayList<ScheduleEntry> result = new ArrayList<>();
