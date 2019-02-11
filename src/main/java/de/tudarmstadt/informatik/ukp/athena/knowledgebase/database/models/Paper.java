@@ -13,6 +13,7 @@ import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.hibernate.PersonHibernateAccess;
 import org.hibernate.annotations.GenericGenerator;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -51,10 +52,19 @@ public class Paper {
 
 	/*PDF filesize in Bytes*/
 	@Column(name = "pdfFileSize")
-	private int pdfFileSize;
+	private Integer pdfFileSize;
 	/*anthology of paper as String*/
 	@Column (name = "anthology")
 	private String anthology;
+
+	/*SemanticScholars PaperId as String*/
+	@Column(name = "semanticScholarID")
+	private String semanticScholarID;
+	/*Abstract of paper as String*/
+	@Column(name = "paperAbstract", columnDefinition="TEXT")
+	private String paperAbstract;
+	@Column(name = "amountOfCitations")
+	private Integer amountOfCitations = -1;    //-1 if not known yet
 
 	//	Removed all code concerning quotations and alike. Too time consuming right now.
 
@@ -212,5 +222,152 @@ public class Paper {
 	 */
 	public void setAnthology(String anthology) {
 		this.anthology = anthology;
+	}
+
+	/**
+	 * Gets the paper's ID on Semantic Scholar
+	 *
+	 * @return the papers SemanticScholar ID
+	 */
+	public String getSemanticScholarID() {
+		return semanticScholarID;
+	}
+
+	/**
+	 * Sets the paper's ID on Semantic Scholar
+	 *
+	 * @param semanticScholarID the papers new SemanticScholar ID
+	 */
+	public void setSemanticScholarID(String semanticScholarID) {
+		this.semanticScholarID = semanticScholarID;
+	}
+
+	/**
+	 * Gets the paper's abstract
+	 *
+	 * @return the papers abstract
+	 */
+	public String getPaperAbstract() {
+		return paperAbstract;
+	}
+
+	/**
+	 * Sets the paper's abstract
+	 *
+	 * @param paperAbstract the papers abstract
+	 */
+	public void setPaperAbstract(String paperAbstract) {
+		this.paperAbstract = paperAbstract;
+	}
+
+	/**
+	 * Gets the amount of papers, this paper is cited in
+	 * @return the amount of citations
+	 */
+	public Integer getAmountOfCitations() {
+		return amountOfCitations;
+	}
+
+	/**
+	 * Sets the amount of papers, this paper is cited in
+	 * @param amountOfCitations the new amount of citations
+	 */
+	public void setAmountOfCitations(Integer amountOfCitations) {
+		this.amountOfCitations = amountOfCitations;
+	}
+
+
+	public boolean complementBy(Paper srcPaper) {
+
+		boolean changed = false;
+		PersonHibernateAccess personFiler = new PersonHibernateAccess();
+
+		//1. Copy all prime Attributes
+		if (this.getTopic() == null && srcPaper.getTopic() != null) {
+			this.setTopic(srcPaper.getTopic());
+			changed = true;
+		}
+		if (this.getPaperAbstract() == null && srcPaper.getPaperAbstract() != null) {
+			this.setPaperAbstract(srcPaper.getPaperAbstract());
+			changed = true;
+		}
+		if (this.getTitle() == null && srcPaper.getTitle() != null) {
+			this.setTitle(srcPaper.getTitle());
+			changed = true;
+		}
+		if (this.getReleaseDate() == null && srcPaper.getReleaseDate() != null) {
+			this.setReleaseDate(srcPaper.getReleaseDate());
+			changed = true;
+		}
+		if (this.getRemoteLink() == null && srcPaper.getRemoteLink() != null) {
+			this.setRemoteLink(srcPaper.getRemoteLink());
+			changed = true;
+		}
+		if (this.getPdfFileSize() == null && srcPaper.getPdfFileSize() != null) {
+			this.setPdfFileSize(srcPaper.getPdfFileSize());
+			changed = true;
+		}
+		if (this.getAnthology() == null && srcPaper.getAnthology() != null) {
+			this.setAnthology(srcPaper.getAnthology());
+			changed = true;
+		}
+		if (this.getSemanticScholarID() == null && srcPaper.getSemanticScholarID() != null) {
+			this.setSemanticScholarID(srcPaper.getSemanticScholarID());
+			changed = true;
+		}
+		if (this.getAmountOfCitations() == null && srcPaper.getAmountOfCitations() != null) {
+			this.setAmountOfCitations(srcPaper.getAmountOfCitations());
+			changed = true;
+		}
+
+
+
+		//2. Copy all Authors
+		copyAllAuthorsLoop:
+		for (Person srcAuthor : srcPaper.getAuthors()) {
+
+			//Check if Author is already known in paper
+			for (Person thisAuthor : this.getAuthors()) {
+				if ( thisAuthor.equalsNullAsWildcard(srcAuthor) &&               //Objects must be equal with null as wildcard and either Name or S2ID must match((thisAuthor.getFullName().equals(srcAuthor.getFullName()) ||
+						(equalsNotNull(thisAuthor.getSemanticScholarID(), srcAuthor.getSemanticScholarID()) ||
+								equalsNotNull(thisAuthor.getFullName(), srcAuthor.getFullName())) ) {
+					thisAuthor.complementBy(srcAuthor);
+					continue copyAllAuthorsLoop;    //skip
+				}
+			}
+
+			//If not, add Author to Paper
+			Person inDB = personFiler.lookUpPerson(srcAuthor);    //Check if we know the author already in DB
+			if (inDB != null) {
+				if (inDB instanceof Person) {
+					Person inDBa = (Person) inDB;
+					inDBa.complementBy(srcAuthor);
+					this.addAuthor(inDBa);
+					changed = true;
+				}
+				//else TODO what if "Person" turns out to be an author
+			} else {
+				this.addAuthor(srcAuthor);
+				changed = true;
+			}
+		}
+		return changed;
+	}
+
+
+	//TODO nochmal richtig
+	@Override
+	public String toString() {
+		String ret = "{title: " + this.getTitle() + ",";
+		ret = ret + "topic: " + this.getTopic() + ",";
+		ret = ret + "Authors: ";
+		for (Person a : this.getAuthors()) {
+			ret = ret + "{ name:"+ a.getFullName() +", personID:"+ a.getPersonID() +", S2ID:" +a.getSemanticScholarID() + "}";
+		}
+		ret = ret + "S2ID: " + this.getSemanticScholarID() + ",";
+		ret = ret + "abstract: " + this.getPaperAbstract() + ",";
+		ret = ret + "PaperID: " + this.getPaperID() + "}";
+		// ret = ret + "prefix: " + this.get + "\n";
+		return ret;
 	}
 }

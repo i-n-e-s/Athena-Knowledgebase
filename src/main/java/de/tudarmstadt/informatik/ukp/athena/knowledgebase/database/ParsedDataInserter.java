@@ -7,25 +7,20 @@ import java.util.TimeZone;
 
 import javax.annotation.PostConstruct;
 
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.crawler.SemanticScholarAPI.S2APIFunctions;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.access.*;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.hibernate.PersonHibernateAccess;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.*;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.JPASandBox;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.crawler.CrawlerFacade;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.crawler.SupportedConferences;
-import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.access.ConferenceCommonAccess;
-import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.access.PaperCommonAccess;
-import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.access.SessionCommonAccess;
-import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.access.WorkshopCommonAccess;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.jpa.ConferenceJPAAccess;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.jpa.PaperJPAAccess;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.jpa.SessionJPAAccess;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.jpa.WorkshopJPAAccess;
-import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Conference;
-import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Paper;
-import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.ScheduleEntry;
-import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Session;
-import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Workshop;
 
 
 @SpringBootApplication
@@ -166,5 +161,54 @@ public class ParsedDataInserter {
 		}
 
 		return entries;
+	}
+
+	/**
+	 * This method runs through the DB and performs an authorSearch for every
+	 * Person in the DB. Then extends every entry with the new data
+	 *
+	 * TODO write changes to DB
+	 *
+	 * @author Philipp Emmer
+	 * @param n The first n authors will be added
+	 */
+	private void completeAuthorsByS2(int n) {
+		PersonCommonAccess personfiler = new PersonHibernateAccess();
+		List<Person> authors = personfiler.get();
+
+		//Go through every Author in the db
+		Person currAuthor;
+		long failedAuthors = 0;
+		long totalAuthors = 0;
+		long failedPapers = 0;
+		long totalPapers = 0;
+		for ( Person currPerson : authors ) {
+			if( ++totalAuthors == n ) { break; }
+
+			//TODO make sure we get author objects (with at least a name)
+			//1. Make sure person is an Author and cast
+			if ( failedAuthors == 20 ) {
+				System.out.println("Too many fails, break now");
+				break;
+			}
+
+			//2. Update information about Author
+			boolean res = false;
+			//TODO When setting coworkers etc: Use existing persons from db, try not to create new ones
+			try { res = S2APIFunctions.completeAuthorInformationByAuthorSearch(currPerson, false); }
+			catch (IOException e) {
+				failedAuthors++;
+				e.printStackTrace();
+				System.err.println("curr");
+			}
+
+			//TODO 3. write changes to db
+			if ( res ) {
+				System.out.println("Trying to update: "+currPerson.toString());
+				personfiler.update( currPerson );
+			}
+		}
+		System.out.println("Failed: "+failedAuthors+"\nDone");
+
 	}
 }
