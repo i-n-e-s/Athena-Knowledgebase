@@ -91,7 +91,7 @@ public class RequestVerifier {
 	 * Checks whether the attribue values in the request are correct. If there is no exception thrown, the verification was successful
 	 * @param tree The abstract syntax tree that depicts the API request
 	 * @throws VerificationFailedException If the verification fails
-	 */
+	 */ //longer than 40 lines due to comments
 	public static void verify(RequestNode tree) throws VerificationFailedException {
 		String previousEntityName = null;
 
