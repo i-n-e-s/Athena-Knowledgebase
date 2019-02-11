@@ -23,6 +23,7 @@ import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Paper;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Person;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Session;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.SessionPart;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Workshop;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.exception.VerificationFailedException;
 
 public class RequestVerifier {
@@ -41,7 +42,8 @@ public class RequestVerifier {
 				Paper.class,
 				Person.class,
 				Session.class,
-				SessionPart.class
+				SessionPart.class,
+				Workshop.class
 		};
 
 		for(Class<?> clazz : models) {

@@ -44,6 +44,7 @@ public class Workshop implements ScheduleEntry {
 	@Column(name = "place")
 	private String place;
 	/* Events, not all workshops provide easily scrapable schedule*/
+	@Hierarchy(entityName="session")
 	@OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER)
 	@JoinTable(
 			name = "workshop_session",

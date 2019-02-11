@@ -56,7 +56,8 @@ public class Conference {
 	@OneToMany(orphanRemoval=true)     //unidirectional relationship which
 	@JoinColumn(name="conferenceID")   //is saved in the Session table
 	private Set<Session> sessions = new HashSet<>();
-	/*The workshops*/;
+	/*The workshops*/
+	@Hierarchy(entityName="workshop")
 	@OneToMany(orphanRemoval=true)     //unidirectional relationship which
 	@JoinColumn(name="conferenceID")   //is saved in the Session table
 	private Set<Workshop> workshops = new HashSet<>();
