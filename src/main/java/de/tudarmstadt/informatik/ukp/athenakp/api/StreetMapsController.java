@@ -3,10 +3,13 @@ package de.tudarmstadt.informatik.ukp.athenakp.api;
 
 import de.tudarmstadt.informatik.ukp.athenakp.crawler.OpenStreetMaps.openStreetRequestBuilder;
 import de.tudarmstadt.informatik.ukp.athenakp.database.models.Location;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -43,6 +46,14 @@ public class StreetMapsController {
 		//				13.4490548, 48.5662416, 13.4501676, radius);
 		// working example:
 		// http://localhost:8080/openStreetMaps/location/minLatitude/48.5657094/minLongitude/13.4490548/maxLatitude/48.5662416/maxLongitude/13.4501676/amenity/restaurant/radiusInMeter/3000
-		return streetRequestBuilder.run();
+		try{
+			return streetRequestBuilder.run();
+		} catch (IOException e){
+			throw new ResponseStatusException(
+					HttpStatus.NOT_FOUND, "IO Exception, this might be due to the Overpass API not being available " +
+					"or an incorrect String: \n Are your longitudes and latitudes correct?"
+			);
+		}
+
 	}
 }

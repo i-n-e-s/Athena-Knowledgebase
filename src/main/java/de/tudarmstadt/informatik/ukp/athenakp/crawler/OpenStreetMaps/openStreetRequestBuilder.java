@@ -79,7 +79,7 @@ public class openStreetRequestBuilder {
 	 * the StreetMapsController
 	 * @return a list of Locations
 	 */
-	public List<Location> run() {
+	public List<Location> run() throws IOException{
 		// instead of wasting 3+ hours on implementing a dynamic conversion from xml to json,
 		// the undocumented [out:json]; command works just as well.
 		// I Have No Mouth But I Must Scream
@@ -87,7 +87,6 @@ public class openStreetRequestBuilder {
 
 		// Create Connection and set basic parameters
 		// if this fails, we return null and cry
-		try {
 			URL url = new URL(searchRequestURL);
 			HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 			// sourced from Philipp's work with the Semantic Scholar API
@@ -114,10 +113,6 @@ public class openStreetRequestBuilder {
 			recentResponseCode = connection.getResponseCode();
 			// finally, we call resolveJson our JSONArray of locations and return the result
 			return resolveJson(locations);
-		}catch (IOException e){
-			System.out.println("connection error, returned null - check if your Longs and Lats are right");
-			return null;
-		}
 	}
 
 	/**
