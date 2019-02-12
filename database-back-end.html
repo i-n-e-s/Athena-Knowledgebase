@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset='utf-8'>
+		<title>Athena Knowledgebase Wiki</title>
+	</head>
+	<body>
+		<header>
+			<div class="container">
+				<h1><b><u>Athena Knowledgebase - A conversational Agent</u></b></h1>
+			</div>
+		</header>
+		<div class="container">
+			<section id="main_content">
+				<h2><u>Database Backend</u></h2>
+				<p>The database back end is detached from our REST API through interfaces. Their reference implementation uses <a href="https://en.wikipedia.org/wiki/Java_Persistence_API">JPA</a> with <a href="https://www.hibernate.org/">Hibernate</a>.</p>
+				<h3><u>JPA Configuration</u></h3>
+				<p>All JPA Configuration is located in the <code>./src/main/resources/META-INF/persistence.xml</code>-File. It contains configurtaion for persistence units to be bootstrapped and used by JPA. You can add and edit persistence units here.
+					With those units you can switch the database back ends used by JPA.
+				</p>
+				<h3><u>Persistence Units</u></h3>
+				<p><em>TODO</em></p>
+				<h3><u>EntityManagerFactory</u></h3>
+				<p>Note that JPA uses EntityManager-Objects to communicate with the database. Those are provided from an EntityManagerFactory which needs to be initialized with a persistence unit (see above). Note that choice of persistence units happens while initializing the EntityManagerFactory.</p>
+				<p>In our reference implementation you can find it in the <code>de.tudarmstadt.informatik.ukp.athenakp.database.jpa.PersistenceManager</code> class.</p>
+				<h3><u>Other Database Back Ends</u></h3>
+				<p>Switching from JPA to other database back ends involves a lot more work than just switching the bootstrapped persistence unit of JPA. It requires initialization of the new back end and implementation of all interfaces located in the <code>de.tudarmstadt.informatik.ukp.athenakp.database.access</code> package.</p>
+			</section>
+		</div>
+	</body>
+</html>

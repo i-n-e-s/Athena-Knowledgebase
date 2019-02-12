@@ -2,35 +2,64 @@
 <html>
 	<head>
 		<meta charset='utf-8'>
-		<title>Athena Knowledgebase</title>
+		<title>Athena Knowledgebase Wiki</title>
 	</head>
 	<body>
 		<header>
 			<div class="container">
-				<h1>Athena Knowledgebase</h1>
-				<h2>A conversational Agent</h2>
+				<h1><b><u>Athena Knowledgebase - A conversational Agent</u></b></h1>
 			</div>
 		</header>
 		<div class="container">
 			<section id="main_content">
-				<p>Um auf die in der Datenbank gespeicherten Daten zugreifen zu können, kann das von uns bereitgestellte REST API verwendet werden. Es ist möglich, alle unten aufgelisteten Entitäten anhand der vorgeschriebenen Parameter abzufragen.
-					Auf das REST API kann <a href="https://example.org">unter diesem Link</a> zugegriffen werden.
+				<h2><u>Athena Knowledgebase API</u></h2>
+				<p>To access the data saved in the database, the provided REST API can be used. It's possible to request all entities shown on the <a href="database-scheme.html">Database Scheme</a> page using the defined parameters.</p>
+				<h3><u>API Specification</u></h3>
+				<p>What follows is a simple example of a GET request:<br>
+					<code>/person:fullName=John+Doe&amp;birth=1985+10+5</code><br>
+					In it, we search for a person entity (=author), whose attributes "fullName" and "birth" correspond to the values specified.
 				</p>
-				<p>Die Wikiseite einer jeden Entität nennt ein Präfix, was bei jeder Abfrage über diese Entität an den vorher genannten Link angehängt wird.
-					Weiterhin sind auf jeder Wikiseite alle möglichen Abfragen zu dieser Entität aufgelistet. Diese sind dem Link-Präfix-Konstrukt hinten anzufügen.
-					Eine Anfrage hat möglicherweise Parameter, die vom Nutzer hinzugegeben werden müssen. Diese Parameter sind mit <code>{}</code> umkreist, beim Aufrufen des APIS komplett zu ersetzen, und im dort folgenden Text näher erläutert.
+				<hr>
+				<p>For a more elaborate example consider the following request:<br>
+					<code>/paper:topic=vogon+poetry/person:fullName=Daniel+Klingbein&amp;obit=1993+05+22</code><br>
+					Here we are looking for a paper entity which has the topic of "vogon poetry". This is the first part of the request which filters the result set to only contain papers with that very topic. Since papers and persons have a hierarchical relationship (please note that most relationships, unlike paper &lt;-&gt; author, are unidirectional, for further information see the <a href="database-scheme.html">Database Scheme</a> page) the search can be narrowed down even further. We are now searching for persons named "Daniel Klingbein" who died on the 22nd of May, 1993. The type of objects returned is determined by the entity specified after the last "/" symbol.
 				</p>
-				<p>Beispiel einer Abfrage anhand einer Paper ID: <a href="https://example.org/papers/byPaperID/10">https://example.org/papers/byPaperID/10</a></p>
-				<p>Durchgestrichene Anfragen sind geplant, oder funktionieren noch nicht.</p>
-				<h4>Liste der abfragbaren Entitäten</h4>
-				<ol>
-					<li><a href="conference.html">Conference</a></li>
-					<li><a href="event.html">Event</a></li>
-					<li><a href="institution.html">Institution</a></li>
-					<li><a href="paper.html">Paper</a></li>
-					<li><a href="person.html">Person</a></li>
-				</ol>
-				<p>Anmerkung: Ein Autor ist einer Person untergeordnet. Dabei ist der einzige Unterschied, dass eine Person keine Paper geschrieben hat, ein Autor jedoch schon.</p>
+				<hr>
+				<p>Consider the following request:<br>
+					<code>/paper:title=xyz&amp;topic=abc/person:fullName=foo+bar</code><br>
+					At first glance, you might expect this request to return a list of papers, when it will instead return a list of persons that fulfill their specified attributes and can be found in the previously filtered paper entities. How you structure your queries <em>can</em> have a siginificant impact on performance.
+				</p>
+				<hr>
+				<p>To get all available stored entities of a specific type, just query the entity name without any attributes. E.g.:</p>
+				<ul>
+					<li>To get all stored papers: <code>/paper</code></li>
+					<li>To get all sessions in a conference: <code>/conference:name=ACL+2018/session</code>. Please note, that in this case, further specifications have to be made on the entities that are not returned in the result set.</li>
+				</ul>
+				<p>The name to use in front of the colon is the entity name as shown on the <a href="database-scheme.html">Database Scheme</a> page, but all lowercase.<br>
+					The attributes that can be included in the request are the fields in the respective entity class.<br>
+					The values of the attributes are given by their type. SessionCategory is a single digit (for the meaning see below), LocalDate requires 3 numbers and LocalDateTime requires 5 numbers.
+				</p>
+				<p>For further API requests that are available but do not follow the scheme above, please see the <a href="special-api-requests.html">Special API Requests</a> page.</p>
+				<h4><u>Legend</u></h4>
+				<ul>
+					<li><code>/</code> denotes a hierarchical relationship between to entities (e.g. conference -&gt; session). For further information, please see the respective entity pages</li>
+					<li><code>+</code> replaces spaces. Please note, that in numerical attributes, this is used to separate different numbers</li>
+					<li><code>:</code> signifies that some attributes of the preceding entity will be specified</li>
+					<li><code>&amp;</code> chains together such attribute specifications</li>
+				</ul>
+				<h4><u>Session Categories</u></h4>
+				<p>0:    BREAK<br>
+					1:    CEREMONY<br>
+					2:    MEETING<br>
+					3:    PRESENTATION<br>
+					4:    RECRUITMENT<br>
+					5:    SESSION<br>
+					6:    SOCIAL<br>
+					7:    TALK<br>
+					8:    TUTORIAL<br>
+					9:    WELCOME<br>
+					10:    WORKSHOP
+				</p>
 			</section>
 		</div>
 	</body>
