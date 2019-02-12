@@ -220,7 +220,9 @@ public class S2APIFunctions {
                 orig.complementBy(currPaper);
                 currPaper = orig;
             }
-            Model.connectAuthorPaper(author, currPaper);
+
+            if ( !author.getPapers().contains(currPaper) ) { author.addPaper(currPaper); }
+            if ( !currPaper.getAuthors().contains(author) ) { currPaper.addAuthor(author); }    //TODO check duplicates
 
         }
 
@@ -293,10 +295,10 @@ public class S2APIFunctions {
         }
 
         //url
-        if (overwrite || dest.getHref() == null) {
+        if (overwrite || dest.getRemoteLink() == null) {
             try {
                 JSONObject link = paperJSON.getJSONArray("links").getJSONObject(0);
-                dest.setHref(link.getString("url"));
+                dest.setRemoteLink(link.getString("url"));
             } catch (JSONException e) {
             }
         }

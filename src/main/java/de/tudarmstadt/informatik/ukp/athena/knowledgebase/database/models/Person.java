@@ -406,7 +406,8 @@ public class Person extends Model {
 				}
 			}
 			//2.2 if not, save pointer to paper
-			Model.connectAuthorPaper(this, srcP);
+			if( !this.getPapers().contains(srcP) ) { this.addPaper(srcP); }
+			if( !srcP.getAuthors().contains(this) ) { srcP.addAuthor(this); }
 			changed = true;
 		}
 
