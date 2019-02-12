@@ -195,7 +195,7 @@ public class Paper extends Model {
 	 *
 	 * @return The filesize of this papers PDF file in Bytes
 	 */
-	public int getPdfFileSize() {
+	public Integer getPdfFileSize() {
 		return pdfFileSize;
 	}
 
@@ -204,7 +204,7 @@ public class Paper extends Model {
 	 *
 	 * @param pdfFileSize The new filesize of this papers PDF file in Bytes
 	 */
-	public void setPdfFileSize(int pdfFileSize) {
+	public void setPdfFileSize(Integer pdfFileSize) {
 		this.pdfFileSize = pdfFileSize;
 	}
 
