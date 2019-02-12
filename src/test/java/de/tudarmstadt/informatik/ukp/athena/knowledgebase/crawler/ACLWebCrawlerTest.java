@@ -10,11 +10,11 @@ import de.tudarmstadt.informatik.ukp.athena.knowledgebase.crawler.ACLWebCrawler;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Conference;
 
 
-public class ACL18WebParserTest {
+public class ACLWebCrawlerTest {
 	private ACLWebCrawler acl18WebParser = new ACLWebCrawler("2018", "2018");
 	private Conference crawledConference = acl18WebParser.getConferenceInformation();
 
-	public ACL18WebParserTest() throws IOException {
+	public ACLWebCrawlerTest() throws IOException {
 	}
 
 
