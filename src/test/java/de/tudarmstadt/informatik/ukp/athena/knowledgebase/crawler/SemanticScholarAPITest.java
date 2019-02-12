@@ -1,8 +1,7 @@
 package de.tudarmstadt.informatik.ukp.athena.knowledgebase.crawler;
 
-mport org.json.JSONException;
-import de.tudarmstadt.informatik.ukp.athena.knowledgebase.crawler.SemanticScholarAPI.S2APIFunctions;
-import de.tudarmstadt.informatik.ukp.athena.knowledgebase.crawler.SemanticScholarAPI.SemanticScholarAPIrequest;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.crawler.SemanticScholarAPI.*;
+import org.json.JSONException;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Paper;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Person;
 import org.json.JSONException;
@@ -85,7 +84,7 @@ public class SemanticScholarAPITest {
         Paper p = new Paper();
         System.out.println(p.getPaperID());
 
-        Author testAuthor = new Author();
+        Person testAuthor = new Person();
         System.out.println(testAuthor.getPersonID());
         String result;
         testAuthor.setFullName("Iryna Gurevych");
@@ -161,7 +160,7 @@ public class SemanticScholarAPITest {
     @Test
     public void completeAuthorInformationByAuthorSearchTest() {
 
-        Author test = new Author();
+        Person test = new Person();
         test.setFullName("Iryna Gurevych");
         try {
             S2APIFunctions.completeAuthorInformationByAuthorSearch(test, false);
