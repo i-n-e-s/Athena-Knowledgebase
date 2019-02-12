@@ -65,33 +65,6 @@ public class PersonHibernateAccess implements PersonCommonAccess {
 		return getBy("institutionID", institutionID);
 	}
 
-	/**
-	 * Looks for equal attribute DB entries of Person and returns the matching Person Object
-	 * If multiple Occurences are found in DB, return the first result
-	 *
-	 * @author Philipp Emmer
-	 * @param personToFind The person object to search
-	 * @return The first DB Entry of Person with matching Attributes or null
-	 */
-	public Person lookUpPerson( Person personToFind ) {
-		List<Person> matches = null;
-		//1. Try to find matching SemanticScholarID
-		if( personToFind.getSemanticScholarID() != null ) {
-			matches = getBy("semanticScholarID", personToFind.getSemanticScholarID());
-		}
-		//Return first result of author with matching S2ID
-		if( matches != null && matches.size() > 0 ) { return matches.get(0); }
-
-		//2. If no results, search for name
-		matches = getByFullName(personToFind.getFullName());
-		for ( Person namesake : matches ) {
-			//Choose the first one with matching attributes
-			if ( namesake.equalsNullAsWildcard(personToFind) ) { return namesake; }
-		}
-
-		//3. If nothing found, return null
-		return null;
-	}
 
 	/**
 	 * Common code used by all get methods above

@@ -3,6 +3,8 @@ package de.tudarmstadt.informatik.ukp.athena.knowledgebase.crawler.SemanticSchol
 
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.hibernate.PaperHibernateAccess;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.hibernate.PersonHibernateAccess;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.jpa.PaperJPAAccess;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.jpa.PersonJPAAccess;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Model;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Paper;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Person;
@@ -179,11 +181,10 @@ public class S2APIFunctions {
         }
 
         //3.1 Parse JSONObject to temp Author TODO overwrite?
-        Person temp = new Person();
-        parseAddS2InternalAPIAuthorJSON(temp, overwrite, response);
+        parseAddS2InternalAPIAuthorJSON(author, overwrite, response);
 
         //3.2 Add Information from temp Author to original Author
-        author.complementBy(temp);
+        //author.complementBy(temp);
 
         return true;
     }
@@ -198,23 +199,30 @@ public class S2APIFunctions {
      */
     private static boolean parseAddS2InternalAPIAuthorJSON(Person author, boolean overwrite, JSONObject AuthorSearchResponse) {
         //1 Set Top 5 authors influenced by this one the most TODO overwrite?
-        JSONArray influenced = AuthorSearchResponse.getJSONObject("author").getJSONObject("statistics").getJSONObject("influence").getJSONArray("influenced");
-        author.setTop5influenced( parseS2AuthorSearchInfluenceJSONArrayToAuthorArrayList(influenced));
+        if ( author.getTop5influenced() == null || author.getTop5influenced().size() == 0 || overwrite ) {
+            JSONArray influenced = AuthorSearchResponse.getJSONObject("author").getJSONObject("statistics").getJSONObject("influence").getJSONArray("influenced");
+            author.setTop5influenced( parseS2AuthorSearchInfluenceJSONArrayToAuthorArrayList(influenced));
+        }
         for ( Person a : author.getTop5influenced() ) {
             System.out.println("Influenced: " + (a.getSemanticScholarID() == null ? "null" : a.getSemanticScholarID()) + " " + a.getFullName());
         }
 
         //2 Set Top 5 authors with highest influence on this author
-        JSONArray influencedBy = AuthorSearchResponse.getJSONObject("author").getJSONObject("statistics").getJSONObject("influence").getJSONArray("influencedBy");
-        author.setTop5influencedBy(parseS2AuthorSearchInfluenceJSONArrayToAuthorArrayList(influencedBy));
+        if ( author.getTop5influencedBy() == null || author.getTop5influencedBy().size() == 0 || overwrite ) {
+            JSONArray influencedBy = AuthorSearchResponse.getJSONObject("author").getJSONObject("statistics").getJSONObject("influence").getJSONArray("influencedBy");
+            author.setTop5influencedBy(parseS2AuthorSearchInfluenceJSONArrayToAuthorArrayList(influencedBy));
+        }
 
         //3 Add all papers found on S2
-        PaperHibernateAccess filer = new PaperHibernateAccess();
+        PaperJPAAccess filer = new PaperJPAAccess();
         JSONArray papersJSON = AuthorSearchResponse.getJSONObject("author").getJSONObject("papers").getJSONArray("results");
         for (int i = 0; i < papersJSON.length(); i++) {   //Add all found papers
 
+
             Paper currPaper = new Paper();
-            parseAddS2InternalAPIPaperJSON(papersJSON.getJSONObject(i), overwrite, currPaper);
+            parseAddS2InternalAPIPaperJSON(papersJSON.getJSONObject(i), true, currPaper);
+
+            //Check whether paper already exists in DB, if so choose existing
             Paper orig = filer.lookUpPaper( currPaper );
             if( orig != null ) {
                 orig.complementBy(currPaper);
@@ -226,9 +234,11 @@ public class S2APIFunctions {
 
         }
 
-        //4 Set S2ID
-        String foundS2ID = AuthorSearchResponse.getJSONObject("author").getString("id");
-        author.setSemanticScholarID(foundS2ID);
+        //4 Set
+        if( author.getSemanticScholarID() == null || overwrite ) {
+            String foundS2ID = AuthorSearchResponse.getJSONObject("author").getString("id");
+            author.setSemanticScholarID(foundS2ID);
+        }
         return true;        //TODO placeholder
     }
 
@@ -242,7 +252,7 @@ public class S2APIFunctions {
      */
     private static ArrayList<Person> parseS2AuthorSearchInfluenceJSONArrayToAuthorArrayList(JSONArray influenceJSON) {
         ArrayList<Person> result = new ArrayList<>();
-        PersonHibernateAccess filer = new PersonHibernateAccess();
+        PersonJPAAccess filer = new PersonJPAAccess();
         for (int i = 0; i < influenceJSON.length() && i < 5; i++) { //Iterate through list
             JSONObject jsonAuthorInfo = influenceJSON.getJSONObject(i).getJSONObject("author");
             Person currInfl = new Person();

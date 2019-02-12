@@ -10,6 +10,7 @@ import javax.annotation.PostConstruct;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.crawler.SemanticScholarAPI.S2APIFunctions;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.access.*;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.hibernate.PersonHibernateAccess;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.jpa.*;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.*;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -17,10 +18,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.JPASandBox;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.crawler.CrawlerFacade;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.crawler.SupportedConferences;
-import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.jpa.ConferenceJPAAccess;
-import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.jpa.PaperJPAAccess;
-import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.jpa.SessionJPAAccess;
-import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.jpa.WorkshopJPAAccess;
 
 
 @SpringBootApplication
@@ -173,11 +170,10 @@ public class ParsedDataInserter {
 	 * @param n The first n authors will be added
 	 */
 	private void completeAuthorsByS2(int n) {
-		PersonCommonAccess personfiler = new PersonHibernateAccess();
+		PersonCommonAccess personfiler = new PersonJPAAccess();
 		List<Person> authors = personfiler.get();
 
 		//Go through every Author in the db
-		Person currAuthor;
 		long failedAuthors = 0;
 		long totalAuthors = 0;
 		long failedPapers = 0;
