@@ -30,7 +30,8 @@ public class StreetMapsController {
 	 * @param minLongitude The minimum longitude for the bounding box
 	 * @param maxLatitude	The maximum latitude for the bounding box
 	 * @param maxLongitude	The maximum longitude for the bounding box
-	 * @return A list of location objects
+	 * @throws ResponseStatusException signals to the user that the API is either unreachable or the request was bad
+	 * @return A list of location objects, can be null, though this is unlikely
 	 */
 	@RequestMapping("/location/minLatitude/{minLatitude}/minLongitude/{minLongitude}/maxLatitude/{maxLatitude}/maxLongitude/{maxLongitude}/amenity/{amenity}/radiusInMeter/{radius}")
 	public List<Location> returnAmenities(@PathVariable("amenity") String amenity,
