@@ -38,7 +38,8 @@ public class Location {
 
 	/**
 	 * Sets the location's longitude
-	 * @param longitude The location's longitude (in a range of -180 to 180)
+	 * @param longitude The location's longitude restricted to -180 to 180
+	 * @throws IllegalArgumentException if the longitude was not in range
 	 */
 	public void setLongitude(double longitude) {
 		if (longitude > 180 || longitude < -180){
@@ -89,7 +90,8 @@ public class Location {
 
 	/**
 	 * Sets the location's latitude
-	 * @param latitude The location's latitude
+	 * @param latitude The location's latitude, restricted to -90 to 90
+	 * @throws IllegalArgumentException if the specified latitude was not in range
 	 */
 	public void setLatitude(double latitude) {
 		if (latitude > 90 || latitude < -90){
