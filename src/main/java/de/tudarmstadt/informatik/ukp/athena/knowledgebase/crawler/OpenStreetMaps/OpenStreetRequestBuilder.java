@@ -79,8 +79,8 @@ public class OpenStreetRequestBuilder {
 	 * This method uses the generated request URL to obtain an input stream, which it reads, translates
 	 * into a JSON Array of data from the Overpass API, and finally resolves this data to a usable {@link java.util.List list} of {@link Location locations} for
 	 * the {@link StreetMapsController}.
-	 *
-	 * @return A list of locations
+	 * @throws  IOException in case of connection problems
+	 * @return A list of locations, can be null
 	 */
 	public List<Location> run() throws IOException{
 		// instead of wasting 3+ hours on implementing a dynamic conversion from xml to json,
@@ -122,7 +122,8 @@ public class OpenStreetRequestBuilder {
 	 * Builds a list of {@link Location locations} from the JSON data
 	 *
 	 * @param locations A {@link JSONArray} of nodes in the openStreetMap sense, not null
-	 * @return A list of locations which are then collected from the API
+	 * @throws JSONException in case the JSON was badly formatted or missing key values, though this should not happen
+	 * @return A list of locations which are then collected from the API, or null if it was passed null
 	 */
 	List<Location> resolveJson(JSONArray locations) throws JSONException {
 		// this should never happen
@@ -150,6 +151,11 @@ public class OpenStreetRequestBuilder {
 
 	// this could sometimes be of interest - e.g. the commented test in openStreetRequestBuilderTest with a real API
 	// 	call
+
+	/**
+	 * gets the most recent responseCode, which can be used to check whether a problem occurred API side or sever side
+	 * @return the Overpass API's most recent response code
+	 */
 	public Integer getRecentResponseCode() {
 		return recentResponseCode;
 	}
