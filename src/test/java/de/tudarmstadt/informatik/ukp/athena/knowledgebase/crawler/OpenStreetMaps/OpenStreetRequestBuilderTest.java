@@ -1,4 +1,4 @@
-package de.tudarmstadt.informatik.ukp.athena.knowledgebase.crawler.openstreetmaps;
+package de.tudarmstadt.informatik.ukp.athena.knowledgebase.crawler.OpenStreetMaps;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;

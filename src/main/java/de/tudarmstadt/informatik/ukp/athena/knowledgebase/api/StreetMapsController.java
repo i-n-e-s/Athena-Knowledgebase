@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
-import de.tudarmstadt.informatik.ukp.athena.knowledgebase.crawler.openstreetmaps.OpenStreetRequestBuilder;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.crawler.OpenStreetMaps.OpenStreetRequestBuilder;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Location;
 
 /**

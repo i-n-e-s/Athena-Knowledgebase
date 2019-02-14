@@ -1,4 +1,4 @@
-package de.tudarmstadt.informatik.ukp.athena.knowledgebase.crawler.openstreetmaps;
+package de.tudarmstadt.informatik.ukp.athena.knowledgebase.crawler.OpenStreetMaps;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
@@ -59,7 +59,7 @@ public class OpenStreetRequestBuilder {
 	 * @return The request URL, not null
 	 */
 	@NotNull
-	protected String buildRequestURL(){
+	String buildRequestURL(){
 		return "http://overpass-api.de/api/interpreter?data=[out:json];node(" +
 				minLatitude.toString() +
 				"," +
@@ -124,7 +124,7 @@ public class OpenStreetRequestBuilder {
 	 * @param locations A {@link JSONArray} of nodes in the openStreetMap sense, not null
 	 * @return A list of locations which are then collected from the API
 	 */
-	protected List<Location> resolveJson(JSONArray locations) throws JSONException {
+	List<Location> resolveJson(JSONArray locations) throws JSONException {
 		// this should never happen
 		if (locations == null){
 			System.out.println("JSONArray of locations was null");
