@@ -14,8 +14,8 @@ Problem: Workshop-Schedule wurden noch nicht gespeichtert - jetzt fixed: Daniel 
 
 
 Problem: Semanticscholar - zu viele Anfragen, eine Anfrage pro Paper pro Autor: Philipp erklärt die Lösung
-		Anfrage nur noch max = Anzahl der Autoren, anstatt Anzahl Paper
 		Zugriff nur wenn benötigt
+		Anfrage nur noch max = Anzahl der Autoren, anstatt Anzahl Paper
 		Philipp erklärt Vorhergehensweise - 
 
 
