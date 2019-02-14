@@ -1,4 +1,4 @@
-package de.tudarmstadt.informatik.ukp.athena.knowledgebase.crawler.OpenStreetMaps;
+package de.tudarmstadt.informatik.ukp.athena.knowledgebase.crawler.openstreetmaps;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
@@ -59,7 +59,7 @@ public class OpenStreetRequestBuilder {
 	 * @return The request URL, not null
 	 */
 	@NotNull
-	String buildRequestURL(){
+	protected String buildRequestURL(){
 		return "http://overpass-api.de/api/interpreter?data=[out:json];node(" +
 				minLatitude.toString() +
 				"," +
@@ -125,7 +125,7 @@ public class OpenStreetRequestBuilder {
 	 * @throws JSONException in case the JSON was badly formatted or missing key values, though this should not happen
 	 * @return A list of locations which are then collected from the API, or null if it was passed null
 	 */
-	List<Location> resolveJson(JSONArray locations) throws JSONException {
+	protected List<Location> resolveJson(JSONArray locations) throws JSONException {
 		// this should never happen
 		if (locations == null){
 			System.out.println("JSONArray of locations was null");
@@ -153,8 +153,8 @@ public class OpenStreetRequestBuilder {
 	// 	call
 
 	/**
-	 * gets the most recent responseCode, which can be used to check whether a problem occurred API side or sever side
-	 * @return the Overpass API's most recent response code
+	 * Gets the most recent responseCode, which can be used to check whether a problem occurred API side or sever side
+	 * @return The Overpass API's most recent response code
 	 */
 	public Integer getRecentResponseCode() {
 		return recentResponseCode;

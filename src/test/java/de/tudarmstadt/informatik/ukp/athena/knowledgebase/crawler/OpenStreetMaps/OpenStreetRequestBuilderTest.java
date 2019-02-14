@@ -9,6 +9,7 @@ import org.json.JSONException;
 import org.junit.Before;
 import org.junit.Test;
 
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.crawler.openstreetmaps.OpenStreetRequestBuilder;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Location;
 
 public class OpenStreetRequestBuilderTest {
