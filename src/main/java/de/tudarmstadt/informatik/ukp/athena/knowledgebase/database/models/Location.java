@@ -7,7 +7,7 @@ public class Location {
 	private double longitude;
 	// the latitude of the location
 	private double latitude;
-	// the type of location
+	// the type of the location
 	private String type;
 	// the type of amenity the location is (e.g. tree or restaurant)
 	private String amenity;
@@ -56,9 +56,5 @@ public class Location {
 			throw new IllegalArgumentException("value is not a valid latitude");
 		}
 		this.latitude = latitude;
-	}
-
-	public Location() {
-		super();
 	}
 }

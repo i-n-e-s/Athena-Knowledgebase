@@ -1,45 +1,45 @@
 package de.tudarmstadt.informatik.ukp.athena.knowledgebase.api;
 
+import java.io.IOException;
+import java.util.List;
 
-import de.tudarmstadt.informatik.ukp.athena.knowledgebase.crawler.OpenStreetMaps.openStreetRequestBuilder;
-import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Location;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.io.IOException;
-import java.util.List;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.crawler.openstreetmaps.OpenStreetRequestBuilder;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Location;
 
 /**
- * The REST API controller for StreetMap data
- * currently /openStreetMaps is not mapped but might be extended in the future
+ * The REST API controller for OpenStreetMap data
+ * Currently, /openStreetMaps is not mapped, but might be extended in the future
  */
 @RestController
 @RequestMapping("/openStreetMaps")
 public class StreetMapsController {
 	/**
+	 * Since location data is almost never exact, overpass expects a bounding box (long-/latitude parameters) which symbolises one rough location.
+	 * If you have exact data (you shouldn't), simply add or subtract a small value from your longitude and latitude to
+	 * create a range.
 	 *
-	 * @param amenity the type of amentiy (e.g. restaurant or even tree)
-	 * @param radius the searchradius in meters
-	 * Since location data is almost never exact, overpass expects a bounding box which symbolises once rough location
-	 * if you have exact data (you shouldn't) simply add or subtract a small value from your Longitude and Latitude to
-	 * create a range
-	 * @param minLatitude the minimum Latitude for the bounding box
-	 * @param minLongitude the minimum Longitude for the bounding box
-	 * @param maxLatitude	the maximum Latitude for the bounding box
-	 * @param maxLongitude	the maximum Longitude for the bounding box
-	 * @return A list of Location Objects
+	 * @param amenity The type of amenity (e.g. restaurant or even tree)
+	 * @param radius The search radius in meters
+	 * @param minLatitude The minimum latitude for the bounding box
+	 * @param minLongitude The minimum longitude for the bounding box
+	 * @param maxLatitude	The maximum latitude for the bounding box
+	 * @param maxLongitude	The maximum longitude for the bounding box
+	 * @return A list of location objects
 	 */
 	@RequestMapping("/location/minLatitude/{minLatitude}/minLongitude/{minLongitude}/maxLatitude/{maxLatitude}/maxLongitude/{maxLongitude}/amenity/{amenity}/radiusInMeter/{radius}")
 	public List<Location> returnAmenities(@PathVariable("amenity") String amenity,
-										  @PathVariable("radius") Integer radius,
-										  @PathVariable("minLatitude") Double minLatitude,
-										  @PathVariable("minLongitude") Double minLongitude,
-										  @PathVariable("maxLatitude") Double maxLatitude,
-										  @PathVariable("maxLongitude") Double maxLongitude) {
-		openStreetRequestBuilder streetRequestBuilder = new openStreetRequestBuilder(amenity, minLatitude,
+			@PathVariable("radius") Integer radius,
+			@PathVariable("minLatitude") Double minLatitude,
+			@PathVariable("minLongitude") Double minLongitude,
+			@PathVariable("maxLatitude") Double maxLatitude,
+			@PathVariable("maxLongitude") Double maxLongitude) {
+		OpenStreetRequestBuilder streetRequestBuilder = new OpenStreetRequestBuilder(amenity, minLatitude,
 				minLongitude, maxLatitude, maxLongitude, radius);
 
 		//		openStreetRequestBuilder streetRequestBuilder = new openStreetRequestBuilder(amenity, 48.5657094,
@@ -51,9 +51,8 @@ public class StreetMapsController {
 		} catch (IOException e){
 			throw new ResponseStatusException(
 					HttpStatus.NOT_FOUND, "IO Exception, this might be due to the Overpass API not being available " +
-					"or an incorrect String: \n Are your longitudes and latitudes correct?"
-			);
+							"or an incorrect String: \n Are your longitudes and latitudes correct?"
+					);
 		}
-
 	}
 }

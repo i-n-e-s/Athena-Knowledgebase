@@ -1,31 +1,33 @@
-package de.tudarmstadt.informatik.ukp.athena.knowledgebase.crawler.OpenStreetMaps;
+package de.tudarmstadt.informatik.ukp.athena.knowledgebase.crawler.openstreetmaps;
 
-import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Location;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.fail;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.junit.Before;
 import org.junit.Test;
 
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Location;
 
-import static org.junit.Assert.*;
-
-public class openStreetRequestBuilderTest {
-	private openStreetRequestBuilder openStreetRequestBuilder;
+public class OpenStreetRequestBuilderTest {
+	private OpenStreetRequestBuilder openStreetRequestBuilder;
 	@Test
 	@Before
 	public void setUp() {
-		this.openStreetRequestBuilder = new openStreetRequestBuilder("toilets",
+		this.openStreetRequestBuilder = new OpenStreetRequestBuilder("toilets",
 				48.5657094, 13.4490548, 48.5662416,
 				13.4501676, 150);
 	}
 	// uncomment this only if you actually want to make an API call to Overpass - since we do not test APIs
-//	@Test
-//	public void run() {
-//		int response;
-//		openStreetRequestBuilder.run();
-//		response = openStreetRequestBuilder.getRecentResponseCode();
-//		assertEquals(200, response);
-//	}
+	//	@Test
+	//	public void run() {
+	//		int response;
+	//		openStreetRequestBuilder.run();
+	//		response = openStreetRequestBuilder.getRecentResponseCode();
+	//		assertEquals(200, response);
+	//	}
 	@Test
 	// checks whether the function resolveJson actually does just that
 	// invalid input is not tested, since we directly feed input from Overpass and should trust it?
