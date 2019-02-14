@@ -59,7 +59,7 @@ public class OpenStreetRequestBuilder {
 	 * @return The request URL, not null
 	 */
 	@NotNull
-	protected String buildRequestURL(){
+	String buildRequestURL(){
 		return "http://overpass-api.de/api/interpreter?data=[out:json];node(" +
 				minLatitude.toString() +
 				"," +
@@ -125,7 +125,7 @@ public class OpenStreetRequestBuilder {
 	 * @throws JSONException in case the JSON was badly formatted or missing key values, though this should not happen
 	 * @return A list of locations which are then collected from the API, or null if it was passed null
 	 */
-	protected List<Location> resolveJson(JSONArray locations) throws JSONException {
+	List<Location> resolveJson(JSONArray locations) throws JSONException {
 		// this should never happen
 		if (locations == null){
 			System.out.println("JSONArray of locations was null");

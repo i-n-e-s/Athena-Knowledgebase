@@ -1,4 +1,4 @@
-package de.tudarmstadt.informatik.ukp.athena.knowledgebase.crawler.OpenStreetMaps;
+package de.tudarmstadt.informatik.ukp.athena.knowledgebase.crawler.openstreetmaps;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
@@ -9,7 +9,6 @@ import org.json.JSONException;
 import org.junit.Before;
 import org.junit.Test;
 
-import de.tudarmstadt.informatik.ukp.athena.knowledgebase.crawler.openstreetmaps.OpenStreetRequestBuilder;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Location;
 
 public class OpenStreetRequestBuilderTest {
