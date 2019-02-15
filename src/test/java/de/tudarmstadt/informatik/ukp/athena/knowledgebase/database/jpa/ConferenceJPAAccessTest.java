@@ -1,4 +1,4 @@
-package de.tudarmstadt.informatik.ukp.athenakp.database.jpa;
+package de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.jpa;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -15,9 +15,8 @@ import org.junit.Test;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 
-import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.jpa.ConferenceJPAAccess;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.JPATestdatabase;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Conference;
-import de.tudarmstadt.informatik.ukp.athenakp.database.JPATestdatabase;
 
 @SuppressWarnings("javadoc")
 public class ConferenceJPAAccessTest {
@@ -47,8 +46,8 @@ public class ConferenceJPAAccessTest {
 		testValue.setAddress("TestAdressTest");
 		testValue.setCity("TestCityTest");
 		testValue.setCountry("TestCountryTest");
-		testValue.setEndDate(LocalDate.of(1234, 1, 2));
-		testValue.setStartDate(LocalDate.of(1234, 1, 1));
+		testValue.setEnd(LocalDate.of(1234, 1, 2));
+		testValue.setBegin(LocalDate.of(1234, 1, 1));
 	}
 	
 	@Before
@@ -103,8 +102,8 @@ public class ConferenceJPAAccessTest {
 		assertEquals("Testadress0", returnValue.get(0).getAddress());
 		assertEquals("Testcity0", returnValue.get(0).getCity());
 		assertEquals("Testcountry0", returnValue.get(0).getCountry());
-		assertEquals(LocalDate.of(1960,01,02), returnValue.get(0).getEndDate());
-		assertEquals(LocalDate.of(1960,01,01), returnValue.get(0).getStartDate());	
+		assertEquals(LocalDate.of(1960,01,02), returnValue.get(0).getEnd());
+		assertEquals(LocalDate.of(1960,01,01), returnValue.get(0).getBegin());	
 	}
 
 	@Test
@@ -123,8 +122,8 @@ public class ConferenceJPAAccessTest {
 		assertEquals("Testadress0", returnValue.get(0).getAddress());
 		assertEquals("Testcity0", returnValue.get(0).getCity());
 		assertEquals("Testcountry0", returnValue.get(0).getCountry());
-		assertEquals(LocalDate.of(1960,01,02), returnValue.get(0).getEndDate());
-		assertEquals(LocalDate.of(1960,01,01), returnValue.get(0).getStartDate());	
+		assertEquals(LocalDate.of(1960,01,02), returnValue.get(0).getEnd());
+		assertEquals(LocalDate.of(1960,01,01), returnValue.get(0).getBegin());	
 	}
 
 	@Test 
@@ -137,8 +136,8 @@ public class ConferenceJPAAccessTest {
 		assertEquals("Testadress1", returnValue.get(0).getAddress());
 		assertEquals("Testcity1", returnValue.get(0).getCity());
 		assertEquals("Testcountry1", returnValue.get(0).getCountry());
-		assertEquals(LocalDate.of(1961,02,03), returnValue.get(0).getEndDate());
-		assertEquals(LocalDate.of(1961,02,02), returnValue.get(0).getStartDate());	
+		assertEquals(LocalDate.of(1961,02,03), returnValue.get(0).getEnd());
+		assertEquals(LocalDate.of(1961,02,02), returnValue.get(0).getBegin());	
 	}
 
 	@Test
@@ -171,8 +170,8 @@ public class ConferenceJPAAccessTest {
 		assertEquals("Testadress0", returnValue.get(0).getAddress());
 		assertEquals("Testcity0", returnValue.get(0).getCity());
 		assertEquals("Testcountry0", returnValue.get(0).getCountry());
-		assertEquals(LocalDate.of(1960,01,02), returnValue.get(0).getEndDate());
-		assertEquals(LocalDate.of(1960,01,01), returnValue.get(0).getStartDate());		
+		assertEquals(LocalDate.of(1960,01,02), returnValue.get(0).getEnd());
+		assertEquals(LocalDate.of(1960,01,01), returnValue.get(0).getBegin());		
 	}
 
 	@Test 
@@ -185,8 +184,8 @@ public class ConferenceJPAAccessTest {
 		assertEquals("Testadress1", returnValue.get(0).getAddress());
 		assertEquals("Testcity1", returnValue.get(0).getCity());
 		assertEquals("Testcountry1", returnValue.get(0).getCountry());
-		assertEquals(LocalDate.of(1961,02,03), returnValue.get(0).getEndDate());
-		assertEquals(LocalDate.of(1961,02,02), returnValue.get(0).getStartDate());		
+		assertEquals(LocalDate.of(1961,02,03), returnValue.get(0).getEnd());
+		assertEquals(LocalDate.of(1961,02,02), returnValue.get(0).getBegin());		
 	}
 
 	@Test
@@ -239,8 +238,8 @@ public class ConferenceJPAAccessTest {
 		assertEquals("Testadress1", returnValue.get(0).getAddress());
 		assertEquals("Testcity1", returnValue.get(0).getCity());
 		assertEquals("Testcountry1", returnValue.get(0).getCountry());
-		assertEquals(LocalDate.of(1961,02,03), returnValue.get(0).getEndDate());
-		assertEquals(LocalDate.of(1961,02,02), returnValue.get(0).getStartDate());
+		assertEquals(LocalDate.of(1961,02,03), returnValue.get(0).getEnd());
+		assertEquals(LocalDate.of(1961,02,02), returnValue.get(0).getBegin());
 	}
 
 	@Test
@@ -259,8 +258,8 @@ public class ConferenceJPAAccessTest {
 		assertEquals("Testadress1", returnValue.get(0).getAddress());
 		assertEquals("Testcity1", returnValue.get(0).getCity());
 		assertEquals("Testcountry1", returnValue.get(0).getCountry());
-		assertEquals(LocalDate.of(1961,02,03), returnValue.get(0).getEndDate());
-		assertEquals(LocalDate.of(1961,02,02), returnValue.get(0).getStartDate());
+		assertEquals(LocalDate.of(1961,02,03), returnValue.get(0).getEnd());
+		assertEquals(LocalDate.of(1961,02,02), returnValue.get(0).getBegin());
 	}
 
 	@Test

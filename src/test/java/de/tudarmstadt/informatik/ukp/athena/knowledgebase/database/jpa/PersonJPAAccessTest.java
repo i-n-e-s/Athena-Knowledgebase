@@ -1,4 +1,4 @@
-package de.tudarmstadt.informatik.ukp.athenakp.database.jpa;
+package de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.jpa;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -16,12 +16,10 @@ import org.junit.Test;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 
-import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.jpa.PersonJPAAccess;
-import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Author;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.JPATestdatabase;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Institution;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Paper;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Person;
-import de.tudarmstadt.informatik.ukp.athenakp.database.JPATestdatabase;
 
 @SuppressWarnings("javadoc")
 public class PersonJPAAccessTest {
@@ -55,7 +53,7 @@ public class PersonJPAAccessTest {
 	}
 
 	public void resetValues() {
-		testValue = new Author();
+		testValue = new Person();
 		testPaper1 = new Paper();
 
 		testPaper1.setTitle("TestTitle1");
@@ -69,7 +67,7 @@ public class PersonJPAAccessTest {
 		testInstitution.setName("TestInstitution");
 		testValue.setInstitution(testInstitution);
 
-		testValue.setBirthdate(LocalDate.of(123, 12,3));
+		testValue.setBirth(LocalDate.of(123, 12,3));
 	}
 	
 	@Test
@@ -101,7 +99,7 @@ public class PersonJPAAccessTest {
 		if(returnValues.size() > 1) fail("more than one returnValue ");
 		assertEquals("Prefix0", returnValues.get(0).getPrefix());
 		assertEquals("Author 8", returnValues.get(0).getFullName());
-		assertEquals(LocalDate.of(1938,9,9), returnValues.get(0).getBirthdate());
+		assertEquals(LocalDate.of(1938,9,9), returnValues.get(0).getBirth());
 		assertEquals("Institution8", returnValues.get(0).getInstitution().getName());
 	}
 	
@@ -112,7 +110,7 @@ public class PersonJPAAccessTest {
 		if(returnValues.size() > 1) fail("more than one returnValue ");
 		assertEquals("Prefix1", returnValues.get(0).getPrefix());
 		assertEquals("Author 61", returnValues.get(0).getFullName());
-		assertEquals(LocalDate.of(1991,2,6), returnValues.get(0).getBirthdate());
+		assertEquals(LocalDate.of(1991,2,6), returnValues.get(0).getBirth());
 		assertEquals("Institution1", returnValues.get(0).getInstitution().getName());
 	}
 	
@@ -142,7 +140,7 @@ public class PersonJPAAccessTest {
 	public void getTest() {
 		List<Person> resultList = uut.get();
 		assertTrue(testDB.getAuthorQuantity() == resultList.size());
-		List<String> resultTitles = new ArrayList();
+		List<String> resultTitles = new ArrayList<String>();
 		resultList.stream().forEach((Person p) -> resultTitles.add(p.getFullName()));;
 		for (int i = 0; i < testDB.getAuthorQuantity(); i++) {
 			resultTitles.contains("Person"+ i);

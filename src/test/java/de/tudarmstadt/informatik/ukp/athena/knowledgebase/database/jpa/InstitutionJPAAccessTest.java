@@ -1,4 +1,4 @@
-package de.tudarmstadt.informatik.ukp.athenakp.database.jpa;
+package de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.jpa;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -13,10 +13,9 @@ import org.junit.Test;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 
-import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.jpa.InstitutionJPAAccess;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.JPATestdatabase;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Institution;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Person;
-import de.tudarmstadt.informatik.ukp.athenakp.database.JPATestdatabase;
 
 @SuppressWarnings("javadoc")
 public class InstitutionJPAAccessTest {
@@ -52,7 +51,7 @@ public class InstitutionJPAAccessTest {
 	}
 	
 	@Test
-	public static void addAndDeleteTest() {
+	public void addAndDeleteTest() {
 		uut.add(testValue);
 		List<Institution> returnValue = uut.getByName(testValue.getName());
 		if(returnValue.size() == 0) fail("return value is empty");
@@ -64,7 +63,7 @@ public class InstitutionJPAAccessTest {
 	}
 	
 	@Test
-	public static void updateTest() {
+	public void updateTest() {
 		testValue.setName("TestNameUpdate");
 		List<Institution> returnValue = uut.getByInstitutionID(testValue.getInstitutionID());
 		if(returnValue.size() == 0) fail("returnValue empty");
@@ -78,7 +77,7 @@ public class InstitutionJPAAccessTest {
 	}
 	
 	@Test 
-	public static void getByNameTest() {
+	public void getByNameTest() {
 		List<Institution> returnValue = uut.getByName("Institution6");
 		if(returnValue.size() == 0) fail("return is empty");
 		if(returnValue.size() > 1) fail("More than one return");

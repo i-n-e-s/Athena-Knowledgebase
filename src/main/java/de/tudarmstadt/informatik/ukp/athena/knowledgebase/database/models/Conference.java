@@ -19,7 +19,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name="conference")
-public class Conference {
+public class Conference extends Model{
 	/*Unique id*/
 	@Id
 	@GeneratedValue(generator="increment")

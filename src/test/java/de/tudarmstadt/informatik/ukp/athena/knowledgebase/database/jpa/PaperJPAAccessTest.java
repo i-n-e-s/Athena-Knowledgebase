@@ -1,4 +1,4 @@
-package de.tudarmstadt.informatik.ukp.athenakp.database.jpa;
+package de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.jpa;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -16,10 +16,9 @@ import org.junit.Test;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 
-import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.jpa.PaperJPAAccess;
-import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Author;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.JPATestdatabase;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Paper;
-import de.tudarmstadt.informatik.ukp.athenakp.database.JPATestdatabase;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Person;
 
 @SuppressWarnings("javadoc")
 public class PaperJPAAccessTest {
@@ -27,8 +26,8 @@ public class PaperJPAAccessTest {
 	static JPATestdatabase testDB;
 	static PaperJPAAccess uut;
 	static Paper testValue;
-	static Author testAuthor1;
-	static Author testAuthor2;
+	static Person testAuthor1;
+	static Person testAuthor2;
 	
 	static ConfigurableApplicationContext ctx;
 	
@@ -47,16 +46,16 @@ public class PaperJPAAccessTest {
 
 	public void resetValues() {
 		testValue = new Paper();
-		testAuthor1 = new Author();
+		testAuthor1 = new Person();
 		testAuthor1.setFullName("testAuthor1");
-		testAuthor2 = new Author();
+		testAuthor2 = new Person();
 		testAuthor2.setFullName("testAuthor2");
 		testValue.setTitle("TestPapertitleTest");
 		testValue.addAuthor(testAuthor1);
 		testValue.addAuthor(testAuthor2);
 		testValue.setReleaseDate(LocalDate.of(1234, 12, 3));
 		testValue.setTopic("TestTopicTest");
-		testValue.setHref("TestLinktTest");
+		testValue.setRemoteLink("TestLinktTest");
 		testValue.setPdfFileSize(1234321);
 		testValue.setAnthology("TestAnthology");
 		
@@ -152,9 +151,9 @@ public class PaperJPAAccessTest {
 		if(returnValue.size() == 0) fail("return of existing Database is empty");
 		if(returnValue.size() > 1) fail("more than one return value");
 		assertTrue(testValue.equalsWithoutID(returnValue.get(0)));
-		for (Author authorReturn : returnValue.get(0).getAuthors()) {
+		for (Person authorReturn : returnValue.get(0).getAuthors()) {
 			boolean containsAuthor = false;
-			for (Author authorTestVal : testValue.getAuthors()) {
+			for (Person authorTestVal : testValue.getAuthors()) {
 				if(authorTestVal.getFullName().equals(authorReturn.getFullName()) 
 						&& containsAuthor) fail("duplicate author entry in return");
 				if(authorTestVal.getFullName().equals(authorReturn.getFullName())) 
