@@ -1,4 +1,4 @@
-package de.tudarmstadt.informatik.ukp.athenakp.database.models;
+package de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models;
 
 import java.util.Set;
 
@@ -11,8 +11,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Entity
-@Table(name="institutions")
-public class Institution extends Model{
+@Table(name="institution")
+public class Institution extends Model {
 
 	/*Unique institutionID*/
 	@Id

@@ -1,4 +1,4 @@
-package de.tudarmstadt.informatik.ukp.athenakp.database.hibernate;
+package de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.hibernate;
 
 import java.sql.Timestamp;
 

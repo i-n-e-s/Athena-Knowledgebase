@@ -1,4 +1,4 @@
-package de.tudarmstadt.informatik.ukp.athenakp.database.models;
+package de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models;
 
 public enum EventCategory {
 	TUTORIAL,

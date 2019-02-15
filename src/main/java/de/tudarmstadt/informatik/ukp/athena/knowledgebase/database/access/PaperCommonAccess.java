@@ -1,14 +1,13 @@
-package de.tudarmstadt.informatik.ukp.athenakp.database.access;
+package de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.access;
 
 import java.util.List;
 
-import de.tudarmstadt.informatik.ukp.athenakp.database.models.Paper;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Paper;
 
 /**
  * @author Daniel Lehmann
  */
-public interface PaperCommonAccess extends CommonAccess<Paper>
-{
+public interface PaperCommonAccess extends CommonAccess<Paper> {
 	/**
 	 * Get all papers with specified paper id.
 	 * @param paperID The paper's paper id.

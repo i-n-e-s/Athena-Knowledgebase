@@ -1,4 +1,4 @@
-package de.tudarmstadt.informatik.ukp.athenakp.database.hibernate;
+package de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.hibernate;
 
 import java.util.List;
 
@@ -6,8 +6,8 @@ import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 
-import de.tudarmstadt.informatik.ukp.athenakp.database.access.InstitutionCommonAccess;
-import de.tudarmstadt.informatik.ukp.athenakp.database.models.Institution;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.access.InstitutionCommonAccess;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Institution;
 
 /**
  * @author Daniel Lehmann
@@ -33,7 +33,7 @@ public class InstitutionHibernateAccess implements InstitutionCommonAccess {
 	 * Common code used by all get methods above
 	 * @param name The name of the column to restrict
 	 * @param value The value to restrict the selection to
-	 * @return A List of all persons with the given restriction
+	 * @return A List of all institutions with the given restriction
 	 */
 	private List<Institution> getBy(String name, Object value) {
 		Session session = HibernateUtils.getSessionFactory().openSession();

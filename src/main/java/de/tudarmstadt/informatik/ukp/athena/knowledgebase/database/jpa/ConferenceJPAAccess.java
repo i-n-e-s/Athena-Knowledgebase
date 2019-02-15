@@ -1,4 +1,4 @@
-package de.tudarmstadt.informatik.ukp.athenakp.database.jpa;
+package de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.jpa;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -8,8 +8,8 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 
-import de.tudarmstadt.informatik.ukp.athenakp.database.access.ConferenceCommonAccess;
-import de.tudarmstadt.informatik.ukp.athenakp.database.models.Conference;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.access.ConferenceCommonAccess;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Conference;
 
 public class ConferenceJPAAccess implements ConferenceCommonAccess {
 
@@ -63,14 +63,6 @@ public class ConferenceJPAAccess implements ConferenceCommonAccess {
 	 */
 	@Override
 	public List<Conference> getByAuthor(long personID) {
-		throw new UnsupportedOperationException("Not supported yet!");
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public List<Conference> getByPaper(long paperID) {
 		throw new UnsupportedOperationException("Not supported yet!");
 	}
 

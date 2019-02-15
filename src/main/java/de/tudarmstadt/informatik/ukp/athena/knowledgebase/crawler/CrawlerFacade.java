@@ -1,9 +1,9 @@
-package de.tudarmstadt.informatik.ukp.athenakp.crawler;
+package de.tudarmstadt.informatik.ukp.athena.knowledgebase.crawler;
 
 import java.io.IOException;
 import java.util.ArrayList;
 
-import de.tudarmstadt.informatik.ukp.athenakp.database.models.Conference;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.*;
 
 /**
  *
@@ -25,28 +25,48 @@ public class CrawlerFacade extends AbstractCrawler{
 		super();
 		switch(conference) {
 			case ACL:
-				crawler = new ACL18WebParser(beginYear, endYear);
+				crawler = new ACLWebCrawler(beginYear, endYear);
 				break;
 		}
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
-	public ArrayList<String> getAuthors() throws IOException {
+	public ArrayList<Person> getAuthors() throws IOException {
 		return crawler.getAuthors();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
-	public ArrayList<String> getPaperTitles() throws IOException {
-		return crawler.getPaperTitles();
+	public ArrayList<Paper> getPapers() throws IOException {
+		return crawler.getPapers();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
-	public ArrayList<ArrayList<String>> getPaperAuthor() throws IOException{
+	public ArrayList<Paper> getPaperAuthor() throws IOException{
 		return crawler.getPaperAuthor();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Conference getConferenceInformation() throws IOException {
 		return crawler.getConferenceInformation();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public ArrayList<ScheduleEntry> getSchedule() throws IOException {
+		return crawler.getSchedule();
 	}
 }

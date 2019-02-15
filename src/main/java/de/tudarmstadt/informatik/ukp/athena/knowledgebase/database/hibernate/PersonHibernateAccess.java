@@ -1,4 +1,4 @@
-package de.tudarmstadt.informatik.ukp.athenakp.database.hibernate;
+package de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.hibernate;
 
 import java.util.List;
 
@@ -6,8 +6,8 @@ import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 
-import de.tudarmstadt.informatik.ukp.athenakp.database.access.PersonCommonAccess;
-import de.tudarmstadt.informatik.ukp.athenakp.database.models.Person;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.access.PersonCommonAccess;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Person;
 
 /**
  * Implementation of PersonCommonAccess with Hibernate.

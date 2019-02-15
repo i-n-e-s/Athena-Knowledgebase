@@ -1,8 +1,8 @@
-package de.tudarmstadt.informatik.ukp.athenakp.database.access;
+package de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.access;
 
 import java.util.List;
 
-import de.tudarmstadt.informatik.ukp.athenakp.database.models.Institution;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Institution;
 
 /**
  * @author Daniel Lehmann

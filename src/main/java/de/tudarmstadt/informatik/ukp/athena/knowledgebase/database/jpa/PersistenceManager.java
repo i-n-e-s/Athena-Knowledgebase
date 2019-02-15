@@ -1,4 +1,4 @@
-package de.tudarmstadt.informatik.ukp.athenakp.database.jpa;
+package de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.jpa;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;

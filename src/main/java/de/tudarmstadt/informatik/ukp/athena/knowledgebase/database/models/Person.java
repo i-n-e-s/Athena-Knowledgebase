@@ -1,30 +1,30 @@
-package de.tudarmstadt.informatik.ukp.athenakp.database.models;
+package de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models;
 
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
-import javax.persistence.DiscriminatorColumn;
-import javax.persistence.DiscriminatorType;
-import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  * @author Tristan Wettich
  */
-@Entity(name = "person")
+@Entity
 @Table(name = "person")
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(name = "type", discriminatorType = DiscriminatorType.STRING)
-@DiscriminatorValue(value = "person")
-public class Person extends Model{
+public class Person extends Model {
 	/*Unique id*/
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -39,10 +39,8 @@ public class Person extends Model{
 	private String fullName;
 
 	/*Birthday and day of death*/
-	//@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "birthday")
-	private LocalDate birthdate;
-	//@Temporal(TemporalType.TIMESTAMP)
+	private LocalDate birth;
 	@Column(name = "obit")
 	private LocalDate obit;
 
@@ -51,6 +49,17 @@ public class Person extends Model{
 	@ManyToOne
 	@JoinColumn(name = "institutionID")
 	private Institution institution;
+
+	/*Written papers*/
+	@Hierarchy(entityName="paper")
+	@JsonIgnore //fixes infinite recursion
+	@ManyToMany(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER)
+	@JoinTable(
+			name = "author_paper",
+			joinColumns = { @JoinColumn(name = "authorID") },
+			inverseJoinColumns = { @JoinColumn(name = "paperID") }
+			)
+	private Set<Paper> papers = new HashSet<>();
 
 	/**
 	 * Gets the unique id of the person.
@@ -104,16 +113,16 @@ public class Person extends Model{
 	 * Gets the person's birthday.
 	 * @return The person's birthday
 	 */
-	public LocalDate getBirthdate() {
-		return birthdate;
+	public LocalDate getBirth() {
+		return birth;
 	}
 
 	/**
 	 * Sets the person's birthday
-	 * @param birthdate The person's birthday
+	 * @param birth The person's birthday
 	 */
-	public void setBirthdate(LocalDate birthdate) {
-		this.birthdate = birthdate;
+	public void setBirth(LocalDate birth) {
+		this.birth = birth;
 	}
 
 	/**
@@ -146,6 +155,30 @@ public class Person extends Model{
 	 */
 	public void setInstitution(Institution institution) {
 		this.institution = institution;
+	}
+
+	/**
+	 * Gets the papers this author has written
+	 * @return The papers this author has written
+	 */
+	public Set<Paper> getPapers() {
+		return papers;
+	}
+
+	/**
+	 * Sets this author's papers
+	 * @param papers The new paper of this author
+	 */
+	public void setPapers(Set<Paper> papers) {
+		this.papers = papers;
+	}
+
+	/**
+	 * Adds a paper to this author's paper list
+	 * @param p The paper to add
+	 */
+	public void addPaper(Paper p) {
+		papers.add(p);
 	}
 
 }

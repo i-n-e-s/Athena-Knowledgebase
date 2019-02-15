@@ -1,8 +1,8 @@
-package de.tudarmstadt.informatik.ukp.athenakp.database.access;
+package de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.access;
 
 import java.util.List;
 
-import de.tudarmstadt.informatik.ukp.athenakp.database.models.Conference;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Conference;
 
 /**
  * @author Daniel Lehmann
@@ -40,13 +40,6 @@ public interface ConferenceCommonAccess extends CommonAccess<Conference>
 	 * @return A List of all conferences with the specified author.
 	 */
 	public List<Conference> getByAuthor(long personID);
-
-	/**
-	 * Get all conferences with specified paper.
-	 * @param paperID The conference's paper's ID.
-	 * @return A List of all conferences with the specified paper.
-	 */
-	public List<Conference> getByPaper(long paperID);
 
 	/**
 	 * Get all conferences in the specified country

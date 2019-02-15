@@ -1,4 +1,4 @@
-package de.tudarmstadt.informatik.ukp.athenakp.database.jpa;
+package de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.jpa;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -8,8 +8,8 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 
-import de.tudarmstadt.informatik.ukp.athenakp.database.access.PaperCommonAccess;
-import de.tudarmstadt.informatik.ukp.athenakp.database.models.Paper;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.access.PaperCommonAccess;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Paper;
 
 public class PaperJPAAccess implements PaperCommonAccess {
 

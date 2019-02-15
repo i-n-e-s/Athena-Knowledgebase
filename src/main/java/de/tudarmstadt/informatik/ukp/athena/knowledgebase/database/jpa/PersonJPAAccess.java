@@ -1,4 +1,4 @@
-package de.tudarmstadt.informatik.ukp.athenakp.database.jpa;
+package de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.jpa;
 
 import java.sql.Timestamp;
 import java.util.List;
@@ -8,8 +8,8 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 
-import de.tudarmstadt.informatik.ukp.athenakp.database.access.PersonCommonAccess;
-import de.tudarmstadt.informatik.ukp.athenakp.database.models.Person;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.access.PersonCommonAccess;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Person;
 
 public class PersonJPAAccess implements PersonCommonAccess {
 

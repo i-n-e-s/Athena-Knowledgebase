@@ -1,4 +1,4 @@
-package de.tudarmstadt.informatik.ukp.athenakp.crawler;
+package de.tudarmstadt.informatik.ukp.athena.knowledgebase.crawler;
 
 /**
  * 

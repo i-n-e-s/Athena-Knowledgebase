@@ -1,4 +1,4 @@
-package de.tudarmstadt.informatik.ukp.athenakp.database.hibernate;
+package de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.hibernate;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -7,8 +7,8 @@ import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 
-import de.tudarmstadt.informatik.ukp.athenakp.database.access.PaperCommonAccess;
-import de.tudarmstadt.informatik.ukp.athenakp.database.models.Paper;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.access.PaperCommonAccess;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Paper;
 
 /**
  * @author Daniel Lehmann, Jonas Hake

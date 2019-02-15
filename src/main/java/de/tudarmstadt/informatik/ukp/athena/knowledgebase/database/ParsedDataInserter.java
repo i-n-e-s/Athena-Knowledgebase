@@ -1,28 +1,31 @@
-package de.tudarmstadt.informatik.ukp.athenakp.database;
+package de.tudarmstadt.informatik.ukp.athena.knowledgebase.database;
 
 import java.io.IOException;
-import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.TimeZone;
-import java.util.TreeMap;
 
 import javax.annotation.PostConstruct;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-import de.tudarmstadt.informatik.ukp.athenakp.JPASandBox;
-import de.tudarmstadt.informatik.ukp.athenakp.crawler.CrawlerFacade;
-import de.tudarmstadt.informatik.ukp.athenakp.crawler.SupportedConferences;
-import de.tudarmstadt.informatik.ukp.athenakp.database.access.ConferenceCommonAccess;
-import de.tudarmstadt.informatik.ukp.athenakp.database.access.PaperCommonAccess;
-import de.tudarmstadt.informatik.ukp.athenakp.database.jpa.ConferenceJPAAccess;
-import de.tudarmstadt.informatik.ukp.athenakp.database.jpa.PaperJPAAccess;
-import de.tudarmstadt.informatik.ukp.athenakp.database.models.Author;
-import de.tudarmstadt.informatik.ukp.athenakp.database.models.Conference;
-import de.tudarmstadt.informatik.ukp.athenakp.database.models.Paper;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.JPASandBox;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.crawler.CrawlerFacade;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.crawler.SupportedConferences;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.access.ConferenceCommonAccess;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.access.PaperCommonAccess;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.access.SessionCommonAccess;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.access.WorkshopCommonAccess;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.jpa.ConferenceJPAAccess;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.jpa.PaperJPAAccess;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.jpa.SessionJPAAccess;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.jpa.WorkshopJPAAccess;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Conference;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Paper;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.ScheduleEntry;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Session;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Workshop;
 
 
 @SpringBootApplication
@@ -33,7 +36,19 @@ import de.tudarmstadt.informatik.ukp.athenakp.database.models.Paper;
 	@author Julian Steitz
  */
 public class ParsedDataInserter {
-	// this makes it so everything written into the database is in UTC.
+	private CrawlerFacade acl18WebParser;
+
+	public ParsedDataInserter(){}
+
+	/**
+	 * @param beginYear The first year to get data from
+	 * @param endYear The last year to get data from
+	 */
+	public ParsedDataInserter(String beginYear, String endYear) {
+		acl18WebParser = new CrawlerFacade(SupportedConferences.ACL, beginYear, endYear);
+	}
+
+	// This assures everything written into the database is in UTC.
 	// from https://aboullaite.me/spring-boot-time-zone-configuration-using-hibernate/
 	// took me far too long to find
 	// TODO: look into application.yml ?
@@ -41,14 +56,14 @@ public class ParsedDataInserter {
 	void started() {
 		TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
 	}
+
 	public static void main(String[] args) {
 		SpringApplication.run(JPASandBox.class, args);
-		ParsedDataInserter parsedDataInserter = new ParsedDataInserter();
+		ParsedDataInserter parsedDataInserter;
 
-		List<String> argList = Arrays.asList(args);
 		String beginYear = "2018", endYear = "2018";
 
-		for(String arg : argList) {
+		for(String arg : args) {
 			if(arg.startsWith("-beginYear=")) {
 				String year = arg.split("=")[1];
 
@@ -63,100 +78,93 @@ public class ParsedDataInserter {
 			}
 		}
 
-		System.out.printf("Scraping years %s through %s", beginYear, endYear);
+		parsedDataInserter = new ParsedDataInserter(beginYear, endYear);
+		System.out.printf("Scraping years %s through %s - this can take a couple of minutes...\n", beginYear, endYear);
 
 		try {
-			parsedDataInserter.aclStorePapersAndAuthors(beginYear, endYear);
+			parsedDataInserter.aclStorePapersAndAuthors();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		//		parsedDataInserter.acl2018StoreConferenceInformation();
+		parsedDataInserter.acl2018StoreConferenceInformation(); //automatically saves the schedule as well
+		System.out.println("Done!");
 	}
 
 	/**
-	 * Constructs Author and Paper Objects from ACL18Webparser().getPaperAuthor() and adds them to the database
+	 * Constructs Person (Author) and Paper Objects from ACL18Webparser().getPaperAuthor() and adds them to the database
 	 * see its documentation for its makeup
 	 *
-	 * @param beginYear The first year to get data from
-	 * @param endYear The last year to get data from
 	 * @throws IOException if jsoup was interrupted in the scraping process (during getPaperAuthor())
 	 * @author Julian Steitz, Daniel Lehmann
 	 * TODO: implement saveandupdate in Common Access? Otherwise implement check if entry exist. Expensive?
 	 */
-	private void aclStorePapersAndAuthors(String beginYear, String endYear) throws IOException {
-		CrawlerFacade acl18WebParser = new CrawlerFacade(SupportedConferences.ACL, beginYear, endYear);
-		System.out.println(" - this can take a couple of minutes..");
-		ArrayList<ArrayList<String>> listOfPaperAuthor = acl18WebParser.getPaperAuthor();
-		System.out.println("Done scraping! Inserting data into database...");
+	private void aclStorePapersAndAuthors() throws IOException {
+		System.out.println("Scraping papers and authors...");
+		ArrayList<Paper> papers = acl18WebParser.getPaperAuthor();
 		PaperCommonAccess paperFiler = new PaperJPAAccess();
 		// PersonCommonAccess personfiler = new PersonJPAAccess();
 
-		//Keeps Track of all added Authors, so they won't be added twice	
-		TreeMap<String,Author> addedAuthors = new TreeMap<String,Author>((o1, o2) -> o1.compareTo(o2));
-		
-		for (ArrayList<String> paperAndAuthors : listOfPaperAuthor) {
-			// only one Paper per paperandauthors
-			Paper paper = new Paper();
-			// clean up the titles in the form of [C18-1017] Simple Neologism Based Domain Independe...
-			// C18-1017 would be the anthology - we remove [] because the rest API dislikes the characters and they
-			// convey no meaning
-			String rawStore = paperAndAuthors.get(0);
-			String[] storeSplit = rawStore.split(";;");
-			String rawTitle = storeSplit[0];
-			String[] splitRawTitle = rawTitle.split(" ", 2);
-			String paperTitle = splitRawTitle[1];
-			String anthology = splitRawTitle[0].replace("[", "").replace("]", "");
-			paper.setTitle(paperTitle);
-			paper.setAnthology(anthology);
-			paper.setReleaseDate(LocalDate.of(Integer.parseInt(storeSplit[1]), Integer.parseInt(storeSplit[2]), 1));
-			paper.setHref("http://aclweb.org/anthology/" + anthology); //wow that was easy
-			// we ignore the first entry, since it is a Paper's title
-			for (int i = 1; i < paperAndAuthors.size(); i++) {
-				String authorName = paperAndAuthors.get(i);
-				Author author;
-				if(!addedAuthors.containsKey(authorName)) {
-					author = new Author();
-					// because acl2018 seems to not employ prefixes (e.g. Prof. Dr.), we do not need to scan them
-					// scanning them might make for a good user story
-					author.setFullName(authorName);
-					addedAuthors.put(authorName, author);
+		System.out.println("Inserting papers and authors into database...");
 
-				}else {
-					author = addedAuthors.get(authorName);
-				}
-
-				// Both following statements seem necessary for the author_paper table but lead to Hibernate
-				// access returning an object (paper) as often as a relation in author_paper exists
-				// looking into the tables themselves, duplicate papers (even with the same PaperID) do not exist
-				// TODO: fix whatever causes the multiple Hibernate Accesses (returning the same object)
-				// TODO: when calling the API (my guess: paper_author relation)
-				// set paper - author relation
-				paper.addAuthor(author);
-				// set author - paper relation
-				author.addPaper(paper);
-				// add author to database + paper included
-				// personfiler.add(author);
-			}
-			// adding the paper automatically adds the corresponding authors - realisation that took hours
+		for(Paper paper : papers) {
 			paperFiler.add(paper);
+		}
+
+		System.out.println("Done inserting papers and authors!");
+	}
+
+	/**
+	 * Stores the acl2018 conference including the schedule into the database
+	 */
+	private void acl2018StoreConferenceInformation() {
+		ConferenceCommonAccess conferenceCommonAccess = new ConferenceJPAAccess();
+
+		try {
+			Conference acl2018 = acl18WebParser.getConferenceInformation();
+			List<ScheduleEntry> entries = acl2018StoreSchedule();
+
+			for(ScheduleEntry entry : entries) {
+				if(entry instanceof Session)
+					acl2018.addSession((Session)entry);
+				else if(entry instanceof Workshop)
+					acl2018.addWorkshop((Workshop)entry);
+			}
+
+			System.out.println("Inserting conference into database...");
+			conferenceCommonAccess.add(acl2018);
+			System.out.println("Done inserting!");
+		}
+		catch (IOException e) {
+			e.printStackTrace();
 		}
 	}
 
 	/**
-	 * Stores the acl2018 conference into the database
-	 * @param beginYear The first year to get data from
-	 * @param endYear The last year to get data from
+	 * Stores the acl2018 conference's schedule into the database
+	 * @return The scraped and stored sessions
 	 */
-	private void acl2018StoreConferenceInformation(String beginYear, String endYear) {
-		CrawlerFacade acl18WebParser = new CrawlerFacade(SupportedConferences.ACL, beginYear, endYear);
-		ConferenceCommonAccess conferenceCommonAccess = new ConferenceJPAAccess();
-		try{
-			Conference acl2018 = acl18WebParser.getConferenceInformation();
-			conferenceCommonAccess.add(acl2018);
+	private List<ScheduleEntry> acl2018StoreSchedule() {
+		SessionCommonAccess sessionCommonAccess = new SessionJPAAccess();
+		WorkshopCommonAccess workshopCommonAccess = new WorkshopJPAAccess();
+		List<ScheduleEntry> entries = new ArrayList<>(); //initialize in case anything fails
+
+		try {
+			entries = acl18WebParser.getSchedule();
+
+			System.out.println("Inserting schedule into database...");
+			//add to database
+			for(ScheduleEntry entry : entries) {
+				if(entry instanceof Session)
+					sessionCommonAccess.add((Session)entry);
+				else if(entry instanceof Workshop)
+					workshopCommonAccess.add((Workshop)entry);
+			}
+			System.out.println("Done inserting!");
 		}
-		catch (IOException e){
+		catch(IOException e){
 			e.printStackTrace();
 		}
 
+		return entries;
 	}
 }
