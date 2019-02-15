@@ -1,4 +1,4 @@
-package de.tudarmstadt.informatik.ukp.athenakp;
+package de.tudarmstadt.informatik.ukp.athena.knowledgebase;
 
 import java.time.LocalDate;
 import java.util.Arrays;
@@ -7,13 +7,13 @@ import java.util.List;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-import de.tudarmstadt.informatik.ukp.athenakp.database.access.PaperCommonAccess;
-import de.tudarmstadt.informatik.ukp.athenakp.database.access.PersonCommonAccess;
-import de.tudarmstadt.informatik.ukp.athenakp.database.jpa.PaperJPAAccess;
-import de.tudarmstadt.informatik.ukp.athenakp.database.jpa.PersonJPAAccess;
-import de.tudarmstadt.informatik.ukp.athenakp.database.models.Author;
-import de.tudarmstadt.informatik.ukp.athenakp.database.models.Paper;
-import de.tudarmstadt.informatik.ukp.athenakp.database.models.Person;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.access.PaperCommonAccess;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.access.PersonCommonAccess;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.jpa.PaperJPAAccess;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.jpa.PersonJPAAccess;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Author;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Paper;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Person;
 
 @SpringBootApplication
 public class JPASandBox {

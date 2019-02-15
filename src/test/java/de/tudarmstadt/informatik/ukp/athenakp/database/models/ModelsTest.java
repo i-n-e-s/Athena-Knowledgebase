@@ -7,6 +7,11 @@ import java.time.LocalDate;
 
 import org.junit.Test;
 
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Author;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Conference;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Model;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Paper;
+
 @SuppressWarnings("javadoc")
 public class ModelsTest {
 	/*Branchcoverage can't be reached yet, because we don't have fields which are accessible 

@@ -8,6 +8,8 @@ import java.time.LocalTime;
 
 import org.junit.Test;
 
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.crawler.CrawlerToolset;
+
 public class CrawlerToolsetTest {
 	private LocalTime correctTime = LocalTime.of(9,0);
 

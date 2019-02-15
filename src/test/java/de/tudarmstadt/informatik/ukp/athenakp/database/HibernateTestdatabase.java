@@ -13,16 +13,16 @@ import org.hibernate.Session;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-import de.tudarmstadt.informatik.ukp.athenakp.database.hibernate.ConferenceHibernateAccess;
-import de.tudarmstadt.informatik.ukp.athenakp.database.hibernate.HibernateUtils;
-import de.tudarmstadt.informatik.ukp.athenakp.database.hibernate.InstitutionHibernateAccess;
-import de.tudarmstadt.informatik.ukp.athenakp.database.hibernate.PaperHibernateAccess;
-import de.tudarmstadt.informatik.ukp.athenakp.database.hibernate.PersonHibernateAccess;
-import de.tudarmstadt.informatik.ukp.athenakp.database.models.Author;
-import de.tudarmstadt.informatik.ukp.athenakp.database.models.Conference;
-import de.tudarmstadt.informatik.ukp.athenakp.database.models.Event;
-import de.tudarmstadt.informatik.ukp.athenakp.database.models.Institution;
-import de.tudarmstadt.informatik.ukp.athenakp.database.models.Paper;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.hibernate.ConferenceHibernateAccess;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.hibernate.HibernateUtils;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.hibernate.InstitutionHibernateAccess;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.hibernate.PaperHibernateAccess;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.hibernate.PersonHibernateAccess;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Author;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Conference;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Event;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Institution;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Paper;
 
 /**
  * A class to create a uniform database for testing purposes

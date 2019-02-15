@@ -15,8 +15,9 @@ import org.junit.Test;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.hibernate.ConferenceHibernateAccess;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Conference;
 import de.tudarmstadt.informatik.ukp.athenakp.database.HibernateTestdatabase;
-import de.tudarmstadt.informatik.ukp.athenakp.database.models.Conference;
 
 @SuppressWarnings("javadoc")
 public class ConferenceHibernateAccessIntegrationTest {

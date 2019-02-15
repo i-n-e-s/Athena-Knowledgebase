@@ -16,9 +16,10 @@ import org.junit.Test;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.jpa.PaperJPAAccess;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Author;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Paper;
 import de.tudarmstadt.informatik.ukp.athenakp.database.JPATestdatabase;
-import de.tudarmstadt.informatik.ukp.athenakp.database.models.Author;
-import de.tudarmstadt.informatik.ukp.athenakp.database.models.Paper;
 
 @SuppressWarnings("javadoc")
 public class PaperJPAAccessTest {

@@ -6,7 +6,8 @@ import java.time.LocalDate;
 import org.junit.Assert;
 import org.junit.Test;
 
-import de.tudarmstadt.informatik.ukp.athenakp.database.models.Conference;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.crawler.ACL18WebParser;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Conference;
 
 
 public class ACL18WebParserTest {

@@ -13,16 +13,16 @@ import javax.persistence.EntityManager;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-import de.tudarmstadt.informatik.ukp.athenakp.database.jpa.ConferenceJPAAccess;
-import de.tudarmstadt.informatik.ukp.athenakp.database.jpa.InstitutionJPAAccess;
-import de.tudarmstadt.informatik.ukp.athenakp.database.jpa.PaperJPAAccess;
-import de.tudarmstadt.informatik.ukp.athenakp.database.jpa.PersistenceManager;
-import de.tudarmstadt.informatik.ukp.athenakp.database.jpa.PersonJPAAccess;
-import de.tudarmstadt.informatik.ukp.athenakp.database.models.Author;
-import de.tudarmstadt.informatik.ukp.athenakp.database.models.Conference;
-import de.tudarmstadt.informatik.ukp.athenakp.database.models.Event;
-import de.tudarmstadt.informatik.ukp.athenakp.database.models.Institution;
-import de.tudarmstadt.informatik.ukp.athenakp.database.models.Paper;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.jpa.ConferenceJPAAccess;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.jpa.InstitutionJPAAccess;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.jpa.PaperJPAAccess;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.jpa.PersistenceManager;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.jpa.PersonJPAAccess;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Author;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Conference;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Event;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Institution;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Paper;
 
 @SpringBootApplication
 public class JPATestdatabase {

@@ -13,9 +13,10 @@ import org.junit.Test;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.hibernate.InstitutionHibernateAccess;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Institution;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Person;
 import de.tudarmstadt.informatik.ukp.athenakp.database.HibernateTestdatabase;
-import de.tudarmstadt.informatik.ukp.athenakp.database.models.Institution;
-import de.tudarmstadt.informatik.ukp.athenakp.database.models.Person;
 
 public class InstitutionHibernateAccessIntegrationTest {
 	
