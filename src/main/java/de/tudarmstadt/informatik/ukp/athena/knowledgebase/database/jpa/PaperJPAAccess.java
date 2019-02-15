@@ -119,7 +119,7 @@ public class PaperJPAAccess implements PaperCommonAccess {
 	/**
 	 * Looks for equal attribute DB entries of Paper and returns the matching Paper Object
 	 * If multiple Occurences are found in DB, return the first result
-	 * 
+	 *
 	 * @author Philipp Emmer
 	 * @param paperToFind The paper object to search
 	 * @return The first DB Entry of Paper with matching Attributes or null

@@ -14,6 +14,8 @@ import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.hibernate.PersonHibernateAccess;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.jpa.PaperJPAAccess;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.jpa.PersonJPAAccess;
 import org.hibernate.annotations.GenericGenerator;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -277,79 +279,82 @@ public class Paper extends Model {
 	}
 
 
-	public boolean complementBy(Paper srcPaper) {
+	public boolean complementBy(Paper srcPaper, boolean overwrite) {
 
+		//Initialize return value
 		boolean changed = false;
-		PersonHibernateAccess personFiler = new PersonHibernateAccess();
+		PersonJPAAccess personFiler = new PersonJPAAccess();
 
-		//1. Copy all prime Attributes
-		if (this.getTopic() == null && srcPaper.getTopic() != null) {
-			this.setTopic(srcPaper.getTopic());
-			changed = true;
-		}
-		if (this.getPaperAbstract() == null && srcPaper.getPaperAbstract() != null) {
-			this.setPaperAbstract(srcPaper.getPaperAbstract());
-			changed = true;
-		}
-		if (this.getTitle() == null && srcPaper.getTitle() != null) {
-			this.setTitle(srcPaper.getTitle());
-			changed = true;
-		}
-		if (this.getReleaseDate() == null && srcPaper.getReleaseDate() != null) {
-			this.setReleaseDate(srcPaper.getReleaseDate());
-			changed = true;
-		}
-		if (this.getRemoteLink() == null && srcPaper.getRemoteLink() != null) {
-			this.setRemoteLink(srcPaper.getRemoteLink());
-			changed = true;
-		}
-		if (this.getPdfFileSize() == null && srcPaper.getPdfFileSize() != null) {
-			this.setPdfFileSize(srcPaper.getPdfFileSize());
-			changed = true;
-		}
-		if (this.getAnthology() == null && srcPaper.getAnthology() != null) {
-			this.setAnthology(srcPaper.getAnthology());
-			changed = true;
-		}
-		if (this.getSemanticScholarID() == null && srcPaper.getSemanticScholarID() != null) {
-			this.setSemanticScholarID(srcPaper.getSemanticScholarID());
-			changed = true;
-		}
-		if (this.getAmountOfCitations() == null && srcPaper.getAmountOfCitations() != null) {
-			this.setAmountOfCitations(srcPaper.getAmountOfCitations());
-			changed = true;
-		}
-
-
+		//1. Complement all prime Attributes
+		changed = complementPrimeAttributesBy(srcPaper, overwrite);
 
 		//2. Copy all Authors
 		copyAllAuthorsLoop:
 		for (Person srcAuthor : srcPaper.getAuthors()) {
 
 			//Check if Author is already known in paper
-			for (Person thisAuthor : this.getAuthors()) {
-				if ( thisAuthor.equalsNullAsWildcard(srcAuthor) &&               //Objects must be equal with null as wildcard and either Name or S2ID must match((thisAuthor.getFullName().equals(srcAuthor.getFullName()) ||
-						(equalsNotNull(thisAuthor.getSemanticScholarID(), srcAuthor.getSemanticScholarID()) ||
-								equalsNotNull(thisAuthor.getFullName(), srcAuthor.getFullName())) ) {
-					thisAuthor.complementBy(srcAuthor);
-					continue copyAllAuthorsLoop;    //skip
+			for ( Person author : this.getAuthors() ) {
+				if ( srcAuthor.equalsNullAsWildcard(author) ) {
+					changed = Model.connectAuthorPaper( author, this );
+					author.complementBy(srcAuthor);
 				}
 			}
 
-			//If not, add Author to Paper
+			//Check if Author is already in DB
 			Person inDB = personFiler.lookUpPerson(srcAuthor);    //Check if we know the author already in DB
 			if (inDB != null) {
-				if (inDB instanceof Person) {
-					Person inDBa = (Person) inDB;
-					inDBa.complementBy(srcAuthor);
-					this.addAuthor(inDBa);
-					changed = true;
-				}
-				//else TODO what if "Person" turns out to be an author
-			} else {
-				this.addAuthor(srcAuthor);
-				changed = true;
+				inDB.complementBy(srcAuthor);
+				changed = Model.connectAuthorPaper(inDB, this);
 			}
+
+
+			Model.connectAuthorPaper(srcAuthor, this);
+		}
+
+		//3. Eliminate duplicates
+		return changed;
+	}
+
+	private boolean complementPrimeAttributesBy( Paper srcPaper, boolean overwrite ) {
+
+		boolean changed = false;
+
+		//1. Copy all prime Attributes
+		if ( (this.getTopic() == null && srcPaper.getTopic() != null) || overwrite) {
+			this.setTopic(srcPaper.getTopic());
+			changed = true;
+		}
+		if ( (this.getPaperAbstract() == null && srcPaper.getPaperAbstract() != null) || overwrite) {
+			this.setPaperAbstract(srcPaper.getPaperAbstract());
+			changed = true;
+		}
+		if ( (this.getTitle() == null && srcPaper.getTitle() != null) || overwrite) {
+			this.setTitle(srcPaper.getTitle());
+			changed = true;
+		}
+		if ( (this.getReleaseDate() == null && srcPaper.getReleaseDate() != null) || overwrite) {
+			this.setReleaseDate(srcPaper.getReleaseDate());
+			changed = true;
+		}
+		if ( (this.getRemoteLink() == null && srcPaper.getRemoteLink() != null) || overwrite) {
+			this.setRemoteLink(srcPaper.getRemoteLink());
+			changed = true;
+		}
+		if ( (this.getPdfFileSize() == null && srcPaper.getPdfFileSize() != null) || overwrite) {
+			this.setPdfFileSize(srcPaper.getPdfFileSize());
+			changed = true;
+		}
+		if ( (this.getAnthology() == null && srcPaper.getAnthology() != null) || overwrite) {
+			this.setAnthology(srcPaper.getAnthology());
+			changed = true;
+		}
+		if ( (this.getSemanticScholarID() == null && srcPaper.getSemanticScholarID() != null) || overwrite) {
+			this.setSemanticScholarID(srcPaper.getSemanticScholarID());
+			changed = true;
+		}
+		if ( (this.getAmountOfCitations() == null && srcPaper.getAmountOfCitations() != null) || overwrite) {
+			this.setAmountOfCitations(srcPaper.getAmountOfCitations());
+			changed = true;
 		}
 		return changed;
 	}
