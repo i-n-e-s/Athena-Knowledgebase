@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
+import javax.persistence.PersistenceException;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
@@ -105,6 +106,8 @@ public class WorkshopJPAAccess implements WorkshopCommonAccess {
 			entityManager.persist(data);
 		}catch(EntityExistsException e) {
 			System.out.println(data.getID()+"already exist in the Database. Maybe try update");
+		}catch(PersistenceException e) {
+			System.err.println(data.getID() + String.format("is detached and can not be added. Use update(%s data)",data.getClass().getSimpleName()));
 		}
 		entityManager.getTransaction().commit();
 		entityManager.close();
