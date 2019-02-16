@@ -179,6 +179,9 @@ public class Person extends Model {
 	 */
 	public void addPaper(Paper p) {
 		papers.add(p);
+		if(!p.getAuthors().contains(this)) {
+			p.addAuthor(this);
+		}
 	}
 
 }

@@ -104,7 +104,7 @@ public class PersonJPAAccessTest {
 	}
 	
 	@Test
-	public void getByBirthdayTest() {
+	public void getByBirthTest() {
 		List<Person> returnValues = uut.getByBirthdate(1991,2,6);
 		if(returnValues.size() == 0) fail("return of existing Database is empty");
 		if(returnValues.size() > 1) fail("more than one returnValue ");

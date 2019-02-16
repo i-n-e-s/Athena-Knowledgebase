@@ -66,7 +66,17 @@ public class PaperJPAAccessTest {
 		resetValues();
 		//testDB.createDB(); //Performance hungry if done before every test
 	}
-	//TODO Add getByPaperIDTest
+	
+	@Test
+	public void getByPaperIDTest() {
+		uut.add(testValue);
+		List<Paper> returnValue = uut.getByPaperID(testValue.getPaperID());
+		if(returnValue.size() == 0) fail("return of existing Database is empty");
+		if(returnValue.size() > 1) fail("more than one returnValue ");
+		assertTrue(testValue.equalsWithoutID(returnValue.get(0)));
+		testDB.createDB();
+	}
+	
 	@Test
 	public void getByAuthorTest() {
 		List<Paper> returnValue;

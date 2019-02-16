@@ -23,6 +23,8 @@ public class InstitutionJPAAccessTest {
 	static JPATestdatabase testDB;
 	static InstitutionJPAAccess uut;
 	static Institution testValue;
+	static Person testPerson1;
+	static Person testPerson2;
 	
 	static ConfigurableApplicationContext ctx;
 	
@@ -42,6 +44,10 @@ public class InstitutionJPAAccessTest {
 	public static void resetValues() {
 		testValue = new Institution();
 		testValue.setName("TestInstitutionTest");
+		testPerson1 = new Person();
+		testPerson2 = new Person();
+		testValue.addPerson(testPerson1);
+		testValue.addPerson(testPerson2);
 	}
 	
 	@Before
@@ -65,7 +71,8 @@ public class InstitutionJPAAccessTest {
 	@Test
 	public void updateTest() {
 		testValue.setName("TestNameUpdate");
-		List<Institution> returnValue = uut.getByInstitutionID(testValue.getInstitutionID());
+		uut.update(testValue);
+		List<Institution> returnValue = uut.getByName(testValue.getName());
 		if(returnValue.size() == 0) fail("returnValue empty");
 		if(returnValue.size() > 1) fail("return list to big");
 		assertEquals(testValue.getInstitutionID(), returnValue.get(0).getInstitutionID());
@@ -78,6 +85,7 @@ public class InstitutionJPAAccessTest {
 	
 	@Test 
 	public void getByNameTest() {
+		testDB.createDB();
 		List<Institution> returnValue = uut.getByName("Institution6");
 		if(returnValue.size() == 0) fail("return is empty");
 		if(returnValue.size() > 1) fail("More than one return");

@@ -90,6 +90,9 @@ public class Paper extends Model{
 	 */
 	public void addAuthor(Person author) {
 		authors.add(author);
+		if(!author.getPapers().contains(this)) {
+			author.addPaper(this);
+		}
 	}
 
 	/**

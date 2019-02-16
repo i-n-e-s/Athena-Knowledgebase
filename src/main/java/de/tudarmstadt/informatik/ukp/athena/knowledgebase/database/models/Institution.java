@@ -1,5 +1,6 @@
 package de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.Column;
@@ -24,7 +25,7 @@ public class Institution extends Model {
 	private String name;
 
 	@OneToMany(mappedBy = "institution")
-	private Set<Person> persons;
+	private Set<Person> persons = new HashSet<Person>();
 
 	/**
 	 * Gets the institution's institutionID.
@@ -74,5 +75,9 @@ public class Institution extends Model {
 	 */
 	public void setPersons(Set<Person> persons) {
 		this.persons = persons;
+	}
+	
+	public void addPerson(Person person) {
+		persons.add(person);
 	}
 }
