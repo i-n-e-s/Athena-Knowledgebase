@@ -12,7 +12,7 @@ import org.hibernate.annotations.GenericGenerator;
 
 @Entity
 @Table(name="sessionPart")
-public class SessionPart{
+public class SessionPart extends Model{
 	/*Unique id*/
 	@Id
 	@GeneratedValue(generator="increment")

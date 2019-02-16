@@ -3,6 +3,7 @@ package de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.jpa;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -77,7 +78,11 @@ public class SessionJPAAccess implements SessionCommonAccess {
 		EntityManager entityManager = PersistenceManager.getEntityManager();
 
 		entityManager.getTransaction().begin();
-		entityManager.persist(data);
+		try {
+			entityManager.persist(data);
+		}catch(EntityExistsException e) {
+			System.out.println(data.getID()+"already exist in the Database. Maybe try update");
+		}
 		entityManager.getTransaction().commit();
 		entityManager.close();
 	}

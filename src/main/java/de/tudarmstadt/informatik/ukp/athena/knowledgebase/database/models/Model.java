@@ -4,6 +4,7 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 
 import javax.persistence.Column;
+import javax.persistence.Id;
 
 public abstract class Model {
 
@@ -104,5 +105,30 @@ public abstract class Model {
 		returnValue.toArray(returnArray);
 		return returnArray;
 	}
-
+	
+	/**
+	 * 
+	 * Return the Value of the Field which is annotated as ID in this model
+	 * 
+	 * @return the Id of this object
+	 */
+	public Object getID() {
+		Field[] fields = this.getClass().getDeclaredFields();
+		for (Field field : fields) {
+			boolean wasAccessible= field.isAccessible();
+			if(!wasAccessible) field.setAccessible(true);
+			if(field.getAnnotation(Id.class) != null) {
+				Object returnValue = null;
+				try {
+					returnValue = field.get(this);
+				} catch (IllegalArgumentException | IllegalAccessException e) {
+					System.err.println("getId should check this, contact developer");
+				}
+				if(!wasAccessible) field.setAccessible(false);
+				return returnValue;
+			}
+			if(!wasAccessible) field.setAccessible(false);
+		}
+		return null;
+	}
 }

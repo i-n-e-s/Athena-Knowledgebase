@@ -149,7 +149,6 @@ public class JPATestdatabase {
 	 * insert data object into database. The data have to be generated or set first
 	 */
 	public void insertData() {
-		System.out.println("Start inserting data");
 		ConferenceJPAAccess cjpaa = new ConferenceJPAAccess();
 		InstitutionJPAAccess ijpaa = new InstitutionJPAAccess();
 		PaperJPAAccess pajpaa = new PaperJPAAccess();
