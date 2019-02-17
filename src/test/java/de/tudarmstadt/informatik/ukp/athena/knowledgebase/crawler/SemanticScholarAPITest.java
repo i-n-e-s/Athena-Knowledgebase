@@ -1,6 +1,7 @@
 package de.tudarmstadt.informatik.ukp.athena.knowledgebase.crawler;
 
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.crawler.SemanticScholarAPI.*;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.ParsedDataInserter;
 import org.json.JSONException;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Paper;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Person;
@@ -157,15 +158,24 @@ public class SemanticScholarAPITest {
         Assert.assertTrue( result );
     }
 
+    /**
+     * Tests whether the servers response to an author search can be parsed as JSON
+     */
+    @Test
+    public void authorSearchValidJSONTest() {
+        SemanticScholarAPIrequest testRequest = new S2AuthorSearch();
+        boolean result = validJSONResponseTest( testRequest, "Iryna Gurevych" );
+        Assert.assertTrue( result );
+    }
+
     @Test
     public void completeAuthorInformationByAuthorSearchTest() {
 
-        Person test = new Person();
-        test.setFullName("Iryna Gurevych");
+        Person uut = new Person();
+        uut.setFullName("Iryna Gurevych");
         try {
-            S2APIFunctions.completeAuthorInformationByAuthorSearch(test, false);
-            Assert.assertEquals( "1730400", test.getSemanticScholarID() );
-            // );
+            S2APIFunctions.completeAuthorInformationByAuthorSearch(uut, false);
+            Assert.assertEquals( "1730400", uut.getSemanticScholarID() );
         } catch ( IOException e ) {
             System.err.println(e.toString());
             System.err.println("Some HTTP stuff went wrong");
@@ -185,11 +195,13 @@ public class SemanticScholarAPITest {
      * @return true if test succeeded
      */
     private boolean validJSONResponseTest( SemanticScholarAPIrequest request, String query ) {
+        String rawText = "";
         s2con = request;
         try {
             s2con.setQuery(query);
             s2con.run();
             s2con.getParsedJSONResponse();
+            rawText = s2con.getRawResponse();
         } catch( IOException e) {
             System.err.println( e.toString() );
             return false;
@@ -198,6 +210,7 @@ public class SemanticScholarAPITest {
             return false;
         } catch( JSONException e ) {
             System.err.println("Response is not JSONObject");
+            System.out.println(rawText);
             return false;
         }
         return true;

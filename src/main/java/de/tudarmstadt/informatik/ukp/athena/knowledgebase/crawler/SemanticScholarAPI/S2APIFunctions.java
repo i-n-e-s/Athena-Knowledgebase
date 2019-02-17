@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 
 /**
  * This class offers functions to easily access the SemanticScholarAPI
@@ -195,13 +196,12 @@ public class S2APIFunctions {
      * @param author The Object to add the info to
      * @param overwrite true if Attributes should be overwritten
      * @param AuthorSearchResponse response to an AuthorSearch as JSONObject
-     * @return true if changes have been applied
      */
-    private static boolean parseAddS2InternalAPIAuthorJSON(Person author, boolean overwrite, JSONObject AuthorSearchResponse) {
+    private static void parseAddS2InternalAPIAuthorJSON(Person author, boolean overwrite, JSONObject AuthorSearchResponse) {
         //1 Set Top 5 authors influenced by this one the most TODO overwrite?
         if ( author.getTop5influenced() == null || author.getTop5influenced().size() == 0 || overwrite ) {
             JSONArray influenced = AuthorSearchResponse.getJSONObject("author").getJSONObject("statistics").getJSONObject("influence").getJSONArray("influenced");
-            author.setTop5influenced( parseS2AuthorSearchInfluenceJSONArrayToAuthorArrayList(influenced));
+            author.setTop5influenced( parseS2AuthorSearchInfluenceJSONArrayToAuthorArrayList(influenced, true));
         }
         for ( Person a : author.getTop5influenced() ) {
             System.out.println("Influenced: " + (a.getSemanticScholarID() == null ? "null" : a.getSemanticScholarID()) + " " + a.getFullName());
@@ -210,7 +210,7 @@ public class S2APIFunctions {
         //2 Set Top 5 authors with highest influence on this author
         if ( author.getTop5influencedBy() == null || author.getTop5influencedBy().size() == 0 || overwrite ) {
             JSONArray influencedBy = AuthorSearchResponse.getJSONObject("author").getJSONObject("statistics").getJSONObject("influence").getJSONArray("influencedBy");
-            author.setTop5influencedBy(parseS2AuthorSearchInfluenceJSONArrayToAuthorArrayList(influencedBy));
+            author.setTop5influencedBy(parseS2AuthorSearchInfluenceJSONArrayToAuthorArrayList(influencedBy, true));
         }
 
         //3 Add all papers found on S2
@@ -219,27 +219,29 @@ public class S2APIFunctions {
         for (int i = 0; i < papersJSON.length(); i++) {   //Add all found papers
 
 
-            Paper currPaper = new Paper();
-            parseAddS2InternalAPIPaperJSON(papersJSON.getJSONObject(i), true, currPaper);
+            //Search for paper title in DB
+            String title = papersJSON.getJSONObject(i).getJSONObject("title").getString("text");
+            List<Paper> matchingPapersInDB = filer.getByTitle( title );
+            Paper currPaper;
 
-            //Check whether paper already exists in DB, if so choose existing
-            Paper orig = filer.lookUpPaper( currPaper );
-            if( orig != null ) {
-                orig.complementBy(currPaper);
-                currPaper = orig;
+            //If matching paper is found, choose existing, else create new
+            if( matchingPapersInDB != null && matchingPapersInDB.size() > 0 ) {
+                currPaper = matchingPapersInDB.get(0);
+            } else {
+                currPaper = new Paper();
             }
 
-            if ( !author.getPapers().contains(currPaper) ) { author.addPaper(currPaper); }
-            if ( !currPaper.getAuthors().contains(author) ) { currPaper.addAuthor(author); }    //TODO check duplicates
+            parseAddS2InternalAPIPaperJSON(papersJSON.getJSONObject(i), false, currPaper);
+
+            Model.connectAuthorPaper(author, currPaper);    //TODO check duplicates
 
         }
 
-        //4 Set
+        //4 Set authors S2ID
         if( author.getSemanticScholarID() == null || overwrite ) {
             String foundS2ID = AuthorSearchResponse.getJSONObject("author").getString("id");
             author.setSemanticScholarID(foundS2ID);
         }
-        return true;        //TODO placeholder
     }
 
     /**
@@ -248,20 +250,34 @@ public class S2APIFunctions {
      * as JSONArray and returns an ArrayList of Author Objects
      *
      * @param influenceJSON The JSON object to be parsed
+     * @param overwrite true if attributes should be overwritten
      * @return the parsed list of authors
      */
-    private static ArrayList<Person> parseS2AuthorSearchInfluenceJSONArrayToAuthorArrayList(JSONArray influenceJSON) {
+    private static ArrayList<Person> parseS2AuthorSearchInfluenceJSONArrayToAuthorArrayList(JSONArray influenceJSON, boolean overwrite) {
         ArrayList<Person> result = new ArrayList<>();
         PersonJPAAccess filer = new PersonJPAAccess();
         for (int i = 0; i < influenceJSON.length() && i < 5; i++) { //Iterate through list
             JSONObject jsonAuthorInfo = influenceJSON.getJSONObject(i).getJSONObject("author");
-            Person currInfl = new Person();
-            currInfl.setFullName(jsonAuthorInfo.getString("name"));
-            currInfl.setSemanticScholarID(jsonAuthorInfo.getJSONArray("ids").getString(0));
-            Person orig = (Person) filer.lookUpPerson(currInfl);
-            if( orig != null ) {
-                orig.complementBy(currInfl);
-                currInfl = orig;
+            String s2id = jsonAuthorInfo.getJSONArray("ids").getString(0);
+
+            //Check if DB entry of Person with matching S2ID exists
+            Person currInfl = filer.getBySemanticScholarID( s2id );
+            //If not, search for entry with matching Name
+            if ( currInfl == null ) {
+                List<Person> currInflList = filer.getByFullName(jsonAuthorInfo.getString("name"));
+                if ( currInflList != null && currInflList.size() > 0 ) {
+                    currInfl = currInflList.get(0);
+                }
+            }
+            //If neither way matches were found, create new
+            if ( currInfl == null ) { currInfl = new Person(); }
+
+            //Set attributes:
+            if ( currInfl.getFullName() == null || overwrite ) {
+                currInfl.setFullName(jsonAuthorInfo.getString("name"));
+            }
+            if ( currInfl.getSemanticScholarID() == null || overwrite ) {
+                currInfl.setSemanticScholarID(jsonAuthorInfo.getJSONArray("ids").getString(0));
             }
             result.add(currInfl);
         }

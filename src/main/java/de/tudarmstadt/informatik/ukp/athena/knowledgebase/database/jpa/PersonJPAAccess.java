@@ -81,28 +81,20 @@ public class PersonJPAAccess implements PersonCommonAccess {
 	}
 
 	/**
-	 * Looks for equal attribute DB entries of Person and returns the matching Person Object
-	 * If multiple Occurences are found in DB, return the first result
+	 * Looks for DB entries with matching SemanticScholar ID
 	 *
 	 * @author Philipp Emmer
-	 * @param personToFind The person object to search
-	 * @return The first DB Entry of Person with matching Attributes or null
+	 * @param semanticScholarID The semanticScholarID of the wanted person object to search
+	 * @return DB Entry of Person with matching S2ID or null
 	 */
-	public Person lookUpPerson( Person personToFind ) {
+	public Person getBySemanticScholarID( String semanticScholarID ) {
 		List<Person> matches = null;
 		//1. Try to find matching SemanticScholarID
-		if( personToFind.getSemanticScholarID() != null ) {
-			matches = getBy("semanticScholarID", personToFind.getSemanticScholarID());
+		if( semanticScholarID != null ) {
+			matches = getBy("semanticScholarID", semanticScholarID);
 		}
 		//Return first result of author with matching S2ID
 		if( matches != null && matches.size() > 0 ) { return matches.get(0); }
-
-		//2. If no results, search for name
-		matches = getByFullName(personToFind.getFullName());
-		for ( Person namesake : matches ) {
-			//Choose the first one with matching attributes
-			if ( namesake.equalsNullAsWildcard(personToFind) ) { return namesake; }
-		}
 
 		//3. If nothing found, return null
 		return null;

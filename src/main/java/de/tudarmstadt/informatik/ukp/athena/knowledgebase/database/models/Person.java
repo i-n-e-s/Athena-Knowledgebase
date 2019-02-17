@@ -256,11 +256,11 @@ public class Person extends Model {
 
 	public ArrayList<Person> getTop5influencedBy() {
 		ArrayList<Person> ret = new ArrayList<Person>();
-		ret.add(this.top1influencedBy);
-		ret.add(this.top2influencedBy);
-		ret.add(this.top3influencedBy);
-		ret.add(this.top4influencedBy);
-		ret.add(this.top5influencedBy);
+		if(this.top1influencedBy != null) { ret.add(this.top1influencedBy); }
+		if(this.top2influencedBy != null) { ret.add(this.top2influencedBy); }
+		if(this.top3influencedBy != null) { ret.add(this.top3influencedBy); }
+		if(this.top4influencedBy != null) { ret.add(this.top4influencedBy); }
+		if(this.top5influencedBy != null) { ret.add(this.top5influencedBy); }
 		return ret;
 	}
 	/**
@@ -308,11 +308,11 @@ public class Person extends Model {
 
 	public ArrayList<Person> getTop5influenced() {
 		ArrayList<Person> ret = new ArrayList<Person>();
-		ret.add(this.top1influenced);
-		ret.add(this.top2influenced);
-		ret.add(this.top3influenced);
-		ret.add(this.top4influenced);
-		ret.add(this.top5influenced);
+		if(this.top1influenced != null) { ret.add(this.top1influenced); }
+		if(this.top2influenced != null) { ret.add(this.top2influenced); }
+		if(this.top3influenced != null) { ret.add(this.top3influenced); }
+		if(this.top4influenced != null) { ret.add(this.top4influenced); }
+		if(this.top5influenced != null) { ret.add(this.top5influenced); }
 		return ret;
 	}
 
@@ -361,10 +361,47 @@ public class Person extends Model {
 	/**
 	 * Complements the Author Object by the information of the given one
 	 * @param srcAuthor
-	 */
+	 *
 
 	public boolean complementBy(Person srcAuthor) {
 
+		boolean changed = false;
+		//1. Copy prime attributes without overwriting
+		changed = this.complementPrimeAttributesBy(srcAuthor);
+
+		//2. Copy papers
+		loopAllSrcPapers:
+		for ( Paper srcP : srcAuthor.getPapers() ) {
+
+			//2.1 check if paper with same name/S2ID already in known
+			for ( Paper thisP : this.getPapers() ) {
+				if ( equalsNotNull( thisP.getSemanticScholarID(), srcP.getSemanticScholarID()) ||
+						equalsNotNull( thisP.getTitle(), srcP.getTitle())) {
+					//If matching paper is found:
+					changed = thisP.complementBy(srcP, false);     //TODO Paper complementBy override
+					continue loopAllSrcPapers;
+				}
+			}
+			//2.2 if not, save pointer to paper
+			Model.connectAuthorPaper(this, srcP);
+			changed = true;
+		}
+
+		//3. Copy influences
+		for ( int i = 0; i < 5; i++ ) {
+			if ( this.getTop5influenced().get(i) == null && srcAuthor.getTop5influenced().get(i) != null ) {
+				this.addInfluenced(srcAuthor.getTop5influenced().get(i));
+			}
+			if ( this.getTop5influencedBy().get(i) == null && srcAuthor.getTop5influencedBy().get(i) != null ) {
+				this.addInfluencedBy(srcAuthor.getTop5influencedBy().get(i));
+			}
+		}
+
+
+		return changed;
+	}*/
+
+	private boolean complementPrimeAttributesBy(Person srcAuthor) {
 		boolean changed = false;
 		//1. Copy prime attributes without overwriting
 		if(this.getBirth() == null && srcAuthor.getBirth() != null) {
@@ -391,37 +428,6 @@ public class Person extends Model {
 			this.setInstitution( srcAuthor.getInstitution() );
 			changed = true;
 		}
-
-		//2. Copy papers
-		loopAllSrcPapers:
-		for ( Paper srcP : srcAuthor.getPapers() ) {
-
-			//2.1 check if paper with same name/S2ID already in known
-			for ( Paper thisP : this.getPapers() ) {
-				if ( equalsNotNull( thisP.getSemanticScholarID(), srcP.getSemanticScholarID()) ||
-						equalsNotNull( thisP.getTitle(), srcP.getTitle())) {
-					//If matching paper is found:
-					changed = thisP.complementBy(srcP);     //TODO Paper complementBy override
-					continue loopAllSrcPapers;
-				}
-			}
-			//2.2 if not, save pointer to paper
-			if( !this.getPapers().contains(srcP) ) { this.addPaper(srcP); }
-			if( !srcP.getAuthors().contains(this) ) { srcP.addAuthor(this); }
-			changed = true;
-		}
-
-		//3. Copy influences
-		for ( int i = 0; i < 5; i++ ) {
-			if ( this.getTop5influenced().get(i) == null && srcAuthor.getTop5influenced().get(i) != null ) {
-				this.addInfluenced(srcAuthor.getTop5influenced().get(i));
-			}
-			if ( this.getTop5influencedBy().get(i) == null && srcAuthor.getTop5influencedBy().get(i) != null ) {
-				this.addInfluencedBy(srcAuthor.getTop5influencedBy().get(i));
-			}
-		}
-
-
 		return changed;
 	}
 }

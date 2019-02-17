@@ -2,6 +2,7 @@ package de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.persistence.Column;
 
@@ -119,7 +120,7 @@ public class Model {
      * @param model the model Object to copy the attributes from
      * @return true if changes occurred
      *
-    public boolean complementBy( Model model ) {
+    public boolean complementPrimeAttributesBy( Model model ) {
     if (! this.equalsNullAsWildcard(model) ) { return false; }
     //if (! (this instanceof model.getClass() )) { throw IllegalArgumentException(); }
 
@@ -163,6 +164,19 @@ public class Model {
     public static boolean equalsNotNull( Object a, Object b ) {
         if ( a == null || b == null ) { return false; }
         return a.equals(b);
+    }
+
+    /**
+     * Returns the size of a list, not counting null elements
+     * @param l List to get the size of
+     * @return Length of the list, not counting null elements
+     */
+    public static int sizeWithoutNullObjs(List l) {
+        int ret = 0;
+        for( int i = 0; i < l.size(); i++ ) {
+            if ( l.get(i) != null ) { ret++; }
+        }
+        return ret;
     }
 
     /**

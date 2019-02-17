@@ -279,6 +279,7 @@ public class Paper extends Model {
 	}
 
 
+	/*
 	public boolean complementBy(Paper srcPaper, boolean overwrite) {
 
 		//Initialize return value
@@ -357,7 +358,7 @@ public class Paper extends Model {
 			changed = true;
 		}
 		return changed;
-	}
+	}*/
 
 
 	//TODO nochmal richtig

@@ -73,12 +73,16 @@ public class ParsedDataInserter {
 		parsedDataInserter = new ParsedDataInserter(beginYear, endYear);
 		System.out.printf("Scraping years %s through %s - this can take a couple of minutes...\n", beginYear, endYear);
 
+		/*
 		try {
 			parsedDataInserter.aclStorePapersAndAuthors();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		parsedDataInserter.acl2018StoreConferenceInformation(); //automatically saves the schedule as well
+		*/
+
+		parsedDataInserter.completeAuthorsByS2(10);
 		System.out.println("Done!");
 	}
 
