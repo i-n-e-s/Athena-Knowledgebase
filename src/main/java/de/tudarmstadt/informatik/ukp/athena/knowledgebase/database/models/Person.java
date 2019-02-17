@@ -355,6 +355,14 @@ public class Person extends Model {
 		ret = ret + "birthdate: " + String.valueOf( this.getBirth()) + "\n";
 		ret = ret + "PersonID: " + String.valueOf( this.getPersonID()) + "\n";
 		ret = ret + "prefix: " + String.valueOf( this.getPrefix() )+ "\n";
+		ret = ret + "Influenced: { ";
+		for (Person p : this.getTop5influenced()) {
+			ret = ret + p.getFullName() + "("+ p.getPersonID() + ") S2ID:"+p.getSemanticScholarID()+")\n";
+		}
+		ret = ret + "}\nInfluencedBy: { ";
+		for (Person p : this.getTop5influencedBy()) {
+			ret = ret + p.getFullName() + "("+ p.getPersonID() + ") S2ID:"+p.getSemanticScholarID()+")\n";
+		}
 		return ret;
 	}
 

@@ -185,7 +185,6 @@ public class ParsedDataInserter {
 		for ( Person currPerson : authors ) {
 			if( ++totalAuthors == n ) { break; }
 
-			//TODO make sure we get author objects (with at least a name)
 			//1. Make sure person is an Author and cast
 			if ( failedAuthors == 20 ) {
 				System.out.println("Too many fails, break now");
@@ -194,7 +193,6 @@ public class ParsedDataInserter {
 
 			//2. Update information about Author
 			boolean res = false;
-			//TODO When setting coworkers etc: Use existing persons from db, try not to create new ones
 			try { res = S2APIFunctions.completeAuthorInformationByAuthorSearch(currPerson, false); }
 			catch (IOException e) {
 				failedAuthors++;
@@ -202,7 +200,11 @@ public class ParsedDataInserter {
 				System.err.println("curr");
 			}
 
-			//TODO 3. write changes to db
+
+			//Show updated author
+			System.out.print(currPerson.toString());
+
+			//3. write changes to db
 			if ( res ) {
 				System.out.println("Trying to update: "+currPerson.toString());
 				personfiler.update( currPerson );
