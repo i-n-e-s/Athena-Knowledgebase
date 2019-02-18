@@ -111,6 +111,44 @@ public class Model {
         return returnArray;
     }
 
+    /**
+     *
+     * This method compares all fields of the given models with this model, null is seen as value.
+     * It is reflective, symmetric and transitive
+     *
+     * @param model A model, preferably of the same class of the object from which called
+     * @return true if all fields, except the one referencing other objects, are equal false if the given object is null, not the same class ore a field is different
+     */
+    public boolean equals(Object model) {   //TODO
+        if (model == null) return false;
+
+        if (!this.getClass().equals(model.getClass())) return false;
+
+        Field fields[] = getAllFields(this);
+
+        for (Field field : fields) {
+            boolean wasAccessible= field.isAccessible();
+            if(!wasAccessible) field.setAccessible(true);
+            if(field.getAnnotation(Column.class)!=null) {//Field is not ID and Information is Stored in Object, because it's a Column
+                //Start checking equality
+                try {
+                    if(field.get(this)==null) {//Both are null?
+                        if(!(field.get(model) == null)) {
+                            if(!wasAccessible) field.setAccessible(false);
+                            return false;}
+                    } else if(!(field.get(this).equals(field.get(model)))) {
+                        if(!wasAccessible) field.setAccessible(false);
+                        return false;
+                    }
+                } catch (IllegalArgumentException | IllegalAccessException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+            }
+            if(!wasAccessible) field.setAccessible(false);
+        }
+        return true;
+    }
 
     /**
      * Complements a Model Object with the information of another
@@ -185,12 +223,41 @@ public class Model {
      */
     public static boolean connectAuthorPaper(Person author, Paper paper) {
         boolean changed = false;
-        if ( !author.getPapers().contains(paper) ) { author.addPaper(paper); changed = true; }
-        if ( !paper.getAuthors().contains(author) ) { paper.addAuthor(author); changed = true; }
+
+        boolean found = false;
+        for ( Paper authorsPaper : author.getPapers() ) {
+            if ( authorsPaper.equals(paper) ) {
+                found = true;
+                System.out.println("Found equal");
+                break;
+            } else {
+                System.out.println(authorsPaper.getTitle() + " != "+ paper.getTitle());
+                if ( paper.getTitle().equals("A New Approach to Animacy Detection") ) {
+                    System.out.println( "Paper already known in Paper: \n"+ authorsPaper.toString() );
+                    System.out.println("Paper to add:\n"+ paper.toString()+"\n");
+                }
+            }
+        }
+
+        if ( !author.getPapers().contains(paper) ) { System.out.println("t1"); author.addPaper(paper); changed = true; }
+        if ( !paper.getAuthors().contains(author) ) { System.out.println("t2"); paper.addAuthor(author); changed = true; }
+        if (changed) {
+            System.out.println("Paper: " + paper.getTitle() + "(" + paper.getPaperID() + ") connected to Author " + author.getFullName() + "(" + author.getPersonID() + ")");
+            System.out.println("Author "+author.getFullName()+" contains now: ");
+            for ( Paper p : author.getPapers() ) { System.out.print(p.getTitle()+"("+p.getPaperID()+")\n"); }
+        }
+        System.out.print("\n");
         return changed;
     }
 
-	/*
+    /*
+    private static boolean containsEqual(List<Model> list, Model toFind) {
+        for (Model curr : list) {
+            if (curr.equalsNullAsWildcard(toFind) && curr.)
+        }
+    }
+
+	/
 
 	@Override
 	public String toString() {

@@ -83,6 +83,7 @@ public class ParsedDataInserter {
 		*/
 
 		parsedDataInserter.completeAuthorsByS2(10);
+
 		System.out.println("Done!");
 	}
 

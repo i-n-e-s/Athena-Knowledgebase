@@ -182,7 +182,9 @@ public class S2APIFunctions {
         }
 
         //3.1 Parse JSONObject to temp Author TODO overwrite?
+        System.out.println("Start to parse:\n\n"+response.toString());
         parseAddS2InternalAPIAuthorJSON(author, overwrite, response);
+        System.out.println("\n\ngot:\n"+author.toString()+"\n\n");
 
         //3.2 Add Information from temp Author to original Author
         //author.complementBy(temp);
@@ -218,9 +220,10 @@ public class S2APIFunctions {
         JSONArray papersJSON = AuthorSearchResponse.getJSONObject("author").getJSONObject("papers").getJSONArray("results");
         for (int i = 0; i < papersJSON.length(); i++) {   //Add all found papers
 
-
             //Search for paper title in DB
             String title = papersJSON.getJSONObject(i).getJSONObject("title").getString("text");
+            System.out.println("Parse paper "+title+"\ti="+i);
+
             List<Paper> matchingPapersInDB = filer.getByTitle( title );
             Paper currPaper;
 

@@ -365,6 +365,7 @@ public class Paper extends Model {
 	@Override
 	public String toString() {
 		String ret = "{title: " + this.getTitle() + ",";
+		ret = ret + "PaperID: " + this.getPaperID() + "}";
 		ret = ret + "topic: " + this.getTopic() + ",";
 		ret = ret + "Authors: ";
 		for (Person a : this.getAuthors()) {
@@ -372,8 +373,8 @@ public class Paper extends Model {
 		}
 		ret = ret + "S2ID: " + this.getSemanticScholarID() + ",";
 		ret = ret + "abstract: " + this.getPaperAbstract() + ",";
-		ret = ret + "PaperID: " + this.getPaperID() + "}";
 		// ret = ret + "prefix: " + this.get + "\n";
 		return ret;
 	}
+
 }
