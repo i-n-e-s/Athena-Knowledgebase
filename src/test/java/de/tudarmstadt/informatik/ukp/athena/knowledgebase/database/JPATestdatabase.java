@@ -88,7 +88,7 @@ public class JPATestdatabase {
 			}
 		}
 		entityManager.getTransaction().commit();
-		entityManager.close();
+		//entityManager.close();
 		System.out.println("Done deleting");
 	}
 

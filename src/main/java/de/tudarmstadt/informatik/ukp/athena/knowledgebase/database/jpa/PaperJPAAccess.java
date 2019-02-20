@@ -5,7 +5,6 @@ import java.util.List;
 
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
-import javax.persistence.PersistenceException;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
@@ -30,7 +29,6 @@ public class PaperJPAAccess implements PaperCommonAccess {
 		.select(root)
 		.where(builder.equal(root.get(name), value));
 		List<Paper> result = entityManager.createQuery(criteriaQuery).getResultList();
-		entityManager.close();
 		return result;
 	}
 
@@ -73,7 +71,6 @@ public class PaperJPAAccess implements PaperCommonAccess {
 		.select(root)
 		.where(builder.between(root.get("releaseDate"), date1, date2));
 		List<Paper> result = entityManager.createQuery(criteriaQuery).getResultList();
-		entityManager.close();
 		return result;
 	}
 
@@ -129,11 +126,8 @@ public class PaperJPAAccess implements PaperCommonAccess {
 			entityManager.persist(data);
 		}catch(EntityExistsException e) {
 			System.out.println(data.getID()+"already exist in the Database. Maybe try update");
-		}catch(PersistenceException e) {
-			System.err.println(data.getID() + String.format(" is detached and can not be added. Use update(%s data)",data.getClass().getSimpleName()));
 		}
 		entityManager.getTransaction().commit();
-		entityManager.close();
 	}
 
 	/**
@@ -146,7 +140,6 @@ public class PaperJPAAccess implements PaperCommonAccess {
 		entityManager.getTransaction().begin();
 		entityManager.merge(data);
 		entityManager.getTransaction().commit();
-		entityManager.close();
 	}
 
 	/**
@@ -159,7 +152,6 @@ public class PaperJPAAccess implements PaperCommonAccess {
 		entityManager.getTransaction().begin();
 		entityManager.remove(data);
 		entityManager.getTransaction().commit();
-		entityManager.close();
 	}
 
 	/**
@@ -169,7 +161,6 @@ public class PaperJPAAccess implements PaperCommonAccess {
 	public List<Paper> get() {
 		EntityManager entityManager = PersistenceManager.getEntityManager();
 		List<Paper> result = entityManager.createQuery("FROM Paper").getResultList();
-		entityManager.close();
 		return result;
 	}
 }

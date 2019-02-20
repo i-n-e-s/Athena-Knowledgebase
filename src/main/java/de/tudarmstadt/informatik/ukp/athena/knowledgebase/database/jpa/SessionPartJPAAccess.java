@@ -4,7 +4,6 @@ import java.util.List;
 
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
-import javax.persistence.PersistenceException;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
@@ -31,7 +30,6 @@ public class SessionPartJPAAccess implements SessionPartCommonAccess {
 		.select(root)
 		.where(builder.equal(root.get(name), value));
 		List<SessionPart> result = entityManager.createQuery(criteriaQuery).getResultList();
-		entityManager.close();
 		return result;
 	}
 
@@ -64,11 +62,8 @@ public class SessionPartJPAAccess implements SessionPartCommonAccess {
 			entityManager.persist(data);
 		}catch(EntityExistsException e) {
 			System.out.println(data.getID()+"already exist in the Database. Maybe try update");
-		}catch(PersistenceException e) {
-			System.err.println(data.getID() + String.format("is detached and can not be added. Use update(%s data)",data.getClass().getSimpleName()));
 		}
 		entityManager.getTransaction().commit();
-		entityManager.close();
 	}
 
 	@Override
@@ -78,7 +73,6 @@ public class SessionPartJPAAccess implements SessionPartCommonAccess {
 		entityManager.getTransaction().begin();
 		entityManager.merge(data);
 		entityManager.getTransaction().commit();
-		entityManager.close();
 	}
 
 	@Override
@@ -88,14 +82,12 @@ public class SessionPartJPAAccess implements SessionPartCommonAccess {
 		entityManager.getTransaction().begin();
 		entityManager.remove(data);
 		entityManager.getTransaction().commit();
-		entityManager.close();
 	}
 
 	@Override
 	public List<SessionPart> get() {
 		EntityManager entityManager = PersistenceManager.getEntityManager();
 		List<SessionPart> result = entityManager.createQuery("FROM SessionPart").getResultList();
-		entityManager.close();
 		return result;
 	}
 }

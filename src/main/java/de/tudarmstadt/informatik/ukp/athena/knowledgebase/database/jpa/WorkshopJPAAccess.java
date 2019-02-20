@@ -5,7 +5,6 @@ import java.util.List;
 
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
-import javax.persistence.PersistenceException;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
@@ -32,7 +31,6 @@ public class WorkshopJPAAccess implements WorkshopCommonAccess {
 		.select(root)
 		.where(builder.equal(root.get(name), value));
 		List<Workshop> result = entityManager.createQuery(criteriaQuery).getResultList();
-		entityManager.close();
 		return result;
 	}
 
@@ -106,11 +104,8 @@ public class WorkshopJPAAccess implements WorkshopCommonAccess {
 			entityManager.persist(data);
 		}catch(EntityExistsException e) {
 			System.out.println(data.getID()+"already exist in the Database. Maybe try update");
-		}catch(PersistenceException e) {
-			System.err.println(data.getID() + String.format("is detached and can not be added. Use update(%s data)",data.getClass().getSimpleName()));
 		}
 		entityManager.getTransaction().commit();
-		entityManager.close();
 	}
 
 	/**
@@ -123,7 +118,6 @@ public class WorkshopJPAAccess implements WorkshopCommonAccess {
 		entityManager.getTransaction().begin();
 		entityManager.merge(data);
 		entityManager.getTransaction().commit();
-		entityManager.close();
 	}
 
 	/**
@@ -136,7 +130,7 @@ public class WorkshopJPAAccess implements WorkshopCommonAccess {
 		entityManager.getTransaction().begin();
 		entityManager.remove(data);
 		entityManager.getTransaction().commit();
-		entityManager.close();
+		//entityManager.close();
 	}
 
 	/**
@@ -146,7 +140,6 @@ public class WorkshopJPAAccess implements WorkshopCommonAccess {
 	public List<Workshop> get() {
 		EntityManager entityManager = PersistenceManager.getEntityManager();
 		List<Workshop> result = entityManager.createQuery("FROM Workshop").getResultList();
-		entityManager.close();
 		return result;
 	}
 }

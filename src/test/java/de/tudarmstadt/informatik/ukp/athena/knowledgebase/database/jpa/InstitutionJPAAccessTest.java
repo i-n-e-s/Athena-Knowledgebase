@@ -70,17 +70,20 @@ public class InstitutionJPAAccessTest {
 	
 	@Test
 	public void updateTest() {
+		String oldName = testValue.getName();
 		testValue.setName("TestNameUpdate");
 		uut.update(testValue);
 		List<Institution> returnValue = uut.getByName(testValue.getName());
 		if(returnValue.size() == 0) fail("returnValue empty");
 		if(returnValue.size() > 1) fail("return list to big");
-		assertEquals(testValue.getInstitutionID(), returnValue.get(0).getInstitutionID());
+		assertTrue(testValue.equalsWithoutID(returnValue.get(0)));
 		assertEquals("TestNameUpdate", returnValue.get(0).getName());
 		for (Person p : testValue.getPersons()) {
 			assertTrue(returnValue.get(0).getPersons().contains(p));
 		}
 		assertTrue(testValue.getPersons().size() == returnValue.get(0).getPersons().size());
+		returnValue = uut.getByName(oldName);
+		assertEquals(0,returnValue.size());
 	}
 	
 	@Test 
