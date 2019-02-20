@@ -1,0 +1,57 @@
+Beginn: 9:10
+Ende: 10:12
+
+Tristan und Julian fehlen, Daniel vertritt Julian als Protokollschreiber
+
+-------------=============Erfahrungsbericht der Woche von Philipp=============-------------
+	equals Methode für Models:
+		Testen auf null und * existiert, normale equals Methode funktioniert nicht
+		Philipp: toString Methoden bei einigen Models mittlerweile vorhanden, sinnvoll für Debugging
+		Sets überprüfen: eigenes Thema
+
+	Philipp erzählt: Umgeschrieben - 2 Objekte holen, ergänzen, zurückschreiben
+		2x gleichen Autor aus DB => 2 Instanzen, nicht selbes Objekt
+
+	Komplexität DB update Befehl?
+		Jonas schlägt vor das Model erst zu bearbeiten und dann am Schluss zu entscheiden ob add oder update
+		Philipp präsentiert momentane Umsetzung
+		Später: Programmierzeit wertvoller als CPU-Zeit, Jonas möchte Feature fertig haben, auch wenn's kostspielig für CPU ist
+
+	Wann Semantic Scholar ID holen?
+		Am Anfang alle, dann durch DB gehen, oder auf Bedarf?
+
+	Philipp stellt fest, dass Duplikate doof sind
+
+	Jonas möchte, dass S2 Branch zum Abschluss gebracht wird
+		Philipp: Noch problematisch:
+			Einsortieren in DB
+			Gemergete Papers sollten eigentlich unique ID haben, aber ID ist 0 bei Konsolenausgabe
+				Wird die ID erst bei DB schreiben gesetzt? Noch unklar
+				-> Schwer zu erkennnen ob Paper schon in DB oder nicht
+
+	Philipp meint, dass wir complement-Methode benötigen (Duplikate mergen)
+		Problem: Manchmal noch 2 Instanzen von z.B. gleichem Autor
+		Philipp stellt Problem zurück
+-------------=============Erfahrungsbericht der Woche von Philipp Ende=============-------------
+
+-------------=============Erfahrungsbericht der Woche von Jonas=============-------------
+	EntityManager:
+		Objekte werden von JPA gemanaged, Veränderungen werden von DB irgendwann übernommen, Gruppe ist sich unklar über genaues Vorgehen der Software
+		Problem: Access Klassen erstellen bei jedem add einen EntityManager und verwirft ihn nach Operation direkt -> Ist das so richtig?
+			Jonas liest sich noch ein
+				Ist am Umschreiben
+				Viele Hürden
+		Jonas Einschätzung: Hibernate close wie FileStream close, aber JPA könnte anders sein
+-------------=============Erfahrungsbericht der Woche von Jonas Ende=============-------------
+
+-------------=============Erfahrungsbericht der Woche von Daniel=============-------------
+	...
+-------------=============Erfahrungsbericht der Woche von Daniel Ende=============-------------
+
+Alles wäre einfacher wenn man Zugriff auf die exakten Speicheraddressen hätte
+
+Tristan ist inoffizieller Hibernate-/JPA-Experte
+
+Allgemeine Feststellung: Projekt geht dem Ende zu, Zeiten mit Klausurenphase schwer schaffbar
+
+Teambuilding
