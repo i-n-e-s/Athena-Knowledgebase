@@ -13,10 +13,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.JPASandBox;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.crawler.CrawlerFacade;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.crawler.SupportedConferences;
-import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.access.ConferenceCommonAccess;
-import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.access.PaperCommonAccess;
-import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.access.SessionCommonAccess;
-import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.access.WorkshopCommonAccess;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.access.CommonAccess;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.jpa.ConferenceJPAAccess;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.jpa.PaperJPAAccess;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.jpa.SessionJPAAccess;
@@ -101,7 +98,7 @@ public class ParsedDataInserter {
 	private void aclStorePapersAndAuthors() throws IOException {
 		System.out.println("Scraping papers and authors...");
 		ArrayList<Paper> papers = acl18WebParser.getPaperAuthor();
-		PaperCommonAccess paperFiler = new PaperJPAAccess();
+		CommonAccess<Paper> paperFiler = new PaperJPAAccess();
 		// PersonCommonAccess personfiler = new PersonJPAAccess();
 
 		System.out.println("Inserting papers and authors into database...");
@@ -117,7 +114,7 @@ public class ParsedDataInserter {
 	 * Stores the acl2018 conference including the schedule into the database
 	 */
 	private void acl2018StoreConferenceInformation() {
-		ConferenceCommonAccess conferenceCommonAccess = new ConferenceJPAAccess();
+		CommonAccess<Conference> conferenceCommonAccess = new ConferenceJPAAccess();
 
 		try {
 			Conference acl2018 = acl18WebParser.getConferenceInformation();
@@ -144,8 +141,8 @@ public class ParsedDataInserter {
 	 * @return The scraped and stored sessions
 	 */
 	private List<ScheduleEntry> acl2018StoreSchedule() {
-		SessionCommonAccess sessionCommonAccess = new SessionJPAAccess();
-		WorkshopCommonAccess workshopCommonAccess = new WorkshopJPAAccess();
+		CommonAccess<Session> sessionCommonAccess = new SessionJPAAccess();
+		CommonAccess<Workshop> workshopCommonAccess = new WorkshopJPAAccess();
 		List<ScheduleEntry> entries = new ArrayList<>(); //initialize in case anything fails
 
 		try {

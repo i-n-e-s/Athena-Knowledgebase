@@ -4,55 +4,14 @@ import java.util.List;
 
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Root;
 
-import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.access.SessionPartCommonAccess;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.access.CommonAccess;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.SessionPart;
 
 /**
  * @author Daniel Lehmann
  */
-public class SessionPartJPAAccess implements SessionPartCommonAccess {
-	/**
-	 * Common code used by all get methods which filter by simple column values.
-	 * @param name The name of the column to restrict
-	 * @param value The value to restrict the selection to
-	 * @return A List of all session parts with the given restriction
-	 */
-	private List<SessionPart> getBy(String name, Object value) {
-		EntityManager entityManager = PersistenceManager.getEntityManager();
-		CriteriaBuilder builder = entityManager.getCriteriaBuilder();
-		CriteriaQuery<SessionPart> criteriaQuery = builder.createQuery(SessionPart.class);
-		Root<SessionPart> root = criteriaQuery.from(SessionPart.class);
-		criteriaQuery
-		.select(root)
-		.where(builder.equal(root.get(name), value));
-		List<SessionPart> result = entityManager.createQuery(criteriaQuery).getResultList();
-		return result;
-	}
-
-	@Override
-	public List<SessionPart> getBySessionPartId(Long id) {
-		return getBy("sessionPartID", id);
-	}
-
-	@Override
-	public List<SessionPart> getByTitle(String title) {
-		return getBy("title", title);
-	}
-
-	@Override
-	public List<SessionPart> getByDescription(String description) {
-		return getBy("description", description);
-	}
-
-	@Override
-	public List<SessionPart> getByPlace(String place) {
-		return getBy("place", place);
-	}
-
+public class SessionPartJPAAccess implements CommonAccess<SessionPart> {
 	@Override
 	public void add(SessionPart data) {
 		EntityManager entityManager = PersistenceManager.getEntityManager();
