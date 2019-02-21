@@ -5,6 +5,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -65,6 +66,14 @@ public class ConferenceJPAAccessTest {
 	}
 	
 	@Test
+	public void addStartAfterEndTest() {
+		testDB.createDB();
+		testValue.setBegin(LocalDate.of(1,1,2));
+		testValue.setEnd(LocalDate.of(1,1,1));
+		uut.add(testValue);
+	}
+	
+	@Test
 	public void addanddeleteTest() {
 		uut.add(testValue);
 		List<Conference> returnValue = uut.getByName("TestConferenceTest");
@@ -114,7 +123,7 @@ public class ConferenceJPAAccessTest {
 
 	@Test 
 	public void getByStartDateTest1() {
-		List<Conference> returnValue = uut.getByStartDate(1960, 01, 01);
+		List<Conference> returnValue = uut.getByStartDate(1960, 1, 1);
 		assertNotNull(returnValue);
 		if(returnValue.size() == 0) fail("return value is empty");
 		if(returnValue.size() > 1) fail("More then one return value");
@@ -128,7 +137,7 @@ public class ConferenceJPAAccessTest {
 
 	@Test 
 	public void getByStartDateTest2() {
-		List<Conference> returnValue = uut.getByStartDate(1961, 02, 02);
+		List<Conference> returnValue = uut.getByStartDate(1961, 2, 2);
 		assertNotNull(returnValue);
 		if(returnValue.size() == 0) fail("return value is empty");
 		if(returnValue.size() > 1) fail("More then one return value");
@@ -150,12 +159,12 @@ public class ConferenceJPAAccessTest {
 		assertTrue(returnValue.size() == 0);
 	}
 
-	@Test 
+	@Test (expected = DateTimeException.class)
 	public void getByStartDateInvalidDateTest1() {
 		uut.getByStartDate(1961, 13, 02);
 	}
 
-	@Test
+	@Test (expected = DateTimeException.class)
 	public void getByStartDateInvalidDateTest2() {
 		uut.getByStartDate(1961, 2, 32);
 	}
@@ -198,12 +207,12 @@ public class ConferenceJPAAccessTest {
 		assertTrue(returnValue.size() == 0);
 	}
 
-	@Test
+	@Test(expected = DateTimeException.class)
 	public void getByEndDateInvalidDateTest1() {
 		uut.getByEndDate(1961, 13, 02);
 	}
 
-	@Test
+	@Test(expected = DateTimeException.class)
 	public void getByEndDateInvalidDateTest2() {
 		uut.getByEndDate(1961, 2, 32);
 	}

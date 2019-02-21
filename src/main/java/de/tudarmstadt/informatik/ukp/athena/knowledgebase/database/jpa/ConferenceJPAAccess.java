@@ -1,5 +1,6 @@
 package de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.jpa;
 
+import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -43,6 +44,7 @@ public class ConferenceJPAAccess implements ConferenceCommonAccess {
 
 	/**
 	 * {@inheritDoc}
+	 * @throws DateTimeException - if the value of any field is out of range, or if the day-of-month is invalid for the month-year
 	 */
 	@Override
 	public List<Conference> getByStartDate(Integer year, Integer month, Integer day) {
@@ -52,6 +54,8 @@ public class ConferenceJPAAccess implements ConferenceCommonAccess {
 
 	/**
 	 * {@inheritDoc}
+	 * 
+	 * @throws DateTimeException if the value of any field is out of range, or if the day-of-month is invalid for the month-year
 	 */
 	@Override
 	public List<Conference> getByEndDate(Integer year, Integer month, Integer day) {

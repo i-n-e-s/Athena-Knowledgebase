@@ -78,9 +78,6 @@ public class InstitutionJPAAccessTest {
 		if(returnValue.size() > 1) fail("return list to big");
 		assertTrue(testValue.equalsWithoutID(returnValue.get(0)));
 		assertEquals("TestNameUpdate", returnValue.get(0).getName());
-		for (Person p : testValue.getPersons()) {
-			assertTrue(returnValue.get(0).getPersons().contains(p));
-		}
 		assertTrue(testValue.getPersons().size() == returnValue.get(0).getPersons().size());
 		returnValue = uut.getByName(oldName);
 		assertEquals(0,returnValue.size());

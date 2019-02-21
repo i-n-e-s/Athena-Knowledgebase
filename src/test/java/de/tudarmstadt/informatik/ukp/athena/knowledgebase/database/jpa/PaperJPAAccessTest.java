@@ -108,8 +108,8 @@ public class PaperJPAAccessTest {
 	
 	@Test 
 	public void getByReleaseRangeTest() {
-		List<Paper> returnValue = uut.getByReleaseRange(87,1,94,12);
-		List<String> expectedResultTitle = Arrays.asList("Title87","Title88","Title89","Title90","Title91","Title92","Title93","Title94");
+		List<Paper> returnValue = uut.getByReleaseRange(37,1,44,12);
+		List<String> expectedResultTitle = Arrays.asList("Title37","Title38","Title39","Title40","Title41","Title42","Title43","Title44");
 		for (Paper returnPaper :  returnValue){
 			assertTrue(expectedResultTitle.contains(returnPaper.getTitle()));
 		}
