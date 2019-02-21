@@ -30,7 +30,7 @@ public class PersonJPAAccessTest {
 	static Paper testPaper1;
 	static Paper testPaper2;
 	static Institution testInstitution;
-	
+
 	static ConfigurableApplicationContext ctx;
 
 	@BeforeClass
@@ -46,7 +46,7 @@ public class PersonJPAAccessTest {
 		resetValues();
 		//testDB.createDB(); //Performance hungry if done before every test
 	}
-	
+
 	@AfterClass
 	public static void shutdownDatabase() {
 		ctx.close();
@@ -69,7 +69,7 @@ public class PersonJPAAccessTest {
 
 		testValue.setBirth(LocalDate.of(123, 12,3));
 	}
-	
+
 	@Test
 	public void getByPersonID() {
 		uut.add(testValue);
@@ -79,19 +79,25 @@ public class PersonJPAAccessTest {
 		assertTrue(testValue.equalsWithoutID(returnValues.get(0)));
 		testDB.createDB();
 	}
-	
-	@Test 
+
+	@Test
 	public void getByPrefix() {
 		List<Person> returnValues = uut.getByPrefix("Prefix0");
 		assertTrue(returnValues.stream().allMatch((Person p) -> p.getPrefix().equals("Prefix0")));
-		assertEquals(50,returnValues.size());	
-		int cnt = 0;
-		for (Person person : returnValues) {
-			assertEquals("Author "+ cnt*2, person.getFullName());
-			cnt++;
+		assertEquals(50,returnValues.size());
+		for (int i = 0; i < 50; i++) {
+			boolean contains = false;
+			for(Person person : returnValues) {
+				if(person.getFullName().equals("Author " + i * 2))
+				{
+					contains = true;
+					break;
+				}
+			}
+			assertTrue(contains);
 		}
 	}
-	
+
 	@Test
 	public void getByFullNameTest() {
 		List<Person> returnValues = uut.getByFullName("Author 8");
@@ -102,7 +108,7 @@ public class PersonJPAAccessTest {
 		assertEquals(LocalDate.of(1938,9,9), returnValues.get(0).getBirth());
 		assertEquals("Institution8", returnValues.get(0).getInstitution().getName());
 	}
-	
+
 	@Test
 	public void getByBirthTest() {
 		List<Person> returnValues = uut.getByBirthdate(1991,2,6);
@@ -113,7 +119,7 @@ public class PersonJPAAccessTest {
 		assertEquals(LocalDate.of(1991,2,6), returnValues.get(0).getBirth());
 		assertEquals("Institution1", returnValues.get(0).getInstitution().getName());
 	}
-	
+
 	@Test
 	public void getByInstitute() {
 		List<Person> returnValues = uut.getByInstitutionID(803);
@@ -124,7 +130,7 @@ public class PersonJPAAccessTest {
 			assertEquals("Institution2",person.getInstitution());
 		}
 	}
-	
+
 	@Test
 	public void addAndDeleteTest() {
 		uut.add(testValue);
@@ -136,7 +142,7 @@ public class PersonJPAAccessTest {
 		assertTrue(uut.getByPersonID(testValue.getPersonID()).size() == 0);
 		testDB.createDB();
 	}
-	
+
 	public void getTest() {
 		List<Person> resultList = uut.get();
 		assertTrue(testDB.getAuthorQuantity() == resultList.size());
@@ -146,7 +152,7 @@ public class PersonJPAAccessTest {
 			resultTitles.contains("Person"+ i);
 		}
 	};
-	
+
 	public void updateTest() {
 		uut.add(testValue);
 		testValue.setFullName("UpdatedName");
