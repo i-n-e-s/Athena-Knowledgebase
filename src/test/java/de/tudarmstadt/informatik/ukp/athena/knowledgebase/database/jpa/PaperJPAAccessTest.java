@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -94,13 +95,13 @@ public class PaperJPAAccessTest {
 	@Test 
 	public void getByReleaseDate() {
 		List<Paper> returnValue;
-		returnValue = uut.getByReleaseDate(63,63%12, 63%28);
+		returnValue = uut.getByReleaseDate(41,6, 14);
 		if(returnValue.size() == 0) fail("return of existing Database is empty");
 		if(returnValue.size() > 1) fail("more than one returnValue ");
-		assertEquals("Title63", returnValue.get(0).getTitle());
+		assertEquals("Title41", returnValue.get(0).getTitle());
 	}
 	
-	@Test
+	@Test(expected = DateTimeException.class)
 	public void getByAuthorInvalidDateTest() {
 		uut.getByReleaseDate(-1,-1,-1);
 	}
@@ -112,7 +113,7 @@ public class PaperJPAAccessTest {
 		for (Paper returnPaper :  returnValue){
 			assertTrue(expectedResultTitle.contains(returnPaper.getTitle()));
 		}
-		assertTrue(expectedResultTitle.size() == returnValue.size());
+		assertEquals(expectedResultTitle.size(),returnValue.size());
 	}
 	
 	@Test

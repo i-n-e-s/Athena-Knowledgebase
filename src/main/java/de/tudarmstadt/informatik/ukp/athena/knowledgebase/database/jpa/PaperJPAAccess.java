@@ -1,5 +1,6 @@
 package de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.jpa;
 
+import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -50,6 +51,8 @@ public class PaperJPAAccess implements PaperCommonAccess {
 
 	/**
 	 * {@inheritDoc}
+	 * 
+	 * @throws DateTimeException if the value of any field is out of range, or if the day-of-month is invalid for the month-year
 	 */
 	@Override
 	public List<Paper> getByReleaseDate(Integer year, Integer month, Integer day) {
