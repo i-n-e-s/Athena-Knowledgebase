@@ -37,7 +37,7 @@ public class Paper {
 	@Hierarchy(entityName="person")
 	@JsonIgnore //fixes infinite recursion
 	@ManyToMany(cascade = { CascadeType.ALL }, mappedBy = "papers", fetch = FetchType.EAGER)
-	private Set<Person> authors = new HashSet<>();
+	private Set<Person> persons = new HashSet<>();
 
 	/*Release date*/
 	@Column(name = "releaseDate")
@@ -73,7 +73,7 @@ public class Paper {
 	 * @return List of this paper's authors
 	 */
 	public Set<Person> getAuthors() {
-		return authors;
+		return persons;
 	}
 
 	/**
@@ -81,7 +81,7 @@ public class Paper {
 	 * @param authors The new author of this paper
 	 */
 	public void setAuthors(Set<Person> authors) {
-		this.authors = authors;
+		this.persons = authors;
 	}
 
 	/**
@@ -89,7 +89,7 @@ public class Paper {
 	 * @param author The author to add
 	 */
 	public void addAuthor(Person author) {
-		authors.add(author);
+		persons.add(author);
 	}
 
 	/**

@@ -7,8 +7,6 @@ import java.util.List;
 import java.util.Map;
 
 import javax.persistence.Column;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
 
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.api.ast.AttributeNode;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.api.ast.NumberAttributeNode;
@@ -71,7 +69,7 @@ public class RequestVerifier {
 						numberAttributeMap.put(field.getName(), 1);
 				}
 				//custom annotation to manage hierarchy between entities and collections
-				else if((field.isAnnotationPresent(JoinTable.class) || field.isAnnotationPresent(JoinColumn.class)) && field.isAnnotationPresent(Hierarchy.class)) {
+				else if(field.isAnnotationPresent(Hierarchy.class)) {
 					if(fieldTypeName.equals(java.util.Set.class.getName()))
 						setAttributeMap.put(field.getAnnotation(Hierarchy.class).entityName(), field.getName());
 				}
