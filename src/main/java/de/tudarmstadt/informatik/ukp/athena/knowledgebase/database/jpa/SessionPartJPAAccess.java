@@ -26,15 +26,6 @@ public class SessionPartJPAAccess implements CommonAccess<SessionPart> {
 	}
 
 	@Override
-	public void update(SessionPart data) {
-		EntityManager entityManager = PersistenceManager.getEntityManager();
-
-		entityManager.getTransaction().begin();
-		entityManager.merge(data);
-		entityManager.getTransaction().commit();
-	}
-
-	@Override
 	public void delete(SessionPart data) {
 		EntityManager entityManager = PersistenceManager.getEntityManager();
 

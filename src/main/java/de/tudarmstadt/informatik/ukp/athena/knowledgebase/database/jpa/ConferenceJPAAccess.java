@@ -19,19 +19,8 @@ public class ConferenceJPAAccess implements CommonAccess<Conference> {
 		try {
 			entityManager.persist(data);
 		}catch(EntityExistsException e) {
-			System.out.println(data.getID()+"already exist in the Database. Maybe try update");
+			System.out.println(data.getID()+"already exist in the Database.");
 		}
-		entityManager.getTransaction().commit();
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public void update(Conference data) {
-		EntityManager entityManager = PersistenceManager.getEntityManager();
-
-		entityManager.getTransaction().begin();
-		entityManager.merge(data);
 		entityManager.getTransaction().commit();
 	}
 

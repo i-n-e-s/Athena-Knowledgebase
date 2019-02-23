@@ -53,51 +53,45 @@ public class InstitutionJPAAccessTest {
 	@Before
 	public void resetDB() {
 		resetValues();
-		//testDB.createDB(); //Performance hungry if done before every test
+		testDB.createDB(); //Performance hungry if done before every test
 	}
 	
 	@Test
 	public void addAndDeleteTest() {
 		uut.add(testValue);
-		List<Institution> returnValue = uut.getByName(testValue.getName());
+		List<Institution> returnValue = getByName(testValue.getName());
 		if(returnValue.size() == 0) fail("return value is empty");
 		if(returnValue.size() > 1) fail("return value is to large");
 		assertTrue(testValue.equalsWithoutID(returnValue.get(0)));
 		uut.delete(testValue);
-		returnValue = uut.getByName(testValue.getName());
+		returnValue = getByName(testValue.getName());
 		assertTrue(returnValue.size() == 0);
 	}
 	
 	@Test
 	public void updateTest() {
 		String oldName = testValue.getName();
+		uut.add(testValue);
 		testValue.setName("TestNameUpdate");
-		uut.update(testValue);
-		List<Institution> returnValue = uut.getByName(testValue.getName());
+		List<Institution> returnValue = getByName(testValue.getName());
 		if(returnValue.size() == 0) fail("returnValue empty");
 		if(returnValue.size() > 1) fail("return list to big");
 		assertTrue(testValue.equalsWithoutID(returnValue.get(0)));
 		assertEquals("TestNameUpdate", returnValue.get(0).getName());
 		assertTrue(testValue.getPersons().size() == returnValue.get(0).getPersons().size());
-		returnValue = uut.getByName(oldName);
+		returnValue = getByName(oldName);
 		assertEquals(0,returnValue.size());
 	}
 	
 	@Test 
-	public void getByNameTest() {
+	public void getTest() {
+		testDB.setDefaultParameters();
 		testDB.createDB();
-		List<Institution> returnValue = uut.getByName("Institution6");
-		if(returnValue.size() == 0) fail("return is empty");
-		if(returnValue.size() > 1) fail("More than one return");
-		//TODO add person assertion here, when added to Testbench
-		uut.add(testValue);
-		returnValue = uut.getByName(testValue.getName());
-		if(returnValue.size() == 0) fail("return is empty");
-		if(returnValue.size() > 1) fail("More than one return");
-		for (Person p : testValue.getPersons()) {
-			assertTrue(returnValue.get(0).getPersons().contains(p));
-		}
-		assertTrue(testValue.getPersons().size() == returnValue.get(0).getPersons().size());
-		uut.delete(testValue);
+		List<Institution> returnValues = uut.get();
+		assertEquals(returnValues.size(),testDB.getInstitutionQuantity());
+	}
+	
+	public List<Institution> getByName(String name) {
+		return PersistenceManager.getEntityManager().createQuery(String.format("SELECT i FROM Institution AS i WHERE i.name = '%s'",name), Institution.class).getResultList();
 	}
 }

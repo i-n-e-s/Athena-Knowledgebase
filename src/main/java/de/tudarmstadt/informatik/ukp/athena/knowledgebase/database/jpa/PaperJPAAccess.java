@@ -29,18 +29,6 @@ public class PaperJPAAccess implements CommonAccess<Paper> {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void update(Paper data) {
-		EntityManager entityManager = PersistenceManager.getEntityManager();
-
-		entityManager.getTransaction().begin();
-		entityManager.merge(data);
-		entityManager.getTransaction().commit();
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
 	public void delete(Paper data) {
 		EntityManager entityManager = PersistenceManager.getEntityManager();
 

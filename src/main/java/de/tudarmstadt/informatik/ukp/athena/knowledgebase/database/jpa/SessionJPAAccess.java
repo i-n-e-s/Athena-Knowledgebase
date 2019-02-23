@@ -26,15 +26,6 @@ public class SessionJPAAccess implements CommonAccess<Session> {
 	}
 
 	@Override
-	public void update(Session data) {
-		EntityManager entityManager = PersistenceManager.getEntityManager();
-
-		entityManager.getTransaction().begin();
-		entityManager.merge(data);
-		entityManager.getTransaction().commit();
-	}
-
-	@Override
 	public void delete(Session data) {
 		EntityManager entityManager = PersistenceManager.getEntityManager();
 

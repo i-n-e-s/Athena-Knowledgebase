@@ -1,13 +1,10 @@
 package de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.jpa;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.junit.AfterClass;
@@ -65,84 +62,9 @@ public class PaperJPAAccessTest {
 	@Before
 	public void resetDB() {
 		resetValues();
-		//testDB.createDB(); //Performance hungry if done before every test
+		testDB.createDB(); //Performance hungry if done before every test
 	}
-	
-	@Test
-	public void getByPaperIDTest() {
-		uut.add(testValue);
-		List<Paper> returnValue = uut.getByPaperID(testValue.getPaperID());
-		if(returnValue.size() == 0) fail("return of existing Database is empty");
-		if(returnValue.size() > 1) fail("more than one returnValue ");
-		assertTrue(testValue.equalsWithoutID(returnValue.get(0)));
-		testDB.createDB();
-	}
-	
-	@Test
-	public void getByAuthorTest() {
-		List<Paper> returnValue;
-		returnValue = uut.getByAuthor("Author 0");
-		if(returnValue.size() == 0) fail("return of existing Database is empty");
-		if(returnValue.size() > 1) fail("more than one returnValue ");
-		assertEquals("Title0", returnValue.get(0).getTitle());
-	}
-	
-	@Test
-	public void getByAuthorInvalidAuthorTest() {
-		assertTrue(uut.getByAuthor("InvalidAuthor").size() == 0);
-	}
-	
-	@Test 
-	public void getByReleaseDate() {
-		List<Paper> returnValue;
-		returnValue = uut.getByReleaseDate(41,6, 14);
-		if(returnValue.size() == 0) fail("return of existing Database is empty");
-		if(returnValue.size() > 1) fail("more than one returnValue ");
-		assertEquals("Title41", returnValue.get(0).getTitle());
-	}
-	
-	@Test(expected = DateTimeException.class)
-	public void getByAuthorInvalidDateTest() {
-		uut.getByReleaseDate(-1,-1,-1);
-	}
-	
-	@Test 
-	public void getByReleaseRangeTest() {
-		List<Paper> returnValue = uut.getByReleaseRange(37,1,44,12);
-		List<String> expectedResultTitle = Arrays.asList("Title37","Title38","Title39","Title40","Title41","Title42","Title43","Title44");
-		for (Paper returnPaper :  returnValue){
-			assertTrue(expectedResultTitle.contains(returnPaper.getTitle()));
-		}
-		assertEquals(expectedResultTitle.size(),returnValue.size());
-	}
-	
-	@Test
-	public void getByHrefTest() {
-		List<Paper> returnValue = uut.getByHref("Link.test/16");
-		if(returnValue.size() == 0) fail("return of existing Database is empty");
-		if(returnValue.size() > 1) fail("more than one returnValue ");
-		assertEquals("Title16", returnValue.get(0).getTitle());
-	}
-	
-	@Test
-	public void getByPdfFileSize() {
-		List<Paper> returnValue = uut.getByPdfFileSize(148);
-		if(returnValue.size() == 0) fail("return of existing Database is empty");
-		if(returnValue.size() > 1) fail("more than one returnValue ");
-		assertEquals("Title48", returnValue.get(0).getTitle());
-	}
-	
-	@Test
-	public void getByAntholoyTest() {
-		List<Paper> returnValue = uut.getByAnthology("Ant5");
-		if(returnValue.size() < 2) fail("return of existing Database is to small empty");
-		if(returnValue.size() > 2) fail("more than two return values ");
-		List<String> expectedResultTitles = Arrays.asList("Title5","Title30");
-		for (Paper returnedPaper : returnValue) {
-			assertTrue(expectedResultTitles.contains(returnedPaper.getTitle()));
-		}
-		assertTrue(expectedResultTitles.size() == returnValue.size());
-	}
+
 	
 	@Test
 	public void getTest() {
@@ -158,7 +80,7 @@ public class PaperJPAAccessTest {
 	@Test
 	public void addAndDeleteTest() {//Could be wrong, if getByPaperID is broken
 		uut.add(testValue);
-		List<Paper> returnValue = uut.getByPaperID(testValue.getPaperID());
+		List<Paper> returnValue = getByPaperID(testValue.getPaperID());
 		if(returnValue.size() == 0) fail("return of existing Database is empty");
 		if(returnValue.size() > 1) fail("more than one return value");
 		assertTrue(testValue.equalsWithoutID(returnValue.get(0)));
@@ -173,7 +95,7 @@ public class PaperJPAAccessTest {
 			assertTrue(containsAuthor);
 		}
 		uut.delete(testValue);
-		assertTrue(uut.getByPaperID(testValue.getPaperID()).size() == 0);
+		assertTrue(getByPaperID(testValue.getPaperID()).size() == 0);
 		testDB.createDB();//If delete is broken don't pollute DB
 	}
 	
@@ -181,12 +103,14 @@ public class PaperJPAAccessTest {
 	public void updateTest() {
 		uut.add(testValue);
 		testValue.setTitle("UpdatedTitle");
-		uut.update(testValue);
-		List<Paper> returnValues = uut.getByPaperID(testValue.getPaperID());
+		List<Paper> returnValues = getByPaperID(testValue.getPaperID());
 		if(returnValues.size() == 0) fail("return is empty");
 		if(returnValues.size() > 1) fail("more than one return value");
 		assertTrue(testValue.equalsWithoutID(returnValues.get(0)));
 		testDB.createDB();//Don't pollute the Database
 	}
 	
+	public List<Paper> getByPaperID(long id) {
+		return PersistenceManager.getEntityManager().createQuery(String.format("SELECT p FROM Paper AS p WHERE p.paperID = '%s'",Long.toString(id)), Paper.class).getResultList();
+	}
 }

@@ -32,18 +32,6 @@ public class WorkshopJPAAccess implements CommonAccess<Workshop> {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void update(Workshop data) {
-		EntityManager entityManager = PersistenceManager.getEntityManager();
-
-		entityManager.getTransaction().begin();
-		entityManager.merge(data);
-		entityManager.getTransaction().commit();
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
 	public void delete(Workshop data) {
 		EntityManager entityManager = PersistenceManager.getEntityManager();
 

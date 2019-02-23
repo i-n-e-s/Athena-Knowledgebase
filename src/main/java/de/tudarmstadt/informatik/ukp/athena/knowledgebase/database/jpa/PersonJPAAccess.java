@@ -26,17 +26,6 @@ public class PersonJPAAccess implements CommonAccess<Person> {
 		entityManager.getTransaction().commit();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void update(Person data) {
-		EntityManager entityManager = PersistenceManager.getEntityManager();
-
-		entityManager.getTransaction().begin();
-		entityManager.merge(data);
-		entityManager.getTransaction().commit();
-	}
 
 	/**
 	 * {@inheritDoc}

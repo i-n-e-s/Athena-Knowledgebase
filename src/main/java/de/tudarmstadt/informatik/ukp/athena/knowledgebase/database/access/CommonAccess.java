@@ -18,12 +18,6 @@ public interface CommonAccess<T> {
 	public void add(T data);
 
 	/**
-	 * Update data in database.
-	 * @param data Object of model T to be updated
-	 */
-	public void update(T data);
-
-	/**
 	 * Delete data from database.
 	 * @param data Object of model T to be removed
 	 */
