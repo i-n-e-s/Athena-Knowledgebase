@@ -119,7 +119,7 @@ public class Model {
      * @param model A model, preferably of the same class of the object from which called
      * @return true if all fields, except the one referencing other objects, are equal false if the given object is null, not the same class ore a field is different
      */
-    public boolean equals(Object model) {   //TODO
+    public boolean equals(Object model) {
         if (model == null) return false;
 
         if (!this.getClass().equals(model.getClass())) return false;
@@ -224,20 +224,17 @@ public class Model {
     public static boolean connectAuthorPaper(Person author, Paper paper) {
         boolean changed = false;
 
+        //Search if connection already exists
         boolean found = false;
         for ( Paper authorsPaper : author.getPapers() ) {
-            if ( authorsPaper.equals(paper) ) {
+            if ( authorsPaper.equalsWithoutID(paper) ) {
                 found = true;
                 System.out.println("Found equal");
                 break;
-            } else {
-                System.out.println(authorsPaper.getTitle() + " != "+ paper.getTitle());
-                if ( paper.getTitle().equals("A New Approach to Animacy Detection") ) {
-                    System.out.println( "Paper already known in Paper: \n"+ authorsPaper.toString() );
-                    System.out.println("Paper to add:\n"+ paper.toString()+"\n");
-                }
             }
         }
+
+        if ( found ) { return false; }
 
         if ( !author.getPapers().contains(paper) ) { System.out.println("t1"); author.addPaper(paper); changed = true; }
         if ( !paper.getAuthors().contains(author) ) { System.out.println("t2"); paper.addAuthor(author); changed = true; }

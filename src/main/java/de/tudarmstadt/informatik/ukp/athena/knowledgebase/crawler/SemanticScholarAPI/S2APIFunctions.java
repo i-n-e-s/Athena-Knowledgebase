@@ -224,19 +224,29 @@ public class S2APIFunctions {
             String title = papersJSON.getJSONObject(i).getJSONObject("title").getString("text");
             System.out.println("Parse paper "+title+"\ti="+i);
 
-            List<Paper> matchingPapersInDB = filer.getByTitle( title );
-            Paper currPaper;
+            Paper currPaper = null;
 
-            //If matching paper is found, choose existing, else create new
-            if( matchingPapersInDB != null && matchingPapersInDB.size() > 0 ) {
-                currPaper = matchingPapersInDB.get(0);
-            } else {
-                currPaper = new Paper();
+            //Check if paper is already connected to author
+            for( Paper authorsPaper : author.getPapers() ) {
+                if( authorsPaper.getTitle().equals(title) ) { currPaper = authorsPaper; break; }
             }
+
+            if( currPaper == null ) {
+                List<Paper> matchingPapersInDB = filer.getByTitle(title);
+                //If matching paper is found, choose existing, else create new
+                if (matchingPapersInDB != null && matchingPapersInDB.size() > 0) {
+                    currPaper = matchingPapersInDB.get(0);
+                } else {
+                    currPaper = new Paper();
+                }
+            }
+
+            //Always connect this author with paper
+            Model.connectAuthorPaper(author, currPaper);    //TODO check duplicates
 
             parseAddS2InternalAPIPaperJSON(papersJSON.getJSONObject(i), false, currPaper);
 
-            Model.connectAuthorPaper(author, currPaper);    //TODO check duplicates
+
 
         }
 
@@ -344,18 +354,43 @@ public class S2APIFunctions {
             dest.setAuthors(new HashSet<>());
         }    //If overwrite is set, reset the authors
 
+
+        //Fetch S2ID for all currently connected Authors to minimize duplicates
+        for( Person a : dest.getAuthors() ) {
+            try {
+                a.setSemanticScholarID(getAuthorsS2ID(a));
+            } catch( IOException | JSONException e ) {}
+        }
+
         JSONArray authorsJSON = paperJSON.getJSONArray("authors");
         for (int i = 0; i < authorsJSON.length(); i++) {                         //Add every Author to paper
-            JSONObject cAJSON = authorsJSON.getJSONArray(i).getJSONObject(0);
-            Person authorObjToBeAdded = new Person();
-            try {
-                authorObjToBeAdded.setFullName(cAJSON.getString("name"));
-                authorObjToBeAdded.setSemanticScholarID(cAJSON.getJSONArray("ids").getString(0));
-            } catch (JSONException e) {
-                continue;
-            }   //If name or S2ID unknown, skip the Author
 
-            dest.addAuthor(authorObjToBeAdded);
+            String name, s2id;
+            try {
+                JSONObject cAJSON = authorsJSON.getJSONArray(i).getJSONObject(0);
+                name = cAJSON.getString("name");
+                s2id = cAJSON.getJSONArray("ids").getString(0);
+            } catch ( JSONException e ) {
+                continue;       //If name or S2ID unknown, skip the Author
+            }
+            System.out.println("Want to add author "+name+" to paper "+dest.getTitle());
+
+            Person authorObjToBeAdded = null;
+            for ( Person papersKnownAuthor : dest.getAuthors() ) {
+                if (papersKnownAuthor.getSemanticScholarID().equals(s2id) || papersKnownAuthor.getFullName().equals(name)) {
+                    authorObjToBeAdded = papersKnownAuthor;
+                    System.out.println("Found and reuse "+authorObjToBeAdded.getFullName()+"("+authorObjToBeAdded.getPersonID()+")");
+                    break;
+                } else { System.out.println( name + " " + s2id+ " does not equal " + papersKnownAuthor.getFullName()+ " "+ papersKnownAuthor.getSemanticScholarID()); }
+            }
+            if ( authorObjToBeAdded == null ) {
+                System.out.println("Author not found, create new Author");
+                authorObjToBeAdded = new Person(); }
+
+            if( overwrite || authorObjToBeAdded.getFullName() == null ) { authorObjToBeAdded.setFullName(name); }
+            if( overwrite || authorObjToBeAdded.getSemanticScholarID() == null ) { authorObjToBeAdded.setSemanticScholarID(s2id); }
+
+            Model.connectAuthorPaper(authorObjToBeAdded, dest);
         }
         //releaseDate
         if (overwrite || dest.getReleaseDate() == null) {
