@@ -72,12 +72,12 @@ public class PersonJPAAccessTest {
 	@Test
 	public void addAndDeleteTest() {
 		uut.add(testValue);
-		List<Person> returnValues = getByPersonID(testValue.getPersonID());
+		List<Person> returnValues = getByFullName(testValue.getFullName());
 		if(returnValues.size() == 0) fail("return of existing Database is empty");
 		if(returnValues.size() > 1) fail("more than one returnValue ");
 		assertTrue(testValue.equalsWithoutID(returnValues.get(0)));
 		uut.delete(testValue);
-		assertTrue(getByPersonID(testValue.getPersonID()).size() == 0);
+		assertTrue(getByFullName(testValue.getFullName()).size() == 0);
 	}
 
 	@Test
@@ -95,14 +95,14 @@ public class PersonJPAAccessTest {
 	public void updateTest() {
 		uut.add(testValue);
 		testValue.setFullName("UpdatedName");
-		List<Person> returnValues = getByPersonID(testValue.getPersonID());
+		List<Person> returnValues = getByFullName(testValue.getFullName());
 		if(returnValues.size() == 0) fail("return is empty");
 		if(returnValues.size() > 1) fail("more than one return value");
 		assertEquals("UpdatedName", returnValues.get(0).getFullName());
 		testDB.createDB();//Don't pollute the Database
 	}
 	
-	public List<Person> getByPersonID(long id) {
-		return PersistenceManager.getEntityManager().createQuery(String.format("SELECT p FROM Person AS p WHERE p.fullName = '%s'",Long.toString(id)), Person.class).getResultList();
+	private List<Person> getByFullName(String name) {
+		return PersistenceManager.getEntityManager().createQuery(String.format("SELECT p FROM Person p WHERE p.fullName = '%s'",name), Person.class).getResultList();
 	}
 }
