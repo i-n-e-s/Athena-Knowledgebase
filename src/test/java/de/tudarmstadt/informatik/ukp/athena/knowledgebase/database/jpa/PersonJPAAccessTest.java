@@ -94,11 +94,11 @@ public class PersonJPAAccessTest {
 	@Test
 	public void updateTest() {
 		uut.add(testValue);
-		testValue.setFullName("UpdatedName");
+		testValue.setPrefix("UpdatedPrefix");
 		List<Person> returnValues = getByFullName(testValue.getFullName());
 		if(returnValues.size() == 0) fail("return is empty");
 		if(returnValues.size() > 1) fail("more than one return value");
-		assertEquals("UpdatedName", returnValues.get(0).getFullName());
+		assertEquals("UpdatedPrefix", returnValues.get(0).getPrefix());
 		testDB.createDB();//Don't pollute the Database
 	}
 	

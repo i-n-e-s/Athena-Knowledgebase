@@ -73,7 +73,10 @@ public class InstitutionJPAAccessTest {
 		String oldName = testValue.getName();
 		uut.add(testValue);
 		testValue.setName("TestNameUpdate");
+		PersistenceManager.getEntityManager().getTransaction().begin();
+		//This Transaction is just necessary to make the change persistent, normally the update would take place at the next persistent access to the Database
 		List<Institution> returnValue = getByName(testValue.getName());
+		PersistenceManager.getEntityManager().getTransaction().commit();
 		if(returnValue.size() == 0) fail("returnValue empty");
 		if(returnValue.size() > 1) fail("return list to big");
 		assertTrue(testValue.equalsWithoutID(returnValue.get(0)));
@@ -92,6 +95,6 @@ public class InstitutionJPAAccessTest {
 	}
 	
 	public List<Institution> getByName(String name) {
-		return PersistenceManager.getEntityManager().createQuery(String.format("SELECT i FROM Institution AS i WHERE i.name = '%s'",name), Institution.class).getResultList();
+		return PersistenceManager.getEntityManager().createQuery(String.format("SELECT i FROM Institution i WHERE i.name = '%s'",name), Institution.class).getResultList();
 	}
 }
