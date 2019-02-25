@@ -200,22 +200,13 @@ public class S2APIFunctions {
      * @param AuthorSearchResponse response to an AuthorSearch as JSONObject
      */
     private static void parseAddS2InternalAPIAuthorJSON(Person author, boolean overwrite, JSONObject AuthorSearchResponse) {
-        //1 Set Top 5 authors influenced by this one the most TODO overwrite?
-        if ( author.getTop5influenced() == null || author.getTop5influenced().size() == 0 || overwrite ) {
-            JSONArray influenced = AuthorSearchResponse.getJSONObject("author").getJSONObject("statistics").getJSONObject("influence").getJSONArray("influenced");
-            author.setTop5influenced( parseS2AuthorSearchInfluenceJSONArrayToAuthorArrayList(influenced, true));
-        }
-        for ( Person a : author.getTop5influenced() ) {
-            System.out.println("Influenced: " + (a.getSemanticScholarID() == null ? "null" : a.getSemanticScholarID()) + " " + a.getFullName());
+        //1 Set authors S2ID
+        if( author.getSemanticScholarID() == null || overwrite ) {
+            String foundS2ID = AuthorSearchResponse.getJSONObject("author").getString("id");
+            author.setSemanticScholarID(foundS2ID);
         }
 
-        //2 Set Top 5 authors with highest influence on this author
-        if ( author.getTop5influencedBy() == null || author.getTop5influencedBy().size() == 0 || overwrite ) {
-            JSONArray influencedBy = AuthorSearchResponse.getJSONObject("author").getJSONObject("statistics").getJSONObject("influence").getJSONArray("influencedBy");
-            author.setTop5influencedBy(parseS2AuthorSearchInfluenceJSONArrayToAuthorArrayList(influencedBy, true));
-        }
-
-        //3 Add all papers found on S2
+        //2 Add all papers found on S2
         PaperJPAAccess filer = new PaperJPAAccess();
         JSONArray papersJSON = AuthorSearchResponse.getJSONObject("author").getJSONObject("papers").getJSONArray("results");
         for (int i = 0; i < papersJSON.length(); i++) {   //Add all found papers
@@ -246,14 +237,21 @@ public class S2APIFunctions {
 
             parseAddS2InternalAPIPaperJSON(papersJSON.getJSONObject(i), false, currPaper);
 
-
-
         }
 
-        //4 Set authors S2ID
-        if( author.getSemanticScholarID() == null || overwrite ) {
-            String foundS2ID = AuthorSearchResponse.getJSONObject("author").getString("id");
-            author.setSemanticScholarID(foundS2ID);
+        //3 Set Top 5 authors influenced by this one the most
+        if ( author.getTop5influenced() == null || author.getTop5influenced().size() == 0 || overwrite ) {
+            JSONArray influenced = AuthorSearchResponse.getJSONObject("author").getJSONObject("statistics").getJSONObject("influence").getJSONArray("influenced");
+            author.setTop5influenced( parseS2AuthorSearchInfluenceJSONArrayToAuthorArrayList(influenced, true));
+        }
+        for ( Person a : author.getTop5influenced() ) {
+            System.out.println("Influenced: " + (a.getSemanticScholarID() == null ? "null" : a.getSemanticScholarID()) + " " + a.getFullName());
+        }
+
+        //4 Set Top 5 authors with highest influence on this author
+        if ( author.getTop5influencedBy() == null || author.getTop5influencedBy().size() == 0 || overwrite ) {
+            JSONArray influencedBy = AuthorSearchResponse.getJSONObject("author").getJSONObject("statistics").getJSONObject("influence").getJSONArray("influencedBy");
+            author.setTop5influencedBy(parseS2AuthorSearchInfluenceJSONArrayToAuthorArrayList(influencedBy, true));
         }
     }
 

@@ -227,34 +227,15 @@ public class Model {
         //Search if connection already exists
         boolean found = false;
         for ( Paper authorsPaper : author.getPapers() ) {
-            if ( authorsPaper.equalsWithoutID(paper) ) {
-                found = true;
-                System.out.println("Found equal");
-                break;
-            }
+            if ( authorsPaper.equalsWithoutID(paper) ) { return false; }
         }
-
-        if ( found ) { return false; }
 
         if ( !author.getPapers().contains(paper) ) { System.out.println("t1"); author.addPaper(paper); changed = true; }
         if ( !paper.getAuthors().contains(author) ) { System.out.println("t2"); paper.addAuthor(author); changed = true; }
-        if (changed) {
-            System.out.println("Paper: " + paper.getTitle() + "(" + paper.getPaperID() + ") connected to Author " + author.getFullName() + "(" + author.getPersonID() + ")");
-            System.out.println("Author "+author.getFullName()+" contains now: ");
-            for ( Paper p : author.getPapers() ) { System.out.print(p.getTitle()+"("+p.getPaperID()+")\n"); }
-        }
-        System.out.print("\n");
         return changed;
     }
 
-    /*
-    private static boolean containsEqual(List<Model> list, Model toFind) {
-        for (Model curr : list) {
-            if (curr.equalsNullAsWildcard(toFind) && curr.)
-        }
-    }
-
-	/
+   	/*
 
 	@Override
 	public String toString() {
