@@ -211,7 +211,6 @@ public class S2APIFunctions {
         JSONArray papersJSON = AuthorSearchResponse.getJSONObject("author").getJSONObject("papers").getJSONArray("results");
         for (int i = 0; i < papersJSON.length(); i++) {   //Add all found papers
 
-            //Search for paper title in DB
             String title = papersJSON.getJSONObject(i).getJSONObject("title").getString("text");
             System.out.println("Parse paper "+title+"\ti="+i);
 
@@ -222,6 +221,7 @@ public class S2APIFunctions {
                 if( authorsPaper.getTitle().equals(title) ) { currPaper = authorsPaper; break; }
             }
 
+            //If not, search for paper title in DB
             if( currPaper == null ) {
                 List<Paper> matchingPapersInDB = filer.getByTitle(title);
                 //If matching paper is found, choose existing, else create new
@@ -374,6 +374,7 @@ public class S2APIFunctions {
             System.out.println("Want to add author "+name+" to paper "+dest.getTitle());
 
             Person authorObjToBeAdded = null;
+            //Check if author is already connected to paper
             for ( Person papersKnownAuthor : dest.getAuthors() ) {
                 if (papersKnownAuthor.getSemanticScholarID().equals(s2id) || papersKnownAuthor.getFullName().equals(name)) {
                     authorObjToBeAdded = papersKnownAuthor;
@@ -381,6 +382,17 @@ public class S2APIFunctions {
                     break;
                 } else { System.out.println( name + " " + s2id+ " does not equal " + papersKnownAuthor.getFullName()+ " "+ papersKnownAuthor.getSemanticScholarID()); }
             }
+
+            //If not already connected, check if author is in DB
+            if ( authorObjToBeAdded == null ) {
+                PersonJPAAccess filer = new PersonJPAAccess();
+                List<Person> possibleAuthors = filer.getByFullName(name);
+                if ( possibleAuthors != null && possibleAuthors.size() > 0 ) {
+                    authorObjToBeAdded = possibleAuthors.get(0);
+                }
+            }
+
+            //Otherwise create new Object
             if ( authorObjToBeAdded == null ) {
                 System.out.println("Author not found, create new Author");
                 authorObjToBeAdded = new Person(); }
