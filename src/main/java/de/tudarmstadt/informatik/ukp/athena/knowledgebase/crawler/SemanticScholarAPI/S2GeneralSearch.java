@@ -146,4 +146,5 @@ public class S2GeneralSearch extends SemanticScholarAPIrequest {
         return searchPayLoad;
     }
 
+
 }

@@ -55,46 +55,65 @@ public class S2AuthorSearch extends SemanticScholarAPIrequest {
 
     /**
      * Gathers all required Information for the AuthorSearch by performing generalSearch on the name
-     * Sets s2id of Author and expectedAmountOfPapers
+     * Sets s2id, name and expectedAmountOfPapers of author
      *
      * @throws IOException when some HTTP stuff goes wrong
      * @throws NotAvailableException if the information could not be found
      */
     public void prepare() throws IOException, NotAvailableException {
-        //General Search for s2id, or the name if id is not available
-        SemanticScholarAPIrequest general = new S2GeneralSearch();
-        if ( this.s2id != null ) { general.setQuery( this.s2id ); }
-        else if ( this.name != null ) { general.setQuery( this.name ); }
-        else { throw new NotAvailableException(); }
-        general.run();
+        SemanticScholarAPIrequest preparationRequest;
+        JSONObject result;
+        if ( this.s2id != null ) {      //If S2ID is known: Prepare by using AuthorSearch
+            this.expectedAmountOfPapers = 1;
+            this.run();
+            //Parse the JSON response
+            try { result = this.getParsedJSONResponse(); }
+            catch (NotAvailableException e) { return; }    //Never thrown, because called after request is run
+            //set expected Amount of papers
+            System.out.println("Lookup name: "+String.valueOf(this.name)+" S2ID: "+String.valueOf(this.s2id));
+            this.expectedAmountOfPapers = result.getJSONObject("author").getJSONObject("papers").getInt("totalResults");
+            //Reset this request
+            this.validDataIsReady = false;
+            this.rawResponse = null;
+            this.HTTPResponseCode = null;
+        }
+        else if ( this.name != null ) { //Otherwise: Prepare by using GeneralSearch
+            preparationRequest = new S2GeneralSearch();
+            preparationRequest.setQuery( this.name );
+            preparationRequest.run();
 
-        //Parse the JSON response
-        JSONObject response;
-        try { response = general.getParsedJSONResponse(); }
-        catch (NotAvailableException e) { return; }    //Never thrown, because called after request is run
+            //Parse the JSON response
+            try { result = preparationRequest.getParsedJSONResponse(); }
+            catch (NotAvailableException e) { return; }    //Never thrown, because called after request is run
 
-        //If multiple results match the name, choose most relevant one
-        JSONArray matchingAuthors = response.getJSONArray("matchedAuthors");
-        JSONObject chosenAuthor = (JSONObject) matchingAuthors.get(0);
+            //If multiple results match the name, choose most relevant one
+            System.out.println("Lookup name: "+String.valueOf(this.name)+" S2ID: "+String.valueOf(this.s2id));
+            System.out.println(result.toString());
+            JSONArray matchingAuthors = result.getJSONArray("matchedAuthors");
+            JSONObject chosenAuthor = (JSONObject) matchingAuthors.get(0);
 
-        //Set ID
-        this.s2id = chosenAuthor.getString("id");
+            //Set ID
+            this.s2id = chosenAuthor.getString("id");
 
-        //S2 returns expectedAmountOfPapers in separate list of stats, so the matching author has to be found
-        this.expectedAmountOfPapers = -1;
-        JSONArray statsAuthors = response.getJSONObject("stats").getJSONArray("authors");
+            //S2 returns expectedAmountOfPapers in separate list of stats, so the matching author has to be found
+            this.expectedAmountOfPapers = -1;
+            JSONArray statsAuthors = result.getJSONObject("stats").getJSONArray("authors");
 
-        for ( int i = 0; i < statsAuthors.length(); i++ ) {     //Find matching Author in statsList
-            if ( statsAuthors.getJSONObject(i).getString("value").equals(chosenAuthor.getString("name")) ) {
-                this.expectedAmountOfPapers = statsAuthors.getJSONObject(i).getInt("documentCount");
-                break;
+            for ( int i = 0; i < statsAuthors.length(); i++ ) {     //Find matching Author in statsList
+                if ( statsAuthors.getJSONObject(i).getString("value").equals(chosenAuthor.getString("name")) ) {
+                    this.expectedAmountOfPapers = statsAuthors.getJSONObject(i).getInt("documentCount");
+                    break;
+                }
             }
         }
+        else { throw new NotAvailableException(); }
 
         //Throw exception if search failed
         if ( this.expectedAmountOfPapers < 0 ) {
             throw new NotAvailableException();
         }
+
+
     }
 
     /**

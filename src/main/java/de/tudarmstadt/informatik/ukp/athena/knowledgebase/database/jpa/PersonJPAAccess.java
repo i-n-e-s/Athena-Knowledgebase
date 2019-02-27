@@ -28,7 +28,7 @@ public class PersonJPAAccess implements PersonCommonAccess {
 		.select(root)
 		.where(builder.equal(root.get(name), value));
 		List<Person> result = entityManager.createQuery(criteriaQuery).getResultList();
-		entityManager.close();
+		//entityManager.close();
 		return result;
 	}
 

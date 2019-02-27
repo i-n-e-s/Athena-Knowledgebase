@@ -82,7 +82,7 @@ public class ParsedDataInserter {
 		parsedDataInserter.acl2018StoreConferenceInformation(); //automatically saves the schedule as well
 		*/
 
-		parsedDataInserter.completeAuthorsByS2(10);
+		parsedDataInserter.completeAuthorsByS2(4);
 
 		System.out.println("Done!");
 	}
@@ -201,15 +201,11 @@ public class ParsedDataInserter {
 				System.err.println("curr");
 			}
 
-
-			//Show updated author
-			System.out.print(currPerson.toString());
-
-			//3. write changes to db
+			/*/3. write changes to db
 			if ( res ) {
 				System.out.println("Trying to update: "+currPerson.toString());
 				personfiler.update( currPerson );
-			}
+			}*/
 		}
 		System.out.println("Failed: "+failedAuthors+"\nDone");
 
