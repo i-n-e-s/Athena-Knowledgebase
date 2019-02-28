@@ -13,7 +13,33 @@
 		<div class="container">
 			<section id="main_content">
 				<h2><u>Special API Requests</u></h2>
-				None as of yet.
+				<h3>StreetMap Data</h3>
+				<p>The request is mapped to</p>
+				<blockquote>
+				  <p>/openStreetMaps/location/minLatitude/{minLatitude}/minLongitude/{minLongitude}/maxLatitude/{maxLatitude}/maxLongitude/{maxLongitude}/amenity/{amenity}/radiusInMeter/{radius}")</p>
+				</blockquote>
+				<p>Because GPS data is rarely exact, the API functions with a concept known as <em>bounding box</em>. We specify a range of longitudes and latitudes respectively, yielding a box from which the GPS signal originates.</p>
+				<hr>
+				<ul>
+				<li>Longitudes allow values from -180 to 180</li>
+				<li>Latitudes allow values from -90 to 90</li>
+				</ul>
+				<hr>
+				<p>Next, we specify the type of amenity we are interested in. The possibilities are large and include values such as "restaurant", "toilets" or even "tree". Play around and see what you find.</p>
+				<p>The last value to specify is the searchradius, in <strong>meters</strong>. Try to keep this as small as reasonable, in order to limit strain on the Overpass Server (where we get our data from).</p>
+				<p>This is a working example that returns a list of Locations (restaurants in this case):</p>
+				<blockquote>
+				  <p>/openStreetMaps/location/minLatitude/48.5657094/minLongitude/13.4490548/maxLatitude/48.5662416/maxLongitude/13.4501676/amenity/restaurant/radiusInMeter/3000</p>
+				</blockquote>
+				<h4>Location</h4>
+				<p>Every location returned always features the following attributes:</p>
+				<ul>
+				<li>An id (long)</li>
+				<li>longitude (double) The longitude of this location</li>
+				<li>latitude (double) The latitude of this location</li>
+				<li>type (usually the String "node")</li>
+				<li>amenity (String) - the type of amenity of this location</li>
+				</ul>
 			</section>
 		</div>
 	</body>
