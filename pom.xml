@@ -76,6 +76,7 @@
 
 
     <build>
+        <!--suppress UnresolvedMavenProperty -->
         <finalName>${project.artifactId}-${project.version}-${git.commit.id.describe-short}</finalName>
         <plugins>
             <plugin>
