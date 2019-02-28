@@ -1,0 +1,31 @@
+Beginn 9:00
+Ende: 10:20
+
+Bachelorpraktikum
+Mitteilung des Arbeitsstatus:
+
+	Datenbank
+	Julian - krank aber genesend
+	Jonas- Testbench - und krank
+	Viel QA-Kram
+	und Entitymanagerbug
+	Wiki TBD
+
+
+Bitte von Thomas
+	überlegt euch mal Roadmap
+		unfertige Dinge lieber dokumentieren als "zu schnell" zu implementieren
+
+Thomas war immer sehr zufrieden. Er wünscht sich, dass bis in 2 Wochen alles soweit fertig ist.
+	in 2 Wochen quasi eine Vorabgabe und ab dann nur noch Reaktionen auf hoffentlich nichtauftretende Panik
+
+Bug-Thema:
+S2APIMerge
+	Entity-Manager Bug
+		Update
+
+
+Wir suchen nach Bugs vom EntityManager
+	wir finden den Bug, lösen ihn aber nicht
+		stecken in einem Zyklus fest
+
