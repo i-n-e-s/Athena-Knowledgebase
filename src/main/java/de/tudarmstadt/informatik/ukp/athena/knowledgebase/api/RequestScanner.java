@@ -91,13 +91,13 @@ public class RequestScanner {
 				return RequestTokenType.ATTR_EQ;
 			case '&':
 				appendCharacter();
-				return RequestTokenType.ATTR_SEPERATOR;
+				return RequestTokenType.ATTR_SEPARATOR;
 			case ':':
 				appendCharacter();
 				return RequestTokenType.ATTR_SPECIFIER;
 			case '/':
 				appendCharacter();
-				return RequestTokenType.HIERARCHY_SEPERATOR;
+				return RequestTokenType.HIERARCHY_SEPARATOR;
 			case '+':
 				appendCharacter();
 				return RequestTokenType.SPACE;

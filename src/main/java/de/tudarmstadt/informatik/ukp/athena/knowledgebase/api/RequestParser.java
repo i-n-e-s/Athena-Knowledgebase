@@ -49,7 +49,7 @@ public class RequestParser {
 	private RequestHierarchyNode parseHierarchyEntry() throws SyntaxException {
 		RequestHierarchyNode node = new RequestHierarchyNode(currentToken.index);
 
-		accept(RequestTokenType.HIERARCHY_SEPERATOR);
+		accept(RequestTokenType.HIERARCHY_SEPARATOR);
 
 		//the first part of a request is always an entity name
 		if(currentToken.type == RequestTokenType.NAME)
@@ -80,8 +80,8 @@ public class RequestParser {
 			node.addAttributeNode(parseAttribute()); //need this here so the first attribute gets parsed, otherwhise the parser would check for /name:&attr=val
 
 			//parse any other attributes
-			while(currentToken.type == RequestTokenType.ATTR_SEPERATOR) {
-				accept(RequestTokenType.ATTR_SEPERATOR);
+			while(currentToken.type == RequestTokenType.ATTR_SEPARATOR) {
+				accept(RequestTokenType.ATTR_SEPARATOR);
 				node.addAttributeNode(parseAttribute());
 			}
 		}

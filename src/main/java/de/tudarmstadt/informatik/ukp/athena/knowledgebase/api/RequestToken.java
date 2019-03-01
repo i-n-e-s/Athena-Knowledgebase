@@ -31,11 +31,11 @@ public class RequestToken {
 
 	public enum RequestTokenType {
 		ATTR_EQ, // =
-		ATTR_SEPERATOR, // &
+		ATTR_SEPARATOR, // &
 		ATTR_SPECIFIER, // :
 		END, //the end of the world (well, more like the request)
 		ERROR, //an error (duh!)
-		HIERARCHY_SEPERATOR, // /
+		HIERARCHY_SEPARATOR, // /
 		NAME, //an entity, attribute name, or attribute value
 		NUMBER, //a number (duh!)
 		SPACE; // +
