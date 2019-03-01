@@ -141,7 +141,7 @@ public class RequestVerifier {
 	 * @param theField The name of the field of the entity to check
 	 * @return true if the given field is numerical and a member of the given entity, false otherwhise
 	 */
-	private static boolean entityContainsNumericalField(String entity, String theField) {
+	public static boolean entityContainsNumericalField(String entity, String theField) {
 		for(String fieldName : NUMERICAL_ATTRIBUTES.get(entity).keySet()) {
 			if(fieldName.equals(theField))
 				return true;
