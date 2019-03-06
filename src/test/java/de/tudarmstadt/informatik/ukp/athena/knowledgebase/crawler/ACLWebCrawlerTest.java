@@ -6,12 +6,11 @@ import java.time.LocalDate;
 import org.junit.Assert;
 import org.junit.Test;
 
-import de.tudarmstadt.informatik.ukp.athena.knowledgebase.crawler.ACLWebCrawler;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Conference;
 
 
 public class ACLWebCrawlerTest {
-	private ACLWebCrawler acl18WebParser = new ACLWebCrawler("2018", "2018");
+	private ACLWebCrawler acl18WebParser = new ACLWebCrawler(2018, 2018);
 	private Conference crawledConference = acl18WebParser.getConferenceInformation();
 
 	public ACLWebCrawlerTest() throws IOException {

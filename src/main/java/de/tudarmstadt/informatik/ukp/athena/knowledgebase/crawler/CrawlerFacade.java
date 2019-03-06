@@ -3,7 +3,10 @@ package de.tudarmstadt.informatik.ukp.athena.knowledgebase.crawler;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.*;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Conference;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Paper;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Person;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.ScheduleEntry;
 
 /**
  *
@@ -21,7 +24,7 @@ public class CrawlerFacade extends AbstractCrawler{
 	 * @param beginYear The first year to get data from
 	 * @param endYear The last year to get data from
 	 */
-	public CrawlerFacade(SupportedConferences conference, String beginYear, String endYear){
+	public CrawlerFacade(SupportedConferences conference, int beginYear, int endYear){
 		super();
 		switch(conference) {
 			case ACL:
