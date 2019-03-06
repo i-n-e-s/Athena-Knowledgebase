@@ -1,0 +1,40 @@
+Beginn: 	9:00
+Ende:		10:45
+
+Wir gehen gemeldete Bugs durch:
+
+Trello - wir machen eine checklist und arbeiten die bugs durch
+
+
+außerdem soll das Wiki ausgebaut werden
+
+Philipps Bug wird in 2 Tagen sterben oder dokumentiert werden 
+
+
+Wiki: semantic scholar Lösung andeuten
+
+
+Bug Channel - da sind noch zwei ungelöste Bugs
+	die in den bugtracker aufgenommen werden
+
+
+Thomas tritt ein:
+	"Mosen sagt, dass die andere Gruppe sich am Montag mit euch treffen will"
+	"Ein großes Fragezeichen ist über meinem Kopf"
+		das hält unser Kopf ähnlich. Die andere Gruppe wurde in Slack darauf angesprochen
+
+
+Anhang QS-Dokument
+ 	Clemens legt eine grobe Deadline für den Anhang fest
+
+		grob: 25.03.2018
+
+Liste von Menschen die in der Crunchtime snowboarden:
+	Clemens
+
+Liste von Menschen die sonst in der Crunchtime im Urlaub sind:
+	Tristan
+
+Liste von Menschen die nächsten Mittwoch vermutlich nicht kommen weil dann der Stress aufgehört hat:
+	Tristan
+
