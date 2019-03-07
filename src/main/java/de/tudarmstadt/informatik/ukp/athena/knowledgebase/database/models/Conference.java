@@ -6,6 +6,7 @@ import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -53,13 +54,13 @@ public class Conference {
 
 	/*Basically the schedule*/
 	@Hierarchy(entityName="session")
-	@OneToMany(orphanRemoval=true)     //unidirectional relationship which
-	@JoinColumn(name="conferenceID")   //is saved in the Session table
+	@OneToMany(orphanRemoval=true, fetch=FetchType.EAGER) //unidirectional relationship which
+	@JoinColumn(name="conferenceID")					  //is saved in the Session table
 	private Set<Session> sessions = new HashSet<>();
 	/*The workshops*/
 	@Hierarchy(entityName="workshop")
-	@OneToMany(orphanRemoval=true)     //unidirectional relationship which
-	@JoinColumn(name="conferenceID")   //is saved in the Session table
+	@OneToMany(orphanRemoval=true, fetch=FetchType.EAGER) //unidirectional relationship which
+	@JoinColumn(name="conferenceID")					  //is saved in the Workshop table
 	private Set<Workshop> workshops = new HashSet<>();
 
 	/**
