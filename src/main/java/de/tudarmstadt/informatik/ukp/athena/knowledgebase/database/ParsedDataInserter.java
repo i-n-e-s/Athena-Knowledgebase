@@ -184,7 +184,7 @@ public class ParsedDataInserter {
 		long failedPapers = 0;
 		long totalPapers = 0;
 		for ( Person currPerson : authors ) {
-			if( ++totalAuthors == n ) { break; }
+			if( totalAuthors++ == n ) { break; }
 
 			//1. Make sure person is an Author and cast
 			if ( failedAuthors == 20 ) {
@@ -193,19 +193,19 @@ public class ParsedDataInserter {
 			}
 
 			//2. Update information about Author
-			boolean res = false;
-			try { res = S2APIFunctions.completeAuthorInformationByAuthorSearch(currPerson, false); }
+			boolean changesWereMade = false;
+			try { changesWereMade = S2APIFunctions.completeAuthorInformationByAuthorSearch(currPerson, false); }
 			catch (IOException e) {
 				failedAuthors++;
 				e.printStackTrace();
 				System.err.println("curr");
 			}
 
-			/*/3. write changes to db
-			if ( res ) {
+			//3. write changes to db
+			if ( changesWereMade ) {
 				System.out.println("Trying to update: "+currPerson.toString());
 				personfiler.update( currPerson );
-			}*/
+			}
 		}
 		System.out.println("Failed: "+failedAuthors+"\nDone");
 
