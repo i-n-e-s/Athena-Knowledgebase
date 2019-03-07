@@ -35,7 +35,14 @@ public class RequestParser {
 
 		//as long as there are tokens in the queue
 		while(currentToken != null && currentToken.type != RequestTokenType.END) { //can be null if the last thing was an entity name (before the :), poll returns null if the deque is empty
-			root.addHierarchyNode(parseHierarchyEntry());
+			if(root.getHierarchy().size() == 0 && tokens.peek().actual.equals("count")) //peek because the currentToken is / and not count
+			{
+				accept(RequestTokenType.HIERARCHY_SEPERATOR);
+				accept(RequestTokenType.NAME);
+				root.setIsCountFunction(true);
+			}
+			else
+				root.addHierarchyNode(parseHierarchyEntry());
 		}
 
 		return root;

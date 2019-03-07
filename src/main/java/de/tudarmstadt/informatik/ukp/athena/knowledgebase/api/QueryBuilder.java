@@ -22,19 +22,33 @@ import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Sessio
 
 public class QueryBuilder {
 	private EntityManager entityManager = PersistenceManager.getEntityManager();
+	private boolean countResults;
+
+	/**
+	 * @param countResults true if the amount of results should be returned, false if the results itself should be returned
+	 */
+	public QueryBuilder(boolean countResults)
+	{
+		this.countResults = countResults;
+	}
 
 	/**
 	 * Sanitizes user input, builds the SQL query and sends the request to the database
 	 * @param tree The request tree to build the request from
 	 * @return The result list of the query
 	 */ //size of 40 lines is exceeded in favor of readability (=> normalEntityName, entityName, entityVar etc. could be removed to meet the requirement)
-	public List<?> buildAndSend(RequestNode tree) {
+	public Object buildAndSend(RequestNode tree) {
 		List<String> queryList = new ArrayList<>();
 		Map<String,Object> sqlVars = new HashMap<>(); //replace key with value later, this is user input
 		String previousEntityVar = null; //used for hierarchical relationship
 
 		queryList.add("SELECT");
-		queryList.add(":entityVar"); //when initially building the query, it's not known which entity is placed last in the request
+
+		if(tree.isCountFunction())
+			queryList.add("count(:entityVar)");
+		else
+			queryList.add(":entityVar"); //when initially building the query, it's not known which entity is placed last in the request
+
 		queryList.add("FROM");
 
 		//build the FROM statement
@@ -76,7 +90,9 @@ public class QueryBuilder {
 		if(queryList.get(queryList.size() - 1).equals("and")) //remove the last and if there is one
 			queryList.remove(queryList.size() - 1);
 
-		return createQuery(queryList, sqlVars).getResultList();
+		if(countResults)
+			return "{\"count\": " + createQuery(queryList, sqlVars).getSingleResult() + "}";
+		else return createQuery(queryList, sqlVars).getResultList();
 	}
 
 	/**

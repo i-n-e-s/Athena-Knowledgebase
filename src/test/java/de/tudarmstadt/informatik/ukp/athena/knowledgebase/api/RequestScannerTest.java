@@ -8,8 +8,6 @@ import java.util.Deque;
 import org.junit.Before;
 import org.junit.Test;
 
-import de.tudarmstadt.informatik.ukp.athena.knowledgebase.api.RequestScanner;
-import de.tudarmstadt.informatik.ukp.athena.knowledgebase.api.RequestToken;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.api.RequestToken.RequestTokenType;
 
 public class RequestScannerTest {
@@ -89,6 +87,25 @@ public class RequestScannerTest {
 		expected.add(new RequestToken(RequestTokenType.ATTR_SEPERATOR, "&", 36));
 		expected.add(new RequestToken(RequestTokenType.NAME, "vogonpoetry", 37));
 		expected.add(new RequestToken(RequestTokenType.END, "<end>", 48));
+
+		assertEquals("Actual size is not equal to expected size!", expected.size(), actual.size());
+
+		while(expected.peek() != null) {
+			assertEquals("Element at position " + i++ + " is not the same!", expected.poll(), actual.poll());
+		}
+	}
+
+	@Test
+	public void testCountFunction() {
+		Deque<RequestToken> actual = new RequestScanner("/count/paper").scan();
+		Deque<RequestToken> expected = new ArrayDeque<>();
+		int i = 0;
+
+		expected.add(new RequestToken(RequestTokenType.HIERARCHY_SEPERATOR, "/", 0));
+		expected.add(new RequestToken(RequestTokenType.NAME, "count", 1));
+		expected.add(new RequestToken(RequestTokenType.HIERARCHY_SEPERATOR, "/", 6));
+		expected.add(new RequestToken(RequestTokenType.NAME, "paper", 7));
+		expected.add(new RequestToken(RequestTokenType.END, "<end>", 12));
 
 		assertEquals("Actual size is not equal to expected size!", expected.size(), actual.size());
 

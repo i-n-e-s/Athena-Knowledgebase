@@ -1,11 +1,10 @@
 package de.tudarmstadt.informatik.ukp.athena.knowledgebase.api;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 import org.junit.Test;
 
-import de.tudarmstadt.informatik.ukp.athena.knowledgebase.api.RequestParser;
-import de.tudarmstadt.informatik.ukp.athena.knowledgebase.api.RequestScanner;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.api.ast.RequestEntityNode;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.api.ast.RequestHierarchyNode;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.api.ast.RequestNode;
@@ -59,5 +58,27 @@ public class RequestParserTest {
 	@Test(expected = SyntaxException.class)
 	public void testUnexpectedTokenParse() throws SyntaxException {
 		uut3.parse();
+	}
+
+	@Test
+	public void testCountFunction() {
+		try {
+			RequestNode actual = new RequestParser(new RequestScanner("/count/paper").scan()).parse();
+			RequestNode expected = new RequestNode(0);
+
+			RequestHierarchyNode theOneAndOnly = new RequestHierarchyNode(6);
+			RequestEntityNode entityNode = new RequestEntityNode(7);
+			StringNode entityNodeName = new StringNode(7);
+
+			entityNodeName.setString("paper");
+			entityNode.setEntityName(entityNodeName);
+			theOneAndOnly.setEntity(entityNode);
+			expected.addHierarchyNode(theOneAndOnly);
+			expected.setIsCountFunction(true);
+			assertEquals("ASTs are not the same!", expected, actual);
+		}
+		catch(SyntaxException e) {
+			fail("Syntactically correct request shouldn't throw a syntax exception");
+		}
 	}
 }

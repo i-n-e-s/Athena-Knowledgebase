@@ -1,7 +1,6 @@
 package de.tudarmstadt.informatik.ukp.athena.knowledgebase.api;
 
 import java.util.Deque;
-import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -38,8 +37,8 @@ public class APIController {
 			tree = parser.parse();
 			RequestVerifier.verify(tree); //if no exception is thrown, the verification was successful
 
-			QueryBuilder queryManager = new QueryBuilder();
-			List<?> result = queryManager.buildAndSend(tree);
+			QueryBuilder queryManager = new QueryBuilder(tree.isCountFunction());
+			Object result = queryManager.buildAndSend(tree);
 
 			queryManager.close();
 			return result;
