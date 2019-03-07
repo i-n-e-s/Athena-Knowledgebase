@@ -7,7 +7,7 @@ import java.util.List;
  * Represents the complete request
  */
 public class RequestNode extends BaseNode {
-	/**Join tables from left to right*/ //TODO: does this make sense with more than two '$'?
+	/**Contains all entities incl. their attributes*/
 	private final List<RequestHierarchyNode> hierarchy = new ArrayList<>();
 	private boolean isCountFunction = false;
 
@@ -19,7 +19,7 @@ public class RequestNode extends BaseNode {
 	}
 
 	/**
-	 * Adds an attribute node to this node
+	 * Adds a hierarchy node to this node
 	 * @param node The node to add
 	 */
 	public void addHierarchyNode(RequestHierarchyNode node) {
