@@ -11,11 +11,11 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.JsoupHelper;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Conference;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Paper;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Person;
@@ -64,7 +64,7 @@ class ACLWebCrawler extends AbstractCrawler {
 	private ArrayList<Document> fetchWebpages(String startURL) throws IOException {
 		System.out.println("Fetching webpages starting from \"" + startURL +"\"...");
 		ArrayList<Document> docs = new ArrayList<Document>();
-		docs.add(Jsoup.connect(startURL).get());
+		docs.add(JsoupHelper.connect(startURL));
 		// find Link to next Page, if not found end loop
 		boolean nextSiteExist = true;
 		while (nextSiteExist) {
@@ -82,7 +82,7 @@ class ACLWebCrawler extends AbstractCrawler {
 			}
 			// add next page to docList
 			if (nextSiteExist) {
-				Document nxtDoc = Jsoup.connect(links.get(idxOfLink).absUrl("href")).get();
+				Document nxtDoc = JsoupHelper.connect(links.get(idxOfLink).absUrl("href"));
 				docs.add(nxtDoc);
 			}
 		}
@@ -260,35 +260,30 @@ class ACLWebCrawler extends AbstractCrawler {
 	 * @param thePaper The {@link Paper} object to save the release year+month in
 	 */
 	private void extractPaperRelease(Element paper, Paper thePaper) {
-		try {
-			Document doc = Jsoup.connect("https://aclanthology.coli.uni-saarland.de" + paper.select("a").attr("href")).get();
-			ArrayList<Element> data = doc.select(".dl-horizontal").get(0).children(); //somewhere in those children is the date
-			String year = "0";
-			String month = "0";
+		Document doc = JsoupHelper.connect("https://aclanthology.coli.uni-saarland.de" + paper.select("a").attr("href"));
+		ArrayList<Element> data = doc.select(".dl-horizontal").get(0).children(); //somewhere in those children is the date
+		String year = "0";
+		String month = "0";
 
-			//find the different parts of the date
-			for(int i = 0; i < data.size(); i++) {
-				if(data.get(i).text().startsWith("Month")) { //the line contains the month
-					month = data.get(i + 1).text();
+		//find the different parts of the date
+		for(int i = 0; i < data.size(); i++) {
+			if(data.get(i).text().startsWith("Month")) { //the line contains the month
+				month = data.get(i + 1).text();
 
-					if(month.contains("-")) //some papers have a release month of e.g. "October-November", assume the first month as the release month
-						month = month.split("-")[0];
+				if(month.contains("-")) //some papers have a release month of e.g. "October-November", assume the first month as the release month
+					month = month.split("-")[0];
 
-					month = "" + CrawlerToolset.getMonthIndex(month);
+				month = "" + CrawlerToolset.getMonthIndex(month);
 
-					if(month.equals("-1"))
-						month = "1"; //resort to january if no month is found
-				}
-				else if(data.get(i).text().startsWith("Year")) { //the line contains the year
-					year = data.get(i + 1).text().substring(0, 4); //hope that every year is given in 1234 format
-				}
+				if(month.equals("-1"))
+					month = "1"; //resort to january if no month is found
 			}
+			else if(data.get(i).text().startsWith("Year")) { //the line contains the year
+				year = data.get(i + 1).text().substring(0, 4); //hope that every year is given in 1234 format
+			}
+		}
 
-			thePaper.setReleaseDate(LocalDate.of(Integer.parseInt(year), Integer.parseInt(month), 1));
-		}
-		catch(IOException e) { //jsoup exception
-			e.printStackTrace();
-		}
+		thePaper.setReleaseDate(LocalDate.of(Integer.parseInt(year), Integer.parseInt(month), 1));
 	}
 
 	/**
@@ -303,7 +298,7 @@ class ACLWebCrawler extends AbstractCrawler {
 	public Conference getConferenceInformation() throws IOException {
 		System.out.println("Scraping conference information...");
 		Conference currentConference = new Conference();
-		Document aboutPage = Jsoup.connect(this.aboutPage).get();
+		Document aboutPage = JsoupHelper.connect(this.aboutPage);
 		String conferenceName = aboutPage.select(".site-title a").text();
 		currentConference.setName(conferenceName);
 
@@ -349,7 +344,7 @@ class ACLWebCrawler extends AbstractCrawler {
 		System.out.println("Scraping conference schedule...");
 		ArrayList<ScheduleEntry> result = new ArrayList<>();
 		System.out.println("Preparing data and starting 5 scraper threads...");
-		Element schedule = Jsoup.connect(schedulePage).get().select("#schedule").get(0);
+		Element schedule = JsoupHelper.connect(schedulePage).select("#schedule").get(0);
 		Elements days = schedule.select(".day-schedule");
 		//threading :DD - takes about 1 minute 20 seconds without, 30 seconds with
 		ExecutorService executor = Executors.newFixedThreadPool(5);
