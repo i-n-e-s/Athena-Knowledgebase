@@ -135,12 +135,18 @@ public class RequestParser {
 		String value = "";
 
 		//while there is a string...
-		while(currentToken.type == RequestTokenType.NAME || currentToken.type == RequestTokenType.NUMBER) { //ACL+2018 should be considered a string token as well
+		while(currentToken.type == RequestTokenType.NAME || currentToken.type == RequestTokenType.NUMBER || currentToken.type == RequestTokenType.ESCAPE) { //ACL+2018 should be considered a string token as well
 			//...add it to the attribute existing value...
 			if(currentToken.type == RequestTokenType.NAME)
 				value += accept(RequestTokenType.NAME);
 			else if(currentToken.type == RequestTokenType.NUMBER)
 				value += accept(RequestTokenType.NUMBER);
+			else if(currentToken.type == RequestTokenType.ESCAPE)
+			{
+				accept(); //accept the escape character
+				value += currentToken.actual; //add whatever comes next to the escape character
+				accept(); //accept whatever comes next
+			}
 
 			//...and check for more parts in the attribute
 			if(currentToken.type == RequestTokenType.SPACE) //if it's not a SPACE, then it will be something else and be catched by the while condition

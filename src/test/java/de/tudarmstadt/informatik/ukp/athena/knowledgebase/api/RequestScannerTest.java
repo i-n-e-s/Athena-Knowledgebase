@@ -113,4 +113,29 @@ public class RequestScannerTest {
 			assertEquals("Element at position " + i++ + " is not the same!", expected.poll(), actual.poll());
 		}
 	}
+
+	@Test
+	public void testEscapeCharacter() {
+		Deque<RequestToken> actual = new RequestScanner("/paper:title=Tes`ting`:x").scan();
+		Deque<RequestToken> expected = new ArrayDeque<>();
+		int i = 0;
+
+		expected.add(new RequestToken(RequestTokenType.HIERARCHY_SEPERATOR, "/", 0));
+		expected.add(new RequestToken(RequestTokenType.NAME, "paper", 1));
+		expected.add(new RequestToken(RequestTokenType.ATTR_SPECIFIER, ":", 6));
+		expected.add(new RequestToken(RequestTokenType.NAME, "title", 7));
+		expected.add(new RequestToken(RequestTokenType.ATTR_EQ, "=", 12));
+		expected.add(new RequestToken(RequestTokenType.NAME, "Tes", 13));
+		expected.add(new RequestToken(RequestTokenType.ESCAPE, "`", 16));
+		expected.add(new RequestToken(RequestTokenType.NAME, "ting", 17));
+		expected.add(new RequestToken(RequestTokenType.ESCAPE, "`", 21));
+		expected.add(new RequestToken(RequestTokenType.NAME, ":x", 22));
+		expected.add(new RequestToken(RequestTokenType.END, "<end>", 24));
+
+		assertEquals("Actual size is not equal to expected size!", expected.size(), actual.size());
+
+		while(expected.peek() != null) {
+			assertEquals("Element at position " + i++ + " is not the same!", expected.poll(), actual.poll());
+		}
+	}
 }
