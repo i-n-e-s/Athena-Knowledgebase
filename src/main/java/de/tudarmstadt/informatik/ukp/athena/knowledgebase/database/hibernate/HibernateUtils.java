@@ -2,6 +2,8 @@ package de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.hibernate;
 
 import java.sql.Timestamp;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.Metadata;
 import org.hibernate.boot.MetadataSources;
@@ -16,6 +18,7 @@ import org.hibernate.service.ServiceRegistry;
 @Deprecated
 public class HibernateUtils {
 
+	private static Logger logger = LogManager.getLogger(HibernateUtils.class);
 	private static final SessionFactory sessionFactory = buildSessionFactory();
 
 	/**
@@ -31,7 +34,7 @@ public class HibernateUtils {
 
 			return metadata.getSessionFactoryBuilder().build();
 		} catch (Throwable ex) {
-			System.err.println("Initial SessionFactory creation failed." + ex);
+			logger.error("Initial SessionFactory creation failed.", ex);
 			throw new ExceptionInInitializerError(ex);
 		}
 	}

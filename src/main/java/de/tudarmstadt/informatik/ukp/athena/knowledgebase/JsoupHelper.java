@@ -1,9 +1,12 @@
 package de.tudarmstadt.informatik.ukp.athena.knowledgebase;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
 public class JsoupHelper {
+	private static Logger logger = LogManager.getLogger(JsoupHelper.class);
 	public static final String USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.82 Safari/537.36 Viv/2.3.1440.41";
 
 	/**
@@ -53,14 +56,18 @@ public class JsoupHelper {
 
 			try {
 				doc = Jsoup.connect(url).userAgent(userAgent).get();
+
+				if(i != 0)
+					logger.info("\"{}\": Tries taken: {}", url, i + 1);
+
 				return doc; //the above line did not error, so nothing was catched -> connection successfully established
 			}
 			catch(Exception e) {
-				System.out.println("\"" + url + "\": Tries left: " + (tries - i - 1));
+				logger.warn("\"{}\": Tries left: {}", url, tries - i - 1);
 			}
 		}
 
-		System.out.printf(errorMessage + "\n", tries);
+		logger.error(errorMessage, tries);
 		return null;
 	}
 }

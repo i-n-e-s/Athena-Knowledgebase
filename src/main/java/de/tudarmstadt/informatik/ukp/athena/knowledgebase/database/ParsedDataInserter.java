@@ -7,6 +7,8 @@ import java.util.TimeZone;
 
 import javax.annotation.PostConstruct;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
@@ -37,6 +39,7 @@ import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Worksh
  */
 public class ParsedDataInserter {
 	private CrawlerFacade acl18WebParser;
+	private static Logger logger = LogManager.getLogger(ParsedDataInserter.class);
 
 	public ParsedDataInserter(){}
 
@@ -79,7 +82,7 @@ public class ParsedDataInserter {
 		}
 
 		parsedDataInserter = new ParsedDataInserter(beginYear, endYear);
-		System.out.printf("Scraping years %s through %s - this can take a couple of minutes...\n", beginYear, endYear);
+		logger.info("Scraping years {} through {} - this can take a couple of minutes...", beginYear, endYear);
 
 		try {
 			parsedDataInserter.aclStorePapersAndAuthors();
@@ -87,7 +90,7 @@ public class ParsedDataInserter {
 			e.printStackTrace();
 		}
 		parsedDataInserter.acl2018StoreConferenceInformation(); //automatically saves the schedule as well
-		System.out.println("Done!");
+		logger.info("Done!");
 	}
 
 	/**
@@ -99,18 +102,18 @@ public class ParsedDataInserter {
 	 * TODO: implement saveandupdate in Common Access? Otherwise implement check if entry exist. Expensive?
 	 */
 	private void aclStorePapersAndAuthors() throws IOException {
-		System.out.println("Scraping papers and authors...");
+		logger.info("Scraping papers and authors...");
 		ArrayList<Paper> papers = acl18WebParser.getPaperAuthor();
 		PaperCommonAccess paperFiler = new PaperJPAAccess();
 		// PersonCommonAccess personfiler = new PersonJPAAccess();
 
-		System.out.println("Inserting papers and authors into database...");
+		logger.info("Inserting papers and authors into database...");
 
 		for(Paper paper : papers) {
 			paperFiler.add(paper);
 		}
 
-		System.out.println("Done inserting papers and authors!");
+		logger.info("Done inserting papers and authors!");
 	}
 
 	/**
@@ -130,9 +133,9 @@ public class ParsedDataInserter {
 					acl2018.addWorkshop((Workshop)entry);
 			}
 
-			System.out.println("Inserting conference into database...");
+			logger.info("Inserting conference into database...");
 			conferenceCommonAccess.add(acl2018);
-			System.out.println("Done inserting!");
+			logger.info("Done inserting!");
 		}
 		catch (IOException e) {
 			e.printStackTrace();
@@ -151,7 +154,7 @@ public class ParsedDataInserter {
 		try {
 			entries = acl18WebParser.getSchedule();
 
-			System.out.println("Inserting schedule into database...");
+			logger.info("Inserting schedule into database...");
 			//add to database
 			for(ScheduleEntry entry : entries) {
 				if(entry instanceof Session)
@@ -159,7 +162,7 @@ public class ParsedDataInserter {
 				else if(entry instanceof Workshop)
 					workshopCommonAccess.add((Workshop)entry);
 			}
-			System.out.println("Done inserting!");
+			logger.info("Done inserting!");
 		}
 		catch(IOException e){
 			e.printStackTrace();
