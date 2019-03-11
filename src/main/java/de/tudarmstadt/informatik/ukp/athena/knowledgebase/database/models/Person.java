@@ -167,7 +167,7 @@ public class Person extends Model {
 
 	/**
 	 * Sets this author's papers
-	 * @param papers The new paper of this author
+	 * @param papers The new papers of this author
 	 */
 	public void setPapers(Set<Paper> papers) {
 		this.papers = papers;

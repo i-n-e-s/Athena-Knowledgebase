@@ -9,12 +9,11 @@ import javax.persistence.Id;
 public abstract class Model {
 
 	/**
-	 * 
 	 * This method compares all fields of the given models with this model, except all fields containing ID and all fields referencing other models. Null is seen
 	 * as value. It is reflective, symmetric and transitive
 	 * 
 	 * @param model A model, preferably of the same class of the object from which called
-	 * @return true if all fields, except the one referencing other objects, are equal false if the given object is null, not the same class ore a field is different
+	 * @return true if all fields, except the ones referencing other objects, are equal. false if the given object is null, not the same class or a field is different
 	 */
 	public boolean  equalsWithoutID(Object model){
 		if (model == null) return false;
@@ -49,11 +48,10 @@ public abstract class Model {
 	}
 
 	/**
-	 * 
 	 * This method compares all fields of the given models with this model, except all fields containing ID and all fields referencing other models. If a field is set to null it is seen as a wildcard 
 	 * 
 	 * @param model A model, preferably of the same class of the object from which called
-	 * @return true if all fields, except the one referencing other objects, are equal false if the given object is null, not the same class ore a field is different
+	 * @return true if all fields, except the ones referencing other objects, are equal. false if the given object is null, not the same class or a field is different
 	 */
 	public boolean  equalsNullAsWildcard(Object model) {
 		if (model == null) return false;
@@ -85,8 +83,7 @@ public abstract class Model {
 	}
 
 	/**
-	 * 
-	 * A method to find all fields in the hierarchy in 
+	 * Returns all fields of this class and its superclasses, up to the class "Model"
 	 * 
 	 * @param model A model or an Class which extends Model
 	 * @return All fields declared in the class hierarchy between the given Object and Model
@@ -107,7 +104,6 @@ public abstract class Model {
 	}
 	
 	/**
-	 * 
 	 * Return the Value of the Field which is annotated as ID in this model
 	 * 
 	 * @return the Id of this object

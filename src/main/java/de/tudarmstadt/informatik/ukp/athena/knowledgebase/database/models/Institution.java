@@ -76,7 +76,11 @@ public class Institution extends Model {
 	public void setPersons(Set<Person> persons) {
 		this.persons = persons;
 	}
-	
+
+	/**
+	 * Adds an affiliated person to the institution
+	 * @param person The person to add
+	 */
 	public void addPerson(Person person) {
 		persons.add(person);
 	}
