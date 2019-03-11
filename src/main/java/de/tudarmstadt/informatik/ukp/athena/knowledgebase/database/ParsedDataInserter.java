@@ -35,7 +35,7 @@ import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Worksh
 	a class which is meant to be run only once, which is why it is separate from application. Starts Spring and adds
 	data to an sql Database via hibernate
 	contains methods which reformat ParserData into a hibernate digestible format
-	@author Julian Steitz
+	@author Julian Steitz, Daniel Lehmann
  */
 public class ParsedDataInserter {
 	private CrawlerFacade acl18WebParser;

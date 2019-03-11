@@ -59,7 +59,7 @@ class ACLWebCrawler extends AbstractCrawler {
 	 *
 	 * @param startURL the URL of the webpage, where the crawler starts
 	 * @return the list of visited webpages in form of a Jsoup document
-	 * @throws IOException
+	 * @throws IOException in case the connection is faulty and / or not present
 	 */
 	private ArrayList<Document> fetchWebpages(String startURL) throws IOException {
 		System.out.println("Fetching webpages starting from \"" + startURL +"\"...");
