@@ -18,7 +18,7 @@ public abstract class Model {
 	public boolean  equalsWithoutID(Object model){
 		if (model == null) return false;
 
-		if (!this.getClass().equals(model.getClass())) return false;
+		if (!this.getClass().equals(model.getClass())) return false; //Different Classes can't be equal
 
 		Field fields[] = getAllFields(this);
 
@@ -28,14 +28,14 @@ public abstract class Model {
 			if(!field.getName().contains("ID") && field.getAnnotation(Column.class)!=null) {//Field is not ID and Information is Stored in Object, because it's a Column
 				//Start checking equality
 				try {
-					if(field.get(this)==null) {//Both are null?
-						if(!(field.get(model) == null)) { 
+					if(field.get(this)==null) {
+						if(!(field.get(model) == null)) { //Both are null? => equal
 							if(!wasAccessible) field.setAccessible(false);
-							return false;
+							return false;//One of the fields is not null
 						}
-					}else if(!(field.get(this).equals(field.get(model)))) {
+					}else if(!(field.get(this).equals(field.get(model)))) {// 
 						if(!wasAccessible) field.setAccessible(false);
-						return false;
+						return false;//fields are not equal values
 					}
 				} catch (IllegalArgumentException | IllegalAccessException e) {
 					System.err.println("This should never be reached...");
@@ -56,7 +56,7 @@ public abstract class Model {
 	public boolean  equalsNullAsWildcard(Object model) {
 		if (model == null) return false;
 
-		if (!this.getClass().equals(model.getClass())) return false;
+		if (!this.getClass().equals(model.getClass())) return false; //Different Classes can't be equal
 
 		Field fields[] = getAllFields(this);
 
@@ -66,14 +66,14 @@ public abstract class Model {
 			if(!field.getName().contains("ID") && field.getAnnotation(Column.class)!=null) {//Field is not ID and Information is Stored in Object, because it's a Column
 				//Start checking equality
 				try {
-					if(field.get(this) != null && field.get(model) != null) {
+					if(field.get(this) != null && field.get(model) != null) {// is one value null
 						if(!(field.get(this).equals(field.get(model)))) {
 							if(!wasAccessible) field.setAccessible(false);
-							return false;
+							return false;// values are not equal
 						}
 					}
 				} catch (IllegalArgumentException | IllegalAccessException e) {
-					// TODO Auto-generated catch block
+					System.err.println("This should never be reached...");
 					e.printStackTrace();
 				}
 			}
