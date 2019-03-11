@@ -89,7 +89,7 @@ public class PersonJPAAccessTest {
 		for (int i = 0; i < testDB.getAuthorQuantity(); i++) {
 			assertTrue(resultTitles.contains("Person"+ i));
 		}
-	};
+	}
 
 	@Test
 	public void updateTest() {

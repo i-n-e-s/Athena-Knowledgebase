@@ -92,7 +92,7 @@ public class Paper extends Model{
 	 * @param author The author to add
 	 */
 	public void addAuthor(Person author) {
-		authors.add(author);
+		persons.add(author);
 		if(!author.getPapers().contains(this)) {
 			author.addPaper(this);
 		}
