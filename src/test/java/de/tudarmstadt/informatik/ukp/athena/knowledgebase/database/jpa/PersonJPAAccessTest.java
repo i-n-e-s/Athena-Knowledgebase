@@ -87,7 +87,7 @@ public class PersonJPAAccessTest {
 		List<String> resultTitles = new ArrayList<String>();
 		resultList.stream().forEach((Person p) -> resultTitles.add(p.getFullName()));;
 		for (int i = 0; i < testDB.getAuthorQuantity(); i++) {
-			assertTrue(resultTitles.contains("Person"+ i));
+			assertTrue(resultTitles.contains("Author "+ i));
 		}
 	}
 
