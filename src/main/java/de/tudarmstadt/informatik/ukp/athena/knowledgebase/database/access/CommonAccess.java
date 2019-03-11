@@ -3,7 +3,7 @@ package de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.access;
 import java.util.List;
 
 /**
- * Common access interface hiding the database layer. Every Access-Class should implement this
+ * Common access interface to hide the database layer. Every Access-Class should implement this
  * as it demands implementation of basic database access functionality.
  *
  * @author Tristan Wettich

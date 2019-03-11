@@ -20,7 +20,7 @@ public class SessionPartJPAAccess implements CommonAccess<SessionPart> {
 		try {
 			entityManager.persist(data);
 		}catch(EntityExistsException e) {
-			System.out.println(data.getID()+"already exist in the Database. Maybe try update");
+			System.out.println(data.getID()+" already exists in the Database. Maybe try update");
 		}
 		entityManager.getTransaction().commit();
 	}
