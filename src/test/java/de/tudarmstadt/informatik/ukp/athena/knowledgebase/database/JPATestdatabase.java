@@ -50,7 +50,7 @@ public class JPATestdatabase {
 	}
 
 	/**
-	 * Reset the Parameters to there default values
+	 * Reset the Parameters to their default values
 	 */
 	public void setDefaultParameters() {
 		conferenceQuantity = 2;
@@ -146,7 +146,7 @@ public class JPATestdatabase {
 	}
 
 	/**
-	 * insert data object into database. The data have to be generated or set first
+	 * insert data object into database. The data has to be generated or set first
 	 */
 	public void insertData() {
 		ConferenceJPAAccess cjpaa = new ConferenceJPAAccess();
@@ -180,11 +180,10 @@ public class JPATestdatabase {
 	}
 
 	/**
+	 * checks if an author with the same name already exists
 	 * 
-	 * checks if an author with the same name already exist
-	 * 
-	 * @param a the author, which should be searched in the database
-	 * @return true if an author-entry exist with the same name
+	 * @param a the author to be searched in the database
+	 * @return true if an author-entry with the same name exists
 	 */
 /*	private boolean authorInDB(Author a) {
 		Session session = HibernateUtils.getSessionFactory().openSession();
@@ -195,11 +194,10 @@ public class JPATestdatabase {
 	}*/
 
 	/**
+	 * checks if a paper with the same title already exists
 	 * 
-	 * checks if an paper with the same title already exist
-	 * 
-	 * @param a the paper, which should be searched in the database
-	 * @return true if an paper-entry exist with the same title
+	 * @param a the paper to be searched in the database
+	 * @return true if a paper-entry exists with the same title
 	 */
 /*	private boolean paperInDB(Paper p) {
 		Session session = HibernateUtils.getSessionFactory().openSession();
@@ -228,7 +226,7 @@ public class JPATestdatabase {
 	}
 
 	/**
-	 * institutionQuantity is the number of Institution, which will be generated
+	 * institutionQuantity is the number of Institutions, which will be generated
 	 * 
 	 * @return The current institutionQuantity
 	 */
@@ -336,18 +334,18 @@ public class JPATestdatabase {
 	}
 
 	/**
-	 * Returns the {@link Author authors}, which will be added to the database
+	 * Returns the {@link Person authors}, which will be added to the database
 	 * 
-	 * @return {@link Author authors}, which were originally/will be added to the database
+	 * @return {@link Person authors}, which were originally/will be added to the database
 	 */
 	public Person[] getAuthors() {
 		return authors;
 	}
 
 	/**
-	 * Set the {@link Author authors}, which will be added to the Database, when {@link #insertData()} is executed}
+	 * Set the {@link Person authors}, which will be added to the Database, when {@link #insertData()} is executed}
 	 * 
-	 * @param authors The {@link Author authors}, which will be added
+	 * @param authors The {@link Person authors}, which will be added
 	 */
 	public void setAuthors(Person[] authors) {
 		this.authors = authors;

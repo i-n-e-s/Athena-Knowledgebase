@@ -48,12 +48,12 @@ public class PaperJPAAccessTest {
 		testAuthor1.setFullName("testAuthor1");
 		testAuthor2 = new Person();
 		testAuthor2.setFullName("testAuthor2");
-		testValue.setTitle("TestPapertitleTest");
+		testValue.setTitle("TestPaperTitleTest");
 		testValue.addAuthor(testAuthor1);
 		testValue.addAuthor(testAuthor2);
 		testValue.setReleaseDate(LocalDate.of(1234, 12, 3));
 		testValue.setTopic("TestTopicTest");
-		testValue.setRemoteLink("TestLinktTest");
+		testValue.setRemoteLink("TestLinkTest");
 		testValue.setPdfFileSize(1234321);
 		testValue.setAnthology("TestAnthology");
 		
@@ -73,7 +73,7 @@ public class PaperJPAAccessTest {
 		List<String> resultTitles = new ArrayList<String>();
 		resultList.stream().forEach((Paper p) -> resultTitles.add(p.getTitle()));;
 		for (int i = 0; i < testDB.getPaperQuantity(); i++) {
-			resultTitles.contains("Title"+ i);
+			assertTrue(resultTitles.contains("Title"+ i));
 		}
 	}
 	

@@ -42,7 +42,7 @@ public class ConferenceJPAAccessTest {
 	public static void resetValues() {
 		testValue = new Conference();
 		testValue.setName("TestConferenceTest");
-		testValue.setAddress("TestAdressTest");
+		testValue.setAddress("TestAddressTest");
 		testValue.setCity("TestCityTest");
 		testValue.setCountry("TestCountryTest");
 		testValue.setEnd(LocalDate.of(1234, 1, 2));
@@ -68,7 +68,7 @@ public class ConferenceJPAAccessTest {
 		uut.add(testValue);
 		List<Conference> returnValue = getByName("TestConferenceTest");
 		if(returnValue.size() == 0) fail("return value is empty");
-		if(returnValue.size() > 1) fail("return value is to large");
+		if(returnValue.size() > 1) fail("return value is too large");
 		assertTrue(testValue.equalsWithoutID(returnValue.get(0)));
 		uut.delete(testValue);
 		returnValue = getByName("TestConferenceTest");
@@ -79,12 +79,12 @@ public class ConferenceJPAAccessTest {
 	public void updateTest() {
 		List<Conference> returnValue;
 		uut.add(testValue);
-		String altAdress = "TestAdressTestCorrected";
+		String altAdress = "TestAddressTestCorrected";
 		testValue.setAddress(altAdress);
 		returnValue = getByName(testValue.getName());
 		if(returnValue.size() == 0) fail("return value is empty");
 		if(returnValue.size() > 1) fail("multiple return entries");
-		assertEquals("TestAdressTestCorrected", returnValue.get(0).getAddress());
+		assertEquals("TestAddressTestCorrected", returnValue.get(0).getAddress());
 		uut.delete(testValue);
 	}
 	

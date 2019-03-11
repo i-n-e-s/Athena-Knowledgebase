@@ -20,7 +20,7 @@ public class InstitutionJPAAccess implements CommonAccess<Institution> {
 		try {
 			entityManager.persist(data);
 		}catch(EntityExistsException e) {
-			System.out.println(data.getID()+"already exist in the Database.");
+			System.out.println(data.getID()+" already exists in the Database.");
 		}
 		entityManager.getTransaction().commit();
 	}
