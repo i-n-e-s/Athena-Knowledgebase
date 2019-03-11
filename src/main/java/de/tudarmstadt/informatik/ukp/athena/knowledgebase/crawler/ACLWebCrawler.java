@@ -42,7 +42,7 @@ class ACLWebCrawler extends AbstractCrawler {
 	 * @param beginYear The first year to get data from
 	 * @param endYear The last year to get data from
 	 */
-	public ACLWebCrawler(String beginYear, String endYear) {
+	public ACLWebCrawler(int beginYear, int endYear) {
 		startURLAuthors = String.format("https://aclanthology.coli.uni-saarland.de/catalog/facet/author?"// get a list of all authors
 				+ "commit=facet.page=1&"// get first page of search
 				+ "facet.sort=index&" // sort author list alphabetically
@@ -59,7 +59,7 @@ class ACLWebCrawler extends AbstractCrawler {
 	 *
 	 * @param startURL the URL of the webpage, where the crawler starts
 	 * @return the list of visited webpages in form of a Jsoup document
-	 * @throws IOException
+	 * @throws IOException in case the connection is faulty and / or not present
 	 */
 	private ArrayList<Document> fetchWebpages(String startURL) throws IOException {
 		System.out.println("Fetching webpages starting from \"" + startURL +"\"...");
