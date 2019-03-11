@@ -8,6 +8,8 @@ import java.util.TimeZone;
 import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
@@ -23,6 +25,7 @@ import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Person
 
 @SpringBootApplication
 public class JPATestdatabase {
+	private static Logger logger = LogManager.getLogger(JPATestdatabase.class);
 	private int conferenceQuantity;
 	private int institutionQuantity;
 	private int authorQuantity;
@@ -62,21 +65,21 @@ public class JPATestdatabase {
 
 	/**
 	 * Creates a database for testing purposes. The created entries are deterministic based on the given parameters.
-	 * The set 
-	 * <b>WARNING:</b> This method deletes the whole database 'athena' and replaces it! If you just want to insert new 
+	 * The set
+	 * <b>WARNING:</b> This method deletes the whole database 'athena' and replaces it! If you just want to insert new
 	 * data use {@link #generateData()} and {@link #insertData()}
 	 */
 	public void createDB() {
 		deleteOldData();
 		generateData();
-		insertData();		
+		insertData();
 	}
 
 	/**
 	 * Deletes all tables in the athena-database, except hibernate_sequence
 	 */
 	public void deleteOldData() {
-		System.out.println("Start deleting");
+		logger.info("Start deleting");
 		EntityManager entityManager = PersistenceManager.getEntityManager();
 		entityManager.getTransaction().begin();
 		List<String> list = entityManager.createNativeQuery("SHOW tables").getResultList();
@@ -89,7 +92,7 @@ public class JPATestdatabase {
 		}
 		entityManager.getTransaction().commit();
 		//entityManager.close();
-		System.out.println("Done deleting");
+		logger.info("Done deleting");
 	}
 
 	/**
@@ -97,7 +100,7 @@ public class JPATestdatabase {
 	 */
 	public void generateData() {
 		//Need to be one method, because data is linked
-		System.out.println("Start creating data");
+		logger.info("Start creating data");
 		conferences = new Conference[conferenceQuantity];
 		institutions = new Institution[institutionQuantity];
 		authors = new Person[authorQuantity];
@@ -106,7 +109,7 @@ public class JPATestdatabase {
 		for(int i = 0; i< conferences.length;i++) {
 			conferences[i] = new Conference();
 			conferences[i].setName("Conference" + i);
-			LocalDate tmpDate = LocalDate.of(1960 + i, (i%12)+1 , (i%28)+1); 
+			LocalDate tmpDate = LocalDate.of(1960 + i, (i%12)+1 , (i%28)+1);
 			conferences[i].setBegin(tmpDate);
 			conferences[i].setEnd(tmpDate.plusDays(1));
 			conferences[i].setCountry("Testcountry" + i);
@@ -142,7 +145,7 @@ public class JPATestdatabase {
 			papers[i].setAnthology("Ant" + i%25);
 
 		}
-		System.out.println("Done creating data");
+		logger.info("Done creating data");
 	}
 
 	/**
@@ -154,13 +157,13 @@ public class JPATestdatabase {
 		PaperJPAAccess pajpaa = new PaperJPAAccess();
 		PersonJPAAccess pejpaa = new PersonJPAAccess();
 		//TODO add EventJPAAccess here
-		System.out.println("Start inserting Data");
+		logger.info("Start inserting Data");
 
 		for (Conference c : conferences) cjpaa.add(c);
 		for (Institution i : institutions) ijpaa.add(i);
 		for (Person a : authors) pejpaa.add(a);
 		for (Paper p: papers)pajpaa.add(p);
-		System.out.println("Done inserting data");
+		logger.info("Done inserting data");
 	}
 	/**
 	 * Generates a HashSet of Authors, which is deterministic.
@@ -181,11 +184,11 @@ public class JPATestdatabase {
 
 	/**
 	 * checks if an author with the same name already exists
-	 * 
+	 *
 	 * @param a the author to be searched in the database
 	 * @return true if an author-entry with the same name exists
 	 */
-/*	private boolean authorInDB(Author a) {
+	/*	private boolean authorInDB(Author a) {
 		Session session = HibernateUtils.getSessionFactory().openSession();
 		List<String> result = session.createSQLQuery(
 				String.format("\nSELECT fullName FROM person \n WHERE fullName = '%s' \n LIMIT 1", a.getFullName() )).list();
@@ -195,11 +198,11 @@ public class JPATestdatabase {
 
 	/**
 	 * checks if a paper with the same title already exists
-	 * 
+	 *
 	 * @param a the paper to be searched in the database
 	 * @return true if a paper-entry exists with the same title
 	 */
-/*	private boolean paperInDB(Paper p) {
+	/*	private boolean paperInDB(Paper p) {
 		Session session = HibernateUtils.getSessionFactory().openSession();
 		List<String> result = session.createSQLQuery(
 				String.format("\nSELECT title FROM paper \n WHERE title = '%s' \n LIMIT 1", p.getTitle() )).list();
@@ -209,7 +212,7 @@ public class JPATestdatabase {
 
 	/**
 	 * conferenceQuantity is the number of Conferences, which will be generated
-	 * 
+	 *
 	 * @return The current ConferenceQuantity
 	 */
 	public int getConferenceQuantity() {
@@ -218,7 +221,7 @@ public class JPATestdatabase {
 
 	/**
 	 * conferenceQuantity is the number of Conferences, which will be generated
-	 * 
+	 *
 	 * @param conferenceQuantity The desired ConferenceQuantity
 	 */
 	public void setConferenceQuantity(int conferenceQuantity) {
@@ -227,7 +230,7 @@ public class JPATestdatabase {
 
 	/**
 	 * institutionQuantity is the number of Institutions, which will be generated
-	 * 
+	 *
 	 * @return The current institutionQuantity
 	 */
 	public int getInstitutionQuantity() {
@@ -236,7 +239,7 @@ public class JPATestdatabase {
 
 	/**
 	 * institutionQuantity is the number of Institution, which will be generated
-	 * 
+	 *
 	 * @param institutionQuantity The desired institutionQuantity
 	 */
 	public void setInstitutionQuantity(int institutionQuantity) {
@@ -245,7 +248,7 @@ public class JPATestdatabase {
 
 	/**
 	 * authorQuantity is the number of Authors, which will be generated
-	 * 
+	 *
 	 * @return authorQuantity The current authorQuantity
 	 */
 	public int getAuthorQuantity() {
@@ -254,7 +257,7 @@ public class JPATestdatabase {
 
 	/**
 	 * paperQuantity is the number of Papers, which will be generated
-	 * 
+	 *
 	 * @param authorQuantity The desired paperQuantity
 	 */
 	public void setAuthorQuantity(int authorQuantity) {
@@ -263,7 +266,7 @@ public class JPATestdatabase {
 
 	/**
 	 * paperQuantity is the number of Papers, which will be generated
-	 * 
+	 *
 	 * @return paperQuantity The current paperQuantity
 	 */
 	public int getPaperQuantity() {
@@ -272,7 +275,7 @@ public class JPATestdatabase {
 
 	/**
 	 * paperQuantity is the number of Papers, which will be generated
-	 * 
+	 *
 	 * @param paperQuantity The desired paperQuantity
 	 */
 	public void setPaperQuantity(int paperQuantity) {
@@ -281,7 +284,7 @@ public class JPATestdatabase {
 
 	/**
 	 * eventQuantity is the number of Events, which will be generated
-	 * 
+	 *
 	 * @return The current eventQuantity
 	 */
 	public int getEventQuantity() {
@@ -290,7 +293,7 @@ public class JPATestdatabase {
 
 	/**
 	 * eventQuantity is the number of Events, which will be generated
-	 * 
+	 *
 	 * @param eventQuantity The desired eventQuantity
 	 */
 	public void setEventQuantity(int eventQuantity) {
@@ -299,7 +302,7 @@ public class JPATestdatabase {
 
 	/**
 	 * Returns the {@link Conference conferences}, which will be added to the conference
-	 * 
+	 *
 	 * @return {@link Conference conferences}, which will be added to the Database
 	 */
 	public Conference[] getConferences() {
@@ -308,7 +311,7 @@ public class JPATestdatabase {
 
 	/**
 	 * Set the {@link Conference conferences}, which will be added to the Database, when {@link #insertData()} is executed}
-	 * 
+	 *
 	 * @param conferences The {@link Conference conferences}, which will be added
 	 */
 	public void setConferences(Conference[] conferences) {
@@ -317,7 +320,7 @@ public class JPATestdatabase {
 
 	/**
 	 * Returns the {@link Institution institutions}, which will be added to the database
-	 * 
+	 *
 	 * @return {@link Institution institutions}, which were originally/will be added to the Database
 	 */
 	public Institution[] getInstitutions() {
@@ -326,7 +329,7 @@ public class JPATestdatabase {
 
 	/**
 	 * Set the {@link Institution institutions}, which will be added to the Database, when {@link #insertData()} is executed}
-	 * 
+	 *
 	 * @param institutions The {@link Institution institutions}, which will be added
 	 */
 	public void setInstitutions(Institution[] institutions) {
@@ -335,7 +338,7 @@ public class JPATestdatabase {
 
 	/**
 	 * Returns the {@link Person authors}, which will be added to the database
-	 * 
+	 *
 	 * @return {@link Person authors}, which were originally/will be added to the database
 	 */
 	public Person[] getAuthors() {
@@ -344,7 +347,7 @@ public class JPATestdatabase {
 
 	/**
 	 * Set the {@link Person authors}, which will be added to the Database, when {@link #insertData()} is executed}
-	 * 
+	 *
 	 * @param authors The {@link Person authors}, which will be added
 	 */
 	public void setAuthors(Person[] authors) {
@@ -353,7 +356,7 @@ public class JPATestdatabase {
 
 	/**
 	 * Returns the {@link Paper papers}, which will be added to the database
-	 * 
+	 *
 	 * @return {@link Paper papers}, which were originally/will be added to the database
 	 */
 	public Paper[] getPapers() {
@@ -362,7 +365,7 @@ public class JPATestdatabase {
 
 	/**
 	 * Set the {@link Paper papers}, which will be added to the Database, when {@link #insertData()} is executed}
-	 * 
+	 *
 	 * @param papers The {@link Paper papers}, which will be added
 	 */
 	public void setPapers(Paper[] papers) {

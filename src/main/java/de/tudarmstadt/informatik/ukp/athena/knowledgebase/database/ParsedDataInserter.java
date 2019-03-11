@@ -14,7 +14,6 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-import de.tudarmstadt.informatik.ukp.athena.knowledgebase.JPASandBox;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.crawler.CrawlerFacade;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.crawler.SupportedConferences;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.access.CommonAccess;
@@ -61,7 +60,7 @@ public class ParsedDataInserter {
 
 	public static void main(String[] args) {
 		long then = System.nanoTime();
-		SpringApplication.run(JPASandBox.class, args);
+		SpringApplication.run(ParsedDataInserter.class, args);
 		ParsedDataInserter parsedDataInserter;
 		List<String> argsList = Arrays.asList(args); //for .contains
 		int beginYear = 2018, endYear = 2018;
@@ -76,7 +75,7 @@ public class ParsedDataInserter {
 		if(beginYear > endYear) {
 			int temp = beginYear;
 
-			System.out.printf("Received arguments beginYear=%s, endYear=%s. endYear is bigger than beginYear, swapping them.\n", beginYear, endYear);
+			logger.info("Received arguments beginYear={}, endYear={}. endYear is bigger than beginYear, swapping them.", beginYear, endYear);
 			beginYear = endYear;
 			endYear = temp;
 		}
@@ -85,21 +84,21 @@ public class ParsedDataInserter {
 		//only scrape if respective argument was found
 		if(argsList.contains("-scrape-paper-author")) {
 			try {
-				System.out.printf("Scraping years %s through %s - this can take a couple of minutes...\n", beginYear, endYear);
+				logger.info("Scraping years {} through {} - this can take a couple of minutes...", beginYear, endYear);
 				parsedDataInserter.aclStorePapersAndAuthors();
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		}
 		else
-			System.out.println("\"-scrape-paper-author\" argument was not found, skipping paper author scraping");
+			logger.info("\"-scrape-paper-author\" argument was not found, skipping paper author scraping");
 
 		if(argsList.contains("-scrape-acl18-info"))
 			parsedDataInserter.acl2018StoreConferenceInformation(); //automatically saves the schedule as well
 		else
-			System.out.println("\"-scrape-acl18-info\" argument was not found, skipping ACL 2018 scraping");
+			logger.info("\"-scrape-acl18-info\" argument was not found, skipping ACL 2018 scraping");
 
-		System.out.printf("Done! (Took %s)\n", LocalTime.ofNanoOfDay(System.nanoTime() - then));
+		logger.info("Done! (Took {})", LocalTime.ofNanoOfDay(System.nanoTime() - then));
 	}
 
 	/**

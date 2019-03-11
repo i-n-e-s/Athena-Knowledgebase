@@ -5,10 +5,15 @@ import java.util.List;
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.access.CommonAccess;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Conference;
 
 public class ConferenceJPAAccess implements CommonAccess<Conference> {
+	private static Logger logger = LogManager.getLogger(ConferenceJPAAccess.class);
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -19,7 +24,7 @@ public class ConferenceJPAAccess implements CommonAccess<Conference> {
 		try {
 			entityManager.persist(data);
 		}catch(EntityExistsException e) {
-			System.out.println(data.getID()+" already exists in the Database.");
+			logger.warn("{} already exists in the database. Maybe try update", data.getID());
 		}
 		entityManager.getTransaction().commit();
 	}
