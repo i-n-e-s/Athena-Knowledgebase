@@ -19,7 +19,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name="paper")
-public class Paper {
+public class Paper extends Model{
 	/*Identifier*/
 	@Id
 	@GeneratedValue(generator="increment")
@@ -92,7 +92,10 @@ public class Paper {
 	 * @param author The author to add
 	 */
 	public void addAuthor(Person author) {
-		persons.add(author);
+		authors.add(author);
+		if(!author.getPapers().contains(this)) {
+			author.addPaper(this);
+		}
 	}
 
 	/**

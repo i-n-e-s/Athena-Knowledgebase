@@ -3,7 +3,7 @@ package de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.access;
 import java.util.List;
 
 /**
- * Common access interface hiding the database layer. Every Access-Class should implement this
+ * Common access interface to hide the database layer. Every Access-Class should implement this
  * as it demands implementation of basic database access functionality.
  *
  * @author Tristan Wettich
@@ -16,12 +16,6 @@ public interface CommonAccess<T> {
 	 * @param data Object of model T to be saved
 	 */
 	public void add(T data);
-
-	/**
-	 * Update data in database.
-	 * @param data Object of model T to be updated
-	 */
-	public void update(T data);
 
 	/**
 	 * Delete data from database.
