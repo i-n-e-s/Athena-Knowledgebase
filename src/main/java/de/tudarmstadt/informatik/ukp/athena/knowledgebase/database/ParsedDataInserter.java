@@ -1,7 +1,9 @@
 package de.tudarmstadt.informatik.ukp.athena.knowledgebase.database;
 
 import java.io.IOException;
+import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.TimeZone;
 
@@ -15,10 +17,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.JPASandBox;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.crawler.CrawlerFacade;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.crawler.SupportedConferences;
-import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.access.ConferenceCommonAccess;
-import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.access.PaperCommonAccess;
-import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.access.SessionCommonAccess;
-import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.access.WorkshopCommonAccess;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.access.CommonAccess;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.jpa.ConferenceJPAAccess;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.jpa.PaperJPAAccess;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.jpa.SessionJPAAccess;
@@ -35,7 +34,7 @@ import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Worksh
 	a class which is meant to be run only once, which is why it is separate from application. Starts Spring and adds
 	data to an sql Database via hibernate
 	contains methods which reformat ParserData into a hibernate digestible format
-	@author Julian Steitz
+	@author Julian Steitz, Daniel Lehmann
  */
 public class ParsedDataInserter {
 	private CrawlerFacade acl18WebParser;
@@ -47,7 +46,7 @@ public class ParsedDataInserter {
 	 * @param beginYear The first year to get data from
 	 * @param endYear The last year to get data from
 	 */
-	public ParsedDataInserter(String beginYear, String endYear) {
+	public ParsedDataInserter(int beginYear, int endYear) {
 		acl18WebParser = new CrawlerFacade(SupportedConferences.ACL, beginYear, endYear);
 	}
 
@@ -61,36 +60,46 @@ public class ParsedDataInserter {
 	}
 
 	public static void main(String[] args) {
+		long then = System.nanoTime();
 		SpringApplication.run(JPASandBox.class, args);
 		ParsedDataInserter parsedDataInserter;
-
-		String beginYear = "2018", endYear = "2018";
+		List<String> argsList = Arrays.asList(args); //for .contains
+		int beginYear = 2018, endYear = 2018;
 
 		for(String arg : args) {
-			if(arg.startsWith("-beginYear=")) {
-				String year = arg.split("=")[1];
+			if(arg.startsWith("-beginYear="))
+				beginYear = Integer.parseInt(arg.split("=")[1]); //parse to make sure that it's a number
+			else if(arg.startsWith("-endYear="))
+				endYear = Integer.parseInt(arg.split("=")[1]); //parse to make sure that it's a number
+		}
 
-				Integer.parseInt(year); //parse to make sure that it's a number
-				beginYear = year;
-			}
-			else if(arg.startsWith("-endYear=")) {
-				String year = arg.split("=")[1];
+		if(beginYear > endYear) {
+			int temp = beginYear;
 
-				Integer.parseInt(year); //parse to make sure that it's a number
-				endYear = year;
-			}
+			System.out.printf("Received arguments beginYear=%s, endYear=%s. endYear is bigger than beginYear, swapping them.\n", beginYear, endYear);
+			beginYear = endYear;
+			endYear = temp;
 		}
 
 		parsedDataInserter = new ParsedDataInserter(beginYear, endYear);
-		logger.info("Scraping years {} through {} - this can take a couple of minutes...", beginYear, endYear);
-
-		try {
-			parsedDataInserter.aclStorePapersAndAuthors();
-		} catch (IOException e) {
-			e.printStackTrace();
+		//only scrape if respective argument was found
+		if(argsList.contains("-scrape-paper-author")) {
+			try {
+				System.out.printf("Scraping years %s through %s - this can take a couple of minutes...\n", beginYear, endYear);
+				parsedDataInserter.aclStorePapersAndAuthors();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
-		parsedDataInserter.acl2018StoreConferenceInformation(); //automatically saves the schedule as well
-		logger.info("Done!");
+		else
+			System.out.println("\"-scrape-paper-author\" argument was not found, skipping paper author scraping");
+
+		if(argsList.contains("-scrape-acl18-info"))
+			parsedDataInserter.acl2018StoreConferenceInformation(); //automatically saves the schedule as well
+		else
+			System.out.println("\"-scrape-acl18-info\" argument was not found, skipping ACL 2018 scraping");
+
+		System.out.printf("Done! (Took %s)\n", LocalTime.ofNanoOfDay(System.nanoTime() - then));
 	}
 
 	/**
@@ -104,7 +113,7 @@ public class ParsedDataInserter {
 	private void aclStorePapersAndAuthors() throws IOException {
 		logger.info("Scraping papers and authors...");
 		ArrayList<Paper> papers = acl18WebParser.getPaperAuthor();
-		PaperCommonAccess paperFiler = new PaperJPAAccess();
+		CommonAccess<Paper> paperFiler = new PaperJPAAccess();
 		// PersonCommonAccess personfiler = new PersonJPAAccess();
 
 		logger.info("Inserting papers and authors into database...");
@@ -120,7 +129,7 @@ public class ParsedDataInserter {
 	 * Stores the acl2018 conference including the schedule into the database
 	 */
 	private void acl2018StoreConferenceInformation() {
-		ConferenceCommonAccess conferenceCommonAccess = new ConferenceJPAAccess();
+		CommonAccess<Conference> conferenceCommonAccess = new ConferenceJPAAccess();
 
 		try {
 			Conference acl2018 = acl18WebParser.getConferenceInformation();
@@ -147,8 +156,8 @@ public class ParsedDataInserter {
 	 * @return The scraped and stored sessions
 	 */
 	private List<ScheduleEntry> acl2018StoreSchedule() {
-		SessionCommonAccess sessionCommonAccess = new SessionJPAAccess();
-		WorkshopCommonAccess workshopCommonAccess = new WorkshopJPAAccess();
+		CommonAccess<Session> sessionCommonAccess = new SessionJPAAccess();
+		CommonAccess<Workshop> workshopCommonAccess = new WorkshopJPAAccess();
 		List<ScheduleEntry> entries = new ArrayList<>(); //initialize in case anything fails
 
 		try {

@@ -46,7 +46,7 @@ public class Person extends Model {
 
 	/*The person's institution, eg. an university or a company*/
 	//@Column(name = "institution")
-	@ManyToOne
+	@ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
 	@JoinColumn(name = "institutionID")
 	private Institution institution;
 
@@ -167,7 +167,7 @@ public class Person extends Model {
 
 	/**
 	 * Sets this author's papers
-	 * @param papers The new paper of this author
+	 * @param papers The new papers of this author
 	 */
 	public void setPapers(Set<Paper> papers) {
 		this.papers = papers;
@@ -179,6 +179,9 @@ public class Person extends Model {
 	 */
 	public void addPaper(Paper p) {
 		papers.add(p);
+		if(!p.getAuthors().contains(this)) {
+			p.addAuthor(this);
+		}
 	}
 
 }

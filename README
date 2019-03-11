@@ -4,3 +4,6 @@ All submitted code should follow the Google Java Guide Lines, except the followi
 - 					Tabs should be represented with 4 whitespace characters
 - (Section 4.2) 	Each time a new block or block-like construct is opened, the indent increases by one Tab
 - (Section 4.4) 	The column limit doesn't have to be followed //This is done because some of the frameworks have very long names, so you would often have to rip apart your code without adding readability
+
+Adding new Models:
+If you want to add another model please check if your model have a Many-to-Many relationship. If so the coresponding add-Methode have to check if the other Object have an coresponding Entriy

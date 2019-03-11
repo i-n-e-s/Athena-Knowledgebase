@@ -20,7 +20,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name="conference")
-public class Conference {
+public class Conference extends Model{
 	/*Unique id*/
 	@Id
 	@GeneratedValue(generator="increment")
@@ -31,7 +31,7 @@ public class Conference {
 	@Column(name="name")
 	private String name;
 
-	/*First day of conference no need for the temporal annotation with java.time (indeed this would break it)*/
+	/*First day of conference, no need for the temporal annotation with java.time (indeed this would break it)*/
 	@Column (name="begin")
 	private LocalDate begin;
 	/*Last day of conference*/
@@ -176,16 +176,16 @@ public class Conference {
 	}
 
 	/**
-	 * Gets the sessions making up this conference's schedule
-	 * @return The sessions making up this conference's schedule
+	 * Gets the sessions building up this conference's schedule
+	 * @return The sessions building up this conference's schedule
 	 */
 	public Set<Session> getSessions(){
 		return sessions;
 	}
 
 	/**
-	 * Sets the sessions making up this conference's schedule
-	 * @param sessions The new sessions making up this conference's schedule
+	 * Sets the sessions building up this conference's schedule
+	 * @param sessions The new sessions building up this conference's schedule
 	 */
 	public void setSessions(Set<Session> sessions){
 		this.sessions = sessions;
@@ -193,7 +193,7 @@ public class Conference {
 
 	/**
 	 * Adds a session to this conference's list of sessions
-	 * @param session The session
+	 * @param session The session to add
 	 */
 	public void addSession(Session session) {
 		sessions.add(session);
@@ -217,7 +217,7 @@ public class Conference {
 
 	/**
 	 * Adds a workshop to this conference's list of workshops
-	 * @param workshop The workshop
+	 * @param workshop The workshop to add
 	 */
 	public void addWorkshop(Workshop workshop) {
 		workshops.add(workshop);

@@ -13,12 +13,17 @@ public class PersistenceManager {
 	@PersistenceUnit
 	private static final EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("hibernate");
 
+	static EntityManager entityManager;
+	
 	/**
 	 * Get the Hibernate-SessionFactory.
 	 * @return the SessionFactory
 	 */
 	public static EntityManager getEntityManager() {
-		return entityManagerFactory.createEntityManager();
+		if(entityManager == null) {
+			entityManager = entityManagerFactory.createEntityManager();
+		}
+		return entityManager;
 	}
 
 	/**

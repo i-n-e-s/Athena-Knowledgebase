@@ -1,16 +1,13 @@
 package de.tudarmstadt.informatik.ukp.athena.knowledgebase;
 
 import java.time.LocalDate;
-import java.util.Arrays;
-import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.access.PaperCommonAccess;
-import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.access.PersonCommonAccess;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.access.CommonAccess;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.jpa.PaperJPAAccess;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.jpa.PersonJPAAccess;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Paper;
@@ -23,20 +20,18 @@ public class JPASandBox {
 	public static void main(String[] args) {
 		SpringApplication.run(JPASandBox.class, args);
 
-		PersonCommonAccess pca = new PersonJPAAccess();
+		CommonAccess<Person> pca = new PersonJPAAccess();
 
 		Person dummyAuthor = new Person();
 		dummyAuthor.setFullName("Rumpo Derpel");
 		dummyAuthor.setBirth(LocalDate.of(2010, 10, 10));
 		pca.add(dummyAuthor);
 
-		List<Person> authors = pca.getByFullName("Rumpo Derpel");
+        logger.debug("Authors: {}", authors.toString());
 
-		logger.debug("Authors: {}", authors.toString());
-
-		PaperCommonAccess paca = new PaperJPAAccess();
-
+		CommonAccess<Paper> paca = new PaperJPAAccess();
 		Paper dummyPaper1 = new Paper();
+
 		dummyPaper1.setReleaseDate(LocalDate.of(2018, 8, 1));
 		Paper dummyPaper2 = new Paper();
 		dummyPaper2.setReleaseDate(LocalDate.of(2018, 9, 1));
