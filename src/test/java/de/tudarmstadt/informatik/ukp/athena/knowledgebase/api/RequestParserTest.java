@@ -55,7 +55,7 @@ public class RequestParserTest {
 	}
 
 	@Test
-	public void parseParseWithNumberAttribute()
+	public void testParseWithNumberAttribute()
 	{
 		try {
 			RequestNode actual = new RequestParser(new RequestScanner("/paper:releaseDate=2018+02+29").scan()).parse();
@@ -92,7 +92,7 @@ public class RequestParserTest {
 	}
 
 	@Test
-	public void parseParseWithStringAttributeWithNumber()
+	public void testParseWithStringAttributeWithNumber()
 	{
 		//one attribute value part
 		try {
