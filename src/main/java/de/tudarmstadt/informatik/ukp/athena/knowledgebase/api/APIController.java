@@ -22,6 +22,7 @@ public class APIController {
 	 * This method then calls various worker classes to validate and verify the request string and make sure that it's correct.
 	 * If that is the case, the request will be sent to the database and the result will be returned to the user.
 	 * If an error occurs, it will be returned to the user as well.
+	 * @return The result list of the query, or an error message.
 	 */
 	@RequestMapping("/**")
 	public Object apiConnector(HttpServletRequest request) { //the argument contains everything that was not matched to any other argument

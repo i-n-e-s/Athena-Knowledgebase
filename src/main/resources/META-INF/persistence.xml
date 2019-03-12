@@ -25,7 +25,7 @@
                       value="ihavesecurityissues" />
 
             <property name="hibernate.dialect"
-                      value="org.hibernate.dialect.MariaDBDialect" />
+                      value="org.hibernate.dialect.MariaDB10Dialect" />
 
             <property name="hibernate.show_sql"
                       value="false" />

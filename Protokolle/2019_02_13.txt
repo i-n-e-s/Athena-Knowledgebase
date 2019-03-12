@@ -1,0 +1,82 @@
+Beginn: 	 9:00
+Ende:		11:30
+
+
+Ungefähre Deadline: 
+	Mitte März
+		Noch 4 Wochen
+
+
+Arbeitsstand:
+	clean_db, API steht, Server steht
+
+
+DATENBANKMISC
+Typische Fragen die funktionieren müssen?
+	"Wann ist die Präsentation von Blargh?"
+	"Wann ist die Präsentation von Paper XY"
+	
+
+Wenn eine Paper zu einer Konferenz eingereicht wird, muss es in aller Regel auch präsentiert werden - sonst wird es nicht angenommen
+	Gibt es Paper, die keine Session oder ähnliches haben?
+		Wenn ja, Workaround anstatt eine Verbindung zu Konferenz - für den "rare case"
+
+	
+SESSIONTHEMA:
+Session ist als Wort schon belegt
+Manche Workshops sind größer als eine Session, manche haben gar keine Sessions
+Thomas schickt Definitionen von Konferenzteilen
+	Tabellennamen - Session umbenennen - weil Wort belegt
+		als typ ok
+	Event ist ok
+Momentan gespeichert: Papertitles, soll jetzt zu Paper Model/ID umgeändert werden	
+
+Tristans und Philipps Bug:
+	Update-Mode funktioniert - aber ist das zielführend?
+	
+
+Thomas: spricht nochmal mit Mosen wegen dem Zeitlimit
+
+
+Aufgabe:
+	Jonas:
+		Publikationsalter
+
+	Fuzzy-Search:
+		Aufgabe: Thomas sagt, macht euch schlau
+		Julian: Lucene?
+
+----------
+Anhang QS-Dokument
+Reviews gerne mehr als exemplarisch
+Reviews ab jetzt das Dokument abspeichern
+	Neuer Tab im Masterdokument
+		Tristan versucht es
+	Namen vertikal schreiben
+Druckt Tests aus (Code)
+	Branch Coverage
+	Unzulängliche Tests im Doc begründet
+Schaut nochmal ins BP Dokument rein, sind alle Vorgaben erfüllt? - generische Frage
+
+
+Reviews:
+	Ab jetzt soll man sich einen Schuldigen suchen
+	
+Tests:
+	API-Rewrite Test müssen noch nachgereicht werden
+		Daniel macht das
+
+	Wenn sie durchgewunken wurde, einfach eine neue Userstory erstellen
+	aufgeschobene Tests als absolute Ausnahme
+
+
+
+Deadline:
+ Zyklus entfernen - bekämpfen  bis Mittwoch, sonst spricht Philipp das an
+
+Trello:
+	Exploration PDF z.B.
+
+Auftretende Sub-Probleme bei Userstorys werden in den Backlog getan
+
+Conference - Person - kann getötet werden

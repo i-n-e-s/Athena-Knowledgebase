@@ -20,7 +20,7 @@ import org.hibernate.annotations.GenericGenerator;
 
 @Entity
 @Table(name="session")
-public class Session implements ScheduleEntry {
+public class Session extends Model implements ScheduleEntry {
 	/*Unique id*/
 	@Id
 	@GeneratedValue(generator="increment")

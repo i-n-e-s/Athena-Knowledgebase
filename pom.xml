@@ -5,7 +5,7 @@
 
     <groupId>ukp.informatik.tu-darmstadt.de</groupId>
     <artifactId>bpathenakp</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.2</version>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -27,6 +27,11 @@
             <groupId>com.jayway.jsonpath</groupId>
             <artifactId>json-path</artifactId>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.json</groupId>
+            <artifactId>json</artifactId>
+            <version>20180813</version>
         </dependency>
         <dependency>
             <groupId>org.jsoup</groupId>
@@ -51,9 +56,22 @@
             <version>8.0.13</version>
         </dependency>
         <dependency>
-            <groupId>org.json</groupId>
-            <artifactId>json</artifactId>
-            <version>20180813</version>
+        	<groupId>ch.vorburger.mariaDB4j</groupId>
+  			<artifactId>mariaDB4j</artifactId>
+  			<version>2.2.3</version>
+  			<scope>test</scope>
+  		</dependency>
+  		<dependency>	
+            <groupId>org.jetbrains</groupId>
+            <artifactId>annotations</artifactId>
+            <version>16.0.2</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>pl.project13.maven</groupId>
+            <artifactId>git-commit-id-plugin</artifactId>
+            <version>2.2.6</version>
+            <type>maven-plugin</type>
         </dependency>
 
     </dependencies>
@@ -64,12 +82,14 @@
 
 
     <build>
+        <!--suppress UnresolvedMavenProperty -->
+        <finalName>${project.artifactId}-${project.version}-${git.commit.id.describe-short}</finalName>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
-                    <mainClass>de.tudarmstadt.informatik.ukp.athenakp.SpringStart</mainClass>
+                    <mainClass>de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.ParsedDataInserter</mainClass>
                 </configuration>
             </plugin>
             <plugin>
@@ -78,6 +98,23 @@
                 <configuration>
                     <source>8</source>
                     <target>8</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>pl.project13.maven</groupId>
+                <artifactId>git-commit-id-plugin</artifactId>
+                <version>${git-commit-id-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>get-the-git-infos</id>
+                        <goals>
+                            <goal>revision</goal>
+                        </goals>
+                        <phase>validate</phase>
+                    </execution>
+                </executions>
+                <configuration>
+                    <dotGitDirectory>${project.basedir}/.git</dotGitDirectory>
                 </configuration>
             </plugin>
         </plugins>
