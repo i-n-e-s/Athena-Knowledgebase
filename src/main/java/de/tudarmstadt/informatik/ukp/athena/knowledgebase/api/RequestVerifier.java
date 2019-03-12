@@ -107,8 +107,6 @@ public class RequestVerifier {
 			else if(previousEntityName != null && (!SET_ATTRIBUTES.containsKey(previousEntityName) || !SET_ATTRIBUTES.get(previousEntityName).containsKey(entityName)))
 				throw new VerificationFailedException("Entity " + previousEntityName + " does not have a hierarchical relationship with entity " + entityName + "!");
 
-			boolean hasNumericalFields = NUMERICAL_ATTRIBUTES.containsKey(entityName);
-
 			previousEntityName = entityName;
 
 			//loop through the attributes and check each attribute's value of validity
@@ -120,9 +118,7 @@ public class RequestVerifier {
 					throw new VerificationFailedException("Unknown attribute " + attrName + " for entity " + entityName + "!");
 
 				//check correct value
-				if(!hasNumericalFields && attr instanceof NumberAttributeNode)
-					throw new VerificationFailedException("Expected a string for attribute " + attrName + " but got " + ((NumberAttributeNode)attr).valuesToString());
-				else if(hasNumericalFields && attr instanceof NumberAttributeNode) {
+				if(attr instanceof NumberAttributeNode) {
 					//numerical attribute found, but should be a string attribute
 					if(!entityContainsNumericalField(entityName, attrName))
 						throw new VerificationFailedException("Expected a string for attribute " + attrName + " but got " + ((NumberAttributeNode)attr).valuesToString());
@@ -130,7 +126,7 @@ public class RequestVerifier {
 					else if(((NumberAttributeNode)attr).getNumbers().size() != NUMERICAL_ATTRIBUTES.get(entityName).get(attrName))
 						throw new VerificationFailedException("Unexpected amount of numbers given for attribute " + attrName + ". " + "Got " + ((NumberAttributeNode)attr).getNumbers().size() + ", need " + NUMERICAL_ATTRIBUTES.get(entityName).get(attrName));
 				}
-				else if(hasNumericalFields && attr instanceof StringAttributeNode) {
+				else if(attr instanceof StringAttributeNode) {
 					//string attribute found, but should be a numerical attribute
 					if(entityContainsNumericalField(entityName, attrName))
 						throw new VerificationFailedException("Expected " + NUMERICAL_ATTRIBUTES.get(entityName).get(attrName) +" number(s) for attribute " + attrName + " but got " + ((StringAttributeNode)attr).getValue().getString());
@@ -145,7 +141,7 @@ public class RequestVerifier {
 	 * @param theField The name of the field of the entity to check
 	 * @return true if the given field is numerical and a member of the given entity, false otherwhise
 	 */
-	private static boolean entityContainsNumericalField(String entity, String theField) {
+	public static boolean entityContainsNumericalField(String entity, String theField) {
 		for(String fieldName : NUMERICAL_ATTRIBUTES.get(entity).keySet()) {
 			if(fieldName.equals(theField))
 				return true;
