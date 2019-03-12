@@ -104,7 +104,6 @@ public class ParsedDataInserter {
 
 		System.out.printf("Done! (Took %s)\n", LocalTime.ofNanoOfDay(System.nanoTime() - then));
 		parsedDataInserter.acl2018StoreConferenceInformation(); //automatically saves the schedule as well
-		*/
 
 		parsedDataInserter.completeAuthorsByS2(4);
 
