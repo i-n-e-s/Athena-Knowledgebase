@@ -1,6 +1,7 @@
 package de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.jpa;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
@@ -47,6 +48,10 @@ public class PaperJPAAccess implements CommonAccess<Paper> {
 		return result;
 	}
 
+	public List<Paper> getByTitle(String titleToFind) {
+		return get().stream().filter(paper -> paper.getTitle().equals(titleToFind)).collect(Collectors.toList());
+	}
+
 	/**
 	 * Looks for equal attribute DB entries of Paper and returns the matching Paper Object
 	 * If multiple Occurences are found in DB, return the first result
@@ -59,13 +64,14 @@ public class PaperJPAAccess implements CommonAccess<Paper> {
 		List<Paper> matches = null;
 		//1. Try to find matching SemanticScholarID
 		if( paperToFind.getSemanticScholarID() != null ) {
-
-			matches = getBy("semanticScholarID", paperToFind.getSemanticScholarID());
+			//Matches contains all papers in DB with matching SemanicScholarID
+			matches = get().stream().filter(paper -> paperToFind.getSemanticScholarID().equals(paper.getSemanticScholarID())).collect(Collectors.toList());
 		}
 		//Return first result of author with matching S2ID
 		if( matches != null && matches.size() > 0 ) { return matches.get(0); }
 		//2. If no results, search for title
 		matches = getByTitle(paperToFind.getTitle());
+
 		for ( Paper namesake : matches ) {
 			//Choose the first one with matching attributes
 			if ( namesake.equalsNullAsWildcard(paperToFind) ) { return namesake; }

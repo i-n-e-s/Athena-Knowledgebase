@@ -1,6 +1,7 @@
 package de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.jpa;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
@@ -49,6 +50,10 @@ public class PersonJPAAccess implements CommonAccess<Person> {
 		return result;
 	}
 
+	public List<Person> getByFullName(String fullName) {
+		return get().stream().filter(person -> person.getFullName().equals(fullName)).collect(Collectors.toList());
+	}
+
 	/**
 	 * Looks for DB entries with matching SemanticScholar ID
 	 *
@@ -60,7 +65,8 @@ public class PersonJPAAccess implements CommonAccess<Person> {
 		List<Person> matches = null;
 		//1. Try to find matching SemanticScholarID
 		if( semanticScholarID != null ) {
-			matches = getBy("semanticScholarID", semanticScholarID);
+			matches = get().stream().filter(person -> person.getSemanticScholarID().equals(semanticScholarID)).collect(Collectors.toList());
+
 		}
 		//Return first result of author with matching S2ID
 		if( matches != null && matches.size() > 0 ) { return matches.get(0); }

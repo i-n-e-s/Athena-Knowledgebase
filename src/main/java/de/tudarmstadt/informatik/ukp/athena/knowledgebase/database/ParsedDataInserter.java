@@ -10,8 +10,6 @@ import java.util.TimeZone;
 import javax.annotation.PostConstruct;
 
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.crawler.SemanticScholarAPI.S2APIFunctions;
-import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.access.*;
-import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.hibernate.PersonHibernateAccess;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.jpa.*;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.*;
 import org.springframework.boot.SpringApplication;
@@ -198,7 +196,7 @@ public class ParsedDataInserter {
 	 * @param n The first n authors will be added
 	 */
 	private void completeAuthorsByS2(int n) {
-		PersonCommonAccess personfiler = new PersonJPAAccess();
+		PersonJPAAccess personfiler = new PersonJPAAccess();
 		List<Person> authors = personfiler.get();
 
 		//Go through every Author in the db
@@ -227,7 +225,7 @@ public class ParsedDataInserter {
 			//3. write changes to db
 			if ( changesWereMade ) {
 				System.out.println("Trying to update: "+currPerson.toString());
-				personfiler.update( currPerson );
+				//personfiler.update( currPerson );
 			}
 		}
 		System.out.println("Failed: "+failedAuthors+"\nDone");

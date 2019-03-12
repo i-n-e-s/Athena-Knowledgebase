@@ -2,6 +2,7 @@ package de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Id;
