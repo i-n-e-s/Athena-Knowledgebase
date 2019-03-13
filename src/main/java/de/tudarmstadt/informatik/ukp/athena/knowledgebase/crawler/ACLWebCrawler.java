@@ -36,19 +36,26 @@ class ACLWebCrawler extends AbstractCrawler {
 	private String startURLPaper;
 	private String schedulePage = "https://acl2018.org/programme/schedule/";
 	private String aboutPage = "https://acl2018.org/";
+	private String[] conferences;
 
 	/**
 	 * Only parses in the given year range. If only one year is needed, use the same input for both
 	 * @param beginYear The first year to get data from
 	 * @param endYear The last year to get data from
+	 * @param conferences The abbreviations (see {@link https://aclanthology.info/}) of the conferences to scrape papers/authors from. null to scrape all. Does not work when only scraping authors
 	 */
-	public ACLWebCrawler(int beginYear, int endYear) {
+	public ACLWebCrawler(int beginYear, int endYear, String... conferences) {
 		startURLAuthors = String.format("https://aclanthology.coli.uni-saarland.de/catalog/facet/author?"// get a list of all authors
 				+ "commit=facet.page=1&"// get first page of search
 				+ "facet.sort=index&" // sort author list alphabetically
 				+ "range[publish_date][begin]=%s&range[publish_date][end]=%s",// limits date of publishing
 				beginYear, endYear);
 		startURLPaper = String.format("https://aclanthology.coli.uni-saarland.de/catalog?per_page=100&range[publish_date][begin]=%s&range[publish_date][end]=%s&search_field=title", beginYear, endYear);
+
+		if(conferences != null)
+			this.conferences = conferences;
+		else
+			this.conferences = new String[0];
 	}
 
 	/**
@@ -148,9 +155,14 @@ class ACLWebCrawler extends AbstractCrawler {
 		ArrayList<Paper> paperList = new ArrayList<>();
 		// extract the authors from all webpages
 		for (Document doc : webpages) {
+			//if no conferences were given, let the papers through. else see if the conference of the paper is given in the launch arg
 			Elements paperListElements = doc.select("h5.index_title");// papers are all <h5 class = "index_title">
-			for (Element elmnt : paperListElements) {
+			innerLoop: for (Element elmnt : paperListElements) {
 				if (!elmnt.text().contains("VOLUME")) {// VOLUMES/Overview-Pdfs are also part of the search-result and removed here
+					//check is not earlier because the elmnt is needed
+					if(conferences.length != 0 && !shouldSavePaper(elmnt))
+						continue innerLoop; //label is not needed necessarily, but helps readability
+
 					Paper paper = new Paper();
 
 					paper.setTitle(elmnt.text());
@@ -214,8 +226,12 @@ class ACLWebCrawler extends AbstractCrawler {
 		ArrayList<Paper> paperList = new ArrayList<>();
 		for (Document doc : webpages) {
 			Elements paperListElements = doc.select("h5.index_title");
-			for (Element elmnt : paperListElements) {
+			innerLoop: for (Element elmnt : paperListElements) {
 				if (!elmnt.text().contains("VOLUME")) {
+					//check is not earlier because the elmnt is needed
+					if(conferences.length != 0 && !shouldSavePaper(elmnt))
+						continue innerLoop; //label is not needed necessarily, but helps readability
+
 					// add Paper info
 					Paper paper = new Paper();
 					// clean up the titles in the form of [C18-1017] Simple Neologism Based Domain Independe...
@@ -223,13 +239,13 @@ class ACLWebCrawler extends AbstractCrawler {
 					// convey no meaning
 					String rawTitle = elmnt.text();
 					String[] splitRawTitle = rawTitle.split(" ", 2);
-					String paperTitle = splitRawTitle[1];
 					String anthology = splitRawTitle[0].replace("[", "").replace("]", "");
+					String paperTitle = splitRawTitle[1];
 
 					paper.setTitle(paperTitle);
 					paper.setAnthology(anthology);
 					paper.setRemoteLink("http://aclweb.org/anthology/" + anthology); //wow that was easy
-					extractPaperRelease(elmnt, paper);
+					paper.setReleaseDate(extractPaperRelease(elmnt));
 
 					// find authors and add them to a list
 					Elements authorElements = elmnt.parent().parent().children().select("span").select("a");
@@ -255,11 +271,46 @@ class ACLWebCrawler extends AbstractCrawler {
 	}
 
 	/**
-	 * Extracts the release year + month of the given paper web element and stores it in the given paper object
-	 * @param paper The web element of the paper to get the release year+month of
-	 * @param thePaper The {@link Paper} object to save the release year+month in
+	 * Checks with the given {@link conferences} whether or not to save this paper into the database or not
+	 * @param paper The web element of the paper to check
+	 * @return true if the paper should be saved into the database, false otherwhise
 	 */
-	private void extractPaperRelease(Element paper, Paper thePaper) {
+	private boolean shouldSavePaper(Element paper) { //TODO: JsoupHelper
+		try {
+			Document doc = Jsoup.connect("https://aclanthology.coli.uni-saarland.de" + paper.select("a").attr("href")).get();
+			ArrayList<Element> data = doc.select(".dl-horizontal").get(0).children(); //somewhere in those children is the venue with which to filter
+
+			//find it
+			for(int i = 0; i < data.size(); i++) {
+				if(data.get(i).text().startsWith("Venue")) { //the next line contains the venue
+					String text = data.get(i + 1).text();
+					boolean contains = false;
+
+					//needed because some papers are published in multiple conferences
+					innerLoop: for(String c : conferences) {
+						if(text.contains(c)) {
+							contains = true;
+							break innerLoop; //no further processing needed
+						}
+					}
+
+					return contains;
+				}
+			}
+		}
+		catch(IOException e) {
+			e.printStackTrace();
+		}
+
+		return false;
+	}
+
+	/**
+	 * Extracts the release year + month of the given paper web element
+	 * @param paper The web element of the paper to get the release year+month of
+	 * @return The paper's release date, null if errored
+	 */
+	private LocalDate extractPaperRelease(Element paper) {
 		try {
 			Document doc = Jsoup.connect("https://aclanthology.coli.uni-saarland.de" + paper.select("a").attr("href")).get();
 			ArrayList<Element> data = doc.select(".dl-horizontal").get(0).children(); //somewhere in those children is the date
@@ -284,11 +335,13 @@ class ACLWebCrawler extends AbstractCrawler {
 				}
 			}
 
-			thePaper.setReleaseDate(LocalDate.of(Integer.parseInt(year), Integer.parseInt(month), 1));
+			return LocalDate.of(Integer.parseInt(year), Integer.parseInt(month), 1);
 		}
 		catch(IOException e) { //jsoup exception
 			e.printStackTrace();
 		}
+
+		return null;
 	}
 
 	/**

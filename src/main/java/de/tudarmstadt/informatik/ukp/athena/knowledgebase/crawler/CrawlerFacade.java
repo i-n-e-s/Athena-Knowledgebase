@@ -23,12 +23,13 @@ public class CrawlerFacade extends AbstractCrawler{
 	 * @param conference a supported Conference, which should be scraped
 	 * @param beginYear The first year to get data from
 	 * @param endYear The last year to get data from
+	 * @param conferences The abbreviations (see {@link https://aclanthology.info/}) of the conferences to scrape papers/authors from. null to scrape all. Does not work when only scraping authors
 	 */
-	public CrawlerFacade(SupportedConferences conference, int beginYear, int endYear){
+	public CrawlerFacade(SupportedConferences conference, int beginYear, int endYear, String... conferences){
 		super();
 		switch(conference) {
 			case ACL:
-				crawler = new ACLWebCrawler(beginYear, endYear);
+				crawler = new ACLWebCrawler(beginYear, endYear, conferences);
 				break;
 		}
 	}

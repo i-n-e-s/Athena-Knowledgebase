@@ -9,6 +9,8 @@ import java.util.TimeZone;
 
 import javax.annotation.PostConstruct;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
@@ -36,15 +38,18 @@ import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Worksh
  */
 public class ParsedDataInserter {
 	private CrawlerFacade acl18WebParser;
+	private static Logger logger = LogManager.getLogger(ParsedDataInserter.class);
 
+	//needed so spring starts correctly
 	public ParsedDataInserter(){}
 
 	/**
 	 * @param beginYear The first year to get data from
 	 * @param endYear The last year to get data from
+	 * @param conferences The abbreviations (see {@link https://aclanthology.info/}) of the conferences to scrape papers/authors from. null to scrape all. Does not work when only scraping authors
 	 */
-	public ParsedDataInserter(int beginYear, int endYear) {
-		acl18WebParser = new CrawlerFacade(SupportedConferences.ACL, beginYear, endYear);
+	public ParsedDataInserter(int beginYear, int endYear, String... conferences) {
+		acl18WebParser = new CrawlerFacade(SupportedConferences.ACL, beginYear, endYear, conferences);
 	}
 
 	// This assures everything written into the database is in UTC.
@@ -62,12 +67,15 @@ public class ParsedDataInserter {
 		ParsedDataInserter parsedDataInserter;
 		List<String> argsList = Arrays.asList(args); //for .contains
 		int beginYear = 2018, endYear = 2018;
+		String[] conferences = null;
 
 		for(String arg : args) {
 			if(arg.startsWith("-beginYear="))
 				beginYear = Integer.parseInt(arg.split("=")[1]); //parse to make sure that it's a number
 			else if(arg.startsWith("-endYear="))
 				endYear = Integer.parseInt(arg.split("=")[1]); //parse to make sure that it's a number
+			else if(arg.startsWith("-conferences="))
+				conferences = arg.replace("-conferences=", "").split(",");
 		}
 
 		if(beginYear > endYear) {
@@ -78,7 +86,12 @@ public class ParsedDataInserter {
 			endYear = temp;
 		}
 
-		parsedDataInserter = new ParsedDataInserter(beginYear, endYear);
+		if(conferences == null)
+			logger.info("No specific conferences given, will scrape papers and authors from all available conferences");
+		else
+			logger.info("Specific conferences given, will scrape papers and authors from the following: {}", Arrays.toString(conferences));
+
+		parsedDataInserter = new ParsedDataInserter(beginYear, endYear, conferences);
 
 		//only scrape if respective argument was found
 		if(argsList.contains("-scrape-paper-author")) {
