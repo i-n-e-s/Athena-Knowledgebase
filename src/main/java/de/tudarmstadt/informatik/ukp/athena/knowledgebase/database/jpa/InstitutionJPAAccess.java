@@ -19,7 +19,7 @@ public class InstitutionJPAAccess implements CommonAccess<Institution> {
 		entityManager.getTransaction().begin();
 		try {
 			entityManager.persist(data);
-		}catch(EntityExistsException e) {
+		}catch(EntityExistsException e) { //branch not tested because exception shouldn't be thrown again just so junit can test for it
 			System.out.println(data.getID()+" already exists in the Database.");
 		}
 		entityManager.getTransaction().commit();
