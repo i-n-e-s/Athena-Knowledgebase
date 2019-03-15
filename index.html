@@ -14,7 +14,7 @@
 			<section id="main_content">
 				<h2><u>Athena Knowledgebase API</u></h2>
 				<p>To access the data saved in the database, the provided REST API can be used. It's possible to request all entities shown on the <a href="database-scheme.html">Database Scheme</a> page using the defined parameters.
-					You can access the REST API <a href="compjour.ukp.informatik.tu-darmstadt.de:8080">at this link</a>.
+					You can access the REST API <a href="http://compjour.ukp.informatik.tu-darmstadt.de:8080">at this link</a>.
 				</p>
 				<h3><u>API Specification</u></h3>
 				<p>What follows is a simple example of a GET request:<br>
@@ -32,8 +32,8 @@
 					At first glance, you might expect this request to return a list of papers, when it will instead return a list of persons that fulfill their specified attributes and can be found in the previously filtered paper entities. How you structure your queries <em>can</em> have a siginificant impact on performance.
 				</p>
 				<hr>
-				<p>Sometimes, paper titles or similar data have special characters in them that are not alphabetic. For those characters, a backtick (<code>`</code>) can be used to incorporate them into the attribute value. Example:
-					<code>/paper:title=Keynote`:+My+great+keynote</code>
+				<p>Sometimes, paper titles or similar data have special characters in them that are not alphabetic. For those characters, a backtick (<code>`</code>) can be used to incorporate them into the attribute value. Example:<br>
+					<code>/paper:title=Keynote`:+My+great+keynote</code><br>
 					This way, the API will search the database for a paper with the title "Keynote: My great keynote". Without the backtick, the API will throw a syntax error.</p>
 				<hr>
 				<p>To get all available stored entities of a specific type, just query the entity name without any attributes. E.g.:</p>
