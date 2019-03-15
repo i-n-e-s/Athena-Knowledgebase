@@ -5,7 +5,7 @@
 
     <groupId>ukp.informatik.tu-darmstadt.de</groupId>
     <artifactId>athena-knowledgebase</artifactId>
-    <version>0.2</version>
+    <version>0.3</version>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
