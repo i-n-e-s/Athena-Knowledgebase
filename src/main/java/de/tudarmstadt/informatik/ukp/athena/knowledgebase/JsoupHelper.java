@@ -14,6 +14,7 @@ public class JsoupHelper {
 	 * If no tries are left, the method will exit and the program execution can continue without interruption.
 	 * The printed error message will be "Exceeded <code>tries</code> tries when trying to connect to <code>url</code>"
 	 * @param url The URL to connect to
+	 * @return The {@link org.jsoup.nodes.Document Document} of the given url, null if the connection was unsuccessful and no tries are left
 	 */
 	public static Document connect(String url) {
 		return connect(url, "Exceeded %s tries when trying to connect to " + url);
@@ -24,6 +25,7 @@ public class JsoupHelper {
 	 * If no tries are left, the method will exit and the program execution can continue without interruption
 	 * @param url The URL to connect to
 	 * @param errorMessage The error message that should show when no tries are left
+	 * @return The {@link org.jsoup.nodes.Document Document} of the given url, null if the connection was unsuccessful and no tries are left
 	 */
 	public static Document connect(String url, String errorMessage) {
 		return connect(url, USER_AGENT, errorMessage);
