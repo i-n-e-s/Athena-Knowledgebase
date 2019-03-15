@@ -1,7 +1,6 @@
 package de.tudarmstadt.informatik.ukp.athena.knowledgebase.api;
 
 import java.util.Deque;
-import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -22,6 +21,7 @@ public class APIController {
 	 * This method then calls various worker classes to validate and verify the request string and make sure that it's correct.
 	 * If that is the case, the request will be sent to the database and the result will be returned to the user.
 	 * If an error occurs, it will be returned to the user as well.
+	 * @param request A HttpServletRequest usually received through REST
 	 * @return The result list of the query, or an error message.
 	 */
 	@RequestMapping("/**")
@@ -38,8 +38,8 @@ public class APIController {
 			tree = parser.parse();
 			RequestVerifier.verify(tree); //if no exception is thrown, the verification was successful
 
-			QueryBuilder queryManager = new QueryBuilder();
-			List<?> result = queryManager.buildAndSend(tree);
+			QueryBuilder queryManager = new QueryBuilder(tree.isCountFunction());
+			Object result = queryManager.buildAndSend(tree);
 
 			queryManager.close();
 			return result;

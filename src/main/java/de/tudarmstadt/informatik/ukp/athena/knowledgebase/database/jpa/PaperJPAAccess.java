@@ -5,10 +5,15 @@ import java.util.List;
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.access.CommonAccess;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Paper;
 
 public class PaperJPAAccess implements CommonAccess<Paper> {
+	private static Logger logger = LogManager.getLogger(PaperJPAAccess.class);
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -20,7 +25,7 @@ public class PaperJPAAccess implements CommonAccess<Paper> {
 		try {
 			entityManager.persist(data);
 		}catch(EntityExistsException e) { //branch not tested because exception shouldn't be thrown again just so junit can test for it
-			System.out.println(data.getID()+" already exists in the Database. Maybe try update");
+			logger.warn("{} already exists in the database. Maybe try update", data.getID());
 		}
 		entityManager.getTransaction().commit();
 	}

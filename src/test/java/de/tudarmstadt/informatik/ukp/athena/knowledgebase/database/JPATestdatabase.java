@@ -9,6 +9,8 @@ import java.util.TimeZone;
 import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
@@ -29,6 +31,7 @@ import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Sessio
 
 @SpringBootApplication
 public class JPATestdatabase {
+	private static Logger logger = LogManager.getLogger(JPATestdatabase.class);
 	private int conferenceQuantity;
 	private int institutionQuantity;
 	private int authorQuantity;
@@ -86,7 +89,7 @@ public class JPATestdatabase {
 	 * Deletes all tables in the athena-database, except hibernate_sequence
 	 */
 	public void deleteOldData() {
-		System.out.println("Start deleting");
+		logger.info("Start deleting");
 		EntityManager entityManager = PersistenceManager.getEntityManager();
 		entityManager.getTransaction().begin();
 		List<String> list = entityManager.createNativeQuery("SHOW tables").getResultList();
@@ -99,7 +102,7 @@ public class JPATestdatabase {
 		}
 		entityManager.getTransaction().commit();
 		//entityManager.close();
-		System.out.println("Done deleting");
+		logger.info("Done deleting");
 	}
 
 	/**
@@ -107,7 +110,7 @@ public class JPATestdatabase {
 	 */
 	public void generateData() {
 		//Need to be one method, because data is linked
-		System.out.println("Start creating data");
+		logger.info("Start creating data");
 		conferences = new Conference[conferenceQuantity];
 		institutions = new Institution[institutionQuantity];
 		authors = new Person[authorQuantity];
@@ -181,7 +184,7 @@ public class JPATestdatabase {
 			sessions[i].setPaperTitles(paperTitles);
 			sessions[i].setSessionParts(sessionParts);
 		}
-		System.out.println("Done creating data");
+		logger.info("Done creating data");
 	}
 
 	/**
@@ -194,7 +197,7 @@ public class JPATestdatabase {
 		PersonJPAAccess pejpaa = new PersonJPAAccess();
 		SessionPartJPAAccess sesspjpaa = new SessionPartJPAAccess();
 		SessionJPAAccess sessjpaa = new SessionJPAAccess();
-		System.out.println("Start inserting Data");
+		logger.info("Start inserting Data");
 
 		for (Conference c : conferences) cjpaa.add(c);
 		for (Institution i : institutions) ijpaa.add(i);
@@ -202,7 +205,7 @@ public class JPATestdatabase {
 		for (Paper p: papers)pajpaa.add(p);
 		for (SessionPart sp: sessionParts)sesspjpaa.add(sp);
 		for (Session s: sessions)sessjpaa.add(s);
-		System.out.println("Done inserting data");
+		logger.info("Done inserting data");
 	}
 	/**
 	 * Generates a HashSet of Authors, which is deterministic.

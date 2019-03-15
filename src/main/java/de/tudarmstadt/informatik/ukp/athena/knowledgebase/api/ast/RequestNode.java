@@ -7,8 +7,9 @@ import java.util.List;
  * Represents the complete request
  */
 public class RequestNode extends BaseNode {
-	/**Join tables from left to right*/ //TODO: does this make sense with more than two '$'?
+	/**Contains all entities incl. their attributes*/
 	private final List<RequestHierarchyNode> hierarchy = new ArrayList<>();
+	private boolean isCountFunction = false;
 
 	/**
 	 * @see {@link BaseNode#BaseNode(int) BaseNode}
@@ -18,7 +19,7 @@ public class RequestNode extends BaseNode {
 	}
 
 	/**
-	 * Adds an attribute node to this node
+	 * Adds a hierarchy node to this node
 	 * @param node The node to add
 	 */
 	public void addHierarchyNode(RequestHierarchyNode node) {
@@ -32,9 +33,27 @@ public class RequestNode extends BaseNode {
 		return hierarchy;
 	}
 
+	/**
+	 * Sets whether this node is a count function (/count/)
+	 * @param isCountFunction true if this node is a count function, false otherwhise
+	 */
+	public void setIsCountFunction(boolean isCountFunction) {
+		this.isCountFunction = isCountFunction;
+	}
+
+	/**
+	 * @return true if this hierarchy node is a count function (/count/), false otherwhise
+	 */
+	public boolean isCountFunction() {
+		return isCountFunction;
+	}
+
 	@Override
 	public String toString() {
 		String result = "<0>";
+
+		if(isCountFunction)
+			result += "/count";
 
 		for(RequestHierarchyNode node : hierarchy) {
 			result += node.toString();
@@ -45,6 +64,6 @@ public class RequestNode extends BaseNode {
 
 	@Override
 	public boolean equals(Object obj) {
-		return super.equals(obj) && obj instanceof RequestNode && hierarchy.equals(((RequestNode)obj).hierarchy);
+		return super.equals(obj) && obj instanceof RequestNode && ((RequestNode)obj).isCountFunction == isCountFunction && hierarchy.equals(((RequestNode)obj).hierarchy);
 	}
 }

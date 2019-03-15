@@ -4,6 +4,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.junit.Before;
@@ -13,6 +15,7 @@ import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Locati
 
 public class OpenStreetRequestBuilderTest {
 	private OpenStreetRequestBuilder openStreetRequestBuilder;
+	private static Logger logger = LogManager.getLogger(OpenStreetRequestBuilderTest.class);
 	@Test
 	@Before
 	public void setUp() {
@@ -54,7 +57,7 @@ public class OpenStreetRequestBuilderTest {
 			assertNull(openStreetRequestBuilder.resolveJson(null));
 		}
 		catch (JSONException e){
-			System.out.println("JSON EXCEPTION where it does not belong");
+			logger.error("JSON EXCEPTION where it does not belong");
 			fail();
 		}
 

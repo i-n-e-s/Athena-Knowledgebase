@@ -5,6 +5,9 @@ import java.util.List;
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.access.CommonAccess;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Session;
 
@@ -12,6 +15,8 @@ import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Sessio
  * @author Daniel Lehmann
  */
 public class SessionJPAAccess implements CommonAccess<Session> {
+	private static Logger logger = LogManager.getLogger(SessionJPAAccess.class);
+
 	@Override
 	public void add(Session data) {
 		EntityManager entityManager = PersistenceManager.getEntityManager();
@@ -20,7 +25,7 @@ public class SessionJPAAccess implements CommonAccess<Session> {
 		try {
 			entityManager.persist(data);
 		}catch(EntityExistsException e) { //branch not tested because exception shouldn't be thrown again just so junit can test for it
-			System.out.println(data.getID()+" already exists in the Database. Maybe try update");
+			logger.warn("{} already exists in the database. Maybe try update", data.getID());
 		}
 		entityManager.getTransaction().commit();
 	}

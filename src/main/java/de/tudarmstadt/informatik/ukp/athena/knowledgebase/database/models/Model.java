@@ -6,12 +6,16 @@ import java.util.ArrayList;
 import javax.persistence.Column;
 import javax.persistence.Id;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 public abstract class Model {
+	private static Logger logger = LogManager.getLogger(Model.class);
 
 	/**
 	 * This method compares all fields of the given models with this model, except all fields containing ID and all fields referencing other models. Null is seen
 	 * as value. It is reflective, symmetric and transitive
-	 * 
+	 *
 	 * @param model A model, preferably of the same class of the object from which called
 	 * @return true if all fields, except the ones referencing other objects, are equal. false if the given object is null, not the same class or a field is different
 	 */
@@ -33,13 +37,12 @@ public abstract class Model {
 							if(!wasAccessible) field.setAccessible(false);
 							return false;//One of the fields is not null
 						}
-					}else if(!(field.get(this).equals(field.get(model)))) {// 
+					}else if(!(field.get(this).equals(field.get(model)))) {//
 						if(!wasAccessible) field.setAccessible(false);
 						return false;//fields are not equal values
 					}
 				} catch (IllegalArgumentException | IllegalAccessException e) {
-					System.err.println("This should never be reached...");
-					e.printStackTrace();
+					logger.fatal("This should never be reached...", e);
 				}
 			}
 			if(!wasAccessible) field.setAccessible(false);
@@ -48,8 +51,8 @@ public abstract class Model {
 	}
 
 	/**
-	 * This method compares all fields of the given models with this model, except all fields containing ID and all fields referencing other models. If a field is set to null it is seen as a wildcard 
-	 * 
+	 * This method compares all fields of the given models with this model, except all fields containing ID and all fields referencing other models. If a field is set to null it is seen as a wildcard
+	 *
 	 * @param model A model, preferably of the same class of the object from which called
 	 * @return true if all fields, except the ones referencing other objects, are equal. false if the given object is null, not the same class or a field is different
 	 */
@@ -73,8 +76,7 @@ public abstract class Model {
 						}
 					}
 				} catch (IllegalArgumentException | IllegalAccessException e) {
-					System.err.println("This should never be reached...");
-					e.printStackTrace();
+					logger.fatal("This should never be reached...", e);
 				}
 			}
 			if(!wasAccessible) field.setAccessible(false);
@@ -84,7 +86,7 @@ public abstract class Model {
 
 	/**
 	 * Returns all fields of this class and its superclasses, up to the class "Model"
-	 * 
+	 *
 	 * @param model A model or an Class which extends Model
 	 * @return All fields declared in the class hierarchy between the given Object and Model
 	 */
@@ -98,14 +100,14 @@ public abstract class Model {
 			}
 			currentClass = (Class<? extends Model>) currentClass.getSuperclass();
 		}
-		Field[] returnArray = new Field[returnValue.size()]; 
+		Field[] returnArray = new Field[returnValue.size()];
 		returnValue.toArray(returnArray);
 		return returnArray;
 	}
-	
+
 	/**
 	 * Return the Value of the Field which is annotated as ID in this model
-	 * 
+	 *
 	 * @return the Id of this object
 	 */
 	public Object getID() {
@@ -118,7 +120,7 @@ public abstract class Model {
 				try {
 					returnValue = field.get(this);
 				} catch (IllegalArgumentException | IllegalAccessException e) {
-					System.err.println("getId should check this, contact developer");
+					logger.fatal("getId should check this, contact developer", e);
 				}
 				if(!wasAccessible) field.setAccessible(false);
 				return returnValue;

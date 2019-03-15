@@ -1,16 +1,15 @@
 package de.tudarmstadt.informatik.ukp.athena.knowledgebase.crawler;
 
-import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 
-import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.JsoupHelper;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.ScheduleEntry;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Session;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.SessionCategory;
@@ -30,51 +29,44 @@ public class ACL18WorkshopParser {
 	 */
 	public static ArrayList<ScheduleEntry> parseWorkshops() {
 		ArrayList<ScheduleEntry> result = new ArrayList<>();
-		String userAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.82 Safari/537.36 Viv/2.3.1440.41";
+		Document doc = JsoupHelper.connect(workshopPage);
+		Elements content = doc.select(".post-content");
+		Elements days = content.select("ul");
 
-		try {
-			Document doc = Jsoup.connect(workshopPage).get();
-			Elements content = doc.select(".post-content");
-			Elements days = content.select("ul");
+		for(int i = 0; i < days.size(); i++) {
+			Element day = days.get(i);
+			Elements workshops = day.select("li");
 
-			for(int i = 0; i < days.size(); i++) {
-				Element day = days.get(i);
-				Elements workshops = day.select("li");
+			for(Element workshopEl : workshops) {
+				Workshop workshop = new Workshop();
+				String[] dayMonth = content.select("h4").get(i).text().split(" ", 2)[1].split(" ");
+				String[] complTitleRoom = workshopEl.text().split(": Room");
+				String wsLink = workshopEl.selectFirst("a").attr("href");
+				String[] titleAbbr = complTitleRoom[0].split("\\(");
+				LocalDate date = LocalDate.of(2018, CrawlerToolset.getMonthIndex(dayMonth[1]), Integer.parseInt(dayMonth[0]));
 
-				for(Element workshopEl : workshops) {
-					Workshop workshop = new Workshop();
-					String[] dayMonth = content.select("h4").get(i).text().split(" ", 2)[1].split(" ");
-					String[] complTitleRoom = workshopEl.text().split(": Room");
-					String wsLink = workshopEl.selectFirst("a").attr("href");
-					String[] titleAbbr = complTitleRoom[0].split("\\(");
-					LocalDate date = LocalDate.of(2018, CrawlerToolset.getMonthIndex(dayMonth[1]), Integer.parseInt(dayMonth[0]));
+				workshop.setBegin(LocalDateTime.of(date, LocalTime.of(9, 0)));
+				workshop.setEnd(LocalDateTime.of(date, LocalTime.of(17, 0))); //assume 5pm, because the schedule table is not 100% proportional
+				workshop.setTitle(titleAbbr[0].trim());
+				workshop.setPlace("Room" + complTitleRoom[1]);
+				workshop.setAbbreviation(titleAbbr[1].replace(")", "").trim());
 
-					workshop.setBegin(LocalDateTime.of(date, LocalTime.of(9, 0)));
-					workshop.setEnd(LocalDateTime.of(date, LocalTime.of(17, 0))); //assume 5pm, because the schedule table is not 100% proportional
-					workshop.setTitle(titleAbbr[0].trim());
-					workshop.setPlace("Room" + complTitleRoom[1]);
-					workshop.setAbbreviation(titleAbbr[1].replace(")", "").trim());
-
-					//not every workshop has a schedule and each one has a different layout - this switch is there to select them
-					//the previous link to BioNLP is now linking to the 2019 edition of the workshop :(
-					//the CALCS workshop has a schedule, but it's in pdf form. some hours went by trying to find a proper library
-					//	for pdf reading, but to no avail
-					switch(workshop.getAbbreviation()) {
-						case "MSR": parseMSR(Jsoup.connect(wsLink).userAgent(userAgent).get(), workshop); break;
-						case "MRQA": parseMRQA(Jsoup.connect(wsLink).userAgent(userAgent).get(), workshop); break;
-						case "RELNLP": parseRELNLP(Jsoup.connect(wsLink).userAgent(userAgent).get(), workshop); break;
-						case "ECONLP": parseECONLP(Jsoup.connect("https://julielab.de/econlp/2018/").get(), workshop); break; //direct link because wsLink is a redirect in this case
-						case "MML_Challenge": parseMML(Jsoup.connect(wsLink).userAgent(userAgent).get(), workshop); break;
-						case "SocialNLP": parseSocialNLP(Jsoup.connect(wsLink).userAgent(userAgent).get(), workshop); break;
-						case "NLPOSS": parseNLPOSS(Jsoup.connect(wsLink).userAgent(userAgent).get(), workshop); break;
-					}
-
-					result.add(workshop);
+				//not every workshop has a schedule and each one has a different layout - this switch is there to select them
+				//the previous link to BioNLP is now linking to the 2019 edition of the workshop :(
+				//the CALCS workshop has a schedule, but it's in pdf form. some hours went by trying to find a proper library
+				//	for pdf reading, but to no avail
+				switch(workshop.getAbbreviation()) {
+					case "MSR": parseMSR(JsoupHelper.connect(wsLink), workshop); break;
+					case "MRQA": parseMRQA(JsoupHelper.connect(wsLink), workshop); break;
+					case "RELNLP": parseRELNLP(JsoupHelper.connect(wsLink), workshop); break;
+					case "ECONLP": parseECONLP(JsoupHelper.connect("https://julielab.de/econlp/2018/"), workshop); break; //direct link because wsLink is a redirect in this case
+					case "MML_Challenge": parseMML(JsoupHelper.connect(wsLink), workshop); break;
+					case "SocialNLP": parseSocialNLP(JsoupHelper.connect(wsLink), workshop); break;
+					case "NLPOSS": parseNLPOSS(JsoupHelper.connect(wsLink), workshop); break;
 				}
+
+				result.add(workshop);
 			}
-		}
-		catch(IOException e) {
-			e.printStackTrace();
 		}
 
 		return result;
