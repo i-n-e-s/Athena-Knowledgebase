@@ -1,4 +1,4 @@
-package de.tudarmstadt.informatik.ukp.athena.knowledgebase.database;
+package de.tudarmstadt.informatik.ukp.athena.knowledgebase;
 
 import java.io.IOException;
 import java.time.LocalTime;
