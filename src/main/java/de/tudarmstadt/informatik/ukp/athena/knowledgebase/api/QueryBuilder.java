@@ -156,13 +156,6 @@ public class QueryBuilder {
 	}
 
 	/**
-	 * Closes the entity manager of this query manager. Cannot be undone.
-	 */
-	public void close() {
-		entityManager.close();
-	}
-
-	/**
 	 * Capitalizes the first letter of a string
 	 * @param string The string
 	 * @return The string as it was fed into the method, but with its first character capitalized. If the string is null or empty, an empty string will be returned.

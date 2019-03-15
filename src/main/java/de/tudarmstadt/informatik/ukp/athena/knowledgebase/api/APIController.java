@@ -41,7 +41,6 @@ public class APIController {
 			QueryBuilder queryManager = new QueryBuilder(tree.isCountFunction());
 			Object result = queryManager.buildAndSend(tree);
 
-			queryManager.close();
 			return result;
 		}
 		catch(SyntaxException | VerificationFailedException e) {
