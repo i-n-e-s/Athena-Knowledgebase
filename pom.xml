@@ -89,7 +89,7 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
-                    <mainClass>de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.ParsedDataInserter</mainClass>
+                    <mainClass>de.tudarmstadt.informatik.ukp.athena.knowledgebase.ParsedDataInserter</mainClass>
                 </configuration>
             </plugin>
             <plugin>
