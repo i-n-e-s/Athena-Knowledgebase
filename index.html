@@ -32,6 +32,10 @@
 					At first glance, you might expect this request to return a list of papers, when it will instead return a list of persons that fulfill their specified attributes and can be found in the previously filtered paper entities. How you structure your queries <em>can</em> have a siginificant impact on performance.
 				</p>
 				<hr>
+				<p>Sometimes, paper titles or similar data have special characters in them that are not alphabetic. For those characters, a backtick (<code>`</code>) can be used to incorporate them into the attribute value. Example:
+					<code>/paper:title=Keynote`:+My+great+keynote</code>
+					This way, the API will search the database for a paper with the title "Keynote: My great keynote". Without the backtick, the API will throw a syntax error.</p>
+				<hr>
 				<p>To get all available stored entities of a specific type, just query the entity name without any attributes. E.g.:</p>
 				<ul>
 					<li>To get all stored papers: <code>/paper</code></li>
@@ -48,6 +52,7 @@
 					<li><code>+</code> replaces spaces. Please note, that in numerical attributes, this is used to separate different numbers</li>
 					<li><code>:</code> signifies that some attributes of the preceding entity will be specified</li>
 					<li><code>&amp;</code> chains together such attribute specifications</li>
+					<li><code>`</code> Ignores the (sometimes non-existant) semantic functionality of the next character and makes it part of the attribute value. This allows you to use e.g. colons in paper titles</li>
 				</ul>
 				<h4><u>Session Categories</u></h4>
 				<p>0:    BREAK<br>
