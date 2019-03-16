@@ -20,6 +20,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.jpa.PersonJPAAccess;
 
 /**
  * @author Tristan Wettich
@@ -411,6 +412,27 @@ public class Person extends Model {
 
 		return changed;
 	}*/
+
+	/**
+	 * Looks for Persons with equal attributes in the DB and returns found entities
+	 * If no matching DB entry was found, create and return a new Person Object
+	 * @param toFind The Person Object containing the query data
+	 * @return A matching Person from the DB or a new Person
+	 */
+	public static Person findOrCreate(Person toFind) {
+
+		//Check if Person with same S2ID exists in DB
+		PersonJPAAccess filer = new PersonJPAAccess();
+		List<Person> searchResults = filer.getByKnownAttributes(toFind);
+
+		if(searchResults.size() < 1) { //No matching Person could be found in the DB
+			return new Person();
+		}
+		else { 		//Choose first result
+			return searchResults.get(0);
+		}
+
+	}
 
 	private boolean complementPrimeAttributesBy(Person srcAuthor) {
 		boolean changed = false;

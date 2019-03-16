@@ -2,6 +2,7 @@ package de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models;
 
 import java.time.LocalDate;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -13,6 +14,7 @@ import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.jpa.PaperJPAAccess;
 import org.hibernate.annotations.GenericGenerator;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -281,6 +283,27 @@ public class Paper extends Model {
 		this.amountOfCitations = amountOfCitations;
 	}
 
+
+	/**
+	 * Looks for Persons with equal attributes in the DB and returns found entities
+	 * If no matching DB entry was found, create and return a new Person Object
+	 * @param toFind The Person Object containing the query data
+	 * @return A matching Person from the DB or a new Person
+	 */
+	public static Paper findOrCreate(Paper toFind) {
+
+		//Check if Paper with same S2ID exists in DB
+		PaperJPAAccess filer = new PaperJPAAccess();
+		List<Paper> searchResults = filer.getByKnownAttributes(toFind);
+
+		if(searchResults.size() < 1) { //No matching Paper could be found in the DB
+			return new Paper();
+		}
+		else { 		//Choose first result
+			return searchResults.get(0);
+		}
+
+	}
 
 	/*
 	public boolean complementBy(Paper srcPaper, boolean overwrite) {

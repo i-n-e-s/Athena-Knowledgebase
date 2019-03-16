@@ -220,15 +220,7 @@ public class S2APIFunctions {
             }
 
             //If not, search for paper title in DB
-            if( currPaper == null ) {
-                List<Paper> matchingPapersInDB = filer.getByTitle(title);
-                //If matching paper is found, choose existing, else create new
-                if (matchingPapersInDB != null && matchingPapersInDB.size() > 0) {
-                    currPaper = matchingPapersInDB.get(0);
-                } else {
-                    currPaper = new Paper();
-                }
-            }
+            if( currPaper == null ) { currPaper = filer.getByTitle(title); }
 
             //Always connect this author with paper
             Model.connectAuthorPaper(author, currPaper);    //TODO check duplicates
@@ -270,16 +262,12 @@ public class S2APIFunctions {
             String s2id = jsonAuthorInfo.getJSONArray("ids").getString(0);
 
             //Check if DB entry of Person with matching S2ID exists
-            Person currInfl = filer.getBySemanticScholarID( s2id );
-            //If not, search for entry with matching Name
-            if ( currInfl == null ) {
-                List<Person> currInflList = filer.getByFullName(jsonAuthorInfo.getString("name"));
-                if ( currInflList != null && currInflList.size() > 0 ) {
-                    currInfl = currInflList.get(0);
-                }
-            }
-            //If neither way matches were found, create new
-            if ( currInfl == null ) { currInfl = new Person(); }
+
+            Person query = new Person();
+            query.setFullName(jsonAuthorInfo.getString("name"));
+            query.setSemanticScholarID(s2id);
+            System.out.println("Query ID: "+query.getPersonID());
+            Person currInfl = Person.findOrCreate( query );
 
             //Set attributes:
             if ( currInfl.getFullName() == null || overwrite ) {
@@ -383,17 +371,11 @@ public class S2APIFunctions {
 
             //If not already connected, check if author is in DB
             if ( authorObjToBeAdded == null ) {
-                PersonJPAAccess filer = new PersonJPAAccess();
-                List<Person> possibleAuthors = filer.getByFullName(name);
-                if ( possibleAuthors != null && possibleAuthors.size() > 0 ) {
-                    authorObjToBeAdded = possibleAuthors.get(0);
-                }
+                Person query = new Person();
+                query.setSemanticScholarID(s2id);
+                query.setFullName(name);
+                authorObjToBeAdded = Person.findOrCreate(query);
             }
-
-            //Otherwise create new Object
-            if ( authorObjToBeAdded == null ) {
-                System.out.println("Author not found, create new Author");
-                authorObjToBeAdded = new Person(); }
 
             if( overwrite || authorObjToBeAdded.getFullName() == null ) { authorObjToBeAdded.setFullName(name); }
             if( overwrite || authorObjToBeAdded.getSemanticScholarID() == null ) { authorObjToBeAdded.setSemanticScholarID(s2id); }

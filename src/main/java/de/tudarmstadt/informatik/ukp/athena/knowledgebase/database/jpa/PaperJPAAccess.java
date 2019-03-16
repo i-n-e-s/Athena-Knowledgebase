@@ -48,36 +48,72 @@ public class PaperJPAAccess implements CommonAccess<Paper> {
 		return result;
 	}
 
-	public List<Paper> getByTitle(String titleToFind) {
-		return get().stream().filter(paper -> paper.getTitle().equals(titleToFind)).collect(Collectors.toList());
+	/**
+	 * Finds a matching DB Entry by the attributes of a given Paper Object, null is seen as wildcard
+	 * Currently Only uses (decreasing priority): S2ID, Title
+	 * If multiple occurrences are found in DB, return the first result
+	 * @param toFind Paper Object to get the search constraints from
+	 * @return An Object from the DB with matching attributes
+	 */
+	public List<Paper> getByKnownAttributes(Paper toFind) {
+
+		//1. Build JPQL query
+		String query = "SELECT c FROM Paper c WHERE ";
+		boolean addedConstraint = false;
+		if( toFind.getSemanticScholarID() != null ) {
+			query = query + "c.semanticScholarID LIKE '"+toFind.getSemanticScholarID() + "'";
+			addedConstraint = true;
+		}
+		if ( toFind.getTitle() != null && toFind.getTitle() != "" ) {
+			if (addedConstraint) { query = query + " and "; }
+			query = query + "c.title = '"+toFind.getTitle() + "'";
+			addedConstraint = true;
+		}
+
+		System.out.println(query);
+
+		//2. Execute query und return results
+		EntityManager entityManager = PersistenceManager.getEntityManager();
+		List<Paper> result = entityManager.createQuery(query).getResultList();
+		return result;
+
 	}
 
 	/**
-	 * Looks for equal attribute DB entries of Paper and returns the matching Paper Object
-	 * If multiple Occurences are found in DB, return the first result
+	 * Looks for DB entries with matching SemanticScholar ID
 	 *
 	 * @author Philipp Emmer
-	 * @param paperToFind The paper object to search
-	 * @return The first DB Entry of Paper with matching Attributes or null
+	 * @param semanticScholarID The semanticScholarID of the wanted paper object to search
+	 * @return DB Entry of Paper with matching S2ID or null
 	 */
-	public Paper lookUpPaper( Paper paperToFind ) {
+	@Deprecated
+	public Paper getBySemanticScholarID( String semanticScholarID ) {
 		List<Paper> matches = null;
 		//1. Try to find matching SemanticScholarID
-		if( paperToFind.getSemanticScholarID() != null ) {
-			//Matches contains all papers in DB with matching SemanicScholarID
-			matches = get().stream().filter(paper -> paperToFind.getSemanticScholarID().equals(paper.getSemanticScholarID())).collect(Collectors.toList());
+		if( semanticScholarID != null ) {
+			Paper query = new Paper();
+			query.setSemanticScholarID(semanticScholarID);
+			return Paper.findOrCreate(query);
 		}
-		//Return first result of author with matching S2ID
-		if( matches != null && matches.size() > 0 ) { return matches.get(0); }
-		//2. If no results, search for title
-		matches = getByTitle(paperToFind.getTitle());
+		return null;
+	}
 
-		for ( Paper namesake : matches ) {
-			//Choose the first one with matching attributes
-			if ( namesake.equalsNullAsWildcard(paperToFind) ) { return namesake; }
+	/**
+	 * Looks for DB entries with matching title
+	 *
+	 * @author Philipp Emmer
+	 * @param title The title of the wanted Paper object to search
+	 * @return DB Entry of Paper with matching S2ID or null
+	 */
+	@Deprecated
+	public Paper getByTitle( String title ) {
+		List<Paper> matches = null;
+		//1. Try to find matching SemanticScholarID
+		if( title != null ) {
+			Paper query = new Paper();
+			query.setTitle(title);
+			return Paper.findOrCreate(query);
 		}
-
-		//3. If nothing found, return null
 		return null;
 	}
 }

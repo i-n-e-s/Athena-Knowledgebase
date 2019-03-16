@@ -92,6 +92,16 @@ public class PersonJPAAccessTest {
 	}
 
 	@Test
+	public void getByKnownAttributesTest() {
+		Person testQuery = new Person();
+		testQuery.setFullName("Author 3");
+		System.out.println("ID of testQuery: "+testQuery.getPersonID());
+		List<Person> resultList = uut.getByKnownAttributes(testQuery);
+		if(resultList.size() == 0) fail("return is empty");
+		assertEquals("22473174", resultList.get(0).getSemanticScholarID());
+	}
+
+	@Test
 	public void updateTest() {
 		uut.add(testValue);
 		testValue.setPrefix("UpdatedPrefix");

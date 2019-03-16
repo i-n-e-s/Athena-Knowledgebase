@@ -105,8 +105,8 @@ public class SemanticScholarAPITest {
      */
     @Test
     public void generalSearchConnectionTest() {
-        SemanticScholarAPIrequest testRequest = new S2GeneralSearch();
-        boolean result = successfulHTTPResponseTest( testRequest, "Iryna" );
+        SemanticScholarAPIrequest uut = new S2GeneralSearch();
+        boolean result = successfulHTTPResponseTest( uut, "Iryna" );
         Assert.assertTrue( result );
     }
 
@@ -115,8 +115,8 @@ public class SemanticScholarAPITest {
      */
     @Test
     public void generalSearchValidJSONTest() {
-        SemanticScholarAPIrequest testRequest = new S2GeneralSearch();
-        boolean result = validJSONResponseTest( testRequest, "Iryna" );
+        SemanticScholarAPIrequest uut = new S2GeneralSearch();
+        boolean result = validJSONResponseTest( uut, "Iryna" );
         Assert.assertTrue( result );
     }
 
@@ -126,9 +126,9 @@ public class SemanticScholarAPITest {
      */
     @Test
     public void paperSearchConnectionTest() {
-        SemanticScholarAPIrequest testRequest = new S2PaperSearch();
-        boolean result = successfulHTTPResponseTest( testRequest, "32125496" );
-        try { testRequest.getRawResponse(); }
+        SemanticScholarAPIrequest uut = new S2PaperSearch();
+        boolean result = successfulHTTPResponseTest( uut, "32125496" );
+        try { uut.getRawResponse(); }
         catch(NotAvailableException e) {
             System.err.println("Not available");
             Assert.fail();
@@ -141,16 +141,16 @@ public class SemanticScholarAPITest {
      */
     @Test
     public void paperSearchValidJSONTest() {
-        SemanticScholarAPIrequest testRequest = new S2PaperSearch();
-        boolean result = validJSONResponseTest( testRequest, "32125496" );
+        SemanticScholarAPIrequest uut = new S2PaperSearch();
+        boolean result = validJSONResponseTest( uut, "32125496" );
         Assert.assertTrue( result );
     }
 
     @Test
     public void authorSearchValidConnectionTest() {
-        SemanticScholarAPIrequest testRequest = new S2AuthorSearch();
-        boolean result = successfulHTTPResponseTest( testRequest, "Iryna Gurevych" );
-        try { testRequest.getRawResponse(); }
+        SemanticScholarAPIrequest uut = new S2AuthorSearch();
+        boolean result = successfulHTTPResponseTest( uut, "Iryna Gurevych" );
+        try { uut.getRawResponse(); }
         catch(NotAvailableException e) {
             System.err.println("Not available");
             Assert.fail();
@@ -163,8 +163,8 @@ public class SemanticScholarAPITest {
      */
     @Test
     public void authorSearchValidJSONTest() {
-        SemanticScholarAPIrequest testRequest = new S2AuthorSearch();
-        boolean result = validJSONResponseTest( testRequest, "Iryna Gurevych" );
+        SemanticScholarAPIrequest uut = new S2AuthorSearch();
+        boolean result = validJSONResponseTest( uut, "Iryna Gurevych" );
         Assert.assertTrue( result );
     }
 
