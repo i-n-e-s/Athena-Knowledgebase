@@ -9,6 +9,9 @@ import java.util.TimeZone;
 
 import javax.annotation.PostConstruct;
 
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.crawler.SemanticScholarAPI.S2APIFunctions;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.jpa.*;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.boot.SpringApplication;
@@ -17,15 +20,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.crawler.CrawlerFacade;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.crawler.SupportedConferences;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.access.CommonAccess;
-import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.jpa.ConferenceJPAAccess;
-import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.jpa.PaperJPAAccess;
-import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.jpa.SessionJPAAccess;
-import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.jpa.WorkshopJPAAccess;
-import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Conference;
-import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Paper;
-import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.ScheduleEntry;
-import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Session;
-import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Workshop;
 
 
 @SpringBootApplication
@@ -97,6 +91,8 @@ public class ParsedDataInserter {
 			parsedDataInserter.acl2018StoreConferenceInformation(); //automatically saves the schedule as well
 		else
 			logger.info("\"-scrape-acl18-info\" argument was not found, skipping ACL 2018 scraping");
+
+		parsedDataInserter.completeAuthorsByS2(2);
 
 		logger.info("Done! (Took {})", LocalTime.ofNanoOfDay(System.nanoTime() - then));
 	}
@@ -178,6 +174,8 @@ public class ParsedDataInserter {
 
 		return entries;
 	}
+
+
 	/**
 	 * This method runs through the DB and performs an authorSearch for every
 	 * Person in the DB. Then extends every entry with the new data
@@ -199,13 +197,7 @@ public class ParsedDataInserter {
 		for ( Person currPerson : authors ) {
 			if( totalAuthors++ == n ) { break; }
 
-			//1. Make sure person is an Author and cast
-				System.out.println("Too many fails, break now");
-			if ( failedAuthors == 20 ) {
-				break;
-			}
-
-			//2. Update information about Author
+			//1. Update information about Author
 			boolean changesWereMade = false;
 			try { changesWereMade = S2APIFunctions.completeAuthorInformationByAuthorSearch(currPerson, false); }
 			catch (IOException e) {
@@ -214,7 +206,7 @@ public class ParsedDataInserter {
 				e.printStackTrace();
 			}
 
-			//3. write changes to db
+			//2. write changes to db
 			if ( changesWereMade ) {
 				System.out.println("Trying to update: "+currPerson.toString());
 				//personfiler.update( currPerson );

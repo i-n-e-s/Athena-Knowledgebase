@@ -345,6 +345,7 @@ public class S2APIFunctions {
             catch( IOException | JSONException e ) {}
         }
 
+        //Add authors
         JSONArray authorsJSON = paperJSON.getJSONArray("authors");
         for (int i = 0; i < authorsJSON.length(); i++) {                         //Add every Author to paper
 

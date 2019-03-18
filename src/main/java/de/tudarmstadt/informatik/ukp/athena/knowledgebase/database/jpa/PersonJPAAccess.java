@@ -63,12 +63,14 @@ public class PersonJPAAccess implements CommonAccess<Person> {
 	/**
 	 * Finds a matching DB Entry by the attributes of a given Person Object, null is seen as wildcard
 	 * Currently Only uses (decreasing priority): S2ID, Name
+     * If no entry with matching S2ID AND name is found, look for matching S2ID, if nothing found either look for name, etc
 	 * @param toFind Person Object to get the search constraints from
 	 * @return An Object from the DB with matching attributes
 	 */
 	public List<Person> getByKnownAttributes(Person toFind) {
 
-		String query = "SELECT c FROM Person c WHERE ";
+        EntityManager entityManager = PersistenceManager.getEntityManager();
+        String query = "SELECT c FROM Person c WHERE ";
 		boolean addedConstraint = false;
 		if( toFind.getSemanticScholarID() != null ) {
 			query = query + "c.semanticScholarID LIKE '"+toFind.getSemanticScholarID() + "'";
@@ -82,10 +84,20 @@ public class PersonJPAAccess implements CommonAccess<Person> {
 
 		System.out.println(query);
 
-		EntityManager entityManager = PersistenceManager.getEntityManager();
 		List<Person> result = entityManager.createQuery(query).getResultList();
-		return result;
 
+		if( result.size() > 0 ) { return result; }
+        if( toFind.getSemanticScholarID() != null ) {
+            query = "SELECT c FROM Person c WHERE c.semanticScholarID LIKE '"+toFind.getSemanticScholarID() + "'";
+            result = entityManager.createQuery(query).getResultList();
+            if( result.size() > 0 ) { return result; }
+        }
+        if ( toFind.getFullName() != null && toFind.getFullName() != "" ) {
+            query = "SELECT c FROM Person c WHERE c.fullName = '"+toFind.getFullName().replace("'", "\\'") + "'";
+            result = entityManager.createQuery(query).getResultList();
+            if( result.size() > 0 ) { return result; }
+        }
+        return null;
 	}
 
 	/**
