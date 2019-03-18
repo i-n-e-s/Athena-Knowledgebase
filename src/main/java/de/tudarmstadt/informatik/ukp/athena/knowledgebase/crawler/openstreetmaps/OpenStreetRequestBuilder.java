@@ -10,6 +10,8 @@ import java.util.List;
 
 import javax.validation.constraints.NotNull;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -22,6 +24,7 @@ import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Locati
  * @author Julian
  */
 public class OpenStreetRequestBuilder {
+	private static Logger logger = LogManager.getLogger(OpenStreetRequestBuilder.class);
 	private String amenity;
 	private Double minLatitude;
 	private Double minLongitude;
@@ -128,7 +131,7 @@ public class OpenStreetRequestBuilder {
 	List<Location> resolveJson(JSONArray locations) throws JSONException {
 		// this should never happen
 		if (locations == null){
-			System.out.println("JSONArray of locations was null");
+			logger.warn("JSONArray of locations was null");
 			return null;
 		}
 		// instantiates a list of locations that will be passed along by the controller method

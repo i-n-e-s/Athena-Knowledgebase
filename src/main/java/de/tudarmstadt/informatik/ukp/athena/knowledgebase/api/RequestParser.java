@@ -35,7 +35,14 @@ public class RequestParser {
 
 		//as long as there are tokens in the queue
 		while(currentToken != null && currentToken.type != RequestTokenType.END) { //can be null if the last thing was an entity name (before the :), poll returns null if the deque is empty
-			root.addHierarchyNode(parseHierarchyEntry());
+			if(root.getHierarchy().size() == 0 && tokens.peek().actual.equals("count")) //peek because the currentToken is / and not count
+			{
+				accept(RequestTokenType.HIERARCHY_SEPARATOR);
+				accept(RequestTokenType.NAME);
+				root.setIsCountFunction(true);
+			}
+			else
+				root.addHierarchyNode(parseHierarchyEntry());
 		}
 
 		return root;
@@ -128,12 +135,18 @@ public class RequestParser {
 		String value = "";
 
 		//while there is a string...
-		while(currentToken.type == RequestTokenType.NAME || currentToken.type == RequestTokenType.NUMBER) { //ACL+2018 should be considered a string token as well
+		while(currentToken.type == RequestTokenType.NAME || currentToken.type == RequestTokenType.NUMBER || currentToken.type == RequestTokenType.ESCAPE) { //ACL+2018 should be considered a string token as well
 			//...add it to the attribute existing value...
 			if(currentToken.type == RequestTokenType.NAME)
 				value += accept(RequestTokenType.NAME);
 			else if(currentToken.type == RequestTokenType.NUMBER)
 				value += accept(RequestTokenType.NUMBER);
+			else if(currentToken.type == RequestTokenType.ESCAPE)
+			{
+				accept(); //accept the escape character
+				value += currentToken.actual; //add whatever comes next to the escape character
+				accept(); //accept whatever comes next
+			}
 
 			//...and check for more parts in the attribute
 			if(currentToken.type == RequestTokenType.SPACE) //if it's not a SPACE, then it will be something else and be catched by the while condition

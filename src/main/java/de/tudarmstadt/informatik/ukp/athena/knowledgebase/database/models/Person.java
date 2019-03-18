@@ -42,7 +42,7 @@ public class Person extends Model {
 	private String fullName;
 
 	/*Birthday and day of death*/
-	@Column(name = "birthday")
+	@Column(name = "birth")
 	private LocalDate birth;
 	@Column(name = "obit")
 	private LocalDate obit;

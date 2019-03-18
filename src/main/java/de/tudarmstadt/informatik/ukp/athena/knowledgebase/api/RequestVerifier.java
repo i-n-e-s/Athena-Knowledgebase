@@ -25,11 +25,11 @@ import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Worksh
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.exception.VerificationFailedException;
 
 public class RequestVerifier {
-	// <entity,	field name>
+	//<entity,	field name>
 	private static final Map<String,List<String>> ATTRIBUTES = new HashMap<>(); //denotes which fields (value) an entity (key) has
-	// <entity, <field name, number amount>>
+	//<entity, <field name, number amount>>
 	private static final Map<String,Map<String, Integer>> NUMERICAL_ATTRIBUTES = new HashMap<>(); //denotes which fields (value) of an entity (key) only accept numerical values
-	// <entity, <entity being stored, field name>>
+	//<entity, <entity being stored, field name>>
 	private static final Map<String,Map<String, String>> SET_ATTRIBUTES = new HashMap<>(); //denotes which fields (value) of an entity (key) are sets
 
 

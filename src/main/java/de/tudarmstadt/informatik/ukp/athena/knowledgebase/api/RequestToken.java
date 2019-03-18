@@ -35,6 +35,7 @@ public class RequestToken {
 		ATTR_SPECIFIER, // :
 		END, //the end of the world (well, more like the request)
 		ERROR, //an error (duh!)
+		ESCAPE, //escape character \
 		HIERARCHY_SEPARATOR, // /
 		NAME, //an entity, attribute name, or attribute value
 		NUMBER, //a number (duh!)
