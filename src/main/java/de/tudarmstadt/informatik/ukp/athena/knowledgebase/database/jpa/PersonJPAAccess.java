@@ -66,7 +66,7 @@ public class PersonJPAAccess implements CommonAccess<Person> {
 		}
 		if ( toFind.getFullName() != null && toFind.getFullName() != "" ) {
 			if (addedConstraint) { query = query + " and "; }
-			query = query + "c.fullName = '"+toFind.getFullName() + "'";
+			query = query + "c.fullName = '"+toFind.getFullName().replace("'", "\\'") + "'";
 			addedConstraint = true;
 		}
 

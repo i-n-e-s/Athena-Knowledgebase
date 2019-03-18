@@ -66,7 +66,7 @@ public class PaperJPAAccess implements CommonAccess<Paper> {
 		}
 		if ( toFind.getTitle() != null && toFind.getTitle() != "" ) {
 			if (addedConstraint) { query = query + " and "; }
-			query = query + "c.title = '"+toFind.getTitle() + "'";
+			query = query + "c.title = '"+toFind.getTitle().replace("'", "''") + "'";
 			addedConstraint = true;
 		}
 
@@ -107,12 +107,19 @@ public class PaperJPAAccess implements CommonAccess<Paper> {
 	 */
 	@Deprecated
 	public Paper getByTitle( String title ) {
-		List<Paper> matches = null;
-		//1. Try to find matching SemanticScholarID
+		//1. Build JPQL query
 		if( title != null ) {
-			Paper query = new Paper();
-			query.setTitle(title);
-			return Paper.findOrCreate(query);
+			String query = "SELECT c FROM Paper c WHERE c.title = '"+title.replace("'","''") + "'";
+			System.out.println(query);
+			EntityManager entityManager = PersistenceManager.getEntityManager();
+			List<Paper> matches = entityManager.createQuery(query).getResultList();
+
+			if(matches.size() < 1) { //No matching Paper could be found in the DB
+				return new Paper();
+			}
+			else { 		//Choose first result
+				return matches.get(0);
+			}
 		}
 		return null;
 	}
