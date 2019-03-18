@@ -1,4 +1,4 @@
-package de.tudarmstadt.informatik.ukp.athena.knowledgebase.database;
+package de.tudarmstadt.informatik.ukp.athena.knowledgebase;
 
 import java.io.IOException;
 import java.time.LocalTime;
@@ -15,7 +15,6 @@ import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.*;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-import de.tudarmstadt.informatik.ukp.athena.knowledgebase.JPASandBox;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.crawler.CrawlerFacade;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.crawler.SupportedConferences;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.access.CommonAccess;

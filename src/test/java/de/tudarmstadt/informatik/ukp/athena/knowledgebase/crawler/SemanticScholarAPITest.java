@@ -1,11 +1,9 @@
 package de.tudarmstadt.informatik.ukp.athena.knowledgebase.crawler;
 
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.crawler.SemanticScholarAPI.*;
-import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.ParsedDataInserter;
 import org.json.JSONException;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Paper;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Person;
-import org.json.JSONException;
 import org.junit.Assert;
 import org.junit.Test;
 
