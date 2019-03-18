@@ -291,7 +291,6 @@ public class Paper extends Model {
 	 * @return A matching Person from the DB or a new Person
 	 */
 	public static Paper findOrCreate(Paper toFind) {
-
 		//Check if Paper with same S2ID exists in DB
 		PaperJPAAccess filer = new PaperJPAAccess();
 		List<Paper> searchResults = filer.getByKnownAttributes(toFind);
@@ -302,7 +301,20 @@ public class Paper extends Model {
 		else { 		//Choose first result
 			return searchResults.get(0);
 		}
+	}
 
+	/**
+	 * Looks for papers with defined title or SemanticScholarID and returns matching DB Entry
+	 * If no match was found, create and return new Paper Object
+	 * @param s2id SemanticScholarID of searched paper or null if unknown
+	 * @param title Title of searched Paper or null if unknown
+	 * @return matching DB entry or new Paper
+	 */
+	public static Paper findOrCreate(String s2id, String title) {
+		Paper tmpQuery = new Paper();
+		tmpQuery.setTitle(title);
+		tmpQuery.setSemanticScholarID(s2id);
+		return findOrCreate(tmpQuery);
 	}
 
 	/*

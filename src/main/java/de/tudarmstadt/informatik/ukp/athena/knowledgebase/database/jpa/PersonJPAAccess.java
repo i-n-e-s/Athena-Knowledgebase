@@ -51,6 +51,12 @@ public class PersonJPAAccess implements CommonAccess<Person> {
 	}
 
 	/**
+	 * Executes given JPQL query and returns results
+	 *
+	 */
+
+
+	/**
 	 * Finds a matching DB Entry by the attributes of a given Person Object, null is seen as wildcard
 	 * Currently Only uses (decreasing priority): S2ID, Name
 	 * @param toFind Person Object to get the search constraints from
@@ -85,16 +91,15 @@ public class PersonJPAAccess implements CommonAccess<Person> {
 	 * @param semanticScholarID The semanticScholarID of the wanted person object to search
 	 * @return DB Entry of Person with matching S2ID or null
 	 */
-	@Deprecated
 	public Person getBySemanticScholarID( String semanticScholarID ) {
-		List<Person> matches = null;
-		//1. Try to find matching SemanticScholarID
-		if( semanticScholarID != null ) {
-			Person query = new Person();
-			query.setSemanticScholarID(semanticScholarID);
-			return Person.findOrCreate(query);
-		}
-		return null;
+
+		if( semanticScholarID == null ) { return null; }
+		String query = "SELECT c FROM Person c WHERE c.semanticScholarID = '"+semanticScholarID.replace("'","''") + "'";
+		System.out.println(query);
+		EntityManager entityManager = PersistenceManager.getEntityManager();
+		List<Person> matches = entityManager.createQuery(query).getResultList();
+
+		return (matches.size() > 0) ? matches.get(0) : null;
 	}
 
 	/**
@@ -104,15 +109,13 @@ public class PersonJPAAccess implements CommonAccess<Person> {
 	 * @param name The name of the wanted person object to search
 	 * @return DB Entry of Person with matching S2ID or null
 	 */
-	@Deprecated
 	public Person getByFullName( String name ) {
-		List<Person> matches = null;
-		//1. Try to find matching SemanticScholarID
-		if( name != null ) {
-			Person query = new Person();
-			query.setFullName(name);
-			return Person.findOrCreate(query);
-		}
-		return null;
+		if( name == null ) { return null; }
+		String query = "SELECT c FROM Person c WHERE c.fullName = '"+name.replace("'","''") + "'";
+		System.out.println(query);
+		EntityManager entityManager = PersistenceManager.getEntityManager();
+		List<Person> matches = entityManager.createQuery(query).getResultList();
+
+		return (matches.size() > 0) ? matches.get(0) : null;
 	}
 }

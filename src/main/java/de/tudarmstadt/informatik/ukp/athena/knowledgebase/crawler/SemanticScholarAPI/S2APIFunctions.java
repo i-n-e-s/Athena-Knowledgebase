@@ -192,7 +192,7 @@ public class S2APIFunctions {
 
     /**
      * Helping method called in completeAuthorInformationByAuthorSearch
-     * Gets the JSONObject returned by the AuthorSearch and adds the attributes to the given
+     * Gets the JSONObject returned by the AuthorSearch and adds the attributes to the given Person Object
      * @param author The Object to add the info to
      * @param overwrite true if Attributes should be overwritten
      * @param AuthorSearchResponse response to an AuthorSearch as JSONObject
@@ -220,7 +220,7 @@ public class S2APIFunctions {
             }
 
             //If not, search for paper title in DB
-            if( currPaper == null ) { currPaper = filer.getByTitle(title); }
+            if( currPaper == null ) { currPaper = Paper.findOrCreate(null, title); }
 
             //Always connect this author with paper
             Model.connectAuthorPaper(author, currPaper);    //TODO check duplicates
@@ -262,12 +262,11 @@ public class S2APIFunctions {
             String s2id = jsonAuthorInfo.getJSONArray("ids").getString(0);
 
             //Check if DB entry of Person with matching S2ID exists
-
             Person query = new Person();
             query.setFullName(jsonAuthorInfo.getString("name"));
             query.setSemanticScholarID(s2id);
             System.out.println("Query ID: "+query.getPersonID());
-            Person currInfl = Person.findOrCreate( query );
+            Person currInfl = Person.findOrCreate( query );     //If no matching DB-entry is found, create new Person
 
             //Set attributes:
             if ( currInfl.getFullName() == null || overwrite ) {
@@ -341,9 +340,9 @@ public class S2APIFunctions {
 
         //Fetch S2ID for all currently connected Authors to minimize duplicates
         for( Person a : dest.getAuthors() ) {
-            try {
-                a.setSemanticScholarID(getAuthorsS2ID(a));
-            } catch( IOException | JSONException e ) {}
+            if( a.getSemanticScholarID() != null && a.getSemanticScholarID() != "") { continue; }   //Skip retrieving already known S2IDs
+            try { a.setSemanticScholarID(getAuthorsS2ID(a)); }
+            catch( IOException | JSONException e ) {}
         }
 
         JSONArray authorsJSON = paperJSON.getJSONArray("authors");
