@@ -425,7 +425,7 @@ public class Person extends Model {
 		PersonJPAAccess filer = new PersonJPAAccess();
 		List<Person> searchResults = filer.getByKnownAttributes(toFind);
 
-		if(searchResults.size() < 1) { //No matching Person could be found in the DB
+		if(searchResults == null || searchResults.size() < 1) { //No matching Person could be found in the DB
 			return new Person();
 		}
 		else { 		//Choose first result

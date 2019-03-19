@@ -295,7 +295,7 @@ public class Paper extends Model {
 		PaperJPAAccess filer = new PaperJPAAccess();
 		List<Paper> searchResults = filer.getByKnownAttributes(toFind);
 
-		if(searchResults.size() < 1) { //No matching Paper could be found in the DB
+		if(searchResults == null || searchResults.size() < 1) { //No matching Paper could be found in the DB
 			return new Paper();
 		}
 		else { 		//Choose first result
