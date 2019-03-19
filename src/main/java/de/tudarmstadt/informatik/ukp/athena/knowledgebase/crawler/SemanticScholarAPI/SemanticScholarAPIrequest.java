@@ -17,7 +17,7 @@ public abstract class SemanticScholarAPIrequest {
      * To test HTTP requests: nc -l -p 8080
      * Sets up local HTTP Server on port 8080 to monitor all incoming Requests, showing Headers, Body etc.
      * <p>
-     * TODO wait 3s between two requests
+     * TODO Optional: wait 3s between two requests
      * <p>
      * Then set SemanticScholarInternalAPIURL = "http://localhost:8080/api/1/search";
      */
@@ -61,7 +61,7 @@ public abstract class SemanticScholarAPIrequest {
      *
      * @param value      String to be written to the server
      * @param connection Connection to send the string to
-     * @throws IOException
+     * @throws IOException If some HTTP stuff goes wrong
      */
     protected static void writeStringToServer(String value, HttpsURLConnection connection) throws IOException {
         OutputStreamWriter osw = new OutputStreamWriter(connection.getOutputStream());

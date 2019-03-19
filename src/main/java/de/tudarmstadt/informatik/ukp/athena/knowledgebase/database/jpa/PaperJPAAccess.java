@@ -57,6 +57,7 @@ public class PaperJPAAccess implements CommonAccess<Paper> {
 	 * Finds a matching DB Entry by the attributes of a given Paper Object, null is seen as wildcard
 	 * Currently Only uses (decreasing priority): S2ID, Title
 	 * If multiple occurrences are found in DB, return the first result
+	 *
 	 * @param toFind Paper Object to get the search constraints from
 	 * @return An Object from the DB with matching attributes
 	 */
@@ -122,7 +123,7 @@ public class PaperJPAAccess implements CommonAccess<Paper> {
 			if(matches.size() < 1) { //No matching Paper could be found in the DB
 				return new Paper();
 			}
-			else { 		//Choose first result
+			else { 					//Choose first result
 				return matches.get(0);
 			}
 		}

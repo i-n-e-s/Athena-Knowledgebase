@@ -317,89 +317,12 @@ public class Paper extends Model {
 		return findOrCreate(tmpQuery);
 	}
 
-	/*
-	public boolean complementBy(Paper srcPaper, boolean overwrite) {
 
-		//Initialize return value
-		boolean changed = false;
-		PersonJPAAccess personFiler = new PersonJPAAccess();
-
-		//1. Complement all prime Attributes
-		changed = complementPrimeAttributesBy(srcPaper, overwrite);
-
-		//2. Copy all Authors
-		copyAllAuthorsLoop:
-		for (Person srcAuthor : srcPaper.getAuthors()) {
-
-			//Check if Author is already known in paper
-			for ( Person author : this.getAuthors() ) {
-				if ( srcAuthor.equalsNullAsWildcard(author) ) {
-					changed = Model.connectAuthorPaper( author, this );
-					author.complementBy(srcAuthor);
-				}
-			}
-
-			//Check if Author is already in DB
-			Person inDB = personFiler.lookUpPerson(srcAuthor);    //Check if we know the author already in DB
-			if (inDB != null) {
-				inDB.complementBy(srcAuthor);
-				changed = Model.connectAuthorPaper(inDB, this);
-			}
-
-
-			Model.connectAuthorPaper(srcAuthor, this);
-		}
-
-		//3. Eliminate duplicates
-		return changed;
-	}
-
-	private boolean complementPrimeAttributesBy( Paper srcPaper, boolean overwrite ) {
-
-		boolean changed = false;
-
-		//1. Copy all prime Attributes
-		if ( (this.getTopic() == null && srcPaper.getTopic() != null) || overwrite) {
-			this.setTopic(srcPaper.getTopic());
-			changed = true;
-		}
-		if ( (this.getPaperAbstract() == null && srcPaper.getPaperAbstract() != null) || overwrite) {
-			this.setPaperAbstract(srcPaper.getPaperAbstract());
-			changed = true;
-		}
-		if ( (this.getTitle() == null && srcPaper.getTitle() != null) || overwrite) {
-			this.setTitle(srcPaper.getTitle());
-			changed = true;
-		}
-		if ( (this.getReleaseDate() == null && srcPaper.getReleaseDate() != null) || overwrite) {
-			this.setReleaseDate(srcPaper.getReleaseDate());
-			changed = true;
-		}
-		if ( (this.getRemoteLink() == null && srcPaper.getRemoteLink() != null) || overwrite) {
-			this.setRemoteLink(srcPaper.getRemoteLink());
-			changed = true;
-		}
-		if ( (this.getPdfFileSize() == null && srcPaper.getPdfFileSize() != null) || overwrite) {
-			this.setPdfFileSize(srcPaper.getPdfFileSize());
-			changed = true;
-		}
-		if ( (this.getAnthology() == null && srcPaper.getAnthology() != null) || overwrite) {
-			this.setAnthology(srcPaper.getAnthology());
-			changed = true;
-		}
-		if ( (this.getSemanticScholarID() == null && srcPaper.getSemanticScholarID() != null) || overwrite) {
-			this.setSemanticScholarID(srcPaper.getSemanticScholarID());
-			changed = true;
-		}
-		if ( (this.getAmountOfCitations() == null && srcPaper.getAmountOfCitations() != null) || overwrite) {
-			this.setAmountOfCitations(srcPaper.getAmountOfCitations());
-			changed = true;
-		}
-		return changed;
-	}*/
-
-
-	//TODO nochmal richtig
+	/**
+	 * Creates a String representation of the Person Object.
+	 * Warning: String does not contain all information in the Object
+	 * @return String description of the Object
+	 */
 	@Override
 	public String toString() {
 		String ret = "{title: " + this.getTitle() + ",";

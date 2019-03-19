@@ -347,6 +347,11 @@ public class Person extends Model {
 		this.top5influenced = null;
 	}
 
+	/**
+	 * Creates a String representation of the Person Object.
+	 * Warning: String does not contain all information in the Object
+	 * @return String description of the Object
+	 */
 	@Override
 	public String toString() {
 		String ret = "name: " + String.valueOf( this.getFullName() ) + "\n";
@@ -371,49 +376,6 @@ public class Person extends Model {
 	}
 
 	/**
-	 * Complements the Author Object by the information of the given one
-	 * @param srcAuthor
-	 *
-
-	public boolean complementBy(Person srcAuthor) {
-
-		boolean changed = false;
-		//1. Copy prime attributes without overwriting
-		changed = this.complementPrimeAttributesBy(srcAuthor);
-
-		//2. Copy papers
-		loopAllSrcPapers:
-		for ( Paper srcP : srcAuthor.getPapers() ) {
-
-			//2.1 check if paper with same name/S2ID already in known
-			for ( Paper thisP : this.getPapers() ) {
-				if ( equalsNotNull( thisP.getSemanticScholarID(), srcP.getSemanticScholarID()) ||
-						equalsNotNull( thisP.getTitle(), srcP.getTitle())) {
-					//If matching paper is found:
-					changed = thisP.complementBy(srcP, false);     //TODO Paper complementBy override
-					continue loopAllSrcPapers;
-				}
-			}
-			//2.2 if not, save pointer to paper
-			Model.connectAuthorPaper(this, srcP);
-			changed = true;
-		}
-
-		//3. Copy influences
-		for ( int i = 0; i < 5; i++ ) {
-			if ( this.getTop5influenced().get(i) == null && srcAuthor.getTop5influenced().get(i) != null ) {
-				this.addInfluenced(srcAuthor.getTop5influenced().get(i));
-			}
-			if ( this.getTop5influencedBy().get(i) == null && srcAuthor.getTop5influencedBy().get(i) != null ) {
-				this.addInfluencedBy(srcAuthor.getTop5influencedBy().get(i));
-			}
-		}
-
-
-		return changed;
-	}*/
-
-	/**
 	 * Looks for Persons with equal attributes in the DB and returns found entities
 	 * If no matching DB entry was found, create and return a new Person Object
 	 * @param toFind The Person Object containing the query data
@@ -434,33 +396,4 @@ public class Person extends Model {
 
 	}
 
-	private boolean complementPrimeAttributesBy(Person srcAuthor) {
-		boolean changed = false;
-		//1. Copy prime attributes without overwriting
-		if(this.getBirth() == null && srcAuthor.getBirth() != null) {
-			this.setBirth( srcAuthor.getBirth() );
-			changed = true;
-		}
-		if(this.getInstitution() == null && srcAuthor.getInstitution() != null) {
-			this.setInstitution( srcAuthor.getInstitution() );
-			changed = true;
-		}
-		if(this.getPrefix() == null && srcAuthor.getPrefix() != null) {
-			this.setPrefix( srcAuthor.getPrefix() );
-			changed = true;
-		}
-		if(this.getFullName() == null && srcAuthor.getFullName() != null) {
-			this.setFullName( srcAuthor.getFullName() );
-			changed = true;
-		}
-		if(this.getObit() == null && srcAuthor.getObit() != null) {
-			this.setInstitution( srcAuthor.getInstitution() );
-			changed = true;
-		}
-		if(this.getSemanticScholarID() == null && srcAuthor.getSemanticScholarID() != null) {
-			this.setInstitution( srcAuthor.getInstitution() );
-			changed = true;
-		}
-		return changed;
-	}
 }
