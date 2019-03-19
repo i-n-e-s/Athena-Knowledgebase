@@ -185,7 +185,7 @@ public class ParsedDataInserter {
 	 * TODO write changes to DB
 	 *
 	 * @author Philipp Emmer
-	 * @param n The first n authors will be added
+	 * @param n The first n authors will be enhanced with SemanticScholar Data
 	 */
 	private void completeAuthorsByS2(int n) {
 		PersonJPAAccess personfiler = new PersonJPAAccess();

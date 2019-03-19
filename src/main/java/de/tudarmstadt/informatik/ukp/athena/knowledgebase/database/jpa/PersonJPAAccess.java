@@ -82,7 +82,7 @@ public class PersonJPAAccess implements CommonAccess<Person> {
 			addedConstraint = true;
 		}
 
-		System.out.println(query);
+		logger.info(query);
 
 		List<Person> result = entityManager.createQuery(query).getResultList();
 
@@ -111,7 +111,7 @@ public class PersonJPAAccess implements CommonAccess<Person> {
 
 		if( semanticScholarID == null ) { return null; }
 		String query = "SELECT c FROM Person c WHERE c.semanticScholarID = '"+semanticScholarID.replace("'","''") + "'";
-		System.out.println(query);
+		logger.info(query);
 		EntityManager entityManager = PersistenceManager.getEntityManager();
 		List<Person> matches = entityManager.createQuery(query).getResultList();
 
@@ -128,7 +128,7 @@ public class PersonJPAAccess implements CommonAccess<Person> {
 	public Person getByFullName( String name ) {
 		if( name == null ) { return null; }
 		String query = "SELECT c FROM Person c WHERE c.fullName = '"+name.replace("'","''") + "'";
-		System.out.println(query);
+		logger.info(query);
 		EntityManager entityManager = PersistenceManager.getEntityManager();
 		List<Person> matches = entityManager.createQuery(query).getResultList();
 

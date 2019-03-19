@@ -1,11 +1,14 @@
 package de.tudarmstadt.informatik.ukp.athena.knowledgebase.crawler.SemanticScholarAPI;
 
 
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.ParsedDataInserter;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.jpa.PaperJPAAccess;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.jpa.PersonJPAAccess;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Model;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Paper;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Person;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -22,6 +25,8 @@ import java.util.List;
  * @author Philipp Emmer
  */
 public class S2APIFunctions {
+    private static Logger logger = LogManager.getLogger(ParsedDataInserter.class);
+
 
     /**
      * Returns all papers published by the given author listed on SemanticScholar
@@ -175,15 +180,15 @@ public class S2APIFunctions {
             if (authorSearch.getRawResponse() == "") { return false; }  //If author not found on S2
             response = authorSearch.getParsedJSONResponse();
         } catch (NotAvailableException e) {       //Never thrown, because called after request
-            System.err.println("Response not ready");
+            logger.info("Response not ready");
             e.printStackTrace();
             return false;
         }
 
         //3.1 Parse JSONObject to temp Author TODO overwrite?
-        System.out.println("Start to parse:\n\n"+response.toString());
+        logger.info("Start to parse:\n\n"+response.toString());
         parseAddS2InternalAPIAuthorJSON(author, overwrite, response);
-        System.out.println("\n\ngot:\n"+author.toString()+"\n\n");
+        logger.info("\n\ngot:\n"+author.toString()+"\n\n");
 
         //3.2 Add Information from temp Author to original Author
         //author.complementBy(temp);
@@ -211,7 +216,7 @@ public class S2APIFunctions {
         for (int i = 0; i < papersJSON.length(); i++) {   //Add all found papers
 
             String title = papersJSON.getJSONObject(i).getJSONObject("title").getString("text");
-            System.out.println("Parse paper "+title+"\ti="+i);
+            logger.info("Parse paper "+title+"\ti="+i);
 
             Paper currPaper = null;
 
@@ -236,7 +241,7 @@ public class S2APIFunctions {
             author.setTop5influenced( parseS2AuthorSearchInfluenceJSONArrayToAuthorArrayList(influenced, true));
         }
         for ( Person a : author.getTop5influenced() ) {
-            System.out.println("Influenced: " + (a.getSemanticScholarID() == null ? "null" : a.getSemanticScholarID()) + " " + a.getFullName());
+            logger.info("Influenced: " + (a.getSemanticScholarID() == null ? "null" : a.getSemanticScholarID()) + " " + a.getFullName());
         }
 
         //4 Set Top 5 authors with highest influence on this author
@@ -266,7 +271,7 @@ public class S2APIFunctions {
             Person query = new Person();
             query.setFullName(jsonAuthorInfo.getString("name"));
             query.setSemanticScholarID(s2id);
-            System.out.println("Query ID: "+query.getPersonID());
+            logger.info("Query ID: "+query.getPersonID());
             Person currInfl = Person.findOrCreate( query );     //If no matching DB-entry is found, create new Person
 
             //Set attributes:
@@ -358,16 +363,16 @@ public class S2APIFunctions {
             } catch ( JSONException e ) {
                 continue;       //If name or S2ID unknown, skip the Author
             }
-            System.out.println("Want to add author "+name+" to paper "+dest.getTitle());
+            logger.info("Want to add author "+name+" to paper "+dest.getTitle());
 
             Person authorObjToBeAdded = null;
             //Check if author is already connected to paper
             for ( Person papersKnownAuthor : dest.getAuthors() ) {
                 if (papersKnownAuthor.getSemanticScholarID().equals(s2id) || papersKnownAuthor.getFullName().equals(name)) {
                     authorObjToBeAdded = papersKnownAuthor;
-                    System.out.println("Found and reuse "+authorObjToBeAdded.getFullName()+"("+authorObjToBeAdded.getPersonID()+")");
+                    logger.info("Found and reuse "+authorObjToBeAdded.getFullName()+"("+authorObjToBeAdded.getPersonID()+")");
                     break;
-                } else { System.out.println( name + " " + s2id+ " does not equal " + papersKnownAuthor.getFullName()+ " "+ papersKnownAuthor.getSemanticScholarID()); }
+                } else { logger.info( name + " " + s2id+ " does not equal " + papersKnownAuthor.getFullName()+ " "+ papersKnownAuthor.getSemanticScholarID()); }
             }
 
             //If not already connected, check if author is in DB

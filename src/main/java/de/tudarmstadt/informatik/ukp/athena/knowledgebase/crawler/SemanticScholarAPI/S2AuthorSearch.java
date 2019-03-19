@@ -1,5 +1,8 @@
 package de.tudarmstadt.informatik.ukp.athena.knowledgebase.crawler.SemanticScholarAPI;
 
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.ParsedDataInserter;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -21,6 +24,8 @@ import java.net.URL;
  * @author Philipp Emmer
  */
 public class S2AuthorSearch extends SemanticScholarAPIrequest {
+    private static Logger logger = LogManager.getLogger(ParsedDataInserter.class);
+
     private String s2id = null;
     private String name = null;
     private int expectedAmountOfPapers = -1;
@@ -70,7 +75,7 @@ public class S2AuthorSearch extends SemanticScholarAPIrequest {
             try { result = this.getParsedJSONResponse(); }
             catch (NotAvailableException e) { return; }    //Never thrown, because called after request is run
             //set expected Amount of papers
-            System.out.println("Lookup name: "+String.valueOf(this.name)+" S2ID: "+String.valueOf(this.s2id));
+            logger.info("Lookup name: "+String.valueOf(this.name)+" S2ID: "+String.valueOf(this.s2id));
             this.expectedAmountOfPapers = result.getJSONObject("author").getJSONObject("papers").getInt("totalResults");
             //Reset this request
             this.validDataIsReady = false;
@@ -87,8 +92,8 @@ public class S2AuthorSearch extends SemanticScholarAPIrequest {
             catch (NotAvailableException e) { return; }    //Never thrown, because called after request is run
 
             //If multiple results match the name, choose most relevant one
-            System.out.println("Lookup name: "+String.valueOf(this.name)+" S2ID: "+String.valueOf(this.s2id));
-            System.out.println(result.toString());
+            logger.info("Lookup name: "+String.valueOf(this.name)+" S2ID: "+String.valueOf(this.s2id));
+            logger.info(result.toString());
             JSONArray matchingAuthors = result.getJSONArray("matchedAuthors");
             JSONObject chosenAuthor = (JSONObject) matchingAuthors.get(0);
 

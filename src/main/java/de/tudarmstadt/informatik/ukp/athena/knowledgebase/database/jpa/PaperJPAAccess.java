@@ -76,7 +76,7 @@ public class PaperJPAAccess implements CommonAccess<Paper> {
 			addedConstraint = true;
 		}
 
-		System.out.println(query);
+		logger.info(query);
 
 		//2. Execute query und return results
 		EntityManager entityManager = PersistenceManager.getEntityManager();
@@ -116,7 +116,7 @@ public class PaperJPAAccess implements CommonAccess<Paper> {
 		//1. Build JPQL query
 		if( title != null ) {
 			String query = "SELECT c FROM Paper c WHERE c.title = '"+title.replace("'","''") + "'";
-			System.out.println(query);
+			logger.info(query);
 			EntityManager entityManager = PersistenceManager.getEntityManager();
 			List<Paper> matches = entityManager.createQuery(query).getResultList();
 

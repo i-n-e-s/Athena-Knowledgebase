@@ -132,19 +132,6 @@ public abstract class Model {
 	}
 	
 	/**
-     * Returns the size of a list, not counting null elements
-     * @param l List to get the size of
-     * @return Length of the list, not counting null elements
-     */
-    public static int sizeWithoutNullObjs(List l) {
-        int ret = 0;
-        for( int i = 0; i < l.size(); i++ ) {
-            if ( l.get(i) != null ) { ret++; }
-        }
-        return ret;
-    }
-
-    /**
      * Creates the two way relation between Author and Paper Object
      * @return false if already connected
      */
@@ -157,8 +144,8 @@ public abstract class Model {
             if ( authorsPaper.equalsWithoutID(paper) ) { return false; }
         }
 
-        if ( !author.getPapers().contains(paper) ) { System.out.println("t1"); author.addPaper(paper); changed = true; }
-        if ( !paper.getAuthors().contains(author) ) { System.out.println("t2"); paper.addAuthor(author); changed = true; }
+        if ( !author.getPapers().contains(paper) ) { author.addPaper(paper); changed = true; }
+        if ( !paper.getAuthors().contains(author) ) { paper.addAuthor(author); changed = true; }
         return changed;
     }
 
