@@ -24,7 +24,7 @@ public class SemanticScholarAPITest {
     /**
      * Tests whether the amount of citations of a paper can be retrieved
      *
-     * Hardcoded to expect 44 citations of the Paper:
+     * Hardcoded to expect 49 citations of the Paper:
      * "Temporal Language Models for the Disclosure of Historical Text"
      *
      */
