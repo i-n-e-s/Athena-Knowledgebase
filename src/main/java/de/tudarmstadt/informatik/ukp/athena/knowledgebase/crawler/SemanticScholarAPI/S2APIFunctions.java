@@ -52,7 +52,7 @@ public class S2APIFunctions {
         //2. Perform paper search
         SemanticScholarAPIrequest paperSearch = new S2PaperSearch();
         paperSearch.setQuery(author.getSemanticScholarID());
-        paperSearch.run();
+        paperSearch.safeRun();
 
         //3. Parse JSON response
         JSONObject response;
@@ -122,7 +122,7 @@ public class S2APIFunctions {
         //1. Perform general search
         SemanticScholarAPIrequest generalSearch = new S2GeneralSearch();
         generalSearch.setQuery(author.getFullName());
-        generalSearch.run();
+        generalSearch.safeRun();
 
         //2. Parse the JSON response
         JSONObject response;
@@ -148,7 +148,8 @@ public class S2APIFunctions {
      * Information is added in-place, so the given Object is altered
      * If overwrite == false: Only unset attributes will be overwritten
      * <p>
-     * In worst case 2 API accesses will happen, taking about 3s
+     * In worst case 2 API accesses will happen + 1 for every Person with unknown s2id, connected to a paper already connected to the searched Author
+     *
      *
      * @param author    The author to be looked up
      * @param overwrite True if attributes should be overwritten with SemanticScholars Data
@@ -166,7 +167,7 @@ public class S2APIFunctions {
         if (author.getSemanticScholarID() != null) {
             authorSearch.setS2id(author.getSemanticScholarID());
         }
-        authorSearch.run();
+        authorSearch.safeRun();
 
         //2. Parse the JSON response
         JSONObject response;
@@ -418,7 +419,7 @@ public class S2APIFunctions {
         //1. General Search of full Paper name
         SemanticScholarAPIrequest generalSearch = new S2GeneralSearch();
         generalSearch.setQuery(paper.getTitle());
-        generalSearch.run();
+        generalSearch.safeRun();
 
         //2. Parse answer
         JSONObject response;
@@ -454,7 +455,7 @@ public class S2APIFunctions {
         //1. General Search of full Paper name
         SemanticScholarAPIrequest generalSearch = new S2GeneralSearch();
         generalSearch.setQuery(paper.getTitle());
-        generalSearch.run();
+        generalSearch.safeRun();
 
         //2. Parse answer
         JSONObject response;

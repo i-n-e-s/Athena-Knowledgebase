@@ -93,7 +93,7 @@ public class ParsedDataInserter {
 		else
 			logger.info("\"-scrape-acl18-info\" argument was not found, skipping ACL 2018 scraping");
 
-		parsedDataInserter.completeAuthorsByS2(2);
+		parsedDataInserter.completeAuthorsByS2(5);
 
 		logger.info("Done! (Took {})", LocalTime.ofNanoOfDay(System.nanoTime() - then));
 	}

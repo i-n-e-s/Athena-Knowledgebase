@@ -25,6 +25,7 @@ public abstract class SemanticScholarAPIrequest {
     public static final String SemanticScholarInternalAPIURL = "https://www.semanticscholar.org/api/1";
     public static final String UserAgentString = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) snap Chromium/70.0.3538.110 Chrome/70.0.3538.110 Safari/537.36";
     public static final String SemanticScholarPublicAPIURL = "https://api.semanticscholar.org/";
+    private static final short allowedConnectionFailuresInSafeRun = 5;
 
     public abstract void setQuery(String query);
 
@@ -36,6 +37,24 @@ public abstract class SemanticScholarAPIrequest {
 
     public abstract JSONObject getParsedJSONResponse() throws NotAvailableException, JSONException;
 
+
+    /**
+     * Runs the .run() method and retries up to 5 times in case an IOException occurs
+     *
+     * @throws IOException If the .run() method failed 5 times throwing an IOException
+     */
+    public void safeRun() throws IOException {
+        short failedTries = 0;
+        while ( failedTries < allowedConnectionFailuresInSafeRun ) {
+            try {
+                this.run();
+                return;
+            } catch ( IOException e ) {
+                failedTries++;
+            }
+        }
+        throw new IOException("HTTP Request failed "+failedTries+" times");
+    }
 
     /**
      * Rawly writes a string to a connection
@@ -56,7 +75,7 @@ public abstract class SemanticScholarAPIrequest {
      *
      * @param connection Connection Object to read the inputStream from
      * @return The response as a string
-     * @throws IOException
+     * @throws IOException If some HTTP stuff goes wrong
      */
     protected static String readResponseInputStreamToString(HttpsURLConnection connection) throws IOException {
         BufferedInputStream bis = new BufferedInputStream(connection.getInputStream());

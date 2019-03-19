@@ -36,7 +36,7 @@ public class SemanticScholarAPITest {
         try {
             amount = S2APIFunctions.getCitationAmountByPaper( testPaper );
             Assert.assertTrue( amount >= 0 );   //Make sure amount is not -1
-            Assert.assertEquals(44, amount);
+            Assert.assertEquals(49, amount);
         }
         catch( JSONException e ) {
             System.err.println( e.toString() );
