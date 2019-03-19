@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.TimeZone;
 
 import javax.annotation.PostConstruct;
+import javax.persistence.EntityManager;
 
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.crawler.SemanticScholarAPI.S2APIFunctions;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.jpa.*;
@@ -188,6 +189,8 @@ public class ParsedDataInserter {
 	private void completeAuthorsByS2(int n) {
 		PersonJPAAccess personfiler = new PersonJPAAccess();
 		List<Person> authors = personfiler.get();
+		EntityManager entityManager = PersistenceManager.getEntityManager();
+
 
 		//Go through every Author in the db
 		long failedAuthors = 0;
@@ -198,6 +201,7 @@ public class ParsedDataInserter {
 			if( totalAuthors++ == n ) { break; }
 
 			//1. Update information about Author
+			entityManager.getTransaction().begin();
 			boolean changesWereMade = false;
 			try { changesWereMade = S2APIFunctions.completeAuthorInformationByAuthorSearch(currPerson, false); }
 			catch (IOException e) {
@@ -205,11 +209,11 @@ public class ParsedDataInserter {
 				System.err.println("curr");
 				e.printStackTrace();
 			}
+			entityManager.getTransaction().commit();
 
 			//2. write changes to db
 			if ( changesWereMade ) {
 				System.out.println("Trying to update: "+currPerson.toString());
-				//personfiler.update( currPerson );
 			}
 		}
 		System.out.println("Failed: "+failedAuthors+"\nDone");
