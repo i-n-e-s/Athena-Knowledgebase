@@ -1,0 +1,78 @@
+Beginn: 9:00
+Ende:	
+
+Jonas + Tristan besprechen sich noch wegen dem Wiki
+	Daniel hat etwas dazu hochgeladen (kleine Fixes und API Kram + TLDR Crawler creation )
+
+
+Philipp:
+	Lookup funktioniert jetzt, kann allerdings länger dauern (von 1 bis 30 Sekunden), je nachdem wie involviert der Autor war
+		schaut jedes Mal nach Semantic Scholar ID
+	Frage: Wann wird das gestartet - immer oder nur bei spezifischem API request
+		Daniels Einschätzung: hoffentlich nicht zu viel Aufwand
+		Philipp und Daniel implementieren das
+
+
+Semantic Scholar:
+	bald fertig - Review dürfte nicht länger als 4-5 Stunden dauern
+	
+TIL: Begin Transaction signalisiert nur eine Dringlichkeit von Veränderungen an der Datenbank
+Daniel fragt:
+	Wie funktioniert das mit dem Update beim Entity Manager - erst sagen Begin Transaction, holen, ändern, End Transaction
+
+
+----------
+Thomas:
+	Wie ist die Kommunikation?
+	Bitte öfter auf Slack den Status bekanntgeben?
+	"Wir sind drann" "Ist im Review Prozess" "ist in 2 Tagen implementiert" "Erklären warum es so lange dauert bis ein Feature live ist"
+----------
+
+
+Gruppenanfragen:
+	Autoren doppelt
+	--------
+	Hierachie Session-Paper: 	wichtig!!!!
+	--------
+	Datensätze - sind sie doppelt
+	
+
+	"ju-Zhang" (oder ähnlich) gibt es einfach Duplikate - Doppelte Autoren
+		optional Improvement, erstmal den Erstbesten
+
+
+
+Namen als Primärschlüssel - quick and dirty fix: sinnvoll?
+	
+Umbenennung: Session zu Event
+	Dann in Slack kenntlich gemacht
+		"geht in ungefähr zwei Tagen live"
+
+
+
+
+
+
+
+
+
+Session-Paper Beziehung: Hierachie und Aufsetzen - 
+
+Datenbankprotokolle	- Tristan
+
+Menschen anschreiben	- Jonas
+
+Tldr Poster		- 
+
+Testnamen		- 
+
+Kernklassen Drucken	- 
+
+Excel Sheets		- Julian und Rest
+	in Slack melde ich mich
+	bringe auf den aktuellen Stand
+
+Trello 			- Julian
+	
+	
+finale Abgabe		- Jonas
