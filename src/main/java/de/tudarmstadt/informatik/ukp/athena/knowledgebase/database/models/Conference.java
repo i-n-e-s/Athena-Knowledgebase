@@ -10,13 +10,10 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.GenericGenerator;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name="conference")
@@ -44,13 +41,6 @@ public class Conference extends Model{
 	private String city;
 	@Column(name="address")
 	private String address;
-
-	/*Authors that talked*/
-	@Hierarchy(entityName="person")
-	@ManyToMany
-	@JsonIgnore
-	@Column(name="authors")
-	private Set<Person> authors = new HashSet<>();
 
 	/*Basically the schedule*/
 	@Hierarchy(entityName="session")
@@ -222,12 +212,4 @@ public class Conference extends Model{
 	public void addWorkshop(Workshop workshop) {
 		workshops.add(workshop);
 	}
-
-	/*
-	 * Gets the authors that talked at this conference
-	 * @return The authors that talked at this conference
-	TODO: fix, see above at authors attribute
-	public Set<Person> getAuthors() {
-		return authors;
-	}*/
 }
