@@ -27,14 +27,40 @@ public abstract class SemanticScholarAPIrequest {
     public static final String SemanticScholarPublicAPIURL = "https://api.semanticscholar.org/";
     private static final short allowedConnectionFailuresInSafeRun = 5;
 
+
+    /**
+     * Sets the query of the request
+     *
+     * @param query The query to be searched
+     */
     public abstract void setQuery(String query);
 
+
+    /**
+     * Executes the request and saves the response to be accessed by the get methods
+     * @throws IOException If the HTTP connection fails
+     */
     public abstract void run() throws IOException;
 
+    /**
+     * Returns the server's response to the request as a String
+     * @return The server's response
+     * @throws NotAvailableException If no response is available, e.g. because the request has not been run yet
+     */
     public abstract String getRawResponse() throws NotAvailableException;
 
+    /**
+     * Returns the HTTP-status-code of the response
+     * @return The HTTP-status-code of the response
+     */
     public abstract String getHTTPResponseCode();
 
+    /**
+     * Returns the server's response as a parsed JSONObject
+     * @return The JSONObject parsed from the response
+     * @throws NotAvailableException If no response is available, e.g. because the request has not been run yet
+     * @throws JSONException If the JSONObject could not be parsed as JSON
+     */
     public abstract JSONObject getParsedJSONResponse() throws NotAvailableException, JSONException;
 
 
