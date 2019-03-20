@@ -11,9 +11,9 @@ import org.jsoup.select.Elements;
 
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.JsoupHelper;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.ScheduleEntry;
-import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Session;
-import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.SessionCategory;
-import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.SessionPart;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Event;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.EventCategory;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.EventPart;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Workshop;
 
 /**
@@ -80,10 +80,10 @@ public class ACL18WorkshopParser {
 	//the method can't be written more concise because it parses one single workshop's schedule which can't be broken up in multiple parts
 	private static void parseMSR(Document doc, Workshop workshop) {
 		Elements els = doc.select("#program_table > tbody > tr");
-		Session previousSession = null;
+		Event previousSession = null;
 
 		for(Element el : els) {
-			Session session = new Session();
+			Event session = new Event();
 			Elements td = el.select("td");
 			String[] timeSplit = td.get(0).text().split(":");
 			LocalTime time;
@@ -97,13 +97,13 @@ public class ACL18WorkshopParser {
 			//i'm assuming that the closing event is the end of the workshop, thus it does not get added
 			if(previousSession != null) {
 				previousSession.setEnd(LocalDateTime.of(workshop.getEnd().toLocalDate(), time));
-				workshop.addSession(previousSession);
+				workshop.addEvent(previousSession);
 				workshop.setEnd(previousSession.getEnd());
 			}
 
 			if(el.hasClass("program_break")) {
 				session.setTitle(td.get(1).text().trim());
-				session.setCategory(SessionCategory.BREAK);
+				session.setCategory(EventCategory.BREAK);
 			}
 			else {
 				session.setTitle(td.get(1).select("b").text().trim());
@@ -111,14 +111,14 @@ public class ACL18WorkshopParser {
 				switch(session.getTitle().toLowerCase()) {
 					case "oral presentation":
 						session.setDescription(td.get(1).text().replace(session.getTitle(), ""));
-						session.setCategory(SessionCategory.PRESENTATION);
+						session.setCategory(EventCategory.PRESENTATION);
 						break;
 					case "oral presentations": case "poster session":
 						String html = td.get(1).html().replace("<b> " + session.getTitle() +" </b>", "").trim();
 						String[] sections = html.split("<i>");
 
 						for(String section : sections) {
-							SessionPart sessionPart = new SessionPart();
+							EventPart sessionPart = new EventPart();
 							String[] titleDesc = section.split("</i>");
 
 							if(titleDesc.length < 2) //doesn't contain an entry
@@ -127,24 +127,24 @@ public class ACL18WorkshopParser {
 							sessionPart.setPlace(workshop.getPlace());
 							sessionPart.setTitle(titleDesc[0].trim());
 							sessionPart.setDescription(titleDesc[1].split("<br>")[1].trim());
-							session.addSessionPart(sessionPart);
+							session.addEventPart(sessionPart);
 
 							switch(session.getTitle().toLowerCase()) {
-								case "oral presentations": session.setCategory(SessionCategory.PRESENTATION); break;
-								case "poster session": session.setCategory(SessionCategory.SESSION); break;
+								case "oral presentations": session.setCategory(EventCategory.PRESENTATION); break;
+								case "poster session": session.setCategory(EventCategory.SESSION); break;
 							}
 						}
 
 						break;
-					case "panel/discussions": session.setCategory(SessionCategory.TALK); break;
+					case "panel/discussions": session.setCategory(EventCategory.TALK); break;
 				}
 			}
 
 			if(session.getCategory() == null) {
 				if(session.getTitle().contains("Opening"))
-					session.setCategory(SessionCategory.WELCOME);
+					session.setCategory(EventCategory.WELCOME);
 				else if(session.getTitle().contains("Talk"))
-					session.setCategory(SessionCategory.TALK);
+					session.setCategory(EventCategory.TALK);
 			}
 
 			previousSession = session;
@@ -171,12 +171,12 @@ public class ACL18WorkshopParser {
 			else if(!programFound)
 				continue;
 
-			Session previousSession = null;
+			Event previousSession = null;
 			String[] br = el.html().split("<br>");
 
 			for(String line : br) {
 				if(line.contains("|")) {
-					Session session = new Session();
+					Event session = new Event();
 					String[] split = line.split("\\|"); //splitting by | only basically gets the char array as a string array
 
 					setSessionBeginEnd(extractBeginEnd(split[0].trim().split("–")), workshop.getBegin().toLocalDate(), workshop.getEnd().toLocalDate(), session); //NOT A HYPHEN!!! IT'S AN 'EN DASH'
@@ -202,13 +202,13 @@ public class ACL18WorkshopParser {
 					String title = previousSession.getTitle();
 
 					if(title.contains("Opening"))
-						previousSession.setCategory(SessionCategory.WELCOME);
+						previousSession.setCategory(EventCategory.WELCOME);
 					else if(title.contains("coffee") || title.contains("Lunch"))
-						previousSession.setCategory(SessionCategory.BREAK);
+						previousSession.setCategory(EventCategory.BREAK);
 					else if(title.contains("Poster"))
-						previousSession.setCategory(SessionCategory.SESSION);
+						previousSession.setCategory(EventCategory.SESSION);
 					else
-						previousSession.setCategory(SessionCategory.TALK);
+						previousSession.setCategory(EventCategory.TALK);
 
 					if(previousSession.getDescription() != null && previousSession.getDescription().contains("<a href="))
 						previousSession.setDescription(previousSession.getDescription().split(">")[1].split("<")[0]);
@@ -222,7 +222,7 @@ public class ACL18WorkshopParser {
 						previousSession.setDescription(split[1].split("<")[0] + split[2]);
 					}
 
-					workshop.addSession(previousSession);
+					workshop.addEvent(previousSession);
 					workshop.setEnd(previousSession.getEnd());
 				}
 			}
@@ -238,7 +238,7 @@ public class ACL18WorkshopParser {
 	private static void parseRELNLP(Document doc, Workshop workshop) {
 		Elements els = doc.select(".tyJCtd").get(1).children();
 		boolean programFound = false;
-		Session previousSession = null;
+		Event previousSession = null;
 
 		for(Element el : els) {
 			if(!programFound && el.id().equals("h.p__bAUwIOcmLuf")){
@@ -259,22 +259,22 @@ public class ACL18WorkshopParser {
 				}
 
 				if(previousSession.getTitle().contains("Opening"))
-					previousSession.setCategory(SessionCategory.WELCOME);
+					previousSession.setCategory(EventCategory.WELCOME);
 				else if(previousSession.getTitle().contains("Talk"))
-					previousSession.setCategory(SessionCategory.TALK);
+					previousSession.setCategory(EventCategory.TALK);
 				else if(previousSession.getTitle().contains("Break"))
-					previousSession.setCategory(SessionCategory.BREAK);
+					previousSession.setCategory(EventCategory.BREAK);
 				else if(previousSession.getTitle().contains("session"))
-					previousSession.setCategory(SessionCategory.SESSION);
+					previousSession.setCategory(EventCategory.SESSION);
 
-				workshop.addSession(previousSession);
+				workshop.addEvent(previousSession);
 				workshop.setEnd(previousSession.getEnd());
 
 				if(skip)
 					continue;
 			}
 
-			Session session = new Session();
+			Event session = new Event();
 			//this time extraction code is used often, but there is a lot of variation so no util method
 			String info = el.html().split("/strong>")[1];
 
@@ -303,7 +303,7 @@ public class ACL18WorkshopParser {
 	private static void parseECONLP(Document doc, Workshop workshop) {
 		Elements els = doc.selectFirst(".wrapper").children().get(2).children();
 		boolean programFound = false;
-		Session session = null;
+		Event session = null;
 
 		for(Element el : els) {
 			if(!programFound && el.id().equals("workshop-programme")){
@@ -316,7 +316,7 @@ public class ACL18WorkshopParser {
 				continue;
 
 			if(session == null) {
-				session = new Session();
+				session = new Event();
 				setSessionBeginEnd(extractBeginEnd(el.html().split("–")), workshop.getBegin().toLocalDate(), workshop.getEnd().toLocalDate(), session); //NOT A HYPHEN!!! IT'S AN 'EN DASH'
 				session.setPlace(workshop.getPlace());
 			}
@@ -326,25 +326,25 @@ public class ACL18WorkshopParser {
 
 					session.setTitle(split[0].replace("<strong>", "").replace("</strong>", ""));
 					session.setDescription(split[1]);
-					session.setCategory(SessionCategory.PRESENTATION);
+					session.setCategory(EventCategory.PRESENTATION);
 				}
 				else {
 					session.setTitle(el.text());
 
 					if(session.getTitle().contains("Discussion"))
-						session.setCategory(SessionCategory.TALK);
+						session.setCategory(EventCategory.TALK);
 					else if(session.getTitle().contains("Session")) {
 						String[] titleSplit = session.getTitle().split("-");
 
 						session.setDescription(titleSplit[1].trim());
 						session.setTitle(titleSplit[0].trim());
-						session.setCategory(SessionCategory.SESSION);
+						session.setCategory(EventCategory.SESSION);
 					}
 					else
-						session.setCategory(SessionCategory.BREAK);
+						session.setCategory(EventCategory.BREAK);
 				}
 
-				workshop.addSession(session);
+				workshop.addEvent(session);
 				workshop.setEnd(session.getEnd());
 				session = null;
 			}
@@ -375,24 +375,24 @@ public class ACL18WorkshopParser {
 			if(time.length < 2) //schedule ends
 				break;
 
-			Session session = new Session();
+			Event session = new Event();
 
 			setSessionBeginEnd(extractBeginEnd(time), workshop.getBegin().toLocalDate(), workshop.getEnd().toLocalDate(), session);
 			session.setPlace(workshop.getPlace());
 			session.setTitle(el.html().split("</strong>")[1].replace("<em>", "").replace("</em>", "").replace("&nbsp;", " "));
 
 			if(session.getTitle().toLowerCase().contains("opening"))
-				session.setCategory(SessionCategory.WELCOME);
+				session.setCategory(EventCategory.WELCOME);
 			else if(session.getTitle().toLowerCase().contains("keynote"))
-				session.setCategory(SessionCategory.PRESENTATION);
+				session.setCategory(EventCategory.PRESENTATION);
 			else if(session.getTitle().toLowerCase().contains("break"))
-				session.setCategory(SessionCategory.BREAK);
+				session.setCategory(EventCategory.BREAK);
 			else if(session.getTitle().toLowerCase().contains("results"))
-				session.setCategory(SessionCategory.CEREMONY);
+				session.setCategory(EventCategory.CEREMONY);
 			else
-				session.setCategory(SessionCategory.TALK);
+				session.setCategory(EventCategory.TALK);
 
-			workshop.addSession(session);
+			workshop.addEvent(session);
 			workshop.setEnd(session.getEnd());
 		}
 	}
@@ -414,7 +414,7 @@ public class ACL18WorkshopParser {
 				continue;
 
 			String[] titleDesc = td.get(1).html().split("<br>");
-			Session session = new Session();
+			Event session = new Event();
 
 			session.setPlace(workshop.getPlace());
 
@@ -428,22 +428,22 @@ public class ACL18WorkshopParser {
 			}
 
 			if(session.getTitle() != null) {
-				SessionPart sessionPart = new SessionPart();
+				EventPart sessionPart = new EventPart();
 
 				titleDesc = td.get(1).html().split("<br>");
 				sessionPart.setTitle(titleDesc[0].replace("<b>", "").replace("</b>", ""));
 				sessionPart.setDescription(titleDesc[1]);
 				sessionPart.setPlace(session.getPlace());
-				session.addSessionPart(sessionPart);
+				session.addEventPart(sessionPart);
 				td = els.get(++i).select("td");
 
 				while(!td.get(0).hasText()) {
-					sessionPart = new SessionPart();
+					sessionPart = new EventPart();
 
 					titleDesc = td.get(1).html().split("<br>");
 					sessionPart.setTitle(titleDesc[0].replace("<b>", "").replace("</b>", ""));
 					sessionPart.setDescription(titleDesc[1]);
-					session.addSessionPart(sessionPart);
+					session.addEventPart(sessionPart);
 					td = els.get(++i).select("td");
 				}
 
@@ -457,13 +457,13 @@ public class ACL18WorkshopParser {
 				session.setTitle(titleDesc[0]);
 
 			if(session.getTitle().toLowerCase().contains("keynote"))
-				session.setCategory(SessionCategory.PRESENTATION);
+				session.setCategory(EventCategory.PRESENTATION);
 			else if(session.getTitle().toLowerCase().contains("session"))
-				session.setCategory(SessionCategory.TALK);
+				session.setCategory(EventCategory.TALK);
 			else if(session.getTitle().toLowerCase().contains("break") || session.getTitle().toLowerCase().contains("lunch"))
-				session.setCategory(SessionCategory.BREAK);
+				session.setCategory(EventCategory.BREAK);
 
-			workshop.addSession(session);
+			workshop.addEvent(session);
 			workshop.setEnd(session.getEnd());
 		}
 	}
@@ -476,7 +476,7 @@ public class ACL18WorkshopParser {
 	//the method can't be written more concise because it parses one single workshop's schedule which can't be broken up in multiple parts
 	private static void parseNLPOSS(Document doc, Workshop workshop) {
 		Elements els = doc.selectFirst("#program").select("p");
-		Session session = new Session();
+		Event session = new Event();
 
 		for(int i = 0; i < els.size(); i++) {
 			Element el = els.get(i);
@@ -495,12 +495,12 @@ public class ACL18WorkshopParser {
 				el = els.get(++i);
 
 				while(el.html().startsWith("<a href")) {
-					SessionPart sessionPart = new SessionPart();
+					EventPart sessionPart = new EventPart();
 
 					sessionPart.setTitle(el.selectFirst("a").text());
 					sessionPart.setDescription(el.html().split("<em>")[1].split("</em>")[0]);
 					sessionPart.setPlace(session.getPlace());
-					session.addSessionPart(sessionPart);
+					session.addEventPart(sessionPart);
 					el = els.get(++i);
 				}
 
@@ -508,19 +508,19 @@ public class ACL18WorkshopParser {
 			}
 
 			if(session.getTitle().toLowerCase().contains("opening"))
-				session.setCategory(SessionCategory.WELCOME);
+				session.setCategory(EventCategory.WELCOME);
 			else if(session.getTitle().toLowerCase().contains("session"))
-				session.setCategory(SessionCategory.SESSION);
+				session.setCategory(EventCategory.SESSION);
 			else if(session.getTitle().toLowerCase().contains("talk"))
-				session.setCategory(SessionCategory.TALK);
+				session.setCategory(EventCategory.TALK);
 			else if(session.getTitle().toLowerCase().contains("presentation"))
-				session.setCategory(SessionCategory.PRESENTATION);
+				session.setCategory(EventCategory.PRESENTATION);
 			else if(session.getTitle().toLowerCase().contains("break") || session.getTitle().toLowerCase().contains("lunch"))
-				session.setCategory(SessionCategory.BREAK);
+				session.setCategory(EventCategory.BREAK);
 
-			workshop.addSession(session);
+			workshop.addEvent(session);
 			workshop.setEnd(session.getEnd());
-			session = new Session();
+			session = new Event();
 		}
 	}
 
@@ -546,7 +546,7 @@ public class ACL18WorkshopParser {
 	 * @param endDate The {@link LocalDate} to use as the end date, usually the one of the workshop
 	 * @param session The session to set the begin and end of
 	 */
-	public static final void setSessionBeginEnd(LocalTime[] beginEnd, LocalDate beginDate, LocalDate endDate, Session session) {
+	public static final void setSessionBeginEnd(LocalTime[] beginEnd, LocalDate beginDate, LocalDate endDate, Event session) {
 		session.setBegin(LocalDateTime.of(beginDate, beginEnd[0]));
 		session.setEnd(LocalDateTime.of(endDate, beginEnd[1]));
 	}

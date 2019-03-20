@@ -43,10 +43,10 @@ public class Conference extends Model{
 	private String address;
 
 	/*Basically the schedule*/
-	@Hierarchy(entityName="session")
+	@Hierarchy(entityName="event")
 	@OneToMany(orphanRemoval=true, fetch=FetchType.EAGER) //unidirectional relationship which
-	@JoinColumn(name="conferenceID")					  //is saved in the Session table
-	private Set<Session> sessions = new HashSet<>();
+	@JoinColumn(name="conferenceID")					  //is saved in the Event table
+	private Set<Event> events = new HashSet<>();
 	/*The workshops*/
 	@Hierarchy(entityName="workshop")
 	@OneToMany(orphanRemoval=true, fetch=FetchType.EAGER) //unidirectional relationship which
@@ -166,27 +166,27 @@ public class Conference extends Model{
 	}
 
 	/**
-	 * Gets the sessions building up this conference's schedule
-	 * @return The sessions building up this conference's schedule
+	 * Gets the events building up this conference's schedule
+	 * @return The events building up this conference's schedule
 	 */
-	public Set<Session> getSessions(){
-		return sessions;
+	public Set<Event> getEvents(){
+		return events;
 	}
 
 	/**
-	 * Sets the sessions building up this conference's schedule
-	 * @param sessions The new sessions building up this conference's schedule
+	 * Sets the events building up this conference's schedule
+	 * @param events The new events building up this conference's schedule
 	 */
-	public void setSessions(Set<Session> sessions){
-		this.sessions = sessions;
+	public void setEvents(Set<Event> events){
+		this.events = events;
 	}
 
 	/**
-	 * Adds a session to this conference's list of sessions
-	 * @param session The session to add
+	 * Adds an event to this conference's list of events
+	 * @param event The event to add
 	 */
-	public void addSession(Session session) {
-		sessions.add(session);
+	public void addEvent(Event event) {
+		events.add(event);
 	}
 
 	/**

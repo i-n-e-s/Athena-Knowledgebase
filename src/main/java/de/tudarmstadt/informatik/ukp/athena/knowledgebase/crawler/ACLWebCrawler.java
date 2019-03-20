@@ -22,9 +22,9 @@ import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Confer
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Paper;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Person;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.ScheduleEntry;
-import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Session;
-import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.SessionCategory;
-import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.SessionPart;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Event;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.EventCategory;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.EventPart;
 
 /**
  * A class, which holds the capability to return a List of all authors, which
@@ -386,7 +386,7 @@ class ACLWebCrawler extends AbstractCrawler {
 		//looping through all table rows, each contains a session
 		for(int i = 0; i < tr.size(); i++) {
 			Element el = tr.get(i);
-			Session session = new Session();
+			Event session = new Event();
 
 			addGeneralSessionInfo(el, session, monthDay);
 
@@ -397,10 +397,10 @@ class ACLWebCrawler extends AbstractCrawler {
 
 				//the table row might contain several tutorials in the same timeframe, so loop through those
 				for(Element sessionEl : tutorials) {
-					SessionPart sessionPart = new SessionPart();
+					EventPart sessionPart = new EventPart();
 
 					sessionPart.setTitle(sessionEl.text());
-					session.addSessionPart(sessionPart);
+					session.addEventPart(sessionPart);
 				}
 			}
 
@@ -423,13 +423,13 @@ class ACLWebCrawler extends AbstractCrawler {
 		//looping through all table rows, each contains a session
 		for(int i = 0; i < tr.size(); i++) {
 			Element el = tr.get(i);
-			Session session = new Session();
+			Event session = new Event();
 
 			addGeneralSessionInfo(el, session, monthDay);
 
-			if(session.getCategory() == SessionCategory.PRESENTATION)
+			if(session.getCategory() == EventCategory.PRESENTATION)
 				addOralPresentationInfo(tr.get(++i).select(".conc-session"), tr.get(++i).select(".session-location"), tr.get(++i).select(".session-details"), session);
-			else if(session.getCategory() == SessionCategory.SESSION)
+			else if(session.getCategory() == EventCategory.SESSION)
 				addPosterSessionInfo(tr.get(++i).select(".poster-sub-session"), session);
 
 			result.add(session);
@@ -444,7 +444,7 @@ class ACLWebCrawler extends AbstractCrawler {
 	 * @param session The arraylist with the resulting session's information
 	 * @param monthDay The month (index 0) and day (index 1) where this session happens
 	 */
-	private void addGeneralSessionInfo(Element el, Session session, String[] monthDay) {
+	private void addGeneralSessionInfo(Element el, Event session, String[] monthDay) {
 		//only try to extract the information when the table row is the header of an session and is not the more detailed description
 		//the header is something like "09:00-10:00 		Welcome Session & Presidential Address 			PLENARY, MCEC"
 		if(el.id().startsWith("session")) {
@@ -457,7 +457,7 @@ class ACLWebCrawler extends AbstractCrawler {
 			//e.g. Oral Presentations [title]: Long Papers and TACL Papers) [suffix aka description]
 			String desc = el.select(".session-suffix").text();
 			Elements place = el.select(".session-location");
-			SessionCategory category = null;
+			EventCategory category = null;
 
 			//the title string contains everything, so remove the description to avoid duplicate data
 			if(!desc.isEmpty())
@@ -473,25 +473,25 @@ class ACLWebCrawler extends AbstractCrawler {
 
 			//decide which kind of category this session belongs to
 			if(title.startsWith("tutorial"))
-				category = SessionCategory.TUTORIAL;
+				category = EventCategory.TUTORIAL;
 			else if(title.contains("welcome"))
-				category = SessionCategory.WELCOME;
+				category = EventCategory.WELCOME;
 			else if(title.startsWith("lunch") || title.contains("break"))
-				category = SessionCategory.BREAK;
+				category = EventCategory.BREAK;
 			else if(title.contains("oral"))
-				category = SessionCategory.PRESENTATION;
+				category = EventCategory.PRESENTATION;
 			else if(title.contains("poster"))
-				category = SessionCategory.SESSION;
+				category = EventCategory.SESSION;
 			else if(title.contains("recruitment"))
-				category = SessionCategory.RECRUITMENT;
+				category = EventCategory.RECRUITMENT;
 			else if(title.contains("talk"))
-				category = SessionCategory.TALK;
+				category = EventCategory.TALK;
 			else if(title.contains("meeting"))
-				category = SessionCategory.MEETING;
+				category = EventCategory.MEETING;
 			else if(title.contains("social"))
-				category = SessionCategory.SOCIAL;
+				category = EventCategory.SOCIAL;
 			else if(title.contains("award") || title.contains("achievement"))
-				category = SessionCategory.CEREMONY;
+				category = EventCategory.CEREMONY;
 
 			session.setCategory(category);
 		}
@@ -504,7 +504,7 @@ class ACLWebCrawler extends AbstractCrawler {
 	 * @param presentations The elements containing the presentations per session part
 	 * @param session The arraylist with the resulting oral presentation's information
 	 */
-	private void addOralPresentationInfo(Elements sessionParts, Elements rooms, Elements presentations, Session session) {
+	private void addOralPresentationInfo(Elements sessionParts, Elements rooms, Elements presentations, Event session) {
 		//looping through the different columns of the OP table
 		for(int i = 0; i < presentations.size(); i++) { //seems like session parts, rooms, and presentations all have the same size, always
 			Element sessEl = sessionParts.get(i);
@@ -513,7 +513,7 @@ class ACLWebCrawler extends AbstractCrawler {
 
 			//looping through the rows of the current column
 			for(Element subEl : presentations.get(i).select(".talk")) {
-				SessionPart sessionPart = new SessionPart();
+				EventPart sessionPart = new EventPart();
 				String[] sessTime = subEl.selectFirst(".talk-time").text().split(":");
 				LocalDateTime sessStart = LocalDateTime.of(session.getBegin().toLocalDate(), LocalTime.of(Integer.parseInt(sessTime[0]), Integer.parseInt(sessTime[1])));
 				LocalDateTime sessEnd = sessStart.plusMinutes(25);
@@ -524,7 +524,7 @@ class ACLWebCrawler extends AbstractCrawler {
 				sessionPart.setBegin(sessStart);
 				sessionPart.setEnd(sessEnd);
 				sessionPart.setPlace(sessPlace);
-				session.addSessionPart(sessionPart);
+				session.addEventPart(sessionPart);
 			}
 		}
 	}
@@ -534,10 +534,10 @@ class ACLWebCrawler extends AbstractCrawler {
 	 * @param sessionParts The elements containing the session part information
 	 * @param session The arraylist with the resulting poster session's information
 	 */
-	private void addPosterSessionInfo(Elements sessionParts, Session session) {
+	private void addPosterSessionInfo(Elements sessionParts, Event session) {
 		//looping through the poster sessions
 		for(Element sessEl : sessionParts) {
-			SessionPart sessionPart = new SessionPart();
+			EventPart sessionPart = new EventPart();
 			String[] sessTitleDesc = sessEl.selectFirst(".poster-session-name").text().split(":");
 			String sessTitle = sessTitleDesc[0].trim();
 			String sessDesc = sessTitleDesc[1].trim();
@@ -554,7 +554,7 @@ class ACLWebCrawler extends AbstractCrawler {
 			sessionPart.setBegin(session.getBegin());
 			sessionPart.setEnd(session.getEnd());
 			sessionPart.setPlace(session.getPlace());
-			session.addSessionPart(sessionPart);
+			session.addEventPart(sessionPart);
 		}
 	}
 }

@@ -8,17 +8,17 @@ import javax.persistence.EntityManager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.access.CommonAccess;
-import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Session;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.CommonAccess;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Event;
 
 /**
  * @author Daniel Lehmann
  */
-public class SessionJPAAccess implements CommonAccess<Session> {
-	private static Logger logger = LogManager.getLogger(SessionJPAAccess.class);
+public class EventJPAAccess implements CommonAccess<Event> {
+	private static Logger logger = LogManager.getLogger(EventJPAAccess.class);
 
 	@Override
-	public void add(Session data) {
+	public void add(Event data) {
 		EntityManager entityManager = PersistenceManager.getEntityManager();
 
 		entityManager.getTransaction().begin();
@@ -31,7 +31,7 @@ public class SessionJPAAccess implements CommonAccess<Session> {
 	}
 
 	@Override
-	public void delete(Session data) {
+	public void delete(Event data) {
 		EntityManager entityManager = PersistenceManager.getEntityManager();
 
 		entityManager.getTransaction().begin();
@@ -40,9 +40,9 @@ public class SessionJPAAccess implements CommonAccess<Session> {
 	}
 
 	@Override
-	public List<Session> get() {
+	public List<Event> get() {
 		EntityManager entityManager = PersistenceManager.getEntityManager();
-		List<Session> result = entityManager.createQuery("FROM Session").getResultList();
+		List<Event> result = entityManager.createQuery("FROM Session").getResultList();
 		return result;
 	}
 }

@@ -20,7 +20,6 @@ import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Instit
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Paper;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Person;
 
-@SuppressWarnings("javadoc")
 public class PersonJPAAccessTest {
 
 	static JPATestdatabase testDB;
@@ -101,7 +100,7 @@ public class PersonJPAAccessTest {
 		assertEquals("UpdatedPrefix", returnValues.get(0).getPrefix());
 		testDB.createDB();//Don't pollute the Database
 	}
-	
+
 	private List<Person> getByFullName(String name) {
 		return PersistenceManager.getEntityManager().createQuery(String.format("SELECT p FROM Person p WHERE p.fullName = '%s'",name), Person.class).getResultList();
 	}

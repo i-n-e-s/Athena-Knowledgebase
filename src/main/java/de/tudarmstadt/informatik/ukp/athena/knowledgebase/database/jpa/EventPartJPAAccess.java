@@ -8,17 +8,17 @@ import javax.persistence.EntityManager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.access.CommonAccess;
-import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.SessionPart;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.CommonAccess;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.EventPart;
 
 /**
  * @author Daniel Lehmann
  */
-public class SessionPartJPAAccess implements CommonAccess<SessionPart> {
-	private static Logger logger = LogManager.getLogger(SessionPartJPAAccess.class);
+public class EventPartJPAAccess implements CommonAccess<EventPart> {
+	private static Logger logger = LogManager.getLogger(EventPartJPAAccess.class);
 
 	@Override
-	public void add(SessionPart data) {
+	public void add(EventPart data) {
 		EntityManager entityManager = PersistenceManager.getEntityManager();
 
 		entityManager.getTransaction().begin();
@@ -31,7 +31,7 @@ public class SessionPartJPAAccess implements CommonAccess<SessionPart> {
 	}
 
 	@Override
-	public void delete(SessionPart data) {
+	public void delete(EventPart data) {
 		EntityManager entityManager = PersistenceManager.getEntityManager();
 
 		entityManager.getTransaction().begin();
@@ -40,9 +40,9 @@ public class SessionPartJPAAccess implements CommonAccess<SessionPart> {
 	}
 
 	@Override
-	public List<SessionPart> get() {
+	public List<EventPart> get() {
 		EntityManager entityManager = PersistenceManager.getEntityManager();
-		List<SessionPart> result = entityManager.createQuery("FROM SessionPart").getResultList();
+		List<EventPart> result = entityManager.createQuery("FROM SessionPart").getResultList();
 		return result;
 	}
 }

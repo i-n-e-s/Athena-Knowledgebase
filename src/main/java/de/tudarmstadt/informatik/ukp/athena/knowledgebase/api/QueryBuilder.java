@@ -18,7 +18,7 @@ import de.tudarmstadt.informatik.ukp.athena.knowledgebase.api.ast.RequestHierarc
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.api.ast.RequestNode;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.api.ast.StringAttributeNode;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.jpa.PersistenceManager;
-import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.SessionCategory;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.EventCategory;
 
 public class QueryBuilder {
 	private EntityManager entityManager = PersistenceManager.getEntityManager();
@@ -120,7 +120,7 @@ public class QueryBuilder {
 				case 1:
 					//differentiate between long and category
 					if(attr.getName().getString().toLowerCase().contains("category"))
-						sqlVars.put(sqlVar, SessionCategory.values()[numbers.get(0).getNumber()]);
+						sqlVars.put(sqlVar, EventCategory.values()[numbers.get(0).getNumber()]);
 					else
 						sqlVars.put(sqlVar, new Long(numbers.get(0).getNumber())); //needs to be in a wrapper class or else it doesn't work
 					break;

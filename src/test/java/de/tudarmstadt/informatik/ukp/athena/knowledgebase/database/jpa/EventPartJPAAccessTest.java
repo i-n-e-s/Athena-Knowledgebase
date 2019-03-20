@@ -15,18 +15,13 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.JPATestdatabase;
-import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Session;
-import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.SessionCategory;
-import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.SessionPart;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.EventPart;
 
-@SuppressWarnings("javadoc")
-public class SessionJPAAccessTest {
+public class EventPartJPAAccessTest {
 
 	static JPATestdatabase testDB;
-	static SessionJPAAccess uut;
-	static Session testValue;
-	static SessionPart testSP1;
-	static SessionPart testSP2;
+	static EventPartJPAAccess uut;
+	static EventPart testValue;
 
 	static ConfigurableApplicationContext ctx;
 
@@ -34,7 +29,7 @@ public class SessionJPAAccessTest {
 	public static void setUpDatabase() {
 		ctx = SpringApplication.run(JPATestdatabase.class,"");
 		testDB = new JPATestdatabase();
-		uut = new SessionJPAAccess();
+		uut = new EventPartJPAAccess();
 		testDB.createDB();
 	}
 
@@ -50,25 +45,15 @@ public class SessionJPAAccessTest {
 	}
 
 	public void resetValues() {
-		testValue = new Session();
-		testValue.setTitle("TestSessionTitle");
-		testValue.setCategory(SessionCategory.BREAK);
-		testSP1 = new SessionPart();
-
-		testSP1.setTitle("TestTitle1");
-		testSP2 = new SessionPart();
-		testSP2.setTitle("TestTitle2");
-
-		testValue.addSessionPart(testSP1);
-		testValue.addSessionPart(testSP2);
-		testValue.addPaperTitle("PaperTitle1");
-		testValue.addPaperTitle("PaperTitle2");
+		testValue = new EventPart();
+		testValue.setTitle("TestTitle");
+		testValue.setPlace("TestPlace");
 	}
 
 	@Test
 	public void addAndDeleteTest() {
 		uut.add(testValue);
-		List<Session> returnValues = getByTitle(testValue.getTitle());
+		List<EventPart> returnValues = getByTitle(testValue.getTitle());
 		if(returnValues.size() == 0) fail("return of existing Database is empty");
 		if(returnValues.size() > 1) fail("more than one returnValue ");
 		assertTrue(testValue.equalsWithoutID(returnValues.get(0)));
@@ -78,11 +63,11 @@ public class SessionJPAAccessTest {
 
 	@Test
 	public void getTest() {
-		List<Session> resultList = uut.get();
-		assertTrue(testDB.getSessionQuantity() == resultList.size());
+		List<EventPart> resultList = uut.get();
+		assertTrue(testDB.getSessionPartQuantity() == resultList.size());
 		List<String> resultTitles = new ArrayList<String>();
-		resultList.stream().forEach((Session s) -> resultTitles.add(s.getTitle()));;
-		for (int i = 0; i < testDB.getSessionQuantity(); i++) {
+		resultList.stream().forEach((EventPart s) -> resultTitles.add(s.getTitle()));;
+		for (int i = 0; i < testDB.getSessionPartQuantity(); i++) {
 			assertTrue(resultTitles.contains("Title"+ i));
 		}
 	}
@@ -90,15 +75,15 @@ public class SessionJPAAccessTest {
 	@Test
 	public void updateTest() {
 		uut.add(testValue);
-		testValue.setCategory(SessionCategory.WORKSHOP);
-		List<Session> returnValues = getByTitle(testValue.getTitle());
+		testValue.setPlace("UpdatedPlace");
+		List<EventPart> returnValues = getByTitle(testValue.getTitle());
 		if(returnValues.size() == 0) fail("return is empty");
 		if(returnValues.size() > 1) fail("more than one return value");
-		assertEquals(SessionCategory.WORKSHOP, returnValues.get(0).getCategory());
+		assertEquals("UpdatedPlace", returnValues.get(0).getPlace());
 		testDB.createDB();//Don't pollute the Database
 	}
 
-	private List<Session> getByTitle(String title) {
-		return PersistenceManager.getEntityManager().createQuery(String.format("SELECT s FROM Session s WHERE s.title = '%s'",title), Session.class).getResultList();
+	private List<EventPart> getByTitle(String title) {
+		return PersistenceManager.getEntityManager().createQuery(String.format("SELECT s FROM SessionPart s WHERE s.title = '%s'",title), EventPart.class).getResultList();
 	}
 }

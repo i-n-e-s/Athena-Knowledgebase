@@ -18,17 +18,16 @@ import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.JPATestdataba
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Paper;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Person;
 
-@SuppressWarnings("javadoc")
 public class PaperJPAAccessTest {
-	
+
 	static JPATestdatabase testDB;
 	static PaperJPAAccess uut;
 	static Paper testValue;
 	static Person testAuthor1;
 	static Person testAuthor2;
-	
+
 	static ConfigurableApplicationContext ctx;
-	
+
 	@BeforeClass
 	public static void setUpDatabase() {
 		ctx = SpringApplication.run(JPATestdatabase.class,"");
@@ -36,11 +35,11 @@ public class PaperJPAAccessTest {
 		uut = new PaperJPAAccess();
 		testDB.createDB();
 	}
-	
+
 	@AfterClass
 	public static void shutdownDatabase() {
 		ctx.close();
-	}	
+	}
 
 	public void resetValues() {
 		testValue = new Paper();
@@ -56,16 +55,16 @@ public class PaperJPAAccessTest {
 		testValue.setRemoteLink("TestLinkTest");
 		testValue.setPdfFileSize(1234321);
 		testValue.setAnthology("TestAnthology");
-		
+
 	}
-	
+
 	@Before
 	public void resetDB() {
 		resetValues();
 		testDB.createDB(); //Performance hungry if done before every test
 	}
 
-	
+
 	@Test
 	public void getTest() {
 		List<Paper> resultList = uut.get();
@@ -76,7 +75,7 @@ public class PaperJPAAccessTest {
 			assertTrue(resultTitles.contains("Title"+ i));
 		}
 	}
-	
+
 	@Test
 	public void addAndDeleteTest() {//Could be wrong, if getByPaperID is broken
 		uut.add(testValue);
@@ -87,10 +86,10 @@ public class PaperJPAAccessTest {
 		for (Person authorReturn : returnValue.get(0).getAuthors()) {
 			boolean containsAuthor = false;
 			for (Person authorTestVal : testValue.getAuthors()) {
-				if(authorTestVal.getFullName().equals(authorReturn.getFullName()) 
+				if(authorTestVal.getFullName().equals(authorReturn.getFullName())
 						&& containsAuthor) fail("duplicate author entry in return");
-				if(authorTestVal.getFullName().equals(authorReturn.getFullName())) 
-					containsAuthor = true; 
+				if(authorTestVal.getFullName().equals(authorReturn.getFullName()))
+					containsAuthor = true;
 			}
 			assertTrue(containsAuthor);
 		}
@@ -98,7 +97,7 @@ public class PaperJPAAccessTest {
 		assertTrue(getByPaperID(testValue.getPaperID()).size() == 0);
 		testDB.createDB();//If delete is broken don't pollute DB
 	}
-	
+
 	@Test
 	public void updateTest() {
 		uut.add(testValue);
@@ -109,7 +108,7 @@ public class PaperJPAAccessTest {
 		assertTrue(testValue.equalsWithoutID(returnValues.get(0)));
 		testDB.createDB();//Don't pollute the Database
 	}
-	
+
 	public List<Paper> getByPaperID(long id) {
 		return PersistenceManager.getEntityManager().createQuery(String.format("SELECT p FROM Paper AS p WHERE p.paperID = '%s'",Long.toString(id)), Paper.class).getResultList();
 	}

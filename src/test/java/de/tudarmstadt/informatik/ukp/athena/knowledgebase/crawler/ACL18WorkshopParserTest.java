@@ -8,7 +8,7 @@ import java.time.LocalTime;
 
 import org.junit.Test;
 
-import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Session;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Event;
 
 public class ACL18WorkshopParserTest {
 	@Test
@@ -30,7 +30,7 @@ public class ACL18WorkshopParserTest {
 		};
 		LocalDate beginDate = LocalDate.of(2018, 7, 7);
 		LocalDate endDate = LocalDate.of(2018, 7, 8);
-		Session session = new Session();
+		Event session = new Event();
 
 		ACL18WorkshopParser.setSessionBeginEnd(input, beginDate, endDate, session);
 		assertEquals(beginDate, session.getBegin().toLocalDate());

@@ -19,15 +19,15 @@ import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.jpa.Instituti
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.jpa.PaperJPAAccess;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.jpa.PersistenceManager;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.jpa.PersonJPAAccess;
-import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.jpa.SessionJPAAccess;
-import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.jpa.SessionPartJPAAccess;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.jpa.EventJPAAccess;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.jpa.EventPartJPAAccess;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Conference;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Institution;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Paper;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Person;
-import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Session;
-import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.SessionCategory;
-import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.SessionPart;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Event;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.EventCategory;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.EventPart;
 
 @SpringBootApplication
 public class JPATestdatabase {
@@ -36,15 +36,15 @@ public class JPATestdatabase {
 	private int institutionQuantity;
 	private int authorQuantity;
 	private int paperQuantity;
-	private int sessionPartQuantity;
-	private int sessionQuantity;
+	private int eventPartQuantity;
+	private int eventQuantity;
 
 	Conference conferences[];
 	Institution institutions[];
 	Person authors[];
 	Paper papers[];
-	SessionPart sessionParts[];
-	Session sessions[];
+	EventPart eventParts[];
+	Event events[];
 
 	public JPATestdatabase() {
 		setDefaultParameters();
@@ -69,8 +69,8 @@ public class JPATestdatabase {
 		institutionQuantity = 10;
 		authorQuantity = 100;
 		paperQuantity = 50;
-		sessionPartQuantity = 20;
-		sessionQuantity = sessionPartQuantity;
+		eventPartQuantity = 20;
+		eventQuantity = eventPartQuantity;
 	}
 
 	/**
@@ -115,8 +115,8 @@ public class JPATestdatabase {
 		institutions = new Institution[institutionQuantity];
 		authors = new Person[authorQuantity];
 		papers = new Paper[paperQuantity];
-		sessionParts = new SessionPart[sessionPartQuantity];
-		sessions = new Session[sessionQuantity];
+		eventParts = new EventPart[eventPartQuantity];
+		events = new Event[eventQuantity];
 
 		for(int i = 0; i< conferences.length;i++) {
 			conferences[i] = new Conference();
@@ -158,31 +158,31 @@ public class JPATestdatabase {
 
 		}
 
-		for(int i = 0; i < sessionParts.length; i++) {
-			sessionParts[i] = new SessionPart();
-			sessionParts[i].setBegin(LocalDateTime.of(1960 + i, (i%12)+1 , (i%28)+1, i,i%12+1,i%28+1));
-			sessionParts[i].setEnd(sessionParts[i].getBegin().plusHours(1).plusMinutes(30));
-			sessionParts[i].setPlace("Place" + i);
-			sessionParts[i].setTitle("Title" + i);
+		for(int i = 0; i < eventParts.length; i++) {
+			eventParts[i] = new EventPart();
+			eventParts[i].setBegin(LocalDateTime.of(1960 + i, (i%12)+1 , (i%28)+1, i,i%12+1,i%28+1));
+			eventParts[i].setEnd(eventParts[i].getBegin().plusHours(1).plusMinutes(30));
+			eventParts[i].setPlace("Place" + i);
+			eventParts[i].setTitle("Title" + i);
 		}
 
-		for(int i = 0; i < sessions.length; i++) {
+		for(int i = 0; i < events.length; i++) {
 			HashSet<String> paperTitles = new HashSet<String>();
-			HashSet<SessionPart> sessionParts = new HashSet<SessionPart>();
+			HashSet<EventPart> sessionParts = new HashSet<EventPart>();
 
 			paperTitles.add("PaperTitle" + i + "0");
 			paperTitles.add("PaperTitle" + i + "1");
 			paperTitles.add("PaperTitle" + i + "2");
-			sessionParts.add(this.sessionParts[i]);
-			sessions[i] = new Session();
-			sessions[i].setBegin(LocalDateTime.of(1960 + i, (i%12)+1 , (i%28)+1, i,i%12+1,i%28+1));
-			sessions[i].setEnd(sessions[i].getBegin().plusHours(1).plusMinutes(30));
-			sessions[i].setPlace("Place" + i);
-			sessions[i].setTitle("Title" + i);
-			sessions[i].setCategory(SessionCategory.values()[i % (SessionCategory.values().length - 1)]);
-			sessions[i].setDescription("Description" + i);
-			sessions[i].setPaperTitles(paperTitles);
-			sessions[i].setSessionParts(sessionParts);
+			sessionParts.add(this.eventParts[i]);
+			events[i] = new Event();
+			events[i].setBegin(LocalDateTime.of(1960 + i, (i%12)+1 , (i%28)+1, i,i%12+1,i%28+1));
+			events[i].setEnd(events[i].getBegin().plusHours(1).plusMinutes(30));
+			events[i].setPlace("Place" + i);
+			events[i].setTitle("Title" + i);
+			events[i].setCategory(EventCategory.values()[i % (EventCategory.values().length - 1)]);
+			events[i].setDescription("Description" + i);
+			events[i].setPaperTitles(paperTitles);
+			events[i].setEventParts(sessionParts);
 		}
 		logger.info("Done creating data");
 	}
@@ -195,16 +195,16 @@ public class JPATestdatabase {
 		InstitutionJPAAccess ijpaa = new InstitutionJPAAccess();
 		PaperJPAAccess pajpaa = new PaperJPAAccess();
 		PersonJPAAccess pejpaa = new PersonJPAAccess();
-		SessionPartJPAAccess sesspjpaa = new SessionPartJPAAccess();
-		SessionJPAAccess sessjpaa = new SessionJPAAccess();
+		EventPartJPAAccess sesspjpaa = new EventPartJPAAccess();
+		EventJPAAccess sessjpaa = new EventJPAAccess();
 		logger.info("Start inserting Data");
 
 		for (Conference c : conferences) cjpaa.add(c);
 		for (Institution i : institutions) ijpaa.add(i);
 		for (Person a : authors) pejpaa.add(a);
 		for (Paper p: papers)pajpaa.add(p);
-		for (SessionPart sp: sessionParts)sesspjpaa.add(sp);
-		for (Session s: sessions)sessjpaa.add(s);
+		for (EventPart sp: eventParts)sesspjpaa.add(sp);
+		for (Event s: events)sessjpaa.add(s);
 		logger.info("Done inserting data");
 	}
 	/**
@@ -330,7 +330,7 @@ public class JPATestdatabase {
 	 * @return The current sessionPartQuantity
 	 */
 	public int getSessionPartQuantity() {
-		return sessionPartQuantity;
+		return eventPartQuantity;
 	}
 
 	/**
@@ -339,7 +339,7 @@ public class JPATestdatabase {
 	 * @param sessionPartQuantity The desired sessionPartQuantity
 	 */
 	public void setSessionPartQuantity(int sessionPartQuantity) {
-		this.sessionPartQuantity = sessionPartQuantity;
+		this.eventPartQuantity = sessionPartQuantity;
 	}
 
 	/**
@@ -348,7 +348,7 @@ public class JPATestdatabase {
 	 * @return The current sessionQuantity
 	 */
 	public int getSessionQuantity() {
-		return sessionQuantity;
+		return eventQuantity;
 	}
 
 	/**
@@ -357,7 +357,7 @@ public class JPATestdatabase {
 	 * @param sessionQuantity The desired sessionQuantity
 	 */
 	public void setSessionQuantity(int sessionQuantity) {
-		this.sessionQuantity = sessionQuantity;
+		this.eventQuantity = sessionQuantity;
 	}
 
 	/**

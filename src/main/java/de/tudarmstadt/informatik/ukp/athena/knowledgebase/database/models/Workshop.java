@@ -44,14 +44,14 @@ public class Workshop extends Model implements ScheduleEntry {
 	@Column(name = "place")
 	private String place;
 	/*Basically the schedule. Might be empty since not all workshops provide an easily scrapable schedule*/
-	@Hierarchy(entityName="session")
+	@Hierarchy(entityName="event")
 	@OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER)
 	@JoinTable(
-			name = "workshop_session",
+			name = "workshop_event",
 			joinColumns = { @JoinColumn(name = "workshopID") },
-			inverseJoinColumns = { @JoinColumn(name = "sessionID") }
+			inverseJoinColumns = { @JoinColumn(name = "eventID") }
 			)
-	private Set<Session> sessions = new HashSet<>();
+	private Set<Event> events = new HashSet<>();
 
 	/**
 	 * Gets the unique id of this workshop
@@ -150,26 +150,26 @@ public class Workshop extends Model implements ScheduleEntry {
 	}
 
 	/**
-	 * Gets this workshop's sessions (if any)
-	 * @return This workshop's sessions
+	 * Gets this workshop's event (if any)
+	 * @return This workshop's event
 	 */
-	public Set<Session> getSessions() {
-		return sessions;
+	public Set<Event> getEvents() {
+		return events;
 	}
 
 	/**
-	 * Sets this workshop's sessions (if any)
-	 * @param sessions This workshop's new sessions
+	 * Sets this workshop's event (if any)
+	 * @param event This workshop's new event
 	 */
-	public void setSessions(Set<Session> sessions) {
-		this.sessions = sessions;
+	public void setEvents(Set<Event> event) {
+		this.events = event;
 	}
 
 	/**
-	 * Adds a session to this workshop's session list
-	 * @param s The session to add
+	 * Adds a session to this workshop's event list
+	 * @param e The event to add
 	 */
-	public void addSession(Session s) {
-		sessions.add(s);
+	public void addEvent(Event e) {
+		events.add(e);
 	}
 }
