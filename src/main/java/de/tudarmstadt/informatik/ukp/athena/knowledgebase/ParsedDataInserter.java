@@ -18,13 +18,13 @@ import de.tudarmstadt.informatik.ukp.athena.knowledgebase.crawler.CrawlerFacade;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.crawler.SupportedConferences;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.CommonAccess;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.jpa.ConferenceJPAAccess;
-import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.jpa.PaperJPAAccess;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.jpa.EventJPAAccess;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.jpa.PaperJPAAccess;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.jpa.WorkshopJPAAccess;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Conference;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Event;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Paper;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.ScheduleEntry;
-import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Event;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Workshop;
 
 
@@ -152,10 +152,10 @@ public class ParsedDataInserter {
 
 	/**
 	 * Stores the acl2018 conference's schedule into the database
-	 * @return The scraped and stored sessions
+	 * @return The scraped and stored events and workshops
 	 */
 	private List<ScheduleEntry> acl2018StoreSchedule() {
-		CommonAccess<Event> sessionCommonAccess = new EventJPAAccess();
+		CommonAccess<Event> eventCommonAccess = new EventJPAAccess();
 		CommonAccess<Workshop> workshopCommonAccess = new WorkshopJPAAccess();
 		List<ScheduleEntry> entries = new ArrayList<>(); //initialize in case anything fails
 
@@ -166,7 +166,7 @@ public class ParsedDataInserter {
 			//add to database
 			for(ScheduleEntry entry : entries) {
 				if(entry instanceof Event)
-					sessionCommonAccess.add((Event)entry);
+					eventCommonAccess.add((Event)entry);
 				else if(entry instanceof Workshop)
 					workshopCommonAccess.add((Workshop)entry);
 			}

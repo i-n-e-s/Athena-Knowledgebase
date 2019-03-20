@@ -36,7 +36,7 @@ public class CrawlerToolset {
 	}
 
 	/**
-	 * A method which constructs an Array holding the beginning and end of a conference or a session
+	 * A method which constructs an array holding the beginning and end of a conference or an event
 	 * @param dateString Date (day - day + months + year) in String format e.g. "15-20 July 2018")
 	 * @return an Array of LocalDates with two entries, the beginning and end of the date range or an empty array if
 	 * dateString was in the wrong format

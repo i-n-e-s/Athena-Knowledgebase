@@ -166,7 +166,7 @@ public class Workshop extends Model implements ScheduleEntry {
 	}
 
 	/**
-	 * Adds a session to this workshop's event list
+	 * Adds an event to this workshop's event list
 	 * @param e The event to add
 	 */
 	public void addEvent(Event e) {

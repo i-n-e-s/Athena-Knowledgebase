@@ -18,14 +18,17 @@ import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.JPATestdataba
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Event;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.EventCategory;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.EventPart;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Paper;
 
 public class EventJPAAccessTest {
 
 	static JPATestdatabase testDB;
 	static EventJPAAccess uut;
 	static Event testValue;
-	static EventPart testSP1;
-	static EventPart testSP2;
+	static EventPart testEP1;
+	static EventPart testEP2;
+	static Paper testP1;
+	static Paper testP2;
 
 	static ConfigurableApplicationContext ctx;
 
@@ -52,16 +55,21 @@ public class EventJPAAccessTest {
 		testValue = new Event();
 		testValue.setTitle("TestEventTitle");
 		testValue.setCategory(EventCategory.BREAK);
-		testSP1 = new EventPart();
+		testEP1 = new EventPart();
 
-		testSP1.setTitle("TestTitle1");
-		testSP2 = new EventPart();
-		testSP2.setTitle("TestTitle2");
+		testEP1.setTitle("TestTitle1");
+		testEP2 = new EventPart();
+		testEP2.setTitle("TestTitle2");
 
-		testValue.addEventPart(testSP1);
-		testValue.addEventPart(testSP2);
-		testValue.addPaperTitle("PaperTitle1");
-		testValue.addPaperTitle("PaperTitle2");
+		testP1 = new Paper();
+		testP1.setTitle("TestPaperTitle1");
+		testP2 = new Paper();
+		testP2.setTitle("TestPaperTitle2");
+
+		testValue.addEventPart(testEP1);
+		testValue.addEventPart(testEP2);
+		testValue.addPaper(testP1);
+		testValue.addPaper(testP2);
 	}
 
 	@Test
@@ -78,10 +86,10 @@ public class EventJPAAccessTest {
 	@Test
 	public void getTest() {
 		List<Event> resultList = uut.get();
-		assertTrue(testDB.getSessionQuantity() == resultList.size());
+		assertTrue(testDB.getEventQuantity() == resultList.size());
 		List<String> resultTitles = new ArrayList<String>();
 		resultList.stream().forEach((Event s) -> resultTitles.add(s.getTitle()));;
-		for (int i = 0; i < testDB.getSessionQuantity(); i++) {
+		for (int i = 0; i < testDB.getEventQuantity(); i++) {
 			assertTrue(resultTitles.contains("Title"+ i));
 		}
 	}
@@ -98,6 +106,6 @@ public class EventJPAAccessTest {
 	}
 
 	private List<Event> getByTitle(String title) {
-		return PersistenceManager.getEntityManager().createQuery(String.format("SELECT s FROM Session s WHERE s.title = '%s'",title), Event.class).getResultList();
+		return PersistenceManager.getEntityManager().createQuery(String.format("SELECT e FROM Event e WHERE e.title = '%s'",title), Event.class).getResultList();
 	}
 }

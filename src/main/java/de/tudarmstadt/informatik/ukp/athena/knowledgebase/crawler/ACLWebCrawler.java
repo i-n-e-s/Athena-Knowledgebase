@@ -376,19 +376,19 @@ class ACLWebCrawler extends AbstractCrawler {
 	/**
 	 * Parses ACL 2018's first days' schedule (seperate method because it contains a special case)
 	 * @param day The day element of the website
-	 * @param result The resulting arraylist with the complete sessions of the first day
+	 * @param result The resulting arraylist with the complete events of the first day
 	 * @return An ArrayList<ScheduleEntry> containing the first days' schedule
 	 */
 	private ArrayList<ScheduleEntry> parseFirstDay(Element day, ArrayList<ScheduleEntry> result) {
 		String[] monthDay = day.selectFirst(".day").text().split(":")[1].trim().split(" "); //the text has the form of "Sunday: July 15"
 		Elements tr = day.select("tr");
 
-		//looping through all table rows, each contains a session
+		//looping through all table rows, each contains an event
 		for(int i = 0; i < tr.size(); i++) {
 			Element el = tr.get(i);
-			Event session = new Event();
+			Event event = new Event();
 
-			addGeneralSessionInfo(el, session, monthDay);
+			addGeneralEventInfo(el, event, monthDay);
 
 			//special case
 			if(i + 1 < tr.size() && tr.get(i + 1).hasClass("poster-session-row")) {
@@ -396,15 +396,15 @@ class ACLWebCrawler extends AbstractCrawler {
 				Elements tutorials = row.select(".poster-name");
 
 				//the table row might contain several tutorials in the same timeframe, so loop through those
-				for(Element sessionEl : tutorials) {
-					EventPart sessionPart = new EventPart();
+				for(Element eventEl : tutorials) {
+					EventPart eventPart = new EventPart();
 
-					sessionPart.setTitle(sessionEl.text());
-					session.addEventPart(sessionPart);
+					eventPart.setTitle(eventEl.text());
+					event.addEventPart(eventPart);
 				}
 			}
 
-			result.add(session);
+			result.add(event);
 		}
 
 		return result;
@@ -413,39 +413,39 @@ class ACLWebCrawler extends AbstractCrawler {
 	/**
 	 * Parses ACL 2018's other days' schedule
 	 * @param day The day element of the website
-	 * @param result The resulting arraylist with the complete sessions of the given day
-	 * @return The resulting arraylist with the complete sessions of the given day
+	 * @param result The resulting arraylist with the complete events of the given day
+	 * @return The resulting arraylist with the complete events of the given day
 	 */
 	private ArrayList<ScheduleEntry> parseOtherDays(Element day, ArrayList<ScheduleEntry> result) {
 		String[] monthDay = day.selectFirst(".day").text().split(":")[1].trim().split(" "); //the text has the form of "Sunday: July 15"
 		Elements tr = day.select("tr");
 
-		//looping through all table rows, each contains a session
+		//looping through all table rows, each contains an event
 		for(int i = 0; i < tr.size(); i++) {
 			Element el = tr.get(i);
-			Event session = new Event();
+			Event event = new Event();
 
-			addGeneralSessionInfo(el, session, monthDay);
+			addGeneralEventInfo(el, event, monthDay);
 
-			if(session.getCategory() == EventCategory.PRESENTATION)
-				addOralPresentationInfo(tr.get(++i).select(".conc-session"), tr.get(++i).select(".session-location"), tr.get(++i).select(".session-details"), session);
-			else if(session.getCategory() == EventCategory.SESSION)
-				addPosterSessionInfo(tr.get(++i).select(".poster-sub-session"), session);
+			if(event.getCategory() == EventCategory.PRESENTATION)
+				addOralPresentationInfo(tr.get(++i).select(".conc-session"), tr.get(++i).select(".session-location"), tr.get(++i).select(".session-details"), event);
+			else if(event.getCategory() == EventCategory.SESSION)
+				addPosterSessionInfo(tr.get(++i).select(".poster-sub-session"), event);
 
-			result.add(session);
+			result.add(event);
 		}
 
 		return result;
 	}
 
 	/**
-	 * Adds general information about an session, such as name, timeframe, location etc.
-	 * @param el The session header element of the website
-	 * @param session The arraylist with the resulting session's information
-	 * @param monthDay The month (index 0) and day (index 1) where this session happens
+	 * Adds general information about an event, such as name, timeframe, location etc.
+	 * @param el The event header element of the website
+	 * @param event The arraylist with the resulting event's information
+	 * @param monthDay The month (index 0) and day (index 1) where this event happens
 	 */
-	private void addGeneralSessionInfo(Element el, Event session, String[] monthDay) {
-		//only try to extract the information when the table row is the header of an session and is not the more detailed description
+	private void addGeneralEventInfo(Element el, Event event, String[] monthDay) {
+		//only try to extract the information when the table row is the header of an event and is not the more detailed description
 		//the header is something like "09:00-10:00 		Welcome Session & Presidential Address 			PLENARY, MCEC"
 		if(el.id().startsWith("session")) {
 			//start extracting the data from the table row
@@ -453,7 +453,7 @@ class ACLWebCrawler extends AbstractCrawler {
 			String[] begin = time[0].split(":");
 			String[] end = time[1].split(":");
 			String title = el.select(".session-name").text();
-			//sometimes there is a suffix (after a ':'), use it as the session description
+			//sometimes there is a suffix (after a ':'), use it as the event description
 			//e.g. Oral Presentations [title]: Long Papers and TACL Papers) [suffix aka description]
 			String desc = el.select(".session-suffix").text();
 			Elements place = el.select(".session-location");
@@ -464,14 +464,14 @@ class ACLWebCrawler extends AbstractCrawler {
 				title = title.replace(desc, "");
 
 			//set the extracted data
-			session.setBegin(LocalDateTime.of(2018, CrawlerToolset.getMonthIndex(monthDay[0]), Integer.parseInt(monthDay[1]), Integer.parseInt(begin[0]), Integer.parseInt(begin[1])));
-			session.setEnd(LocalDateTime.of(2018, CrawlerToolset.getMonthIndex(monthDay[0]), Integer.parseInt(monthDay[1]), Integer.parseInt(end[0]), Integer.parseInt(end[1])));
-			session.setTitle(title);
-			session.setPlace(place.isEmpty() ? "?" : (place.get(0).text().isEmpty() ? "?" : place.get(0).text()));
-			session.setDescription(desc);
+			event.setBegin(LocalDateTime.of(2018, CrawlerToolset.getMonthIndex(monthDay[0]), Integer.parseInt(monthDay[1]), Integer.parseInt(begin[0]), Integer.parseInt(begin[1])));
+			event.setEnd(LocalDateTime.of(2018, CrawlerToolset.getMonthIndex(monthDay[0]), Integer.parseInt(monthDay[1]), Integer.parseInt(end[0]), Integer.parseInt(end[1])));
+			event.setTitle(title);
+			event.setPlace(place.isEmpty() ? "?" : (place.get(0).text().isEmpty() ? "?" : place.get(0).text()));
+			event.setDescription(desc);
 			title = title.toLowerCase(); //easier to work with this way
 
-			//decide which kind of category this session belongs to
+			//decide which kind of category this event belongs to
 			if(title.startsWith("tutorial"))
 				category = EventCategory.TUTORIAL;
 			else if(title.contains("welcome"))
@@ -493,54 +493,54 @@ class ACLWebCrawler extends AbstractCrawler {
 			else if(title.contains("award") || title.contains("achievement"))
 				category = EventCategory.CEREMONY;
 
-			session.setCategory(category);
+			event.setCategory(category);
 		}
 	}
 
 	/**
 	 * Adds all available information about an oral presentation section
-	 * @param sessionParts The elements containing session part information
-	 * @param rooms The elements containing room information per session part
-	 * @param presentations The elements containing the presentations per session part
-	 * @param session The arraylist with the resulting oral presentation's information
+	 * @param eventParts The elements containing event part information
+	 * @param rooms The elements containing room information per event part
+	 * @param presentations The elements containing the presentations per event part
+	 * @param event The arraylist with the resulting oral presentation's information
 	 */
-	private void addOralPresentationInfo(Elements sessionParts, Elements rooms, Elements presentations, Event session) {
+	private void addOralPresentationInfo(Elements eventParts, Elements rooms, Elements presentations, Event event) {
 		//looping through the different columns of the OP table
-		for(int i = 0; i < presentations.size(); i++) { //seems like session parts, rooms, and presentations all have the same size, always
-			Element sessEl = sessionParts.get(i);
-			String sessTitle = sessEl.selectFirst(".conc-session-name").text();
-			String sessPlace = rooms.get(i).text();
+		for(int i = 0; i < presentations.size(); i++) { //seems like event parts, rooms, and presentations all have the same size, always
+			Element evEl = eventParts.get(i);
+			String evTitle = evEl.selectFirst(".conc-session-name").text();
+			String evPlace = rooms.get(i).text();
 
 			//looping through the rows of the current column
 			for(Element subEl : presentations.get(i).select(".talk")) {
-				EventPart sessionPart = new EventPart();
+				EventPart eventPart = new EventPart();
 				String[] sessTime = subEl.selectFirst(".talk-time").text().split(":");
-				LocalDateTime sessStart = LocalDateTime.of(session.getBegin().toLocalDate(), LocalTime.of(Integer.parseInt(sessTime[0]), Integer.parseInt(sessTime[1])));
+				LocalDateTime sessStart = LocalDateTime.of(event.getBegin().toLocalDate(), LocalTime.of(Integer.parseInt(sessTime[0]), Integer.parseInt(sessTime[1])));
 				LocalDateTime sessEnd = sessStart.plusMinutes(25);
 				String sessPaperTitle = subEl.selectFirst(".talk-title").text();
 
-				sessionPart.setTitle(sessTitle);
+				eventPart.setTitle(evTitle);
 				session.addPaperTitle(sessPaperTitle);
-				sessionPart.setBegin(sessStart);
-				sessionPart.setEnd(sessEnd);
-				sessionPart.setPlace(sessPlace);
-				session.addEventPart(sessionPart);
+				eventPart.setBegin(sessStart);
+				eventPart.setEnd(sessEnd);
+				eventPart.setPlace(evPlace);
+				event.addEventPart(eventPart);
 			}
 		}
 	}
 
 	/**
 	 * Adds all available information about a poster session
-	 * @param sessionParts The elements containing the session part information
-	 * @param session The arraylist with the resulting poster session's information
+	 * @param eventParts The elements containing the event part information
+	 * @param event The arraylist with the resulting poster session's information
 	 */
-	private void addPosterSessionInfo(Elements sessionParts, Event session) {
+	private void addPosterSessionInfo(Elements eventParts, Event event) {
 		//looping through the poster sessions
-		for(Element sessEl : sessionParts) {
-			EventPart sessionPart = new EventPart();
-			String[] sessTitleDesc = sessEl.selectFirst(".poster-session-name").text().split(":");
-			String sessTitle = sessTitleDesc[0].trim();
-			String sessDesc = sessTitleDesc[1].trim();
+		for(Element sessEl : eventParts) {
+			EventPart eventPart = new EventPart();
+			String[] evTitleDesc = sessEl.selectFirst(".poster-session-name").text().split(":");
+			String evTitle = evTitleDesc[0].trim();
+			String evDesc = evTitleDesc[1].trim();
 
 			//looping through all papers that are part of this PS
 			for(Element subEl : sessEl.select(".poster-name")) {
@@ -549,12 +549,12 @@ class ACLWebCrawler extends AbstractCrawler {
 				session.addPaperTitle(paperTitle);
 			}
 
-			sessionPart.setTitle(sessTitle);
-			sessionPart.setDescription(sessDesc);
-			sessionPart.setBegin(session.getBegin());
-			sessionPart.setEnd(session.getEnd());
-			sessionPart.setPlace(session.getPlace());
-			session.addEventPart(sessionPart);
-		}
+			eventPart.setTitle(evTitle);
+			eventPart.setDescription(evDesc);
+			eventPart.setBegin(event.getBegin());
+			eventPart.setEnd(event.getEnd());
+			eventPart.setPlace(event.getPlace());
+			event.addEventPart(eventPart);
+	}
 	}
 }

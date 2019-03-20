@@ -15,19 +15,19 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.jpa.ConferenceJPAAccess;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.jpa.EventJPAAccess;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.jpa.EventPartJPAAccess;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.jpa.InstitutionJPAAccess;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.jpa.PaperJPAAccess;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.jpa.PersistenceManager;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.jpa.PersonJPAAccess;
-import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.jpa.EventJPAAccess;
-import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.jpa.EventPartJPAAccess;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Conference;
-import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Institution;
-import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Paper;
-import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Person;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Event;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.EventCategory;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.EventPart;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Institution;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Paper;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Person;
 
 @SpringBootApplication
 public class JPATestdatabase {
@@ -167,13 +167,11 @@ public class JPATestdatabase {
 		}
 
 		for(int i = 0; i < events.length; i++) {
-			HashSet<String> paperTitles = new HashSet<String>();
-			HashSet<EventPart> sessionParts = new HashSet<EventPart>();
+			HashSet<Paper> papers = new HashSet<>();
+			HashSet<EventPart> eventParts = new HashSet<>();
 
-			paperTitles.add("PaperTitle" + i + "0");
-			paperTitles.add("PaperTitle" + i + "1");
-			paperTitles.add("PaperTitle" + i + "2");
-			sessionParts.add(this.eventParts[i]);
+			papers.add(this.papers[i]);
+			eventParts.add(this.eventParts[i]);
 			events[i] = new Event();
 			events[i].setBegin(LocalDateTime.of(1960 + i, (i%12)+1 , (i%28)+1, i,i%12+1,i%28+1));
 			events[i].setEnd(events[i].getBegin().plusHours(1).plusMinutes(30));
@@ -181,8 +179,8 @@ public class JPATestdatabase {
 			events[i].setTitle("Title" + i);
 			events[i].setCategory(EventCategory.values()[i % (EventCategory.values().length - 1)]);
 			events[i].setDescription("Description" + i);
-			events[i].setPaperTitles(paperTitles);
-			events[i].setEventParts(sessionParts);
+			events[i].setPapers(papers);
+			events[i].setEventParts(eventParts);
 		}
 		logger.info("Done creating data");
 	}
@@ -325,39 +323,39 @@ public class JPATestdatabase {
 	}
 
 	/**
-	 * sessionPartQuantity is the number of SessionParts, which will be generated
+	 * eventPartQuantity is the number of EventParts, which will be generated
 	 *
-	 * @return The current sessionPartQuantity
+	 * @return The current eventPartQuantity
 	 */
-	public int getSessionPartQuantity() {
+	public int getEventPartQuantity() {
 		return eventPartQuantity;
 	}
 
 	/**
-	 * sessionPartQuantity is the number of SessionParts, which will be generated
+	 * eventPartQuantity is the number of EventParts, which will be generated
 	 *
-	 * @param sessionPartQuantity The desired sessionPartQuantity
+	 * @param eventPartQuantity The desired eventPartQuantity
 	 */
-	public void setSessionPartQuantity(int sessionPartQuantity) {
-		this.eventPartQuantity = sessionPartQuantity;
+	public void setEventPartQuantity(int eventPartQuantity) {
+		this.eventPartQuantity = eventPartQuantity;
 	}
 
 	/**
-	 * sessionQuantity is the number of Sessions, which will be generated
+	 * eventQuantity is the number of Events, which will be generated
 	 *
-	 * @return The current sessionQuantity
+	 * @return The current eventQuantity
 	 */
-	public int getSessionQuantity() {
+	public int getEventQuantity() {
 		return eventQuantity;
 	}
 
 	/**
-	 * sessionQuantity is the number of Sessions, which will be generated
+	 * eventQuantity is the number of Events, which will be generated
 	 *
-	 * @param sessionQuantity The desired sessionQuantity
+	 * @param eventQuantity The desired eventQuantity
 	 */
-	public void setSessionQuantity(int sessionQuantity) {
-		this.eventQuantity = sessionQuantity;
+	public void setEventQuantity(int eventQuantity) {
+		this.eventQuantity = eventQuantity;
 	}
 
 	/**

@@ -47,7 +47,7 @@ public class Event extends Model implements ScheduleEntry {
 	/*Host*/
 	//	@Column(name = "host")
 	//	private Person host;
-	/* Place where this session happens, if empty look in sessions */
+	/* Place where this event happens, if empty look in eventparts */
 	@Column(name = "place")
 	private String place;
 

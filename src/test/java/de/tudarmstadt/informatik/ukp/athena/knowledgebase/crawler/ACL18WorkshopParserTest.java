@@ -30,12 +30,12 @@ public class ACL18WorkshopParserTest {
 		};
 		LocalDate beginDate = LocalDate.of(2018, 7, 7);
 		LocalDate endDate = LocalDate.of(2018, 7, 8);
-		Event session = new Event();
+		Event event = new Event();
 
-		ACL18WorkshopParser.setSessionBeginEnd(input, beginDate, endDate, session);
-		assertEquals(beginDate, session.getBegin().toLocalDate());
-		assertEquals(endDate, session.getEnd().toLocalDate());
-		assertEquals(input[0], session.getBegin().toLocalTime());
-		assertEquals(input[1], session.getEnd().toLocalTime());
+		ACL18WorkshopParser.setEventBeginEnd(input, beginDate, endDate, event);
+		assertEquals(beginDate, event.getBegin().toLocalDate());
+		assertEquals(endDate, event.getEnd().toLocalDate());
+		assertEquals(input[0], event.getBegin().toLocalTime());
+		assertEquals(input[1], event.getEnd().toLocalTime());
 	}
 }

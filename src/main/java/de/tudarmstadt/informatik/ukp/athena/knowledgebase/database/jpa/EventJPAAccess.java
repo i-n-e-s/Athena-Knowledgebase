@@ -42,7 +42,7 @@ public class EventJPAAccess implements CommonAccess<Event> {
 	@Override
 	public List<Event> get() {
 		EntityManager entityManager = PersistenceManager.getEntityManager();
-		List<Event> result = entityManager.createQuery("FROM Session").getResultList();
+		List<Event> result = entityManager.createQuery("FROM Event").getResultList();
 		return result;
 	}
 }

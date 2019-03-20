@@ -64,10 +64,10 @@ public class EventPartJPAAccessTest {
 	@Test
 	public void getTest() {
 		List<EventPart> resultList = uut.get();
-		assertTrue(testDB.getSessionPartQuantity() == resultList.size());
+		assertTrue(testDB.getEventPartQuantity() == resultList.size());
 		List<String> resultTitles = new ArrayList<String>();
 		resultList.stream().forEach((EventPart s) -> resultTitles.add(s.getTitle()));;
-		for (int i = 0; i < testDB.getSessionPartQuantity(); i++) {
+		for (int i = 0; i < testDB.getEventPartQuantity(); i++) {
 			assertTrue(resultTitles.contains("Title"+ i));
 		}
 	}
@@ -84,6 +84,6 @@ public class EventPartJPAAccessTest {
 	}
 
 	private List<EventPart> getByTitle(String title) {
-		return PersistenceManager.getEntityManager().createQuery(String.format("SELECT s FROM SessionPart s WHERE s.title = '%s'",title), EventPart.class).getResultList();
+		return PersistenceManager.getEntityManager().createQuery(String.format("SELECT e FROM EventPart e WHERE e.title = '%s'",title), EventPart.class).getResultList();
 	}
 }

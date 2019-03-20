@@ -55,7 +55,7 @@ public class QueryBuilder {
 		for(RequestHierarchyNode hierarchyNode : tree.getHierarchy()) {
 			String normalEntityName = hierarchyNode.getEntity().getEntityName().getString();
 			String entityName = capitalizeFirstLetter(normalEntityName);
-			String entityVar = normalEntityName.equals("sessionpart") ? "sp" : normalEntityName.substring(0, 2);
+			String entityVar = normalEntityName.equals("eventpart") ? "ep" : normalEntityName.substring(0, 2);
 
 			sqlVars.put(":entityVar", "" + entityVar); //the last one will be in the output
 
@@ -74,7 +74,7 @@ public class QueryBuilder {
 		//now set the attributes
 		for(RequestHierarchyNode hierarchyNode : tree.getHierarchy()) {
 			RequestEntityNode entityNode = hierarchyNode.getEntity();
-			String entityVar = entityNode.getEntityName().getString().equals("sessionpart") ? "sp" : entityNode.getEntityName().getString().substring(0, 2);
+			String entityVar = entityNode.getEntityName().getString().equals("eventpart") ? "ep" : entityNode.getEntityName().getString().substring(0, 2);
 
 			//loop through the attributes (if any)
 			for(AttributeNode attr : entityNode.getAttributes()) {
