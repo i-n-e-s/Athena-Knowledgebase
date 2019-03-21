@@ -99,6 +99,7 @@ public class ParsedDataInserter {
 			logger.info("\"-scrape-acl18-info\" argument was not found, skipping ACL 2018 scraping");
 
 		logger.info("Done! (Took {})", LocalTime.ofNanoOfDay(System.nanoTime() - then));
+		parsedDataInserter.acl18WebParser.close();
 	}
 
 	/**
@@ -126,6 +127,7 @@ public class ParsedDataInserter {
 
 	/**
 	 * Stores the acl2018 conference including the schedule into the database
+	 * Since Sessions contain Papers, this should be run after having executed aclStorePapersAndAuthors()
 	 */
 	private void acl2018StoreConferenceInformation() {
 		CommonAccess<Conference> conferenceCommonAccess = new ConferenceJPAAccess();

@@ -30,7 +30,9 @@ public class RequestHierarchyNode extends BaseNode {
 
 	@Override
 	public String toString() {
-		return "<" + tokenIndex +">/" + entity.toString();
+		if(entity == null)
+			return "<" + tokenIndex +">/ NULL_ENTITY";
+		else return "<" + tokenIndex +">/" + entity.toString();
 	}
 
 	@Override

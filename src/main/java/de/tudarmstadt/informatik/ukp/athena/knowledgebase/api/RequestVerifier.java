@@ -98,6 +98,10 @@ public class RequestVerifier {
 		//loop through the joins to get to the attributes
 		for(RequestHierarchyNode hierarchyEntry : tree.getHierarchy()) {
 			RequestEntityNode entity = hierarchyEntry.getEntity();
+
+			if(entity == null)
+				throw new VerificationFailedException("Entity at index " + hierarchyEntry.tokenIndex + " is null! Perhaps your request ends in a slash (it shouldn't)?");
+
 			String entityName = entity.getEntityName().getString();
 
 			//checking if the entity exists

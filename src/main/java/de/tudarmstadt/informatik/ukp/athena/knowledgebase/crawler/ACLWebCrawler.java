@@ -5,7 +5,9 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -19,12 +21,12 @@ import org.jsoup.select.Elements;
 
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.JsoupHelper;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Conference;
-import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Paper;
-import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Person;
-import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.ScheduleEntry;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Event;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.EventCategory;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.EventPart;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Paper;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Person;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.ScheduleEntry;
 
 /**
  * A class, which holds the capability to return a List of all authors, which
@@ -39,6 +41,7 @@ class ACLWebCrawler extends AbstractCrawler {
 	private String startURLPaper;
 	private String schedulePage = "https://acl2018.org/programme/schedule/";
 	private String aboutPage = "https://acl2018.org/";
+	private Map<String,Paper> papers = new HashMap<>(); //title, corresponding paper
 
 	/**
 	 * Only parses in the given year range. If only one year is needed, use the same input for both
@@ -249,6 +252,7 @@ class ACLWebCrawler extends AbstractCrawler {
 						author.addPaper(paper);
 					}
 					paperList.add(paper);
+					papers.put(paper.getTitle(), paper);
 				}
 			}
 		}
@@ -520,7 +524,7 @@ class ACLWebCrawler extends AbstractCrawler {
 				String sessPaperTitle = subEl.selectFirst(".talk-title").text();
 
 				eventPart.setTitle(evTitle);
-				session.addPaperTitle(sessPaperTitle);
+				event.addPaper(papers.get(sessPaperTitle));
 				eventPart.setBegin(sessStart);
 				eventPart.setEnd(sessEnd);
 				eventPart.setPlace(evPlace);
@@ -546,7 +550,7 @@ class ACLWebCrawler extends AbstractCrawler {
 			for(Element subEl : sessEl.select(".poster-name")) {
 				String paperTitle = subEl.select("a").get(1).text().trim(); //let's hope it's always the second :D
 
-				session.addPaperTitle(paperTitle);
+				event.addPaper(papers.get(paperTitle));
 			}
 
 			eventPart.setTitle(evTitle);
@@ -555,6 +559,11 @@ class ACLWebCrawler extends AbstractCrawler {
 			eventPart.setEnd(event.getEnd());
 			eventPart.setPlace(event.getPlace());
 			event.addEventPart(eventPart);
+		}
 	}
+
+	@Override
+	public void close() {
+		papers.clear();
 	}
 }

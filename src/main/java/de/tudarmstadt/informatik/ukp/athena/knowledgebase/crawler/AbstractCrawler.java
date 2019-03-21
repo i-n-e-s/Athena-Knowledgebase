@@ -55,4 +55,9 @@ abstract class AbstractCrawler {
 	 * @throws IOException if Jsoup.connect fails
 	 */
 	public abstract ArrayList<ScheduleEntry> getSchedule() throws IOException;
+
+	/**
+	 * Can be used to remove any unneeded data after the crawler is done
+	 */
+	public abstract void close();
 }
