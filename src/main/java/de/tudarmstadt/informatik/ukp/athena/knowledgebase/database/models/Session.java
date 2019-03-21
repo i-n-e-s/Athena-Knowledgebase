@@ -6,7 +6,6 @@ import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
-import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -52,9 +51,14 @@ public class Session extends Model implements ScheduleEntry {
 	private String place;
 
 	/* Associated papers */
-	@Column(name = "paperTitles")
-	@ElementCollection(fetch = FetchType.EAGER) //similar to @JoinTable, but for model -> datatype relations instead of model -> model
-	private Set<String> paperTitles = new HashSet<>();
+	@Hierarchy(entityName="paper")
+	@OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER)
+	@JoinTable(
+			name = "session_papers",
+			joinColumns = { @JoinColumn(name = "sessionID") },
+			inverseJoinColumns = { @JoinColumn(name = "paperID") }
+			)
+	private Set<Paper> papers = new HashSet<>();
 
 	/* Papers, if any */
 	//	@Column(name = "papers")
@@ -198,27 +202,27 @@ public class Session extends Model implements ScheduleEntry {
 	}
 
 	/**
-	 * Gets this session's paper's titles (if any)
-	 * @return This session's paper's titles
+	 * Gets this session's papers (if any)
+	 * @return This session's papers
 	 */
-	public Set<String> getPaperTitles() {
-		return paperTitles;
+	public Set<Paper> getPapers() {
+		return papers;
 	}
 
 	/**
-	 * Sets this session's paper's titles (if any)
-	 * @param paperTitles This session's new paper's titles
+	 * Sets this session's papers (if any)
+	 * @param papers This session's new papers
 	 */
-	public void setPaperTitles(Set<String> paperTitles) {
-		this.paperTitles = paperTitles;
+	public void setPapers(Set<Paper> papers) {
+		this.papers = papers;
 	}
 
 	/**
-	 * Adds a paper title to this session's paper's titles list
-	 * @param s The paper title to add
+	 * Adds a paper to this session's paper list
+	 * @param p The paper to add
 	 */
-	public void addPaperTitle(String s) {
-		paperTitles.add(s);
+	public void addPaper(Paper p) {
+		papers.add(p);
 	}
 
 	/**

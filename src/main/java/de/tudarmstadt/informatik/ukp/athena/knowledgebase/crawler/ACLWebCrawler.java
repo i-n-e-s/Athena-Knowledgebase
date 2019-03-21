@@ -5,7 +5,9 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -39,6 +41,7 @@ class ACLWebCrawler extends AbstractCrawler {
 	private String startURLPaper;
 	private String schedulePage = "https://acl2018.org/programme/schedule/";
 	private String aboutPage = "https://acl2018.org/";
+	private Map<String,Paper> papers = new HashMap<>(); //title, corresponding paper
 
 	/**
 	 * Only parses in the given year range. If only one year is needed, use the same input for both
@@ -249,6 +252,7 @@ class ACLWebCrawler extends AbstractCrawler {
 						author.addPaper(paper);
 					}
 					paperList.add(paper);
+					papers.put(paper.getTitle(), paper);
 				}
 			}
 		}
@@ -520,7 +524,7 @@ class ACLWebCrawler extends AbstractCrawler {
 				String sessPaperTitle = subEl.selectFirst(".talk-title").text();
 
 				sessionPart.setTitle(sessTitle);
-				session.addPaperTitle(sessPaperTitle);
+				session.addPaper(papers.get(sessPaperTitle));
 				sessionPart.setBegin(sessStart);
 				sessionPart.setEnd(sessEnd);
 				sessionPart.setPlace(sessPlace);
@@ -546,7 +550,7 @@ class ACLWebCrawler extends AbstractCrawler {
 			for(Element subEl : sessEl.select(".poster-name")) {
 				String paperTitle = subEl.select("a").get(1).text().trim(); //let's hope it's always the second :D
 
-				session.addPaperTitle(paperTitle);
+				session.addPaper(papers.get(paperTitle));
 			}
 
 			sessionPart.setTitle(sessTitle);
@@ -556,5 +560,10 @@ class ACLWebCrawler extends AbstractCrawler {
 			sessionPart.setPlace(session.getPlace());
 			session.addSessionPart(sessionPart);
 		}
+	}
+
+	@Override
+	public void close() {
+		papers.clear();
 	}
 }
