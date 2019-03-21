@@ -127,6 +127,7 @@ public class ParsedDataInserter {
 
 	/**
 	 * Stores the acl2018 conference including the schedule into the database
+	 * Since Sessions contain Papers, this should be run after having executed aclStorePapersAndAuthors()
 	 */
 	private void acl2018StoreConferenceInformation() {
 		CommonAccess<Conference> conferenceCommonAccess = new ConferenceJPAAccess();
