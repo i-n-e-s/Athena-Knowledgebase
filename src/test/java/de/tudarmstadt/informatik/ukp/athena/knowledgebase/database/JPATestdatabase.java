@@ -167,12 +167,10 @@ public class JPATestdatabase {
 		}
 
 		for(int i = 0; i < sessions.length; i++) {
-			HashSet<String> paperTitles = new HashSet<String>();
+			HashSet<Paper> papers = new HashSet<>();
 			HashSet<SessionPart> sessionParts = new HashSet<SessionPart>();
 
-			paperTitles.add("PaperTitle" + i + "0");
-			paperTitles.add("PaperTitle" + i + "1");
-			paperTitles.add("PaperTitle" + i + "2");
+			papers.add(this.papers[i]);
 			sessionParts.add(this.sessionParts[i]);
 			sessions[i] = new Session();
 			sessions[i].setBegin(LocalDateTime.of(1960 + i, (i%12)+1 , (i%28)+1, i,i%12+1,i%28+1));
@@ -181,7 +179,7 @@ public class JPATestdatabase {
 			sessions[i].setTitle("Title" + i);
 			sessions[i].setCategory(SessionCategory.values()[i % (SessionCategory.values().length - 1)]);
 			sessions[i].setDescription("Description" + i);
-			sessions[i].setPaperTitles(paperTitles);
+			sessions[i].setPapers(papers);
 			sessions[i].setSessionParts(sessionParts);
 		}
 		logger.info("Done creating data");
