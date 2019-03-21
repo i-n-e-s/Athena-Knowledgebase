@@ -195,7 +195,6 @@ public class Session extends Model implements ScheduleEntry {
 
 	/**
 	 * Sets this session's category
-	 * @return This session's new category
 	 */
 	public void setCategory(SessionCategory category) {
 		this.category = category;
