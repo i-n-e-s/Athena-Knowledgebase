@@ -1,16 +1,19 @@
 package de.tudarmstadt.informatik.ukp.athena.knowledgebase.models;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
 import java.time.LocalDate;
 
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.jpa.PersistenceManager;
 import org.junit.Test;
 
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Conference;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Model;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Paper;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Person;
+
+import javax.persistence.EntityManager;
+import javax.swing.text.html.parser.Entity;
+
+import static org.junit.Assert.*;
 
 @SuppressWarnings("javadoc")
 public class ModelsTest{
@@ -174,5 +177,16 @@ public class ModelsTest{
 		uut = new Person();
 		Paper paper1 = new Paper();
 		assertFalse(uut.equalsNullAsWildcard(paper1));
+	}
+
+	@Test
+	public void personFindOrCreateTest() {
+		EntityManager entityManager = PersistenceManager.getEntityManager();
+		entityManager.getTransaction().begin();
+		Person query = new Person();
+		query.setFullName("Author 5");
+		assertEquals("0", String.valueOf(query.getPersonID()));
+		Person uut = Person.findOrCreate(query);
+		assertEquals("Prefix" + (5%2), String.valueOf(uut.getPrefix()));
 	}
 }

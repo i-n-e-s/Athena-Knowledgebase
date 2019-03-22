@@ -428,7 +428,7 @@ public class S2APIFunctions {
         generalSearch.safeRun();
 
         //2. Parse answer
-        JSONObject response;
+        JSONObject response = null;
         try {
             response = generalSearch.getParsedJSONResponse();
         } catch (NotAvailableException e) {
