@@ -338,13 +338,28 @@ public class S2APIFunctions {
             } catch (JSONException e) {
             }
         }
+
+        //releaseDate
+        if (overwrite || dest.getReleaseDate() == null) {
+            try {
+                String releaseYearString = paperJSON.getJSONObject("year").getString("text");
+                try {
+                    int releaseYear = Integer.parseInt(releaseYearString);
+                    if (releaseYear > 1000 && releaseYear < 2100) {
+                        dest.setReleaseDate(LocalDate.of(releaseYear, 1, 1));
+                    }
+                } catch (NumberFormatException e) {
+                }
+            } catch (JSONException e) {
+            }
+        }
+
         //authors
         if (overwrite) {
-            dest.setAuthors(new HashSet<>());
-        }    //If overwrite is set, reset the authors
+            dest.setAuthors(new HashSet<>());   //If overwrite is set, reset the authors
+        }
 
-
-        //Fetch S2ID for all currently connected Authors to minimize duplicates
+        //1. Fetch S2ID for all currently connected Authors to minimize duplicates
         for( Person a : dest.getAuthors() ) {
             if( a.getSemanticScholarID() != null && a.getSemanticScholarID() != "") { continue; }   //Skip retrieving already known S2IDs
             try { a.setSemanticScholarID(getAuthorsS2ID(a)); }
@@ -388,22 +403,8 @@ public class S2APIFunctions {
 
             Model.connectAuthorPaper(authorObjToBeAdded, dest);
         }
-        //releaseDate
-        if (overwrite || dest.getReleaseDate() == null) {
-            try {
-                String releaseYearString = paperJSON.getJSONObject("year").getString("text");
-                try {
-                    int releaseYear = Integer.parseInt(releaseYearString);
-                    if (releaseYear > 1000 && releaseYear < 2100) {
-                        dest.setReleaseDate(LocalDate.of(releaseYear, 1, 1));
-                    }
-                } catch (NumberFormatException e) {
-                }
-            } catch (JSONException e) {
-            }
-        }
-    }
 
+    }
 
     /**
      * Performs a general Search of the papers Name and adds all found Information to the paper Object
@@ -411,7 +412,7 @@ public class S2APIFunctions {
      * Information are added in-place, so the given Object is altered
      * Only unset attributes will be overwritten
      * <p>
-     * TODO Search for s2Id of paper if known
+     * Optional Search for s2Id of paper if known
      * TODO releaseDate will be set to 1.1. of release Year, SemanticScholar doesn't tell exact date
      *
      * @param paper     The paper to be looked up
@@ -431,7 +432,7 @@ public class S2APIFunctions {
         try {
             response = generalSearch.getParsedJSONResponse();
         } catch (NotAvailableException e) {
-            return;
+            e.printStackTrace();
         }   //Never thrown, because called after the request
 
         //3. If multiple results match the name, choose most relevant one

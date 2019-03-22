@@ -258,6 +258,10 @@ public class Person extends Model {
 		return ret;
 	}
 
+	/**
+	 * Returns the Top 5 of Authors, that were influenced by this Author
+	 * @return The Top 5 of Authors that were influenced by this Author as an ArrayList
+	 */
 	public ArrayList<Person> getTop5influencedBy() {
 		ArrayList<Person> ret = new ArrayList<Person>();
 		if(this.top1influencedBy != null) { ret.add(this.top1influencedBy); }
@@ -310,6 +314,11 @@ public class Person extends Model {
 	}
 
 
+	/**
+	 * Sets the top 5 authors that were influenced by this author the most
+	 *
+	 * @return true if the new list was set
+	 */
 	public ArrayList<Person> getTop5influenced() {
 		ArrayList<Person> ret = new ArrayList<Person>();
 		if(this.top1influenced != null) { ret.add(this.top1influenced); }
