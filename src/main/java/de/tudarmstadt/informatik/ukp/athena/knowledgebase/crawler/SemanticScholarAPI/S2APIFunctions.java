@@ -240,9 +240,6 @@ public class S2APIFunctions {
             JSONArray influenced = AuthorSearchResponse.getJSONObject("author").getJSONObject("statistics").getJSONObject("influence").getJSONArray("influenced");
             author.setTop5influenced( parseS2AuthorSearchInfluenceJSONArrayToAuthorArrayList(influenced, true));
         }
-        for ( Person a : author.getTop5influenced() ) {
-            logger.info("Influenced: " + (a.getSemanticScholarID() == null ? "null" : a.getSemanticScholarID()) + " " + a.getFullName());
-        }
 
         //4 Set Top 5 authors with highest influence on this author
         if ( author.getTop5influencedBy() == null || author.getTop5influencedBy().size() == 0 || overwrite ) {
@@ -254,7 +251,7 @@ public class S2APIFunctions {
     /**
      * Helping method called in completeAuthorInformationByAuthorSearch
      * Gets a list of either influenced or influencing Authors to this one
-     * as JSONArray and returns an ArrayList of Author Objects
+     * as JSONArray and returns an ArrayList of Person Objects
      *
      * @param influenceJSON The JSON object to be parsed
      * @param overwrite true if attributes should be overwritten
