@@ -290,6 +290,9 @@ public class S2APIFunctions {
      * Parses JSON paper-objects from SemanticScholars Internal API and
      * adds information inplace to the given paper object
      *
+     * This function is longer than the target maximum length defined in the style convention,
+     * due to its nature as a parsing function. Splitting it up further, would decrease the readability
+     *
      * @param paperJSON The JSON Object to be parsed
      * @param overwrite true if existing data should be overwritten
      * @param dest      The Paper object to add the information to

@@ -188,5 +188,20 @@ public class ModelsTest{
 		assertEquals("0", String.valueOf(query.getPersonID()));
 		Person uut = Person.findOrCreate(query);
 		assertEquals("Prefix" + (5%2), String.valueOf(uut.getPrefix()));
+		entityManager.getTransaction().commit();
+		assertEquals("0", String.valueOf(query.getPersonID()));
+		assertEquals("Prefix" + (5%2), String.valueOf(uut.getPrefix()));
+
+	}
+
+	@Test
+	public void paperFindOrCreateTest() {
+		EntityManager entityManager = PersistenceManager.getEntityManager();
+		entityManager.getTransaction().begin();
+		Person query = new Person();
+		query.setFullName("Author 5");
+		assertEquals("0", String.valueOf(query.getPersonID()));
+		Person uut = Person.findOrCreate(query);
+		assertEquals("Prefix" + (5%2), String.valueOf(uut.getPrefix()));
 	}
 }
