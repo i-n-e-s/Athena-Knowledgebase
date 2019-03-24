@@ -27,7 +27,7 @@ public class WorkshopJPAAccess implements CommonAccess<Workshop> {
 		entityManager.getTransaction().begin();
 		try {
 			entityManager.persist(data);
-		}catch(EntityExistsException e) {
+		}catch(EntityExistsException e) {  //branch not tested because exception shouldn't be thrown again just so junit can test for it
 			logger.warn("{} already exists in the database. Maybe try update", data.getID());
 		}
 		entityManager.getTransaction().commit();

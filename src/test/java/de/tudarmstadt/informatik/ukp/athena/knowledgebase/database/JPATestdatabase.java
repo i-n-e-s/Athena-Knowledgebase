@@ -21,6 +21,7 @@ import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.jpa.Persisten
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.jpa.PersonJPAAccess;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.jpa.SessionJPAAccess;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.jpa.SessionPartJPAAccess;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.jpa.WorkshopJPAAccess;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Conference;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Institution;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Paper;
@@ -28,6 +29,7 @@ import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Person
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Session;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.SessionCategory;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.SessionPart;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Workshop;
 
 @SpringBootApplication
 public class JPATestdatabase {
@@ -38,6 +40,7 @@ public class JPATestdatabase {
 	private int paperQuantity;
 	private int sessionPartQuantity;
 	private int sessionQuantity;
+	private int workshopQuantity;
 
 	Conference conferences[];
 	Institution institutions[];
@@ -45,6 +48,7 @@ public class JPATestdatabase {
 	Paper papers[];
 	SessionPart sessionParts[];
 	Session sessions[];
+	Workshop workshops[];
 
 	public JPATestdatabase() {
 		setDefaultParameters();
@@ -71,6 +75,7 @@ public class JPATestdatabase {
 		paperQuantity = 50;
 		sessionPartQuantity = 20;
 		sessionQuantity = sessionPartQuantity;
+		workshopQuantity = sessionQuantity;
 	}
 
 	/**
@@ -117,6 +122,7 @@ public class JPATestdatabase {
 		papers = new Paper[paperQuantity];
 		sessionParts = new SessionPart[sessionPartQuantity];
 		sessions = new Session[sessionQuantity];
+		workshops = new Workshop[workshopQuantity];
 
 		for(int i = 0; i< conferences.length;i++) {
 			conferences[i] = new Conference();
@@ -176,11 +182,24 @@ public class JPATestdatabase {
 			sessions[i].setBegin(LocalDateTime.of(1960 + i, (i%12)+1 , (i%28)+1, i,i%12+1,i%28+1));
 			sessions[i].setEnd(sessions[i].getBegin().plusHours(1).plusMinutes(30));
 			sessions[i].setPlace("Place" + i);
-			sessions[i].setTitle("Title" + i);
 			sessions[i].setCategory(SessionCategory.values()[i % (SessionCategory.values().length - 1)]);
+			sessions[i].setTitle("Title" + i);
 			sessions[i].setDescription("Description" + i);
 			sessions[i].setPapers(papers);
 			sessions[i].setSessionParts(sessionParts);
+		}
+
+		for(int i = 0; i < workshops.length; i++) {
+			HashSet<Session> sessions = new HashSet<Session>();
+
+			sessions.add(this.sessions[i]);
+			workshops[i] = new Workshop();
+			workshops[i].setAbbreviation("Abbr" + i);
+			workshops[i].setBegin(LocalDateTime.of(1960 + i, (i%12)+1 , (i%28)+1, i,i%12+1,i%28+1));
+			workshops[i].setEnd(workshops[i].getBegin().plusHours(6));
+			workshops[i].setPlace("Place" + i);
+			workshops[i].setSessions(sessions);
+			workshops[i].setTitle("Title" + i);
 		}
 		logger.info("Done creating data");
 	}
@@ -195,6 +214,7 @@ public class JPATestdatabase {
 		PersonJPAAccess pejpaa = new PersonJPAAccess();
 		SessionPartJPAAccess sesspjpaa = new SessionPartJPAAccess();
 		SessionJPAAccess sessjpaa = new SessionJPAAccess();
+		WorkshopJPAAccess wjpaa = new WorkshopJPAAccess();
 		logger.info("Start inserting Data");
 
 		for (Conference c : conferences) cjpaa.add(c);
@@ -203,6 +223,7 @@ public class JPATestdatabase {
 		for (Paper p: papers)pajpaa.add(p);
 		for (SessionPart sp: sessionParts)sesspjpaa.add(sp);
 		for (Session s: sessions)sessjpaa.add(s);
+		for (Workshop w: workshops)wjpaa.add(w);
 		logger.info("Done inserting data");
 	}
 	/**
@@ -356,6 +377,24 @@ public class JPATestdatabase {
 	 */
 	public void setSessionQuantity(int sessionQuantity) {
 		this.sessionQuantity = sessionQuantity;
+	}
+
+	/**
+	 * workshopQuantity is the number of Workshops, which will be generated
+	 *
+	 * @return The current workshopQuantity
+	 */
+	public int getWorkshopQuantity() {
+		return workshopQuantity;
+	}
+
+	/**
+	 * workshopQuantity is the number of Workshops, which will be generated
+	 *
+	 * @param workshopQuantity The desired workshopQuantity
+	 */
+	public void setWorkshopQuantity(int workshopQuantity) {
+		this.workshopQuantity = workshopQuantity;
 	}
 
 	/**
