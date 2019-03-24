@@ -227,7 +227,7 @@ class ACLWebCrawler extends AbstractCrawler {
 					String paperTitle = splitRawTitle[1];
 					String anthology = splitRawTitle[0].replace("[", "").replace("]", "");
 
-					Paper paper = Paper.findOrCreate(null, paperTitle);
+					Paper paper = new Paper();
 					paper.setTitle(paperTitle);
 					paper.setAnthology(anthology);
 					paper.setRemoteLink("http://aclweb.org/anthology/" + anthology); //wow that was easy
