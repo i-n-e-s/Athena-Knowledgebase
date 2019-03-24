@@ -26,6 +26,7 @@ public abstract class SemanticScholarAPIrequest {
     public static final String UserAgentString = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) snap Chromium/70.0.3538.110 Chrome/70.0.3538.110 Safari/537.36";
     public static final String SemanticScholarPublicAPIURL = "https://api.semanticscholar.org/";
     private static final short allowedConnectionFailuresInSafeRun = 5;
+    protected String HTTPResponseCode = null;
 
 
     /**
@@ -50,10 +51,13 @@ public abstract class SemanticScholarAPIrequest {
     public abstract String getRawResponse() throws NotAvailableException;
 
     /**
-     * Returns the HTTP-status-code of the response
-     * @return The HTTP-status-code of the response
+     * Returns the HTTP Status Code of the request
+     *
+     * @return The HTTP Status Code of the request
      */
-    public abstract String getHTTPResponseCode();
+    public String getHTTPResponseCode() {
+        return HTTPResponseCode;
+    }
 
     /**
      * Returns the server's response as a parsed JSONObject

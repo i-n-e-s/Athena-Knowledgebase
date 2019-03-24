@@ -23,8 +23,6 @@ public class S2PaperSearch extends SemanticScholarAPIrequest {
     private boolean validDataIsReady = false;       //True if response is ready
 
     private String authorID = null;
-    private String HTTPResponseCode = null;
-
 
     /**
      * Sets the authorID of the selected Author
@@ -37,18 +35,6 @@ public class S2PaperSearch extends SemanticScholarAPIrequest {
         if( s2authorID != null ) { authorID = s2authorID; }
         else { authorID = ""; }
     }
-
-
-    /**
-     * Returns the HTTP Status Code of the request
-     *
-     * @return The HTTP Status Code of the request
-     */
-    @Override
-    public String getHTTPResponseCode() {
-        return HTTPResponseCode;
-    }
-
 
     /**
      * Returns the Response as the String we got from the Server

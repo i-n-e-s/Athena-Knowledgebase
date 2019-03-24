@@ -33,8 +33,6 @@ public class S2AuthorSearch extends SemanticScholarAPIrequest {
     private String rawResponse = null;              //Response as received from Server
     private boolean validDataIsReady = false;       //True if response is ready
 
-    private String HTTPResponseCode = null;
-
     /**
      * Sets the name of the Author to be looked up.
      * Has a lower priority than the S2AuthorID
@@ -199,16 +197,6 @@ public class S2AuthorSearch extends SemanticScholarAPIrequest {
         if (!this.validDataIsReady) { throw new NotAvailableException(); }
 
         return new JSONObject( rawResponse );
-    }
-
-    /**
-     * Returns the HTTP Status Code of the request
-     *
-     * @return The HTTP Status Code of the request
-     */
-    @Override
-    public String getHTTPResponseCode() {
-        return HTTPResponseCode;
     }
 
 

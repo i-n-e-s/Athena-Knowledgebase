@@ -25,8 +25,6 @@ public class S2GeneralSearch extends SemanticScholarAPIrequest {
     private boolean validDataIsReady = false;       //True if response is ready
 
     private String searchQuery = null;
-    private String HTTPResponseCode = null;
-
 
     /**
      * Sets the search query
@@ -36,16 +34,6 @@ public class S2GeneralSearch extends SemanticScholarAPIrequest {
     @Override
     public void setQuery(String query) {
         searchQuery = query;
-    }
-
-    /**
-     * Returns the HTTP Status Code of the request
-     *
-     * @return The HTTP Status Code of the request
-     */
-    @Override
-    public String getHTTPResponseCode() {
-        return HTTPResponseCode;
     }
 
     /**
