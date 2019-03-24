@@ -43,6 +43,9 @@ class ACLWebCrawler extends AbstractCrawler {
 	private String aboutPage = "https://acl2018.org/";
 	private Map<String,Paper> papers = new HashMap<>(); //title, corresponding paper
 
+	//If this is set true,
+	private boolean runWithDuplicateAvoidance = true;
+
 	/**
 	 * Only parses in the given year range. If only one year is needed, use the same input for both
 	 * @param beginYear The first year to get data from

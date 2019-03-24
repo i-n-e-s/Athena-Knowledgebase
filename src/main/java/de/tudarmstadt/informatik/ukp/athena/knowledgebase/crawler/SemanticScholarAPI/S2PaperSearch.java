@@ -34,7 +34,8 @@ public class S2PaperSearch extends SemanticScholarAPIrequest {
      */
     @Override
     public void setQuery(String s2authorID) {
-        authorID = s2authorID;
+        if( s2authorID != null ) { authorID = s2authorID; }
+        else { authorID = ""; }
     }
 
 
