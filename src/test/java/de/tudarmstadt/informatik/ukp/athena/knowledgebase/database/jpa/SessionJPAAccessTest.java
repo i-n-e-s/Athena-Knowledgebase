@@ -15,6 +15,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.JPATestdatabase;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Paper;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Session;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.SessionCategory;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.SessionPart;
@@ -27,6 +28,8 @@ public class SessionJPAAccessTest {
 	static Session testValue;
 	static SessionPart testSP1;
 	static SessionPart testSP2;
+	static Paper testP1;
+	static Paper testP2;
 
 	static ConfigurableApplicationContext ctx;
 
@@ -59,10 +62,15 @@ public class SessionJPAAccessTest {
 		testSP2 = new SessionPart();
 		testSP2.setTitle("TestTitle2");
 
+		testP1 = new Paper();
+		testP1.setTitle("TestPaperTitle1");
+		testP2 = new Paper();
+		testP2.setTitle("TestPaperTitle2");
+
 		testValue.addSessionPart(testSP1);
 		testValue.addSessionPart(testSP2);
-		testValue.addPaperTitle("PaperTitle1");
-		testValue.addPaperTitle("PaperTitle2");
+		testValue.addPaper(testP1);
+		testValue.addPaper(testP2);
 	}
 
 	@Test

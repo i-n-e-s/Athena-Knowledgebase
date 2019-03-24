@@ -14,7 +14,6 @@ import de.tudarmstadt.informatik.ukp.athena.knowledgebase.exception.Verification
 
 @RestController
 public class APIController {
-
 	/**
 	 * This method catches all requests made to the API that are not specified in a different request mapping.
 	 * If there are no questionmarks (?), request will contain the complete path (including all subpaths).
