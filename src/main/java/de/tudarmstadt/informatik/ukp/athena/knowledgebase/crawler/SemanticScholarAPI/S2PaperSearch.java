@@ -1,123 +1,124 @@
-package de.tudarmstadt.informatik.ukp.athena.knowledgebase.crawler.SemanticScholarAPI;
+package de.tudarmstadt.informatik.ukp.athena.knowledgebase.crawler.semanticscholarapi;
+
+import java.io.IOException;
+import java.net.URL;
+
+import javax.net.ssl.HttpsURLConnection;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import javax.net.ssl.HttpsURLConnection;
-import java.io.BufferedInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.net.URL;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.exception.NotAvailableException;
 
 /**
- * This class can perform a paper search on the SemanticScholar API
- * A paper search requires the SemanticScholars internal authorID of a selected author
+ * This class can perform a paper search on the Semantic Scholar API
+ * A paper search requires Semantic Scholar's internal authorID of a selected author
  * and returns a full list of all papers published by the author
  *
  * @author Philipp Emmer
  */
-public class S2PaperSearch extends SemanticScholarAPIrequest {
+public class S2PaperSearch extends SemanticScholarAPIRequest {
 
 
-    private String rawResponse = null;              //Response as received from Server
-    private boolean validDataIsReady = false;       //True if response is ready
+	private String rawResponse = null;              //Response as received from the server
+	private boolean validDataIsReady = false;       //True if response is ready
 
-    private String authorID = null;
-    private String HTTPResponseCode = null;
-
-
-    /**
-     * Sets the authorID of the selected Author
-     * The authorID can be found out by performing a general search on the Name
-     *
-     * @param s2authorID The SemanticScholar authorID of the selected author
-     */
-    @Override
-    public void setQuery(String s2authorID) {
-        if( s2authorID != null ) { authorID = s2authorID; }
-        else { authorID = ""; }
-    }
+	private String authorID = null;
+	private String httpResponseCode = null;
 
 
-    /**
-     * Returns the HTTP Status Code of the request
-     *
-     * @return The HTTP Status Code of the request
-     */
-    @Override
-    public String getHTTPResponseCode() {
-        return HTTPResponseCode;
-    }
+	/**
+	 * Sets the authorID of the selected author
+	 * The authorID can be found out by performing a general search on the name
+	 *
+	 * @param s2authorID The SemanticScholar authorID of the selected author
+	 */
+	@Override
+	public void setQuery(String s2authorID) {
+		if( s2authorID != null ) { authorID = s2authorID; }
+		else { authorID = ""; }
+	}
 
 
-    /**
-     * Returns the Response as the String we got from the Server
-     *
-     * @return Servers RESPONSE String
-     * @throws NotAvailableException if no valid response is available
-     */
-    @Override
-    public String getRawResponse() throws NotAvailableException {
-        if (this.validDataIsReady) {
-            return rawResponse;
-        } else {
-            throw new NotAvailableException();
-        }
-    }
-
-    /**
-     * Returns the Response as a parsed JSON
-     *
-     * @return Servers RESPONSE as an org.json.JSONObject
-     * @throws JSONException if Response could not be parsed as JSON
-     * @throws NotAvailableException if called before a Response as arrived
-     */
-    @Override
-    public JSONObject getParsedJSONResponse() throws JSONException, NotAvailableException {
-        if (!this.validDataIsReady) { throw new NotAvailableException(); }
-
-        return new JSONObject(rawResponse);
-    }
-
-    /**
-     * Establishes an HTTPS Connection to SemanticScholarAPI and POSTs a request
-     *
-     * @throws IOException when some HTTP stuff goes wrong
-     */
-    @Override
-    public void run() throws IOException {
+	/**
+	 * Returns the HTTP status code of the request
+	 *
+	 * @return The HTTP status code of the request
+	 */
+	@Override
+	public String getHTTPResponseCode() {
+		return httpResponseCode;
+	}
 
 
-        //Create Data Payload of GET request, containing Search parameters
-        String searchRequestURL = SemanticScholarPublicAPIURL + "v1" + "/author/" + authorID;
+	/**
+	 * Returns the response as the String we got from the server
+	 *
+	 * @return The server's RESPONSE String
+	 * @throws NotAvailableException if no valid response is available
+	 */
+	@Override
+	public String getRawResponse() throws NotAvailableException {
+		if (this.validDataIsReady) {
+			return rawResponse;
+		} else {
+			throw new NotAvailableException();
+		}
+	}
 
-        //Create Connection and set basic parameters
-        URL url = new URL(searchRequestURL);
-        HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
-        connection.setDoOutput(true);
-        connection.setInstanceFollowRedirects(false);
-        connection.setConnectTimeout(30 * 1000);        //30s
-        connection.setUseCaches(false);                 //Don't cache anything
+	/**
+	 * Returns the response as a parsed JSON
+	 *
+	 * @return The server's RESPONSE as a {@link org.json.JSONObject JSONObject}
+	 * @throws JSONException if the response could not be parsed as JSON
+	 * @throws NotAvailableException if called before a response has arrived
+	 */
+	@Override
+	public JSONObject getParsedJSONResponse() throws JSONException, NotAvailableException {
+		if (!this.validDataIsReady) { throw new NotAvailableException(); }
 
-        //Set Connection Headers
-        connection.setRequestMethod("GET");
-        connection.setRequestProperty("charset", "utf-8");
-        //connection.setRequestProperty("origin", "https://www.semanticscholar.org");
-        connection.setRequestProperty("accept-language", "de-DE,de;q=0.9,en-DE;q=0.8,en;q=0.7,en-US;q=0.6");
-        connection.setRequestProperty("Accept", "*/*");
-        connection.setRequestProperty("cache-control", "no-cache,no-store,must-revalidate,max-age=-1");
-        connection.setRequestProperty("content-type", "application/json");
-        //connection.setRequestProperty("authority", "www.semanticscholar.org");
-        //connection.setRequestProperty("dnt", "1");
-        connection.setRequestProperty("User-Agent", UserAgentString);
+		return new JSONObject(rawResponse);
+	}
 
-        //Convert received JSON to String
-        this.rawResponse = readResponseInputStreamToString(connection);
+	/**
+	 * Establishes an HTTPS connection to SemanticScholarAPI and POSTs a request
+	 *
+	 * @throws IOException when some HTTP stuff goes wrong
+	 */
+	@Override
+	public void run() throws IOException {
 
 
-        this.HTTPResponseCode = Integer.toString(connection.getResponseCode());
-        this.validDataIsReady = true;
-    }
+		//Create data payload of GET request, containing search parameters
+		String searchRequestURL = semanticScholarPublicAPIURL + "v1" + "/author/" + authorID;
+
+		//Create connection and set basic parameters
+		URL url = new URL(searchRequestURL);
+		HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
+		connection.setDoOutput(true);
+		connection.setInstanceFollowRedirects(false);
+		connection.setConnectTimeout(30 * 1000);        //30s
+		connection.setUseCaches(false);                 //Don't cache anything
+
+		//Set connection headers
+		connection.setRequestMethod("GET");
+		connection.setRequestProperty("charset", "utf-8");
+		//connection.setRequestProperty("origin", "https://www.semanticscholar.org");
+		connection.setRequestProperty("accept-language", "de-DE,de;q=0.9,en-DE;q=0.8,en;q=0.7,en-US;q=0.6");
+		connection.setRequestProperty("Accept", "*/*");
+		connection.setRequestProperty("cache-control", "no-cache,no-store,must-revalidate,max-age=-1");
+		connection.setRequestProperty("content-type", "application/json");
+		//connection.setRequestProperty("authority", "www.semanticscholar.org");
+		//connection.setRequestProperty("dnt", "1");
+		connection.setRequestProperty("User-Agent", userAgentString);
+
+		//Convert received JSON to String
+		this.rawResponse = readResponseInputStreamToString(connection);
+
+
+		this.httpResponseCode = Integer.toString(connection.getResponseCode());
+		this.validDataIsReady = true;
+	}
 
 
 }
