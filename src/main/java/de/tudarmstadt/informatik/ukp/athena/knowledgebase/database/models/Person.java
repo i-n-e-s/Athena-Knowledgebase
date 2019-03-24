@@ -405,4 +405,28 @@ public class Person extends Model {
 
 	}
 
+	/**
+	 * Looks for persons with defined title or SemanticScholarID and returns matching DB Entry
+	 * If no match was found, create and return new Person Object
+	 * @param s2id SemanticScholarID of searched person or null if unknown
+	 * @param fullName Name of searched person or null if unknown
+	 * @return matching DB entry or new Person
+	 */
+	public static Person findOrCreate(String s2id, String fullName) {
+		PersonJPAAccess filer = new PersonJPAAccess();
+		Person searchResult = null;
+		if ( s2id == null && fullName == null ) { return null; }
+		else if ( s2id != null && fullName != null ) {
+			Person query = new Person();
+			query.setFullName(fullName);
+			query.setSemanticScholarID(s2id);
+			query.setPrefix("QueryCreated");
+			return findOrCreate(query);
+		}
+		else if ( fullName == null ) { searchResult = filer.getBySemanticScholarID(s2id); }
+		else if ( s2id == null ) { searchResult = filer.getByFullName(fullName); }
+
+		return searchResult != null ? searchResult : new Person();
+	}
+
 }

@@ -314,6 +314,7 @@ public class Paper extends Model {
 		Paper tmpQuery = new Paper();
 		tmpQuery.setTitle(title);
 		tmpQuery.setSemanticScholarID(s2id);
+		tmpQuery.setTopic("queryCreated");
 		return findOrCreate(tmpQuery);
 	}
 

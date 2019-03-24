@@ -185,6 +185,7 @@ public class ModelsTest{
 		entityManager.getTransaction().begin();
 		Person query = new Person();
 		query.setFullName("Author 5");
+		query.setPrefix("queryCreated");
 		assertEquals("0", String.valueOf(query.getPersonID()));
 		Person uut = Person.findOrCreate(query);
 		assertEquals("Prefix" + (5%2), String.valueOf(uut.getPrefix()));
@@ -200,6 +201,7 @@ public class ModelsTest{
 		entityManager.getTransaction().begin();
 		Paper query = new Paper();
 		query.setTitle("Title5");
+		query.setTopic("queryCreated");
 		assertEquals("0", String.valueOf(query.getPaperID()));
 		Paper uut = Paper.findOrCreate(query);
 		assertEquals("Ant5", String.valueOf(uut.getAnthology()));

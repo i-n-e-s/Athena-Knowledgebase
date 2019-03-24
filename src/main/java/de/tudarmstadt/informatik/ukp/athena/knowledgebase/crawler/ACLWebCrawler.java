@@ -43,6 +43,10 @@ class ACLWebCrawler extends AbstractCrawler {
 	private String aboutPage = "https://acl2018.org/";
 	private Map<String,Paper> papers = new HashMap<>(); //title, corresponding paper
 
+	//If this is set true: Before any new Paper or Person is created, it is checked whether a Paper/Person
+	//with the same title/name already exists in the DB. If a match is found, reuse the Paper/Person from the DB
+	private boolean runWithDuplicateAvoidance = true;
+
 	/**
 	 * Only parses in the given year range. If only one year is needed, use the same input for both
 	 * @param beginYear The first year to get data from
@@ -121,7 +125,7 @@ class ACLWebCrawler extends AbstractCrawler {
 		for (Document doc : webpages) {
 			Elements authorListElements = doc.select("li");// authors are the only <li> Elements on the Page
 			for (Element elmnt : authorListElements) {
-				Person author = new Person();
+				Person author = runWithDuplicateAvoidance ? Person.findOrCreate(null, elmnt.child(0).ownText()) : new Person();
 
 				author.setFullName(elmnt.child(0).ownText());
 				authors.add(author);
@@ -157,7 +161,7 @@ class ACLWebCrawler extends AbstractCrawler {
 			Elements paperListElements = doc.select("h5.index_title");// papers are all <h5 class = "index_title">
 			for (Element elmnt : paperListElements) {
 				if (!elmnt.text().contains("VOLUME")) {// VOLUMES/Overview-Pdfs are also part of the search-result and removed here
-					Paper paper = new Paper();
+					Paper paper = runWithDuplicateAvoidance ? Paper.findOrCreate(null, elmnt.text()) : new Paper();
 
 					paper.setTitle(elmnt.text());
 					paperList.add(paper);
@@ -230,7 +234,7 @@ class ACLWebCrawler extends AbstractCrawler {
 					String paperTitle = splitRawTitle[1];
 					String anthology = splitRawTitle[0].replace("[", "").replace("]", "");
 
-					Paper paper = new Paper();
+					Paper paper = runWithDuplicateAvoidance ? Paper.findOrCreate(null, paperTitle) : new Paper();
 					paper.setTitle(paperTitle);
 					paper.setAnthology(anthology);
 					paper.setRemoteLink("http://aclweb.org/anthology/" + anthology); //wow that was easy
@@ -239,7 +243,7 @@ class ACLWebCrawler extends AbstractCrawler {
 					// find authors and add them to a list
 					Elements authorElements = elmnt.parent().parent().children().select("span").select("a");
 					for (Element authorEl : authorElements) {
-						Person author = new Person();
+						Person author = runWithDuplicateAvoidance ? Person.findOrCreate(null, authorEl.text()) : new Person();
 
 						// because acl2018 seems to not employ prefixes (e.g. Prof. Dr.), we do not need to scan them
 						// scanning them might make for a good user story
