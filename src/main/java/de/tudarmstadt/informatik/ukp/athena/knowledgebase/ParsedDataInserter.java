@@ -184,8 +184,6 @@ public class ParsedDataInserter {
 	 * This method runs through the DB and performs an authorSearch for every
 	 * Person in the DB. Then extends every entry with the new data
 	 *
-	 * TODO write changes to DB
-	 *
 	 * @author Philipp Emmer
 	 * @param n The first n authors will be enhanced with SemanticScholar Data
 	 */
@@ -198,26 +196,17 @@ public class ParsedDataInserter {
 		//Go through every Author in the db
 		long failedAuthors = 0;
 		long totalAuthors = 0;
-		long failedPapers = 0;
-		long totalPapers = 0;
 		for ( Person currPerson : authors ) {
 			if( totalAuthors++ == n ) { break; }
 
 			//1. Update information about Author
 			entityManager.getTransaction().begin();
-			boolean changesWereMade = false;
-			try { changesWereMade = S2APIFunctions.completeAuthorInformationByAuthorSearch(currPerson, false); }
+			try { S2APIFunctions.completeAuthorInformationByAuthorSearch(currPerson, false); }
 			catch (IOException e) {
 				failedAuthors++;
-				System.err.println("curr");
 				e.printStackTrace();
 			}
 			entityManager.getTransaction().commit();
-
-			//2. write changes to db
-			if ( changesWereMade ) {
-				System.out.println("Trying to update: "+currPerson.toString());
-			}
 		}
 		System.out.println("Failed: "+failedAuthors+"\nDone");
 
