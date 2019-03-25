@@ -108,7 +108,7 @@ public class ParsedDataInserter {
 			logger.info("\"-scrape-acl18-info\" argument was not found, skipping ACL 2018 scraping");
 
 		//This hardcodes the SemanticScholar completion for debugging
-		parsedDataInserter.completeAuthorsByS2(5);	//TODO remove
+		//		parsedDataInserter.completeAuthorsByS2(5);	//TODO remove
 
 		logger.info("Done! (Took {})", LocalTime.ofNanoOfDay(System.nanoTime() - then));
 		parsedDataInserter.acl18WebParser.close();
@@ -197,7 +197,7 @@ public class ParsedDataInserter {
 	 * person in the DB. It then extends every entry with the new data
 	 *
 	 * @author Philipp Emmer
-	 * @param n The first n authors will be enhanced with Semantic Scholar Data
+	 * @param n The first n authors will be enhanced with Semantic Scholar data
 	 */
 	private void completeAuthorsByS2(int n) {
 		PersonJPAAccess personfiler = new PersonJPAAccess();
