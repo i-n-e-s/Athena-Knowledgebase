@@ -277,7 +277,7 @@ public class Person extends Model {
 
 	/**
 	 * Adds an author this one was influenced by to this author, if he doesn't have 5 already
-	 * The Person added first is interpreted as being the person who has influenced this one the most
+	 * The person added first is interpreted as being the person who has influenced this one the most
 	 *
 	 * @param influencedBy The influencing author to add
 	 * @return true if the author was added, false otherwise
@@ -338,7 +338,7 @@ public class Person extends Model {
 
 	/**
 	 * Adds an author that was influenced by this one, if he doesn't have 5 already
-	 * The Person added first is interpreted as being the person who is influenced by this one the most
+	 * The person added first is interpreted as being the person who is influenced by this one the most
 	 *
 	 * @param influenced The influenced author to add
 	 * @return true if the author was added, false otherwhise

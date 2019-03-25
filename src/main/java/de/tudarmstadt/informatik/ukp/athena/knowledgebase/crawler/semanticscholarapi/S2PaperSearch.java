@@ -5,11 +5,6 @@ import java.net.URL;
 
 import javax.net.ssl.HttpsURLConnection;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import de.tudarmstadt.informatik.ukp.athena.knowledgebase.exception.NotAvailableException;
-
 /**
  * This class can perform a paper search on the Semantic Scholar API
  * A paper search requires Semantic Scholar's internal authorID of a selected author
@@ -19,14 +14,14 @@ import de.tudarmstadt.informatik.ukp.athena.knowledgebase.exception.NotAvailable
  */
 public class S2PaperSearch extends SemanticScholarAPIRequest {
 
-    private String authorID = null;
+	private String authorID = null;
 
 
 	/**
 	 * Sets the authorID of the selected author
 	 * The authorID can be found out by performing a general search on the name
 	 *
-	 * @param s2authorID The SemanticScholar authorID of the selected author
+	 * @param s2authorID The Semantic Scholar authorID of the selected author
 	 */
 	@Override
 	public void setQuery(String s2authorID) {
@@ -34,17 +29,17 @@ public class S2PaperSearch extends SemanticScholarAPIRequest {
 		else { authorID = ""; }
 	}
 
-    /**
-     * Establishes an HTTPS connection to semanticscholarapi and POSTs a request
-     *
-     * @throws IOException if the HTTP connection to the server fails
-     */
-    @Override
-    public void run() throws IOException {
+	/**
+	 * Establishes an HTTPS connection to Semantic Scholar's API and POSTs a request
+	 *
+	 * @throws IOException if the HTTP connection to the server fails
+	 */
+	@Override
+	public void run() throws IOException {
 
 
 		//Create data payload of GET request, containing search parameters
-		String searchRequestURL = SemanticScholarPublicAPIURL + "v1" + "/author/" + authorID;
+		String searchRequestURL = semanticScholarPublicApiUrl + "v1" + "/author/" + authorID;
 
 		//Create connection and set basic parameters
 		URL url = new URL(searchRequestURL);
@@ -64,13 +59,13 @@ public class S2PaperSearch extends SemanticScholarAPIRequest {
 		connection.setRequestProperty("content-type", "application/json");
 		//connection.setRequestProperty("authority", "www.semanticscholar.org");
 		//connection.setRequestProperty("dnt", "1");
-		connection.setRequestProperty("User-Agent", UserAgentString);
+		connection.setRequestProperty("User-Agent", userAgentString);
 
 		//Convert received JSON to String
 		this.rawResponse = readResponseInputStreamToString(connection);
 
 
-		this.HTTPResponseCode = Integer.toString(connection.getResponseCode());
+		this.httpResponseCode = Integer.toString(connection.getResponseCode());
 		this.validDataIsReady = true;
 	}
 

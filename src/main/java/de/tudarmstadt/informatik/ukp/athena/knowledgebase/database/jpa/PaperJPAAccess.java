@@ -112,7 +112,7 @@ public class PaperJPAAccess implements CommonAccess<Paper> {
 	 * @return DB entry of paper with matching S2ID, null if not found
 	 */
 	public Paper getBySemanticScholarID( String semanticScholarID ) {
-		//1. Try to find matching SemanticScholarID
+		//1. Try to find matching Semantic Scholar ID
 		if( semanticScholarID != null ) {
 			Paper query = new Paper();
 			query.setSemanticScholarID(semanticScholarID);

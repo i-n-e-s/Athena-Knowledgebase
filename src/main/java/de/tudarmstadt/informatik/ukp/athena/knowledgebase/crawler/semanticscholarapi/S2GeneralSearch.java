@@ -17,33 +17,33 @@ import javax.net.ssl.HttpsURLConnection;
 
 public class S2GeneralSearch extends SemanticScholarAPIRequest {
 
-    private String searchQuery = null;
+	private String searchQuery = null;
 
-    /**
-     * Sets the search query
-     *
-     * @param query The new Search Query
-     */
-    @Override
-    public void setQuery(String query) {
-        searchQuery = query;
-    }
+	/**
+	 * Sets the search query
+	 *
+	 * @param query The new search query
+	 */
+	@Override
+	public void setQuery(String query) {
+		searchQuery = query;
+	}
 
 
 
-    /**
-     * Establishes an HTTPS connection to semanticscholarapi and POSTs a request
-     *
-     * @throws IOException if the HTTP connection to the server fails
-     */
-    @Override
-    public void run() throws IOException {
+	/**
+	 * Establishes an HTTPS connection to Semantic Scholar's API and POSTs a request
+	 *
+	 * @throws IOException if the HTTP connection to the server fails
+	 */
+	@Override
+	public void run() throws IOException {
 
 		//Create data payload of POST request, containing search parameters
 		String searchPayload = createSearchPayload(10);
 
 		//Create URL for general search request
-		String href = SemanticScholarInternalAPIURL + "/search";
+		String href = semanticScholarInternalApiUrl + "/search";
 
 		//Create connection and set basic parameters
 		URL url = new URL(href);
@@ -63,7 +63,7 @@ public class S2GeneralSearch extends SemanticScholarAPIRequest {
 		connection.setRequestProperty("content-type", "application/json");
 		connection.setRequestProperty("authority", "www.semanticscholar.org");
 		connection.setRequestProperty("dnt", "1");
-		connection.setRequestProperty("User-Agent", UserAgentString);
+		connection.setRequestProperty("User-Agent", userAgentString);
 
 		//Write search payload to server (BODY of POST request)
 		writeStringToServer(searchPayload, connection);
@@ -71,7 +71,7 @@ public class S2GeneralSearch extends SemanticScholarAPIRequest {
 		//Convert received JSON to String
 		this.rawResponse = readResponseInputStreamToString(connection);
 
-		this.HTTPResponseCode = Integer.toString(connection.getResponseCode());
+		this.httpResponseCode = Integer.toString(connection.getResponseCode());
 		this.validDataIsReady = true;
 	}
 
@@ -79,7 +79,7 @@ public class S2GeneralSearch extends SemanticScholarAPIRequest {
 	 * Creates the data payload for the POST request of the search
 	 * Look here for fine tuning of the search parameters
 	 *
-	 * @param numOfResults The amount of results we want the server to give us, greater than 0x
+	 * @param numOfResults The amount of results we want the server to give us, greater than 0
 	 * @return The JSON formatted payload string
 	 */
 	private String createSearchPayload(int numOfResults) {

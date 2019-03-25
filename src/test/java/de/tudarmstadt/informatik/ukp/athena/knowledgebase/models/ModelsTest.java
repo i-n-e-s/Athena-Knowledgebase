@@ -6,11 +6,8 @@ import static org.junit.Assert.assertTrue;
 
 import java.time.LocalDate;
 
-import javax.persistence.EntityManager;
-
 import org.junit.Test;
 
-import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.jpa.PersistenceManager;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Conference;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Model;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Paper;

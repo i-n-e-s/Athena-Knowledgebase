@@ -1,8 +1,7 @@
 package de.tudarmstadt.informatik.ukp.athena.knowledgebase.models;
 
-import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.JPATestdatabase;
-import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.jpa.PersistenceManager;
-import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Person;
+import static org.junit.Assert.assertEquals;
+
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -10,42 +9,43 @@ import org.junit.Test;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 
-import static org.junit.Assert.*;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.JPATestdatabase;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Person;
 
 @SuppressWarnings("javadoc")
 public class PersonTest {
 
-    static JPATestdatabase testDB;
+	static JPATestdatabase testDB;
 
-    static ConfigurableApplicationContext ctx;
+	static ConfigurableApplicationContext ctx;
 
-    @BeforeClass
-    public static void setUpDatabase() {
-        ctx = SpringApplication.run(JPATestdatabase.class, "");
-        testDB = new JPATestdatabase();
-        testDB.createDB();
-    }
+	@BeforeClass
+	public static void setUpDatabase() {
+		ctx = SpringApplication.run(JPATestdatabase.class, "");
+		testDB = new JPATestdatabase();
+		testDB.createDB();
+	}
 
-    @Before
-    public void resetDB() {
-        testDB.createDB(); //Performance hungry if done before every test
-    }
+	@Before
+	public void resetDB() {
+		testDB.createDB(); //Performance hungry if done before every test
+	}
 
-    @AfterClass
-    public static void shutdownDatabase() {
-        ctx.close();
-    }
+	@AfterClass
+	public static void shutdownDatabase() {
+		ctx.close();
+	}
 
-    @Test
-    public void personFindOrCreateTest() {
-       Person query = new Person();
-        query.setFullName("Author 5");
-        assertEquals("0", String.valueOf(query.getPersonID()));
-        Person uut = Person.findOrCreate(query);
-        assertEquals("Prefix" + (5 % 2), String.valueOf(uut.getPrefix()));
-        assertEquals("0", String.valueOf(query.getPersonID()));
-        assertEquals("Prefix" + (5 % 2), String.valueOf(uut.getPrefix()));
-    }
+	@Test
+	public void personFindOrCreateTest() {
+		Person query = new Person();
+		query.setFullName("Author 5");
+		assertEquals("0", String.valueOf(query.getPersonID()));
+		Person uut = Person.findOrCreate(query);
+		assertEquals("Prefix" + (5 % 2), String.valueOf(uut.getPrefix()));
+		assertEquals("0", String.valueOf(query.getPersonID()));
+		assertEquals("Prefix" + (5 % 2), String.valueOf(uut.getPrefix()));
+	}
 
 }
 
