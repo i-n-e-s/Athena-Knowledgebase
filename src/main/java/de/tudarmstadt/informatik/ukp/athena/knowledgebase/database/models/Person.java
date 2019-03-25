@@ -389,6 +389,7 @@ public class Person extends Model {
 	/**
 	 * Looks for persons with equal attributes in the DB and returns found entities
 	 * If no matching DB entry was found, create and return a new person object
+	 * Read more about the search here {@link PersonJPAAccess#getByKnownAttributes(Person)}
 	 * @param toFind The person object containing the query data
 	 * @return A matching person from the DB or a new person
 	 */

@@ -288,6 +288,7 @@ public class Paper extends Model {
 	/**
 	 * Looks for papers with equal attributes in the DB and returns found entities
 	 * If no matching DB entry was found, create and return a new paper object
+	 * Read more about the search here {@link PaperJPAAccess#getByKnownAttributes(Paper)}
 	 * @param toFind The paper object containing the query data
 	 * @return A matching paper from the DB or a new paper
 	 */

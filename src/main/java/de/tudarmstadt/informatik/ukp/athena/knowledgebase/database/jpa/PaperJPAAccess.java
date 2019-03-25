@@ -54,6 +54,7 @@ public class PaperJPAAccess implements CommonAccess<Paper> {
 
 	/**
 	 * Finds a matching DB entry by the attributes of a given paper object, null is seen as wildcard
+	 * If no attribute is specified, return null
 	 * Currently only uses (decreasing priority): S2ID, Title
 	 * If multiple occurrences are found in DB, return the first result
 	 *
@@ -62,7 +63,7 @@ public class PaperJPAAccess implements CommonAccess<Paper> {
 	 */
 	public List<Paper> getByKnownAttributes(Paper toFind) {
 
-		//1. Build JPQL query
+		//1. Build JPQL query for combined search
 		String query = "SELECT c FROM Paper c WHERE ";
 		boolean addedConstraint = false;
 		if( toFind.getSemanticScholarID() != null ) {
@@ -75,13 +76,28 @@ public class PaperJPAAccess implements CommonAccess<Paper> {
 			addedConstraint = true;
 		}
 
+		if ( !addedConstraint ) { return null; }
 		logger.info(query);
 
-		//2. Execute query und return results
+		//2. Execute query
 		EntityManager entityManager = PersistenceManager.getEntityManager();
 		List<Paper> result = entityManager.createQuery(query).getResultList();
-		return result;
+		if( result.size() > 0 ) { return result; }
 
+		//3. If nothing found, try searching for Attributes separately
+		if( toFind.getSemanticScholarID() != null ) {
+			query = "SELECT c FROM Paper c WHERE c.semanticScholarID LIKE '"+toFind.getSemanticScholarID() + "'";
+			result = entityManager.createQuery(query).getResultList();
+			if( result.size() > 0 ) { return result; }
+		}
+		if ( toFind.getTitle() != null && toFind.getTitle() != "" ) {
+			query = "SELECT c FROM Paper c WHERE c.title = '"+toFind.getTitle().replace("'", "\\'") + "'";
+			result = entityManager.createQuery(query).getResultList();
+			if( result.size() > 0 ) { return result; }
+		}
+
+		//4. If still nothing found, return null
+		return null;
 	}
 
 	/**

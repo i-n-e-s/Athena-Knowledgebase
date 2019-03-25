@@ -55,6 +55,7 @@ public class PersonJPAAccess implements CommonAccess<Person> {
 
 	/**
 	 * Finds a matching DB entry by the attributes of a given person object, null is seen as wildcard
+	 * If no attribute is specified, return null
 	 * Currently only uses (decreasing priority): S2ID, Name
 	 * If no entry with matching S2ID AND name is found, look for matching S2ID, if nothing found either look for name, etc
 	 * @param toFind Person object to get the search constraints from
@@ -75,6 +76,7 @@ public class PersonJPAAccess implements CommonAccess<Person> {
 			addedConstraint = true;
 		}
 
+		if ( !addedConstraint ) { return null; }
 		logger.info(query);
 
 		List<Person> result = entityManager.createQuery(query).getResultList();
