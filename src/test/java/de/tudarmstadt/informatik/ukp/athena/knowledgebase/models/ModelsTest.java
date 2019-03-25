@@ -214,6 +214,9 @@ public class ModelsTest{
 		if(!entityManager.getTransaction().isActive()) { entityManager.getTransaction().begin(); }
 		Paper uut = Paper.findOrCreate(null, "Title5");
 		assertEquals("Ant5", String.valueOf(uut.getAnthology()));
+		uut = Paper.findOrCreate(null, "Title6");
+		System.out.println(uut.getSemanticScholarID()+"\n\n"+uut.toString());
+
 		uut = Paper.findOrCreate("44962368", null);
 		assertEquals("Ant6", String.valueOf(uut.getAnthology()));
 		uut = Paper.findOrCreate("27393377", "Title17");
