@@ -107,7 +107,6 @@ public class PaperJPAAccess implements CommonAccess<Paper> {
 	 * @param semanticScholarID The Semantic Scholar ID of the wanted paper object to search
 	 * @return DB entry of paper with matching S2ID, null if not found
 	 */
-	@Deprecated
 	public Paper getBySemanticScholarID( String semanticScholarID ) {
 		//1. Try to find matching SemanticScholarID
 		if( semanticScholarID != null ) {
@@ -125,7 +124,6 @@ public class PaperJPAAccess implements CommonAccess<Paper> {
 	 * @param title The title of the wanted paper object to search
 	 * @return DB entry of Paper with matching S2ID, null if not found
 	 */
-	@Deprecated
 	public Paper getByTitle( String title ) {
 		//1. Build JPQL query
 		if( title != null ) {

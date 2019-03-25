@@ -119,7 +119,7 @@ public class S2APIFunctions {
 	 * In the S2GeneralSearch request, we ask the server to sort the results by relevance
 	 *
 	 * @param author The author to be searched
-	 * @throws IOException   If something goes wrong while communicating with the server
+	 * @throws IOException   if the HTTP connection to the server fails
 	 * @throws JSONException If the server doesn't respond with valid JSON
 	 */
 	public static String getAuthorsS2ID(Person author) throws IOException, JSONException {
@@ -158,8 +158,8 @@ public class S2APIFunctions {
 	 *
 	 * @param author    The author to be looked up
 	 * @param overwrite true if already set attributes should be overwritten with Semantic Scholar's data, false to only set null attributes
-	 * @return false if no information could be found on Semantic Scholar, true otherwhise
-	 * @throws IOException   If something goes wrong while communicating with the server
+	 * @return false if no information could be found on Semantic Scholar, true otherwise
+	 * @throws IOException   if the HTTP connection to the server fails
 	 * @throws JSONException If the server doesn't respond with valid JSON
 	 */
 	public static boolean completeAuthorInformationByAuthorSearch(Person author, boolean overwrite) throws IOException, JSONException {
@@ -415,7 +415,7 @@ public class S2APIFunctions {
 	 *
 	 * @param paper     The paper to be looked up
 	 * @param overwrite true if already set attributes should be overwritten with Semantic Scholar's data, false to only set null attributes
-	 * @throws IOException   If something goes wrong communicating with the server
+	 * @throws IOException   if the HTTP connection to the server fails
 	 * @throws JSONException If the server doesn't respond with valid JSON
 	 */
 	public static void completePaperInformationByGeneralSearch(Paper paper, boolean overwrite) throws IOException, JSONException {
@@ -452,7 +452,7 @@ public class S2APIFunctions {
 	 *
 	 * @param paper Paper whose amount of citation is to be retrieved
 	 * @return Amount of citations
-	 * @throws IOException   If something goes wrong while communicating with the server
+	 * @throws IOException   If an error occurs during the HTTP connection with the server
 	 * @throws JSONException If the server doesn't respond with valid JSON
 	 */
 	@Deprecated

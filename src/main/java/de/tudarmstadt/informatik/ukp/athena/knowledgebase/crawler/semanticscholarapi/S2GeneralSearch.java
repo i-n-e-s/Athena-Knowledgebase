@@ -34,7 +34,7 @@ public class S2GeneralSearch extends SemanticScholarAPIRequest {
     /**
      * Establishes an HTTPS connection to semanticscholarapi and POSTs a request
      *
-     * @throws IOException when some HTTP stuff goes wrong
+     * @throws IOException if the HTTP connection to the server fails
      */
     @Override
     public void run() throws IOException {

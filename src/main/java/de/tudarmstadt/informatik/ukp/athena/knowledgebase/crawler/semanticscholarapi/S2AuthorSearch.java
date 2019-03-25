@@ -59,7 +59,7 @@ public class S2AuthorSearch extends SemanticScholarAPIRequest {
 	 * Gathers all required Information for the AuthorSearch by performing generalSearch on the name
 	 * Sets s2id, name and expectedAmountOfPapers of author
 	 *
-	 * @throws IOException when some HTTP stuff goes wrong
+	 * @throws IOException if the HTTP connection to the server fails
 	 * @throws NotAvailableException if the information could not be found
 	 */
 	private void prepare() throws IOException, NotAvailableException {
@@ -144,7 +144,7 @@ public class S2AuthorSearch extends SemanticScholarAPIRequest {
 	 * Establishes an HTTPS connection to semanticscholarapi and POSTs a request
 	 * Automatically runs .prepare() to gather the s2id and expectedAmountOfPapers first, if not already set
 	 *
-	 * @throws IOException when some HTTP stuff goes wrong
+	 * @throws IOException if the HTTP connection to the server fails
 	 */
 	@Override
 	public void run() throws IOException {

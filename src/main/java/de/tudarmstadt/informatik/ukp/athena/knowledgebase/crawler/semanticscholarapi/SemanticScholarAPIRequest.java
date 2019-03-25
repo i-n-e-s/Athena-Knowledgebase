@@ -103,7 +103,7 @@ public abstract class SemanticScholarAPIRequest {
      *
      * @param value      String to be written to the server
      * @param connection Connection to send the string to
-     * @throws IOException If some HTTP stuff goes wrong
+     * @throws IOException if the HTTP connection to the server fails
      */
     protected static void writeStringToServer(String value, HttpsURLConnection connection) throws IOException {
         OutputStreamWriter osw = new OutputStreamWriter(connection.getOutputStream());
@@ -117,7 +117,7 @@ public abstract class SemanticScholarAPIRequest {
      *
      * @param connection Connection Object to read the inputStream from
      * @return The response as a string
-     * @throws IOException If some HTTP stuff goes wrong
+     * @throws IOException if the HTTP connection to the server fails
      */
     protected static String readResponseInputStreamToString(HttpsURLConnection connection) throws IOException {
         //1. Create in-/output streams
