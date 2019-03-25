@@ -246,6 +246,7 @@ public class Person extends Model {
 
 	/**
 	 * Sets the top 5 authors this author was influenced by
+	 * Sorted in decreasing order: List.get(0) is the author who has influenced this one the most
 	 *
 	 * @param top5influencedBy The new top 5 influencers of this author. The size must be something from 0-5 (inclusive)
 	 * @return true if at least one influenced-by-author was set, false otherwhise
@@ -261,6 +262,7 @@ public class Person extends Model {
 
 	/**
 	 * Returns the top 5 of authors that were influenced by this author
+	 * Sorted in decreasing order: List.get(0) is the author who has influenced this one the most
 	 * @return The top 5 of authors that influenced this author as an ArrayList
 	 */
 	public ArrayList<Person> getTop5influencedBy() {
@@ -275,9 +277,10 @@ public class Person extends Model {
 
 	/**
 	 * Adds an author this one was influenced by to this author, if he doesn't have 5 already
+	 * The Person added first is interpreted as being the person who has influenced this one the most
 	 *
 	 * @param influencedBy The influencing author to add
-	 * @return true if the author was added, false otherwhise
+	 * @return true if the author was added, false otherwise
 	 */
 	public boolean addInfluencedBy(Person influencedBy) {
 		if( this.top1influencedBy == null ) { this.top1influencedBy = influencedBy; }
@@ -302,6 +305,7 @@ public class Person extends Model {
 
 	/**
 	 * Sets the top 5 authors that were influenced by this author the most
+	 * Sorted in decreasing order: List.get(0) is the author who is influenced by this one the most
 	 *
 	 * @param top5influenced The new top 5 authors influenced by this one. The size must be something from 0-5 (inclusive)
 	 * @return true if at least one influenced author was set, false otherwhise
@@ -318,6 +322,7 @@ public class Person extends Model {
 
 	/**
 	 * Sets the top 5 authors that were influenced by this author the most
+	 * Sorted in decreasing order: List.get(0) is the author who is influenced by this one the most
 	 *
 	 * @return The top 5 of authors that were influenced by this author as an ArrayList
 	 */
@@ -333,6 +338,7 @@ public class Person extends Model {
 
 	/**
 	 * Adds an author that was influenced by this one, if he doesn't have 5 already
+	 * The Person added first is interpreted as being the person who is influenced by this one the most
 	 *
 	 * @param influenced The influenced author to add
 	 * @return true if the author was added, false otherwhise
