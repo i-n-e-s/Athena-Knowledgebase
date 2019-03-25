@@ -103,20 +103,6 @@ public class PersonJPAAccessTest {
 		assertEquals("22473174", resultList.get(0).getSemanticScholarID());
 	}
 
-	@Test
-	public void personFindOrCreateTest() {
-		EntityManager entityManager = PersistenceManager.getEntityManager();
-		if(!entityManager.getTransaction().isActive()) { entityManager.getTransaction().begin(); }
-		Person query = new Person();
-		query.setFullName("Author 5");
-		assertEquals("0", String.valueOf(query.getPersonID()));
-		Person uut = Person.findOrCreate(query);
-		assertEquals("Prefix" + (5%2), String.valueOf(uut.getPrefix()));
-		entityManager.getTransaction().commit();
-		assertEquals("0", String.valueOf(query.getPersonID()));
-		assertEquals("Prefix" + (5%2), String.valueOf(uut.getPrefix()));
-	}
-
 
 	@Test
 	public void updateTest() {
