@@ -44,7 +44,7 @@ public class S2PaperSearch extends SemanticScholarAPIRequest {
 
 
 		//Create data payload of GET request, containing search parameters
-		String searchRequestURL = semanticScholarPublicAPIURL + "v1" + "/author/" + authorID;
+		String searchRequestURL = SemanticScholarPublicAPIURL + "v1" + "/author/" + authorID;
 
 		//Create connection and set basic parameters
 		URL url = new URL(searchRequestURL);
@@ -64,13 +64,13 @@ public class S2PaperSearch extends SemanticScholarAPIRequest {
 		connection.setRequestProperty("content-type", "application/json");
 		//connection.setRequestProperty("authority", "www.semanticscholar.org");
 		//connection.setRequestProperty("dnt", "1");
-		connection.setRequestProperty("User-Agent", userAgentString);
+		connection.setRequestProperty("User-Agent", UserAgentString);
 
 		//Convert received JSON to String
 		this.rawResponse = readResponseInputStreamToString(connection);
 
 
-		this.httpResponseCode = Integer.toString(connection.getResponseCode());
+		this.HTTPResponseCode = Integer.toString(connection.getResponseCode());
 		this.validDataIsReady = true;
 	}
 

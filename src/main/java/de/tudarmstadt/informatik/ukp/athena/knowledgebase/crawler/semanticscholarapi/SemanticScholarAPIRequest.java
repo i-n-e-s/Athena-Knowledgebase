@@ -87,15 +87,15 @@ public abstract class SemanticScholarAPIRequest {
      */
     public void safeRun() throws IOException {
         short failedTries = 0;
-        while ( failedTries < allowedConnectionFailuresInSafeRun ) {
+        while ( failedTries < allowedConnectionFailuresInSafeRun ) {    //Repeat until limit is reached
             try {
                 this.run();
-                return;
+                return;             //If run successful, return
             } catch ( IOException e ) {
-                failedTries++;
+                failedTries++;      //If run not successful, increase counter and retry
             }
         }
-        throw new IOException("HTTP Request failed "+failedTries+" times");
+        throw new IOException("HTTP Request failed "+failedTries+" times"); //Only reached if no run completed successfully
     }
 
     /**
@@ -120,13 +120,18 @@ public abstract class SemanticScholarAPIRequest {
      * @throws IOException If some HTTP stuff goes wrong
      */
     protected static String readResponseInputStreamToString(HttpsURLConnection connection) throws IOException {
+        //1. Create in-/output streams
         BufferedInputStream bis = new BufferedInputStream(connection.getInputStream());
         ByteArrayOutputStream buf = new ByteArrayOutputStream();
+
+        //2. Read the input stream into the buffer
         int result2 = bis.read();
         while (result2 != -1) {
             buf.write((byte) result2);
             result2 = bis.read();
         }
+
+        //3. Create and return String from the buffer
         return buf.toString();
     }
 

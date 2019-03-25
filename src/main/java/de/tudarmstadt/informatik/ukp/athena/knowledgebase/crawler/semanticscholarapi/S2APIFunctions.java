@@ -448,7 +448,7 @@ public class S2APIFunctions {
 	 * <p>
 	 * Assumes that papers don't have duplicate names
 	 * <p>
-	 * @deprecated Use {@link S2APIFunctions#completePaperInformationByGeneralSearch()} instead, it retrieves more information using the same amount of requests
+	 * @deprecated Use {@link S2APIFunctions#completePaperInformationByGeneralSearch(Paper, boolean)} instead, it retrieves more information using the same amount of requests
 	 *
 	 * @param paper Paper whose amount of citation is to be retrieved
 	 * @return Amount of citations

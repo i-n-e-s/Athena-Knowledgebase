@@ -8,7 +8,6 @@ import javax.net.ssl.HttpsURLConnection;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.exception.NotAvailableException;
@@ -63,51 +62,12 @@ public class S2AuthorSearch extends SemanticScholarAPIRequest {
 	 * @throws IOException when some HTTP stuff goes wrong
 	 * @throws NotAvailableException if the information could not be found
 	 */
-	public void prepare() throws IOException, NotAvailableException {
-		SemanticScholarAPIRequest preparationRequest;
-		JSONObject result;
+	private void prepare() throws IOException, NotAvailableException {
 		if ( this.s2id != null ) {      //If S2ID is known: Prepare by using an author search
-			this.expectedAmountOfPapers = 1;
-			this.run();
-			//Parse the JSON response
-			try { result = this.getParsedJSONResponse(); }
-			catch (NotAvailableException e) { return; }    //Never thrown, because called after request is run
-			//set expected amount of papers
-			logger.info("Lookup name: "+String.valueOf(this.name)+" S2ID: "+String.valueOf(this.s2id));
-			this.expectedAmountOfPapers = result.getJSONObject("author").getJSONObject("papers").getInt("totalResults");
-			//Reset this request
-			this.validDataIsReady = false;
-			this.rawResponse = null;
-			this.httpResponseCode = null;
+			prepareByS2Id();
 		}
 		else if ( this.name != null ) { //Otherwise: Prepare by using a general search
-			preparationRequest = new S2GeneralSearch();
-			preparationRequest.setQuery( this.name );
-			preparationRequest.run();
-
-			//Parse the JSON response
-			try { result = preparationRequest.getParsedJSONResponse(); }
-			catch (NotAvailableException e) { return; }    //Never thrown, because called after request is run
-
-			//If multiple results match the name, choose most relevant one
-			logger.info("Lookup name: "+String.valueOf(this.name)+" S2ID: "+String.valueOf(this.s2id));
-			logger.info(result.toString());
-			JSONArray matchingAuthors = result.getJSONArray("matchedAuthors");
-			JSONObject chosenAuthor = (JSONObject) matchingAuthors.get(0);
-
-			//Set ID
-			this.s2id = chosenAuthor.getString("id");
-
-			//S2 returns expectedAmountOfPapers in separate list of stats, so the matching author has to be found
-			this.expectedAmountOfPapers = -1;
-			JSONArray statsAuthors = result.getJSONObject("stats").getJSONArray("authors");
-
-			for ( int i = 0; i < statsAuthors.length(); i++ ) {     //Find matching author in statsList
-				if ( statsAuthors.getJSONObject(i).getString("value").equals(chosenAuthor.getString("name")) ) {
-					this.expectedAmountOfPapers = statsAuthors.getJSONObject(i).getInt("documentCount");
-					break;
-				}
-			}
+            prepareByName();
 		}
 		else { throw new NotAvailableException(); }
 
@@ -116,8 +76,69 @@ public class S2AuthorSearch extends SemanticScholarAPIRequest {
 			throw new NotAvailableException();
 		}
 
-
 	}
+
+    /**
+     * Helping method, called by .prepare()
+     * Runs a small authorSearch to find out the information needed to retrieve all available information by the actual request
+     * @throws IOException If an error occurs during the HTTP request
+     */
+	private void prepareByS2Id() throws IOException {
+        SemanticScholarAPIRequest preparationRequest;
+        JSONObject result;
+
+	    this.expectedAmountOfPapers = 1;
+        this.run();
+
+        //Parse the JSON response
+        try { result = this.getParsedJSONResponse(); }
+        catch (NotAvailableException e) { return; }    //Never thrown, because called after request is run
+
+        //set expected amount of papers
+        logger.info("Lookup name: "+String.valueOf(this.name)+" S2ID: "+String.valueOf(this.s2id));
+        this.expectedAmountOfPapers = result.getJSONObject("author").getJSONObject("papers").getInt("totalResults");
+
+        //Reset this request
+        this.validDataIsReady = false;
+        this.rawResponse = null;
+        this.HTTPResponseCode = null;
+    }
+
+    /**
+     *  Helping method, called by .prepare()
+     *  Runs a general search to find out the information needed to retrieve all available information by the actual request
+     *  @throws IOException If an error occurs during the HTTP request
+     */
+    private void prepareByName() throws IOException {
+        SemanticScholarAPIRequest preparationRequest = new S2GeneralSearch();
+        preparationRequest.setQuery( this.name );
+        preparationRequest.run();
+
+        //Parse the JSON response
+        JSONObject result;
+        try { result = preparationRequest.getParsedJSONResponse(); }
+        catch (NotAvailableException e) { return; }    //Never thrown, because called after request is run
+
+        //If multiple results match the name, choose most relevant one
+        logger.info("Lookup name: "+String.valueOf(this.name)+" S2ID: "+String.valueOf(this.s2id));
+        logger.info(result.toString());
+        JSONArray matchingAuthors = result.getJSONArray("matchedAuthors");
+        JSONObject chosenAuthor = (JSONObject) matchingAuthors.get(0);
+
+        //Set ID
+        this.s2id = chosenAuthor.getString("id");
+
+        //S2 returns expectedAmountOfPapers in separate list of stats, so the matching author has to be found
+        this.expectedAmountOfPapers = -1;
+        JSONArray statsAuthors = result.getJSONObject("stats").getJSONArray("authors");
+
+        for ( int i = 0; i < statsAuthors.length(); i++ ) {     //Find matching author in statsList
+            if ( statsAuthors.getJSONObject(i).getString("value").equals(chosenAuthor.getString("name")) ) {
+                this.expectedAmountOfPapers = statsAuthors.getJSONObject(i).getInt("documentCount");
+                break;
+            }
+        }
+    }
 
 	/**
 	 * Establishes an HTTPS connection to semanticscholarapi and POSTs a request
@@ -142,7 +163,7 @@ public class S2AuthorSearch extends SemanticScholarAPIRequest {
 		String searchPayLoad = createSearchPayload();
 
 		//Create URL for general search request
-		String href = semanticScholarInternalAPIURL + "/author/" + this.s2id;
+		String href = SemanticScholarInternalAPIURL + "/author/" + this.s2id;
 
 		//Create connection and set basic parameters
 		URL url = new URL(href);
@@ -160,7 +181,7 @@ public class S2AuthorSearch extends SemanticScholarAPIRequest {
 		connection.setRequestProperty("Accept", "*/*");
 		connection.setRequestProperty("cache-control", "no-cache,no-store,must-revalidate,max-age=-1");
 		connection.setRequestProperty("content-type", "application/json");
-		connection.setRequestProperty("User-Agent", userAgentString);
+		connection.setRequestProperty("User-Agent", UserAgentString);
 
 		//Write search payload to server (BODY of POST request)
 		writeStringToServer(searchPayLoad, connection);
@@ -168,7 +189,7 @@ public class S2AuthorSearch extends SemanticScholarAPIRequest {
 		//Convert received JSON to String
 		this.rawResponse = readResponseInputStreamToString(connection);
 
-		this.httpResponseCode = Integer.toString(connection.getResponseCode());
+		this.HTTPResponseCode = Integer.toString(connection.getResponseCode());
 		this.validDataIsReady = true;
 	}
 
@@ -178,7 +199,7 @@ public class S2AuthorSearch extends SemanticScholarAPIRequest {
      *
      * @return The JSON formatted PayLoad String
      */
-    private String createSearchPayLoad() {
+    private String createSearchPayload() {
 
 		return "{\"queryString\":\"\","
 				+ "\"page\":1,"

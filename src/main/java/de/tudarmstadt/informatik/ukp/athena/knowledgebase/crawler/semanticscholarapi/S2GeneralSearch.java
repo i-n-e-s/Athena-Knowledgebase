@@ -5,10 +5,6 @@ import java.net.URL;
 
 import javax.net.ssl.HttpsURLConnection;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import de.tudarmstadt.informatik.ukp.athena.knowledgebase.exception.NotAvailableException;
 
 /**
  * This class can perform a general search on the Semantic Scholar API
@@ -47,7 +43,7 @@ public class S2GeneralSearch extends SemanticScholarAPIRequest {
 		String searchPayload = createSearchPayload(10);
 
 		//Create URL for general search request
-		String href = semanticScholarInternalAPIURL + "/search";
+		String href = SemanticScholarInternalAPIURL + "/search";
 
 		//Create connection and set basic parameters
 		URL url = new URL(href);
@@ -67,7 +63,7 @@ public class S2GeneralSearch extends SemanticScholarAPIRequest {
 		connection.setRequestProperty("content-type", "application/json");
 		connection.setRequestProperty("authority", "www.semanticscholar.org");
 		connection.setRequestProperty("dnt", "1");
-		connection.setRequestProperty("User-Agent", userAgentString);
+		connection.setRequestProperty("User-Agent", UserAgentString);
 
 		//Write search payload to server (BODY of POST request)
 		writeStringToServer(searchPayload, connection);
@@ -75,7 +71,7 @@ public class S2GeneralSearch extends SemanticScholarAPIRequest {
 		//Convert received JSON to String
 		this.rawResponse = readResponseInputStreamToString(connection);
 
-		this.httpResponseCode = Integer.toString(connection.getResponseCode());
+		this.HTTPResponseCode = Integer.toString(connection.getResponseCode());
 		this.validDataIsReady = true;
 	}
 
