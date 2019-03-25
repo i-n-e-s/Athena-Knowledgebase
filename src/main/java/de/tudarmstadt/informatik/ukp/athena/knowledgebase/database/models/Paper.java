@@ -63,7 +63,7 @@ public class Paper extends Model {
 	@Column(name = "semanticScholarID")
 	private String semanticScholarID;
 	/*Abstract of paper as String*/
-	@Column(name = "abstract", columnDefinition="TEXT")
+	@Column(name = "paperAbstract", columnDefinition="TEXT")
 	private String paperAbstract;
 	@Column(name = "amountOfCitations")
 	private Integer amountOfCitations = -1;    //-1 if not known yet
