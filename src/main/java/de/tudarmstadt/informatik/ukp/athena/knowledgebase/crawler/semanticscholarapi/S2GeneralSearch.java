@@ -36,7 +36,7 @@ public class S2GeneralSearch extends SemanticScholarAPIRequest {
 
 
     /**
-     * Establishes an HTTPS connection to SemanticScholarAPI and POSTs a request
+     * Establishes an HTTPS connection to semanticscholarapi and POSTs a request
      *
      * @throws IOException when some HTTP stuff goes wrong
      */

@@ -120,7 +120,7 @@ public class S2AuthorSearch extends SemanticScholarAPIRequest {
 	}
 
 	/**
-	 * Establishes an HTTPS connection to SemanticScholarAPI and POSTs a request
+	 * Establishes an HTTPS connection to semanticscholarapi and POSTs a request
 	 * Automatically runs .prepare() to gather the s2id and expectedAmountOfPapers first, if not already set
 	 *
 	 * @throws IOException when some HTTP stuff goes wrong

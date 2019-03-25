@@ -1,5 +1,6 @@
-package de.tudarmstadt.informatik.ukp.athena.knowledgebase.crawler.SemanticScholarAPI;
+package de.tudarmstadt.informatik.ukp.athena.knowledgebase.crawler.semanticscholarapi;
 
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.exception.NotAvailableException;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -9,7 +10,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 
-public abstract class SemanticScholarAPIrequest {
+public abstract class SemanticScholarAPIRequest {
 
     /**
      * Notes to save you time:
