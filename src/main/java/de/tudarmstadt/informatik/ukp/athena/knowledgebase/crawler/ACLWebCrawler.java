@@ -222,7 +222,6 @@ class ACLWebCrawler extends AbstractCrawler {
 			for (Element elmnt : paperListElements) {
 				if (!elmnt.text().contains("VOLUME")) {
 					// add Paper info
-					Paper paper = new Paper();
 					// clean up the titles in the form of [C18-1017] Simple Neologism Based Domain Independe...
 					// C18-1017 would be the anthology - we remove [] because the rest API dislikes the characters and they
 					// convey no meaning
@@ -231,6 +230,7 @@ class ACLWebCrawler extends AbstractCrawler {
 					String paperTitle = splitRawTitle[1];
 					String anthology = splitRawTitle[0].replace("[", "").replace("]", "");
 
+					Paper paper = new Paper();
 					paper.setTitle(paperTitle);
 					paper.setAnthology(anthology);
 					paper.setRemoteLink("http://aclweb.org/anthology/" + anthology); //wow that was easy

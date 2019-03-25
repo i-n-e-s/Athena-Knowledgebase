@@ -92,6 +92,17 @@ public class PersonJPAAccessTest {
 	}
 
 	@Test
+	public void getByKnownAttributesTest() {
+		Person testQuery = new Person();
+		testQuery.setFullName("Author 3");
+		System.out.println("ID of testQuery: "+testQuery.getPersonID());
+		List<Person> resultList = uut.getByKnownAttributes(testQuery);
+		if(resultList.size() == 0) fail("return is empty");
+		assertEquals("22473174", resultList.get(0).getSemanticScholarID());
+	}
+
+
+	@Test
 	public void updateTest() {
 		uut.add(testValue);
 		testValue.setPrefix("UpdatedPrefix");
@@ -101,7 +112,7 @@ public class PersonJPAAccessTest {
 		assertEquals("UpdatedPrefix", returnValues.get(0).getPrefix());
 		testDB.createDB();//Don't pollute the Database
 	}
-	
+
 	private List<Person> getByFullName(String name) {
 		return PersistenceManager.getEntityManager().createQuery(String.format("SELECT p FROM Person p WHERE p.fullName = '%s'",name), Person.class).getResultList();
 	}

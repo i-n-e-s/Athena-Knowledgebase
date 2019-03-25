@@ -2,6 +2,7 @@ package de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models;
 
 import java.time.LocalDate;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -17,9 +18,11 @@ import org.hibernate.annotations.GenericGenerator;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.jpa.PaperJPAAccess;
+
 @Entity
 @Table(name="paper")
-public class Paper extends Model{
+public class Paper extends Model {
 	/*Identifier*/
 	@Id
 	@GeneratedValue(generator="increment")
@@ -51,10 +54,19 @@ public class Paper extends Model{
 
 	/*PDF filesize in Bytes*/
 	@Column(name = "pdfFileSize")
-	private int pdfFileSize;
+	private Integer pdfFileSize;
 	/*anthology of paper as String*/
 	@Column (name = "anthology")
 	private String anthology;
+
+	/*Semantic Scholar's PaperId as String*/
+	@Column(name = "semanticScholarID")
+	private String semanticScholarID;
+	/*Abstract of paper as String*/
+	@Column(name = "paperAbstract", columnDefinition="TEXT")
+	private String paperAbstract;
+	@Column(name = "amountOfCitations")
+	private Integer amountOfCitations = -1;    //-1 if not known yet
 
 	//	Removed all code concerning quotations and alike. Too time consuming right now.
 
@@ -70,8 +82,8 @@ public class Paper extends Model{
 
 	// TODO: Rename to getPersons after Testbench integration?
 	/**
-	 * Gets List of this paper's authors
-	 * @return List of this paper's authors
+	 * Gets this paper's authors
+	 * @return A Set of this paper's authors
 	 */
 	public Set<Person> getAuthors() {
 		return persons;
@@ -80,7 +92,7 @@ public class Paper extends Model{
 	// TODO: Rename to setPersons after Testbench integration?
 	/**
 	 * Sets this paper's authors
-	 * @param authors The new author of this paper
+	 * @param authors The new authors of this paper
 	 */
 	public void setAuthors(Set<Person> authors) {
 		this.persons = authors;
@@ -115,7 +127,7 @@ public class Paper extends Model{
 	}
 
 	/**
-	 * Gets this papers topic
+	 * Gets this paper's topic
 	 *
 	 * @return The topic of this paper
 	 */
@@ -124,7 +136,7 @@ public class Paper extends Model{
 	}
 
 	/**
-	 * Sets this institution's topic
+	 * Sets this paper's topic
 	 *
 	 * @param topic The new topic
 	 */
@@ -133,7 +145,7 @@ public class Paper extends Model{
 	}
 
 	/**
-	 * Gets this papers title
+	 * Gets this paper's title
 	 *
 	 * @return The title of this paper
 	 */
@@ -142,7 +154,7 @@ public class Paper extends Model{
 	}
 
 	/**
-	 * Sets this institution's title
+	 * Sets this paper's title
 	 *
 	 * @param title The new title
 	 */
@@ -151,72 +163,181 @@ public class Paper extends Model{
 	}
 
 	/**
-	 * Gets the remote link to this papers PDF file
+	 * Gets the remote link to this paper's PDF file
 	 *
-	 * @return The remote link to this papers PDF file
+	 * @return The remote link to this paper's PDF file
 	 */
 	public String getRemoteLink() {
 		return remoteLink;
 	}
 
 	/**
-	 * Sets the remote link to this papers PDF file
+	 * Sets the remote link to this paper's PDF file
 	 *
-	 * @param remoteLink The new remote link to this papers PDF file
+	 * @param remoteLink The new remote link to this paper's PDF file
 	 */
 	public void setRemoteLink(String remoteLink) {
 		this.remoteLink = remoteLink;
 	}
 
 	/**
-	 * Gets the local link to this papers PDF file
+	 * Gets the local link to this paper's PDF file
 	 *
-	 * @return The local link to this papers PDF file
+	 * @return The local link to this paper's PDF file
 	 */
 	public String getLocalLink() {
 		return localLink;
 	}
 
 	/**
-	 * Sets the local link to this PDF file
+	 * Sets the local link to this paper's PDF file
 	 *
-	 * @param localLink The new local link to this papers PDF file
+	 * @param localLink The new local link to this paper's PDF file
 	 */
 	public void setLocalLink(String localLink) {
 		this.localLink = localLink;
 	}
 
 	/**
-	 * Gets the filesize of this papers PDF file in Bytes
+	 * Gets the filesize of this paper's PDF file in bytes
 	 *
-	 * @return The filesize of this papers PDF file in Bytes
+	 * @return The filesize of this paper's PDF file in bytes
 	 */
-	public int getPdfFileSize() {
+	public Integer getPdfFileSize() {
 		return pdfFileSize;
 	}
 
 	/**
-	 * Sets the filesize of this papers PDF file in Bytes
+	 * Sets the filesize of this paper's PDF file in bytes
 	 *
-	 * @param pdfFileSize The new filesize of this papers PDF file in Bytes
+	 * @param pdfFileSize The new filesize of this paper's PDF file in bytes
 	 */
-	public void setPdfFileSize(int pdfFileSize) {
+	public void setPdfFileSize(Integer pdfFileSize) {
 		this.pdfFileSize = pdfFileSize;
 	}
 
 	/**
-	 * Gets the paper's anthology
-	 * @return the paper's anthology
+	 * Gets this paper's anthology
+	 * @return this paper's anthology
 	 */
 	public String getAnthology() {
 		return anthology;
 	}
 
 	/**
-	 * Sets the paper's anthology
-	 * @param anthology anthology of the paper as String
+	 * Sets this paper's anthology
+	 * @param anthology The anthology of this paper as a string
 	 */
 	public void setAnthology(String anthology) {
 		this.anthology = anthology;
 	}
+
+	/**
+	 * Gets this paper's ID on Semantic Scholar
+	 *
+	 * @return this paper's Semantic Scholar ID
+	 */
+	public String getSemanticScholarID() {
+		return semanticScholarID;
+	}
+
+	/**
+	 * Sets this paper's Semantic Scholar ID
+	 *
+	 * @param semanticScholarID the paper's updated Semantic Scholar ID
+	 */
+	public void setSemanticScholarID(String semanticScholarID) {
+		this.semanticScholarID = semanticScholarID;
+	}
+
+	/**
+	 * Gets this paper's abstract
+	 *
+	 * @return this paper's abstract
+	 */
+	public String getPaperAbstract() {
+		return paperAbstract;
+	}
+
+	/**
+	 * Sets this paper's abstract
+	 *
+	 * @param paperAbstract this paper's abstract
+	 */
+	public void setPaperAbstract(String paperAbstract) {
+		this.paperAbstract = paperAbstract;
+	}
+
+	/**
+	 * Gets the amount of papers this paper is cited in
+	 * @return the amount of citations
+	 */
+	public Integer getAmountOfCitations() {
+		return amountOfCitations;
+	}
+
+	/**
+	 * Sets the amount of papers this paper is cited in
+	 * @param amountOfCitations the new amount of citations
+	 */
+	public void setAmountOfCitations(Integer amountOfCitations) {
+		this.amountOfCitations = amountOfCitations;
+	}
+
+
+	/**
+	 * Looks for papers with equal attributes in the DB and returns found entities
+	 * If no matching DB entry was found, create and return a new paper object
+	 * Read more about the search here {@link PaperJPAAccess#getByKnownAttributes(Paper)}
+	 * @param toFind The paper object containing the query data
+	 * @return A matching paper from the DB or a new paper
+	 */
+	public static Paper findOrCreate(Paper toFind) {
+		//Check if paper with same S2ID exists in DB
+		PaperJPAAccess filer = new PaperJPAAccess();
+		List<Paper> searchResults = filer.getByKnownAttributes(toFind);
+
+		if(searchResults == null || searchResults.size() < 1) { //No matching paper could be found in the DB
+			return new Paper();
+		}
+		else { 		//Choose first result
+			return searchResults.get(0);
+		}
+	}
+
+	/**
+	 * Looks for papers with defined title or Semantic Scholar ID and returns matching DB entry
+	 * If no match was found, create and return a new paper object
+	 * @param s2id Semantic Scholar ID of the searched paper or null if unknown
+	 * @param title The title of the searched paper or null if unknown
+	 * @return matching DB entry or new paper
+	 */
+	public static Paper findOrCreate(String s2id, String title) {
+		Paper tmpQuery = new Paper();
+		tmpQuery.setTitle(title);
+		tmpQuery.setSemanticScholarID(s2id);
+		return findOrCreate(tmpQuery);
+	}
+
+
+	/**
+	 * Creates a String representation of this paper object.
+	 * Warning: String does not contain all information in the object
+	 * @return String description of the object
+	 */
+	@Override
+	public String toString() {
+		String ret = "{title: " + this.getTitle() + ",";
+		ret = ret + "PaperID: " + this.getPaperID() + "}";
+		ret = ret + "topic: " + this.getTopic() + ",";
+		ret = ret + "Authors: ";
+		for (Person a : this.getAuthors()) {
+			ret = ret + "{ name:"+ a.getFullName() +", personID:"+ a.getPersonID() +", S2ID:" +a.getSemanticScholarID() + "}";
+		}
+		ret = ret + "S2ID: " + this.getSemanticScholarID() + ",";
+		ret = ret + "abstract: " + this.getPaperAbstract() + ",";
+		// ret = ret + "prefix: " + this.get + "\n";
+		return ret;
+	}
+
 }

@@ -15,3 +15,5 @@ before_script:
 branches:
   only:
   - /.*/
+git:
+  quiet: true

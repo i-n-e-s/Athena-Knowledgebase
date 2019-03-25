@@ -144,6 +144,7 @@ public class JPATestdatabase {
 			authors[i] = new Person();
 			authors[i].setPrefix("Prefix" + i%2);
 			authors[i].setFullName("Author "+i);
+			authors[i].setSemanticScholarID(  String.valueOf((i * 7491058) % 99999999) );
 			authors[i].setBirth(LocalDate.of(1900+(i%70 + 30), (i%12)+1 , (i%28)+1));
 			authors[i].setInstitution(institutions[i%institutionQuantity]);//Maybe some Data are not available
 		}
@@ -157,6 +158,7 @@ public class JPATestdatabase {
 			}
 			papers[i].setTopic("Topic" + i%4);
 			papers[i].setTitle("Title" + i);
+			papers[i].setSemanticScholarID( String.valueOf((i * 7493728) % 99999999) );
 			papers[i].setRemoteLink("Link.test/" + i);
 			papers[i].setPdfFileSize(i+100);
 			papers[i].setReleaseDate(LocalDate.of(i,i%12+1,i%28+1));

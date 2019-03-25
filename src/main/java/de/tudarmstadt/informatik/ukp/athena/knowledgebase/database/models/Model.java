@@ -19,17 +19,17 @@ public abstract class Model {
 	 * @param model A model, preferably of the same class of the object from which called
 	 * @return true if all fields, except the ones referencing other objects, are equal. false if the given object is null, not the same class or a field is different
 	 */
-	public boolean  equalsWithoutID(Object model){
+	public boolean equalsWithoutID(Object model){
 		if (model == null) return false;
 
-		if (!this.getClass().equals(model.getClass())) return false; //Different Classes can't be equal
+		if (!this.getClass().equals(model.getClass())) return false; //Different classes can't be equal
 
 		Field fields[] = getAllFields(this);
 
 		for (Field field : fields) {
 			boolean wasAccessible= field.isAccessible();
 			if(!wasAccessible) field.setAccessible(true);
-			if(!field.getName().contains("ID") && field.getAnnotation(Column.class)!=null) {//Field is not ID and Information is Stored in Object, because it's a Column
+			if(!field.getName().contains("ID") && field.getAnnotation(Column.class)!=null) {//Field is not ID and information is stored in object, because it's a column
 				//Start checking equality
 				try {
 					if(field.get(this)==null) {
@@ -51,22 +51,22 @@ public abstract class Model {
 	}
 
 	/**
-	 * This method compares all fields of the given models with this model, except all fields containing ID and all fields referencing other models. If a field is set to null it is seen as a wildcard
+	 * This method compares all fields of the given model with this model, except all fields containing ID and all fields referencing other models. If a field is set to null it is seen as a wildcard
 	 *
 	 * @param model A model, preferably of the same class of the object from which called
 	 * @return true if all fields, except the ones referencing other objects, are equal. false if the given object is null, not the same class or a field is different
 	 */
-	public boolean  equalsNullAsWildcard(Object model) {
+	public boolean equalsNullAsWildcard(Object model) {
 		if (model == null) return false;
 
-		if (!this.getClass().equals(model.getClass())) return false; //Different Classes can't be equal
+		if (!this.getClass().equals(model.getClass())) return false; //Different classes can't be equal
 
 		Field fields[] = getAllFields(this);
 
 		for (Field field : fields) {
 			boolean wasAccessible= field.isAccessible();
 			if(!wasAccessible) field.setAccessible(true);
-			if(!field.getName().contains("ID") && field.getAnnotation(Column.class)!=null) {//Field is not ID and Information is Stored in Object, because it's a Column
+			if(!field.getName().contains("ID") && field.getAnnotation(Column.class)!=null) {//Field is not ID and information is stored in object, because it's a column
 				//Start checking equality
 				try {
 					if(field.get(this) != null && field.get(model) != null) {// is one value null
@@ -87,8 +87,8 @@ public abstract class Model {
 	/**
 	 * Returns all fields of this class and its superclasses, up to the class "Model"
 	 *
-	 * @param model A model or an Class which extends Model
-	 * @return All fields declared in the class hierarchy between the given Object and Model
+	 * @param model A model or a class which extends {@link de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Model Model}
+	 * @return All fields declared in the class hierarchy between the given object and model
 	 */
 	private Field[] getAllFields(Model model) {
 		ArrayList<Field> returnValue = new ArrayList<Field>();
@@ -106,9 +106,9 @@ public abstract class Model {
 	}
 
 	/**
-	 * Return the Value of the Field which is annotated as ID in this model
+	 * Return the value of the field which is annotated as ID in this model
 	 *
-	 * @return the Id of this object
+	 * @return the Id of this object, null if none found
 	 */
 	public Object getID() {
 		Field[] fields = this.getClass().getDeclaredFields();
@@ -129,4 +129,22 @@ public abstract class Model {
 		}
 		return null;
 	}
+
+	/**
+	 * Creates the two way relation between an author and paper object
+	 * @return false if already connected
+	 */
+	public static boolean connectAuthorPaper(Person author, Paper paper) {
+		boolean changed = false;
+
+		//Search if connection already exists
+		for ( Paper authorsPaper : author.getPapers() ) {
+			if ( authorsPaper.equalsWithoutID(paper) ) { return false; }
+		}
+
+		if ( !author.getPapers().contains(paper) ) { author.addPaper(paper); changed = true; }
+		if ( !paper.getAuthors().contains(author) ) { paper.addAuthor(author); changed = true; }
+		return changed;
+	}
+
 }
