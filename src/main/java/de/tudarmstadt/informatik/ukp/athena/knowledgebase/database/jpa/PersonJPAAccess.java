@@ -62,36 +62,46 @@ public class PersonJPAAccess implements CommonAccess<Person> {
 	 * @return An object from the DB with matching attributes
 	 */
 	public List<Person> getByKnownAttributes(Person toFind) {
-
+		//1. Get entityManager
 		EntityManager entityManager = PersistenceManager.getEntityManager();
+
+		//2. Build JPQL query string
 		String query = "SELECT c FROM Person c WHERE ";
 		boolean addedConstraint = false;
-		if( toFind.getSemanticScholarID() != null ) {
+		if( toFind.getSemanticScholarID() != null ) {	//if s2id is known, add it to the query phrase
 			query = query + "c.semanticScholarID LIKE '"+toFind.getSemanticScholarID() + "'";
 			addedConstraint = true;
 		}
-		if ( toFind.getFullName() != null && toFind.getFullName() != "" ) {
+		if ( toFind.getFullName() != null && toFind.getFullName() != "" ) {	//if name is known, add it to query phrase
 			if (addedConstraint) { query = query + " and "; }
 			query = query + "c.fullName = '"+toFind.getFullName().replace("'", "''") + "'";
 			addedConstraint = true;
 		}
 
-		if ( !addedConstraint ) { return null; }
+		if ( !addedConstraint ) { return null; }	//if no attributes added to searchquery, return null
 		logger.info(query);
 
+		//3. Execute query
 		List<Person> result = entityManager.createQuery(query).getResultList();
 
+		//4. If results are found, return them
 		if( result.size() > 0 ) { return result; }
+
+		//5. If not, repeat search, but only use s2id
 		if( toFind.getSemanticScholarID() != null ) {
 			query = "SELECT c FROM Person c WHERE c.semanticScholarID LIKE '"+toFind.getSemanticScholarID() + "'";
 			result = entityManager.createQuery(query).getResultList();
-			if( result.size() > 0 ) { return result; }
+			if( result.size() > 0 ) { return result; }		//if search delivered results, break up and return them
 		}
+
+		//6. If still no results found, repeat search but use full name as only search filter
 		if ( toFind.getFullName() != null && toFind.getFullName() != "" ) {
 			query = "SELECT c FROM Person c WHERE c.fullName = '"+toFind.getFullName().replace("'", "''") + "'";
 			result = entityManager.createQuery(query).getResultList();
-			if( result.size() > 0 ) { return result; }
+			if( result.size() > 0 ) { return result; }		///if search delivered results, break up and return them
 		}
+
+		//7. If no search succeeded, return null
 		return null;
 	}
 
@@ -105,11 +115,16 @@ public class PersonJPAAccess implements CommonAccess<Person> {
 	public Person getBySemanticScholarID( String semanticScholarID ) {
 
 		if( semanticScholarID == null ) { return null; }
+
+		//Build JPQL query
 		String query = "SELECT c FROM Person c WHERE c.semanticScholarID = '"+semanticScholarID.replace("'","''") + "'";
 		logger.info(query);
 		EntityManager entityManager = PersistenceManager.getEntityManager();
+
+		//Execute query
 		List<Person> matches = entityManager.createQuery(query).getResultList();
 
+		//If results are found, return them. Otherwise return null
 		return (matches.size() > 0) ? matches.get(0) : null;
 	}
 
@@ -122,11 +137,16 @@ public class PersonJPAAccess implements CommonAccess<Person> {
 	 */
 	public Person getByFullName( String name ) {
 		if( name == null ) { return null; }
+
+		//Build query string
 		String query = "SELECT c FROM Person c WHERE c.fullName = '"+name.replace("'","''") + "'";
 		logger.info(query);
 		EntityManager entityManager = PersistenceManager.getEntityManager();
+
+		//Execute query
 		List<Person> matches = entityManager.createQuery(query).getResultList();
 
+		//If results are found, return them. Otherwise return null
 		return (matches.size() > 0) ? matches.get(0) : null;
 	}
 }
