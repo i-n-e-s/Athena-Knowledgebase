@@ -91,7 +91,7 @@ public class PaperJPAAccess implements CommonAccess<Paper> {
 			if( result.size() > 0 ) { return result; }
 		}
 		if ( toFind.getTitle() != null && toFind.getTitle() != "" ) {
-			query = "SELECT c FROM Paper c WHERE c.title = '"+toFind.getTitle().replace("'", "\\'") + "'";
+			query = "SELECT c FROM Paper c WHERE c.title = '"+toFind.getTitle().replace("'", "''") + "'";
 			result = entityManager.createQuery(query).getResultList();
 			if( result.size() > 0 ) { return result; }
 		}

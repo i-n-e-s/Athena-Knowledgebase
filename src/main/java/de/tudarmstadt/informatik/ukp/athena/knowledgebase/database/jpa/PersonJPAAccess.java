@@ -72,7 +72,7 @@ public class PersonJPAAccess implements CommonAccess<Person> {
 		}
 		if ( toFind.getFullName() != null && toFind.getFullName() != "" ) {
 			if (addedConstraint) { query = query + " and "; }
-			query = query + "c.fullName = '"+toFind.getFullName().replace("'", "\\'") + "'";
+			query = query + "c.fullName = '"+toFind.getFullName().replace("'", "''") + "'";
 			addedConstraint = true;
 		}
 
@@ -88,7 +88,7 @@ public class PersonJPAAccess implements CommonAccess<Person> {
 			if( result.size() > 0 ) { return result; }
 		}
 		if ( toFind.getFullName() != null && toFind.getFullName() != "" ) {
-			query = "SELECT c FROM Person c WHERE c.fullName = '"+toFind.getFullName().replace("'", "\\'") + "'";
+			query = "SELECT c FROM Person c WHERE c.fullName = '"+toFind.getFullName().replace("'", "''") + "'";
 			result = entityManager.createQuery(query).getResultList();
 			if( result.size() > 0 ) { return result; }
 		}
