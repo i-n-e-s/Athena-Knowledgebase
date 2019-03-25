@@ -95,7 +95,7 @@ public class S2AuthorSearch extends SemanticScholarAPIRequest {
         catch (NotAvailableException e) { return; }    //Never thrown, because called after request is run
 
         //set expected amount of papers
-        logger.info("Lookup name: "+String.valueOf(this.name)+" S2ID: "+String.valueOf(this.s2id));
+        logger.info("Lookup name: {} S2ID: {}", String.valueOf(this.name), String.valueOf(this.s2id));
         this.expectedAmountOfPapers = result.getJSONObject("author").getJSONObject("papers").getInt("totalResults");
 
         //Reset this request
@@ -120,7 +120,7 @@ public class S2AuthorSearch extends SemanticScholarAPIRequest {
         catch (NotAvailableException e) { return; }    //Never thrown, because called after request is run
 
         //If multiple results match the name, choose most relevant one
-        logger.info("Lookup name: "+String.valueOf(this.name)+" S2ID: "+String.valueOf(this.s2id));
+        logger.info("Lookup name: {} S2ID: {}", String.valueOf(this.name), String.valueOf(this.s2id));
         logger.info(result.toString());
         JSONArray matchingAuthors = result.getJSONArray("matchedAuthors");
         JSONObject chosenAuthor = (JSONObject) matchingAuthors.get(0);

@@ -220,7 +220,7 @@ public class ParsedDataInserter {
 			}
 			entityManager.getTransaction().commit();
 		}
-		System.out.println("Failed: "+failedAuthors+"\nDone");
+		logger.info("Failed: {}\nDone",failedAuthors);
 
 	}
 

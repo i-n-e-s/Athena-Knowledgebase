@@ -186,9 +186,9 @@ public class S2APIFunctions {
 		}
 
 		//3.1 Parse JSONObject to temp Author TODO overwrite?
-		logger.info("Start to parse:\n\n"+response.toString());
+		logger.info("Start to parse:\n\n{}", response.toString());
 		parseAddS2InternalAPIAuthorJSON(author, overwrite, response);
-		logger.info("\n\ngot:\n"+author.toString()+"\n\n");
+		logger.info("\n\ngot:\n{}\n\n", author.toString());
 
 		//3.2 Add information from temp author to original author
 		//author.complementBy(temp);
@@ -215,7 +215,7 @@ public class S2APIFunctions {
 		for (int i = 0; i < papersJSON.length(); i++) {   //Add all found papers
 
 			String title = papersJSON.getJSONObject(i).getJSONObject("title").getString("text");
-			logger.info("Parse paper "+title+"\ti="+i);
+			logger.info("Parse paper {}\ti={}",title,i);
 
 			Paper currPaper = null;
 
@@ -266,7 +266,7 @@ public class S2APIFunctions {
 			Person query = new Person();
 			query.setFullName(jsonAuthorInfo.getString("name"));
 			query.setSemanticScholarID(s2id);
-			logger.info("Query ID: "+query.getPersonID());
+			logger.info("Query ID: {}", query.getPersonID());
 			Person currInfl = Person.findOrCreate( query );     //If no matching DB-entry is found, create new person
 
 			//Set attributes:
@@ -376,16 +376,16 @@ public class S2APIFunctions {
 			} catch ( JSONException e ) {
 				continue;       //If name or S2ID unknown, skip the author
 			}
-			logger.info("Want to add author "+name+" to paper "+dest.getTitle());
+			logger.info("Want to add author {} to paper {}", name, dest.getTitle());
 
             Person authorObjToBeAdded = null;
             //Check if author is already connected to paper
             for ( Person papersKnownAuthor : dest.getAuthors() ) {
                if ( (papersKnownAuthor.getSemanticScholarID() != null && papersKnownAuthor.getSemanticScholarID().equals(s2id)) || papersKnownAuthor.getFullName().equals(name)) {
                     authorObjToBeAdded = papersKnownAuthor;
-                    logger.info("Found and reuse "+authorObjToBeAdded.getFullName()+"("+authorObjToBeAdded.getPersonID()+")");
+                    logger.info("Found and reuse {}({})", authorObjToBeAdded.getFullName(), authorObjToBeAdded.getPersonID());
                     break;
-                } else { logger.info( name + " " + s2id+ " does not equal " + papersKnownAuthor.getFullName()+ " "+ papersKnownAuthor.getSemanticScholarID()); }
+                } else { logger.info("{} {} does not equal {} {}", name, s2id,papersKnownAuthor.getFullName(), papersKnownAuthor.getSemanticScholarID()); }
             }
 
 			//If not already connected, check if author is in DB
