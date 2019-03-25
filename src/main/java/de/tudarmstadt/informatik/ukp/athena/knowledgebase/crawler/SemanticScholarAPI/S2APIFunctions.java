@@ -383,7 +383,7 @@ public class S2APIFunctions {
             Person authorObjToBeAdded = null;
             //Check if author is already connected to paper
             for ( Person papersKnownAuthor : dest.getAuthors() ) {
-                if (papersKnownAuthor.getSemanticScholarID().equals(s2id) || papersKnownAuthor.getFullName().equals(name)) {
+               if ( (papersKnownAuthor.getSemanticScholarID() != null && papersKnownAuthor.getSemanticScholarID().equals(s2id)) || papersKnownAuthor.getFullName().equals(name)) {
                     authorObjToBeAdded = papersKnownAuthor;
                     logger.info("Found and reuse "+authorObjToBeAdded.getFullName()+"("+authorObjToBeAdded.getPersonID()+")");
                     break;

@@ -30,8 +30,6 @@ public class S2AuthorSearch extends SemanticScholarAPIrequest {
     private String name = null;
     private int expectedAmountOfPapers = -1;
 
-    private String rawResponse = null;              //Response as received from Server
-    private boolean validDataIsReady = false;       //True if response is ready
 
     /**
      * Sets the name of the Author to be looked up.
@@ -170,35 +168,6 @@ public class S2AuthorSearch extends SemanticScholarAPIrequest {
         this.HTTPResponseCode = Integer.toString(connection.getResponseCode());
         this.validDataIsReady = true;
     }
-
-
-    /**
-     * Returns the Response as the String we got from the Server
-     *
-     * @return Servers RESPONSE String
-     * @throws NotAvailableException if no valid response is available
-     */
-    @Override
-    public String getRawResponse() throws NotAvailableException {
-        if (this.validDataIsReady) {
-            return rawResponse;
-        } else {
-            throw new NotAvailableException();
-        }
-    }
-
-    /**
-     * Returns the Response as a parsed JSON
-     *
-     * @return Servers RESPONSE as an org.json.JSONObject
-     */
-    @Override
-    public JSONObject getParsedJSONResponse() throws NotAvailableException, JSONException {
-        if (!this.validDataIsReady) { throw new NotAvailableException(); }
-
-        return new JSONObject( rawResponse );
-    }
-
 
     /**
      * Creates the Data Payload for the POST request of the Search

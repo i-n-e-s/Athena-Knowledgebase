@@ -18,10 +18,6 @@ import java.net.URL;
  */
 public class S2PaperSearch extends SemanticScholarAPIrequest {
 
-
-    private String rawResponse = null;              //Response as received from Server
-    private boolean validDataIsReady = false;       //True if response is ready
-
     private String authorID = null;
 
     /**
@@ -37,42 +33,12 @@ public class S2PaperSearch extends SemanticScholarAPIrequest {
     }
 
     /**
-     * Returns the Response as the String we got from the Server
-     *
-     * @return Servers RESPONSE String
-     * @throws NotAvailableException if no valid response is available
-     */
-    @Override
-    public String getRawResponse() throws NotAvailableException {
-        if (this.validDataIsReady) {
-            return rawResponse;
-        } else {
-            throw new NotAvailableException();
-        }
-    }
-
-    /**
-     * Returns the Response as a parsed JSON
-     *
-     * @return Servers RESPONSE as an org.json.JSONObject
-     * @throws JSONException if Response could not be parsed as JSON
-     * @throws NotAvailableException if called before a Response as arrived
-     */
-    @Override
-    public JSONObject getParsedJSONResponse() throws JSONException, NotAvailableException {
-        if (!this.validDataIsReady) { throw new NotAvailableException(); }
-
-        return new JSONObject(rawResponse);
-    }
-
-    /**
      * Establishes an HTTPS Connection to SemanticScholarAPI and POSTs a request
      *
      * @throws IOException when some HTTP stuff goes wrong
      */
     @Override
     public void run() throws IOException {
-
 
         //Create Data Payload of GET request, containing Search parameters
         String searchRequestURL = SemanticScholarPublicAPIURL + "v1" + "/author/" + authorID;

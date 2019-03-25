@@ -21,9 +21,6 @@ import org.json.JSONObject;
 
 public class S2GeneralSearch extends SemanticScholarAPIrequest {
 
-    private String rawResponse = null;              //Response as received from Server
-    private boolean validDataIsReady = false;       //True if response is ready
-
     private String searchQuery = null;
 
     /**
@@ -36,32 +33,6 @@ public class S2GeneralSearch extends SemanticScholarAPIrequest {
         searchQuery = query;
     }
 
-    /**
-     * Returns the Response as the String we got from the Server
-     *
-     * @return Servers RESPONSE String
-     * @throws NotAvailableException if no valid response is available
-     */
-    @Override
-    public String getRawResponse() throws NotAvailableException {
-        if (this.validDataIsReady) {
-            return rawResponse;
-        } else {
-            throw new NotAvailableException();
-        }
-    }
-
-    /**
-     * Returns the Response as a parsed JSON
-     *
-     * @return Servers RESPONSE as an org.json.JSONObject
-     */
-    @Override
-    public JSONObject getParsedJSONResponse() throws NotAvailableException, JSONException {
-        if (!this.validDataIsReady) { throw new NotAvailableException(); }
-
-        return new JSONObject( rawResponse );
-    }
 
 
     /**

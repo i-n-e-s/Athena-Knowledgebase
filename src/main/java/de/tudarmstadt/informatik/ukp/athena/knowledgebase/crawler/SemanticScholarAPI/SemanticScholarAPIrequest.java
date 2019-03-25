@@ -26,7 +26,10 @@ public abstract class SemanticScholarAPIrequest {
     public static final String UserAgentString = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) snap Chromium/70.0.3538.110 Chrome/70.0.3538.110 Safari/537.36";
     public static final String SemanticScholarPublicAPIURL = "https://api.semanticscholar.org/";
     private static final short allowedConnectionFailuresInSafeRun = 5;
+
     protected String HTTPResponseCode = null;
+    protected String rawResponse = null;              //Response as received from Server
+    protected boolean validDataIsReady = false;       //True if response is ready
 
 
     /**
@@ -36,7 +39,6 @@ public abstract class SemanticScholarAPIrequest {
      */
     public abstract void setQuery(String query);
 
-
     /**
      * Executes the request and saves the response to be accessed by the get methods
      * @throws IOException If the HTTP connection fails
@@ -44,19 +46,24 @@ public abstract class SemanticScholarAPIrequest {
     public abstract void run() throws IOException;
 
     /**
+     * Returns the HTTP Status Code of the request
+     * @return The HTTP Status Code of the request
+     */
+    public final String getHTTPResponseCode() {
+        return HTTPResponseCode;
+    }
+
+    /**
      * Returns the server's response to the request as a String
      * @return The server's response
      * @throws NotAvailableException If no response is available, e.g. because the request has not been run yet
      */
-    public abstract String getRawResponse() throws NotAvailableException;
-
-    /**
-     * Returns the HTTP Status Code of the request
-     *
-     * @return The HTTP Status Code of the request
-     */
-    public String getHTTPResponseCode() {
-        return HTTPResponseCode;
+    public final String getRawResponse() throws NotAvailableException {
+        if (this.validDataIsReady) {
+            return rawResponse;
+        } else {
+            throw new NotAvailableException();
+        }
     }
 
     /**
@@ -65,7 +72,11 @@ public abstract class SemanticScholarAPIrequest {
      * @throws NotAvailableException If no response is available, e.g. because the request has not been run yet
      * @throws JSONException If the JSONObject could not be parsed as JSON
      */
-    public abstract JSONObject getParsedJSONResponse() throws NotAvailableException, JSONException;
+    public final JSONObject getParsedJSONResponse() throws NotAvailableException, JSONException {
+        if (!this.validDataIsReady) { throw new NotAvailableException(); }
+
+        return new JSONObject( rawResponse );
+    }
 
 
     /**
