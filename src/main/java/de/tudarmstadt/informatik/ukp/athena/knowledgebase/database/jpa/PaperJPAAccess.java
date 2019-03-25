@@ -67,10 +67,12 @@ public class PaperJPAAccess implements CommonAccess<Paper> {
 		String query = "SELECT c FROM Paper c WHERE ";
 		boolean addedConstraint = false;
 		if( toFind.getSemanticScholarID() != null ) {
+			System.out.println("Got parameter s2id");
 			query = query + "c.semanticScholarID LIKE '"+toFind.getSemanticScholarID() + "'";
 			addedConstraint = true;
 		}
 		if ( toFind.getTitle() != null && toFind.getTitle() != "" ) {
+			System.out.println("Got parameter title");
 			if (addedConstraint) { query = query + " and "; }
 			query = query + "c.title = '"+toFind.getTitle().replace("'", "''") + "'";
 			addedConstraint = true;
@@ -82,6 +84,8 @@ public class PaperJPAAccess implements CommonAccess<Paper> {
 		//2. Execute query
 		EntityManager entityManager = PersistenceManager.getEntityManager();
 		List<Paper> result = entityManager.createQuery(query).getResultList();
+		System.out.println("Got "+ result.size()+ " results");
+
 		if( result.size() > 0 ) { return result; }
 
 		//3. If nothing found, try searching for Attributes separately

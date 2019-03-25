@@ -152,6 +152,7 @@ public class JPATestdatabase {
 			}
 			papers[i].setTopic("Topic" + i%4);
 			papers[i].setTitle("Title" + i);
+			papers[i].setSemanticScholarID( String.valueOf((i * 7493728) % 99999999) );
 			papers[i].setRemoteLink("Link.test/" + i);
 			papers[i].setPdfFileSize(i+100);
 			papers[i].setReleaseDate(LocalDate.of(i,i%12+1,i%28+1));
