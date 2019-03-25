@@ -183,7 +183,7 @@ public class ModelsTest{
 	@Test
 	public void personFindOrCreateTest() {
 		EntityManager entityManager = PersistenceManager.getEntityManager();
-		entityManager.getTransaction().begin();
+		if(!entityManager.getTransaction().isActive()) { entityManager.getTransaction().begin(); }
 		Person query = new Person();
 		query.setFullName("Author 5");
 		assertEquals("0", String.valueOf(query.getPersonID()));
