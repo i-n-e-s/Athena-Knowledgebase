@@ -1,7 +1,6 @@
 package de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.jpa;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
@@ -55,22 +54,16 @@ public class PersonJPAAccess implements CommonAccess<Person> {
 	}
 
 	/**
-	 * Executes given JPQL query and returns results
-	 *
-	 */
-
-
-	/**
-	 * Finds a matching DB Entry by the attributes of a given Person Object, null is seen as wildcard
-	 * Currently Only uses (decreasing priority): S2ID, Name
-     * If no entry with matching S2ID AND name is found, look for matching S2ID, if nothing found either look for name, etc
-	 * @param toFind Person Object to get the search constraints from
-	 * @return An Object from the DB with matching attributes
+	 * Finds a matching DB entry by the attributes of a given person object, null is seen as wildcard
+	 * Currently only uses (decreasing priority): S2ID, Name
+	 * If no entry with matching S2ID AND name is found, look for matching S2ID, if nothing found either look for name, etc
+	 * @param toFind Person object to get the search constraints from
+	 * @return An object from the DB with matching attributes
 	 */
 	public List<Person> getByKnownAttributes(Person toFind) {
 
-        EntityManager entityManager = PersistenceManager.getEntityManager();
-        String query = "SELECT c FROM Person c WHERE ";
+		EntityManager entityManager = PersistenceManager.getEntityManager();
+		String query = "SELECT c FROM Person c WHERE ";
 		boolean addedConstraint = false;
 		if( toFind.getSemanticScholarID() != null ) {
 			query = query + "c.semanticScholarID LIKE '"+toFind.getSemanticScholarID() + "'";
@@ -87,25 +80,25 @@ public class PersonJPAAccess implements CommonAccess<Person> {
 		List<Person> result = entityManager.createQuery(query).getResultList();
 
 		if( result.size() > 0 ) { return result; }
-        if( toFind.getSemanticScholarID() != null ) {
-            query = "SELECT c FROM Person c WHERE c.semanticScholarID LIKE '"+toFind.getSemanticScholarID() + "'";
-            result = entityManager.createQuery(query).getResultList();
-            if( result.size() > 0 ) { return result; }
-        }
-        if ( toFind.getFullName() != null && toFind.getFullName() != "" ) {
-            query = "SELECT c FROM Person c WHERE c.fullName = '"+toFind.getFullName().replace("'", "\\'") + "'";
-            result = entityManager.createQuery(query).getResultList();
-            if( result.size() > 0 ) { return result; }
-        }
-        return null;
+		if( toFind.getSemanticScholarID() != null ) {
+			query = "SELECT c FROM Person c WHERE c.semanticScholarID LIKE '"+toFind.getSemanticScholarID() + "'";
+			result = entityManager.createQuery(query).getResultList();
+			if( result.size() > 0 ) { return result; }
+		}
+		if ( toFind.getFullName() != null && toFind.getFullName() != "" ) {
+			query = "SELECT c FROM Person c WHERE c.fullName = '"+toFind.getFullName().replace("'", "\\'") + "'";
+			result = entityManager.createQuery(query).getResultList();
+			if( result.size() > 0 ) { return result; }
+		}
+		return null;
 	}
 
 	/**
-	 * Looks for DB entries with matching SemanticScholar ID
+	 * Looks for DB entries with matching Semantic Scholar ID
 	 *
 	 * @author Philipp Emmer
-	 * @param semanticScholarID The semanticScholarID of the wanted person object to search
-	 * @return DB Entry of Person with matching S2ID or null
+	 * @param semanticScholarID The Semantic Scholar ID of the wanted person object to search
+	 * @return DB entry of person with matching S2ID, null if not found
 	 */
 	public Person getBySemanticScholarID( String semanticScholarID ) {
 
@@ -123,7 +116,7 @@ public class PersonJPAAccess implements CommonAccess<Person> {
 	 *
 	 * @author Philipp Emmer
 	 * @param name The name of the wanted person object to search
-	 * @return DB Entry of Person with matching S2ID or null
+	 * @return DB entry of person with matching S2ID or null
 	 */
 	public Person getByFullName( String name ) {
 		if( name == null ) { return null; }

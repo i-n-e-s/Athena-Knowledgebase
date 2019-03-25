@@ -1,4 +1,4 @@
-package de.tudarmstadt.informatik.ukp.athena.knowledgebase.crawler.SemanticScholarAPI;
+package de.tudarmstadt.informatik.ukp.athena.knowledgebase.exception;
 
 /**
  * Thrown, if a search request didn't find any results

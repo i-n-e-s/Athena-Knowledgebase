@@ -20,10 +20,11 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.jpa.PersonJPAAccess;
 
 /**
- * @author Tristan Wettich
+ * @author Tristan Wettich, Philipp Emmer
  */
 @Entity
 @Table(name = "person")
@@ -86,31 +87,31 @@ public class Person extends Model {
 
 	@ManyToOne(cascade={ CascadeType.ALL}, fetch = FetchType.LAZY)
 	@JoinColumn(name="influenced1" )
-	private Person top1influenced = null;    //Authors that influenced this one
+	private Person top1influenced = null;    //Authors that this one influenced
 	@ManyToOne(cascade={ CascadeType.ALL}, fetch = FetchType.LAZY)
 	@JoinColumn(name="influenced2" )
-	private Person top2influenced = null;    //Authors that influenced this one
+	private Person top2influenced = null;    //Authors that this one influenced
 	@ManyToOne(cascade={ CascadeType.ALL}, fetch = FetchType.LAZY)
 	@JoinColumn(name="influenced3" )
-	private Person top3influenced = null;    //Authors that influenced this one
+	private Person top3influenced = null;    //Authors that this one influenced
 	@ManyToOne(cascade={ CascadeType.ALL}, fetch = FetchType.LAZY)
 	@JoinColumn(name="influenced4" )
-	private Person top4influenced = null;    //Authors that influenced this one
+	private Person top4influenced = null;    //Authors that this one influenced
 	@ManyToOne(cascade={ CascadeType.ALL}, fetch = FetchType.LAZY)
 	@JoinColumn(name="influenced5" )
-	private Person top5influenced = null;    //Authors that influenced this one
+	private Person top5influenced = null;    //Authors that this one influenced
 
 
 	/**
-	 * Gets the unique id of the person.
-	 * @return The unique id of the person
+	 * Gets the unique id of this person.
+	 * @return The unique id of this person
 	 */
 	public long getPersonID() {
 		return personID;
 	}
 
 	/**
-	 * Sets the person's id
+	 * Sets this person's id
 	 * @param id The new id
 	 */
 	public void setPersonID(long id) {
@@ -118,80 +119,80 @@ public class Person extends Model {
 	}
 
 	/**
-	 * Gets the person's prefixes as single String.
-	 * @return The person's prefixes
+	 * Gets this person's prefixes as a single String.
+	 * @return This person's prefixes
 	 */
 	public String getPrefix() {
 		return prefix;
 	}
 
 	/**
-	 * Sets the person's prefixes as single String.
-	 * @param prefix The persons new prefixes
+	 * Sets this person's prefixes as a single String.
+	 * @param prefix This person's new prefixes
 	 */
 	public void setPrefix(String prefix) {
 		this.prefix = prefix;
 	}
 
 	/**
-	 * Gets the person's full name.
-	 * @return Gets the person's full name.
+	 * Gets this person's full name.
+	 * @return This person's full name.
 	 */
 	public String getFullName() {
 		return fullName;
 	}
 
 	/**
-	 * Sets the person's full name.
-	 * @param fullName The person's full name.
+	 * Sets this person's full name.
+	 * @param fullName This person's full name.
 	 */
 	public void setFullName(String fullName) {
 		this.fullName = fullName;
 	}
 
 	/**
-	 * Gets the person's birthday.
-	 * @return The person's birthday
+	 * Gets this person's birthday.
+	 * @return This person's birthday
 	 */
 	public LocalDate getBirth() {
 		return birth;
 	}
 
 	/**
-	 * Sets the person's birthday
-	 * @param birth The person's birthday
+	 * Sets this person's birthday
+	 * @param birth This person's birthday
 	 */
 	public void setBirth(LocalDate birth) {
 		this.birth = birth;
 	}
 
 	/**
-	 * Gets the person's day of death.
-	 * @return The person's day of death
+	 * Gets this person's day of death.
+	 * @return This person's day of death
 	 */
 	public LocalDate getObit() {
 		return obit;
 	}
 
 	/**
-	 * Sets the person's day of death.
-	 * @param obit The person's day of death
+	 * Sets this person's day of death.
+	 * @param obit This person's day of death
 	 */
 	public void setObit(LocalDate obit) {
 		this.obit = obit;
 	}
 
 	/**
-	 * Gets the person's institution.
-	 * @return The person's institution
+	 * Gets this person's institution.
+	 * @return This person's institution
 	 */
 	public Institution getInstitution() {
 		return institution;
 	}
 
 	/**
-	 * Sets the person's institution.
-	 * @param institution The person's institution
+	 * Sets this person's institution.
+	 * @param institution This person's institution
 	 */
 	public void setInstitution(Institution institution) {
 		this.institution = institution;
@@ -225,18 +226,18 @@ public class Person extends Model {
 	}
 
 	/**
-	 * Gets the SemanticScholar ID of this author
+	 * Gets the Semantic Scholar ID of this author
 	 *
-	 * @return SemanticScholarID of the author
+	 * @return The Semantic Scholar ID of this author
 	 */
 	public String getSemanticScholarID() {
 		return semanticScholarID;
 	}
 
 	/**
-	 * Sets the SemanticScholar ID of this author
+	 * Sets the Semantic Scholar ID of this author
 	 *
-	 * @param semanticScholarID New SemanticScholarID of the author
+	 * @param semanticScholarID The new Semantic Scholar ID of this author
 	 */
 	public void setSemanticScholarID(String semanticScholarID) {
 		this.semanticScholarID = semanticScholarID;
@@ -246,8 +247,8 @@ public class Person extends Model {
 	/**
 	 * Sets the top 5 authors this author was influenced by
 	 *
-	 * @param top5influencedBy The new top 5 influencers of this author. Must be 5 or less
-	 * @return true if the new list of authors was set
+	 * @param top5influencedBy The new top 5 influencers of this author. The size must be something from 0-5 (inclusive)
+	 * @return true if at least one influenced-by-author was set, false otherwhise
 	 */
 	public boolean setTop5influencedBy(List<Person> top5influencedBy) {
 		flushInfluencedBy();
@@ -259,8 +260,8 @@ public class Person extends Model {
 	}
 
 	/**
-	 * Returns the Top 5 of Authors, that were influenced by this Author
-	 * @return The Top 5 of Authors that were influenced by this Author as an ArrayList
+	 * Returns the top 5 of authors that were influenced by this author
+	 * @return The top 5 of authors that influenced this author as an ArrayList
 	 */
 	public ArrayList<Person> getTop5influencedBy() {
 		ArrayList<Person> ret = new ArrayList<Person>();
@@ -271,11 +272,12 @@ public class Person extends Model {
 		if(this.top5influencedBy != null) { ret.add(this.top5influencedBy); }
 		return ret;
 	}
+
 	/**
-	 * Adds an author, this one was influenced by to the author, if he doesn't have 5 already
+	 * Adds an author this one was influenced by to this author, if he doesn't have 5 already
 	 *
 	 * @param influencedBy The influencing author to add
-	 * @return true if the influencer was added
+	 * @return true if the author was added, false otherwhise
 	 */
 	public boolean addInfluencedBy(Person influencedBy) {
 		if( this.top1influencedBy == null ) { this.top1influencedBy = influencedBy; }
@@ -288,7 +290,7 @@ public class Person extends Model {
 	}
 
 	/**
-	 * Deletes the List of Authors influenced by this one
+	 * Sets all fields of authors that influenced this one to null
 	 */
 	private void flushInfluencedBy() {
 		this.top1influencedBy = null;
@@ -301,8 +303,8 @@ public class Person extends Model {
 	/**
 	 * Sets the top 5 authors that were influenced by this author the most
 	 *
-	 * @param top5influenced The new top 5 authors influenced by this one. Must be 5 or less
-	 * @return true if the new list was set
+	 * @param top5influenced The new top 5 authors influenced by this one. The size must be something from 0-5 (inclusive)
+	 * @return true if at least one influenced author was set, false otherwhise
 	 */
 	public boolean setTop5influenced(List<Person> top5influenced) {
 		flushInfluenced();
@@ -317,7 +319,7 @@ public class Person extends Model {
 	/**
 	 * Sets the top 5 authors that were influenced by this author the most
 	 *
-	 * @return true if the new list was set
+	 * @return The top 5 of authors that were influenced by this author as an ArrayList
 	 */
 	public ArrayList<Person> getTop5influenced() {
 		ArrayList<Person> ret = new ArrayList<Person>();
@@ -333,7 +335,7 @@ public class Person extends Model {
 	 * Adds an author that was influenced by this one, if he doesn't have 5 already
 	 *
 	 * @param influenced The influenced author to add
-	 * @return true if the author was added
+	 * @return true if the author was added, false otherwhise
 	 */
 	public boolean addInfluenced(Person influenced) {
 		if( this.top1influenced == null ) { this.top1influenced = influenced; }
@@ -346,7 +348,7 @@ public class Person extends Model {
 	}
 
 	/**
-	 * Deletes the List of Authors this Author has influenced
+	 * Sets all fields of authors influenced by this one to null
 	 */
 	private void flushInfluenced() {
 		this.top1influenced = null;
@@ -357,9 +359,9 @@ public class Person extends Model {
 	}
 
 	/**
-	 * Creates a String representation of the Person Object.
-	 * Warning: String does not contain all information in the Object
-	 * @return String description of the Object
+	 * Creates a String representation of the person object.
+	 * Warning: String does not contain all information in the object
+	 * @return String description of the object
 	 */
 	@Override
 	public String toString() {
@@ -385,18 +387,18 @@ public class Person extends Model {
 	}
 
 	/**
-	 * Looks for Persons with equal attributes in the DB and returns found entities
-	 * If no matching DB entry was found, create and return a new Person Object
-	 * @param toFind The Person Object containing the query data
-	 * @return A matching Person from the DB or a new Person
+	 * Looks for persons with equal attributes in the DB and returns found entities
+	 * If no matching DB entry was found, create and return a new person object
+	 * @param toFind The person object containing the query data
+	 * @return A matching person from the DB or a new person
 	 */
 	public static Person findOrCreate(Person toFind) {
 
-		//Check if Person with same S2ID exists in DB
+		//Check if person with same S2ID exists in DB
 		PersonJPAAccess filer = new PersonJPAAccess();
 		List<Person> searchResults = filer.getByKnownAttributes(toFind);
 
-		if(searchResults == null || searchResults.size() < 1) { //No matching Person could be found in the DB
+		if(searchResults == null || searchResults.size() < 1) { //No matching person could be found in the DB
 			return new Person();
 		}
 		else { 		//Choose first result
