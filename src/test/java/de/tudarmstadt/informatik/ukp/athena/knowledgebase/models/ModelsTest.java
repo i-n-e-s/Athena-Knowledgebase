@@ -181,54 +181,6 @@ public class ModelsTest{
 	}
 
 	@Test
-	public void personFindOrCreateTest() {
-		EntityManager entityManager = PersistenceManager.getEntityManager();
-		if(!entityManager.getTransaction().isActive()) { entityManager.getTransaction().begin(); }
-		Person query = new Person();
-		query.setFullName("Author 5");
-		assertEquals("0", String.valueOf(query.getPersonID()));
-		Person uut = Person.findOrCreate(query);
-		assertEquals("Prefix" + (5%2), String.valueOf(uut.getPrefix()));
-		entityManager.getTransaction().commit();
-		assertEquals("0", String.valueOf(query.getPersonID()));
-		assertEquals("Prefix" + (5%2), String.valueOf(uut.getPrefix()));
-
-	}
-
-	@Test
-	public void paperFindOrCreateTest() {
-		EntityManager entityManager = PersistenceManager.getEntityManager();
-		if(!entityManager.getTransaction().isActive()) { entityManager.getTransaction().begin(); }
-		Paper query = new Paper();
-		query.setTitle("Title5");
-		assertEquals("0", String.valueOf(query.getPaperID()));
-		Paper uut = Paper.findOrCreate(query);
-		assertEquals("Ant5", String.valueOf(uut.getAnthology()));
-		entityManager.getTransaction().commit();
-		assertEquals("0", String.valueOf(query.getPaperID()));
-	}
-
-	@Test
-	public void paperFindOrCreateStrStrTest() {
-		EntityManager entityManager = PersistenceManager.getEntityManager();
-		if(!entityManager.getTransaction().isActive()) { entityManager.getTransaction().begin(); }
-		Paper uut = Paper.findOrCreate(null, "Title5");
-		assertEquals("Ant5", String.valueOf(uut.getAnthology()));
-		uut = Paper.findOrCreate(null, "Title6");
-		System.out.println(uut.getSemanticScholarID()+"\n\n"+uut.toString());
-
-		uut = Paper.findOrCreate("44962368", null);
-		assertEquals("Ant6", String.valueOf(uut.getAnthology()));
-		uut = Paper.findOrCreate("27393377", "Title17");
-		assertEquals("Ant17", String.valueOf(uut.getAnthology()));
-		uut = Paper.findOrCreate("34887105", "Title17");
-		assertEquals("Ant18", String.valueOf(uut.getAnthology()));
-		uut = Paper.findOrCreate(null, null);
-		assertEquals(null, uut.getAnthology());
-
-	}
-
-	@Test
 	public void connectAuthorPaperTest() {
 		uut = new Person();
 		Paper testPaper = new Paper();

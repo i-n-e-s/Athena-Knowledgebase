@@ -20,6 +20,8 @@ import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Instit
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Paper;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Person;
 
+import javax.persistence.EntityManager;
+
 @SuppressWarnings("javadoc")
 public class PersonJPAAccessTest {
 
@@ -100,6 +102,21 @@ public class PersonJPAAccessTest {
 		if(resultList.size() == 0) fail("return is empty");
 		assertEquals("22473174", resultList.get(0).getSemanticScholarID());
 	}
+
+	@Test
+	public void personFindOrCreateTest() {
+		EntityManager entityManager = PersistenceManager.getEntityManager();
+		if(!entityManager.getTransaction().isActive()) { entityManager.getTransaction().begin(); }
+		Person query = new Person();
+		query.setFullName("Author 5");
+		assertEquals("0", String.valueOf(query.getPersonID()));
+		Person uut = Person.findOrCreate(query);
+		assertEquals("Prefix" + (5%2), String.valueOf(uut.getPrefix()));
+		entityManager.getTransaction().commit();
+		assertEquals("0", String.valueOf(query.getPersonID()));
+		assertEquals("Prefix" + (5%2), String.valueOf(uut.getPrefix()));
+	}
+
 
 	@Test
 	public void updateTest() {

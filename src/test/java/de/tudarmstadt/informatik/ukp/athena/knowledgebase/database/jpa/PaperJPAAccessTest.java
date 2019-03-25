@@ -1,8 +1,5 @@
 package de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.jpa;
 
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,6 +14,11 @@ import org.springframework.context.ConfigurableApplicationContext;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.JPATestdatabase;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Paper;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Person;
+
+import javax.persistence.EntityManager;
+
+import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 @SuppressWarnings("javadoc")
 public class PaperJPAAccessTest {
@@ -108,6 +110,39 @@ public class PaperJPAAccessTest {
 		if(returnValues.size() > 1) fail("more than one return value");
 		assertTrue(testValue.equalsWithoutID(returnValues.get(0)));
 		testDB.createDB();//Don't pollute the Database
+	}
+
+
+	@Test
+	public void paperFindOrCreateTest() {
+		EntityManager entityManager = PersistenceManager.getEntityManager();
+		if(!entityManager.getTransaction().isActive()) { entityManager.getTransaction().begin(); }
+		Paper query = new Paper();
+		query.setTitle("Title5");
+		assertEquals("0", String.valueOf(query.getPaperID()));
+		Paper uut = Paper.findOrCreate(query);
+		assertEquals("Ant5", String.valueOf(uut.getAnthology()));
+		entityManager.getTransaction().commit();
+		assertEquals("0", String.valueOf(query.getPaperID()));
+	}
+
+	@Test
+	public void paperFindOrCreateStrStrTest() {
+		EntityManager entityManager = PersistenceManager.getEntityManager();
+		if(!entityManager.getTransaction().isActive()) { entityManager.getTransaction().begin(); }
+		Paper uut = Paper.findOrCreate(null, "Title5");
+		assertEquals("Ant5", String.valueOf(uut.getAnthology()));
+		uut = Paper.findOrCreate(null, "Title6");
+		System.out.println(uut.getSemanticScholarID()+"\n\n"+uut.toString());
+
+		uut = Paper.findOrCreate("44962368", null);
+		assertEquals("Ant6", String.valueOf(uut.getAnthology()));
+		uut = Paper.findOrCreate("27393377", "Title17");
+		assertEquals("Ant17", String.valueOf(uut.getAnthology()));
+		uut = Paper.findOrCreate("34887105", "Title17");
+		assertEquals("Ant18", String.valueOf(uut.getAnthology()));
+		uut = Paper.findOrCreate(null, null);
+		assertEquals(null, uut.getAnthology());
 	}
 	
 	public List<Paper> getByPaperID(long id) {
