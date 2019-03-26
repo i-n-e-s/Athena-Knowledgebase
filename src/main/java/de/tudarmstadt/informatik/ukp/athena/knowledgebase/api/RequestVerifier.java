@@ -11,6 +11,7 @@ import javax.persistence.Column;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.api.ast.AttributeNode;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.api.ast.NumberAttributeNode;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.api.ast.RequestEntityNode;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.api.ast.RequestFunction;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.api.ast.RequestHierarchyNode;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.api.ast.RequestNode;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.api.ast.StringAttributeNode;
@@ -31,7 +32,7 @@ public class RequestVerifier {
 	private static final Map<String,Map<String, Integer>> NUMERICAL_ATTRIBUTES = new HashMap<>(); //denotes which fields (value) of an entity (key) only accept numerical values
 	//<entity, <entity being stored, field name>>
 	private static final Map<String,Map<String, String>> SET_ATTRIBUTES = new HashMap<>(); //denotes which fields (value) of an entity (key) are sets
-
+	private String resultEntity;
 
 	static { //preprocessing of attributes for verification, this code only runs once
 		Class<?>[] models = {
@@ -92,7 +93,7 @@ public class RequestVerifier {
 	 * @param tree The abstract syntax tree that depicts the API request
 	 * @throws VerificationFailedException If the verification fails
 	 */ //longer than 40 lines due to comments
-	public static void verify(RequestNode tree) throws VerificationFailedException {
+	public void verify(RequestNode tree) throws VerificationFailedException {
 		String previousEntityName = null;
 
 		//loop through the joins to get to the attributes
@@ -137,6 +138,12 @@ public class RequestVerifier {
 				}
 			}
 		}
+
+		resultEntity = previousEntityName;
+
+
+		if(tree.getFunction() == RequestFunction.ENHANCE && !resultEntity.equals("paper") && !resultEntity.equals("person"))
+			throw new VerificationFailedException("Entity " + resultEntity + " cannot be enhanced with Semantic Scholar data.");
 	}
 
 	/**
@@ -152,5 +159,13 @@ public class RequestVerifier {
 		}
 
 		return false;
+	}
+
+	/**
+	 * @return The name of the entity that this request will return
+	 */
+	public String getResultEntity()
+	{
+		return resultEntity;
 	}
 }

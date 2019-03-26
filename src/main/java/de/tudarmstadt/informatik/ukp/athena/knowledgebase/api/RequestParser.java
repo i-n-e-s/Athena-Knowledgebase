@@ -7,6 +7,7 @@ import de.tudarmstadt.informatik.ukp.athena.knowledgebase.api.ast.AttributeNode;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.api.ast.NumberAttributeNode;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.api.ast.NumberNode;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.api.ast.RequestEntityNode;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.api.ast.RequestFunction;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.api.ast.RequestHierarchyNode;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.api.ast.RequestNode;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.api.ast.StringAttributeNode;
@@ -35,11 +36,22 @@ public class RequestParser {
 
 		//as long as there are tokens in the queue
 		while(currentToken != null && currentToken.type != RequestTokenType.END) { //can be null if the last thing was an entity name (before the :), poll returns null if the deque is empty
-			if(root.getHierarchy().size() == 0 && tokens.peek().actual.equals("count")) //peek because the currentToken is / and not count
+			if(root.getHierarchy().size() == 0)
 			{
-				accept(RequestTokenType.HIERARCHY_SEPARATOR);
-				accept(RequestTokenType.NAME);
-				root.setIsCountFunction(true);
+				if(tokens.peek().actual.equals("count")) //peek because the currentToken is / and not count
+				{
+					accept(RequestTokenType.HIERARCHY_SEPARATOR);
+					accept(RequestTokenType.NAME);
+					root.setFunction(RequestFunction.COUNT);
+				}
+				else if(tokens.peek().actual.equals("enhance")) //peek because the currentToken is / and not enhance
+				{
+					accept(RequestTokenType.HIERARCHY_SEPARATOR);
+					accept(RequestTokenType.NAME);
+					root.setFunction(RequestFunction.ENHANCE);
+				}
+				else
+					root.addHierarchyNode(parseHierarchyEntry());
 			}
 			else
 				root.addHierarchyNode(parseHierarchyEntry());

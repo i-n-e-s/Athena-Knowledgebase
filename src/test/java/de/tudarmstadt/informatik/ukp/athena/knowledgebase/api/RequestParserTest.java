@@ -8,6 +8,7 @@ import org.junit.Test;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.api.ast.NumberAttributeNode;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.api.ast.NumberNode;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.api.ast.RequestEntityNode;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.api.ast.RequestFunction;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.api.ast.RequestHierarchyNode;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.api.ast.RequestNode;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.api.ast.StringAttributeNode;
@@ -217,7 +218,29 @@ public class RequestParserTest {
 			entityNode.setEntityName(entityNodeName);
 			theOneAndOnly.setEntity(entityNode);
 			expected.addHierarchyNode(theOneAndOnly);
-			expected.setIsCountFunction(true);
+			expected.setFunction(RequestFunction.COUNT);
+			assertEquals("ASTs are not the same!", expected, actual);
+		}
+		catch(SyntaxException e) {
+			fail("Syntactically correct request shouldn't throw a syntax exception");
+		}
+	}
+
+	@Test
+	public void testEnhanceFunction() {
+		try {
+			RequestNode actual = new RequestParser(new RequestScanner("/enhance/paper").scan()).parse();
+			RequestNode expected = new RequestNode(0);
+
+			RequestHierarchyNode theOneAndOnly = new RequestHierarchyNode(8);
+			RequestEntityNode entityNode = new RequestEntityNode(9);
+			StringNode entityNodeName = new StringNode(9);
+
+			entityNodeName.setString("paper");
+			entityNode.setEntityName(entityNodeName);
+			theOneAndOnly.setEntity(entityNode);
+			expected.addHierarchyNode(theOneAndOnly);
+			expected.setFunction(RequestFunction.ENHANCE);
 			assertEquals("ASTs are not the same!", expected, actual);
 		}
 		catch(SyntaxException e) {

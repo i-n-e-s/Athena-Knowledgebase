@@ -1,6 +1,5 @@
 package de.tudarmstadt.informatik.ukp.athena.knowledgebase.api.ast;
 
-//TODO context analysis
 public abstract class BaseNode {
 	public final int tokenIndex;
 
