@@ -87,15 +87,27 @@ public class S2APIFunctions {
 	private static ArrayList<Paper> parseS2PaperSearchJSONArrayToPaperArrayList(JSONArray paperJSONarr) {
 		ArrayList<Paper> paperList = new ArrayList<>();
 
+		//Add every Paper returned in the JSONObject
 		for (int i = 0; i < paperJSONarr.length(); i++) {
-			Paper currPaper = new Paper();
+			String title = null;
+			String s2id = null;
+
+			//Read S2ID and title
 			JSONObject cSR = (JSONObject) paperJSONarr.get(i);
 			if (!cSR.getString("paperId").equals("null")) {
-				currPaper.setSemanticScholarID(cSR.getString("paperId"));
+				s2id = cSR.getString("paperId");
 			}
 			if (!cSR.getString("title").equals("null")) {
-				currPaper.setTitle(cSR.getString("title"));
+				title = cSR.getString("title");
 			}
+
+			//Create Paper, if it doesn't exist in the DB already
+			Paper currPaper = Paper.findOrCreate(s2id, title);
+
+			//Set Attributes at paper
+			if ( s2id != null ) { currPaper.setSemanticScholarID(s2id); }
+			if ( title != null ) { currPaper.setTitle(title); }
+
 			if (!cSR.getString("url").equals("null")) {
 				currPaper.setRemoteLink(cSR.getString("url"));
 			}
@@ -107,7 +119,7 @@ public class S2APIFunctions {
 			paperList.add(currPaper);
 		}
 
-		//5. Return list
+		//Return list
 		return paperList;
 
 	}
