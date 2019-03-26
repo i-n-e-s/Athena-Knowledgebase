@@ -1,7 +1,6 @@
 package de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.jpa;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
@@ -54,48 +53,66 @@ public class PaperJPAAccess implements CommonAccess<Paper> {
 	}
 
 	/**
-	 * Finds a matching DB Entry by the attributes of a given Paper Object, null is seen as wildcard
-	 * Currently Only uses (decreasing priority): S2ID, Title
+	 * Finds a matching DB entry by the attributes of a given paper object, null is seen as wildcard
+	 * If no attribute is specified, return null
+	 * Currently only uses (decreasing priority): S2ID, Title
 	 * If multiple occurrences are found in DB, return the first result
 	 *
-	 * @param toFind Paper Object to get the search constraints from
-	 * @return An Object from the DB with matching attributes
+	 * @param toFind Paper object to get the search constraints from
+	 * @return An object from the DB with matching attributes
 	 */
 	public List<Paper> getByKnownAttributes(Paper toFind) {
 
-		//1. Build JPQL query
+		//1. Build JPQL query for combined search
 		String query = "SELECT c FROM Paper c WHERE ";
 		boolean addedConstraint = false;
 		if( toFind.getSemanticScholarID() != null ) {
+			System.out.println("Got parameter s2id");
 			query = query + "c.semanticScholarID LIKE '"+toFind.getSemanticScholarID() + "'";
 			addedConstraint = true;
 		}
 		if ( toFind.getTitle() != null && toFind.getTitle() != "" ) {
+			System.out.println("Got parameter title");
 			if (addedConstraint) { query = query + " and "; }
 			query = query + "c.title = '"+toFind.getTitle().replace("'", "''") + "'";
 			addedConstraint = true;
 		}
 
+		if ( !addedConstraint ) { return null; }
 		logger.info(query);
 
-		//2. Execute query und return results
+		//2. Execute query
 		EntityManager entityManager = PersistenceManager.getEntityManager();
 		List<Paper> result = entityManager.createQuery(query).getResultList();
-		return result;
+		System.out.println("Got "+ result.size()+ " results");
 
+		if( result.size() > 0 ) { return result; }
+
+		//3. If nothing found, try searching for Attributes separately
+		if( toFind.getSemanticScholarID() != null ) {
+			query = "SELECT c FROM Paper c WHERE c.semanticScholarID LIKE '"+toFind.getSemanticScholarID() + "'";
+			result = entityManager.createQuery(query).getResultList();
+			if( result.size() > 0 ) { return result; }
+		}
+		if ( toFind.getTitle() != null && toFind.getTitle() != "" ) {
+			query = "SELECT c FROM Paper c WHERE c.title = '"+toFind.getTitle().replace("'", "''") + "'";
+			result = entityManager.createQuery(query).getResultList();
+			if( result.size() > 0 ) { return result; }
+		}
+
+		//4. If still nothing found, return null
+		return null;
 	}
 
 	/**
-	 * Looks for DB entries with matching SemanticScholar ID
+	 * Looks for DB entries with matching Semantic Scholar ID
 	 *
 	 * @author Philipp Emmer
-	 * @param semanticScholarID The semanticScholarID of the wanted paper object to search
-	 * @return DB Entry of Paper with matching S2ID or null
+	 * @param semanticScholarID The Semantic Scholar ID of the wanted paper object to search
+	 * @return DB entry of paper with matching S2ID, null if not found
 	 */
-	@Deprecated
 	public Paper getBySemanticScholarID( String semanticScholarID ) {
-		List<Paper> matches = null;
-		//1. Try to find matching SemanticScholarID
+		//1. Try to find matching Semantic Scholar ID
 		if( semanticScholarID != null ) {
 			Paper query = new Paper();
 			query.setSemanticScholarID(semanticScholarID);
@@ -108,10 +125,9 @@ public class PaperJPAAccess implements CommonAccess<Paper> {
 	 * Looks for DB entries with matching title
 	 *
 	 * @author Philipp Emmer
-	 * @param title The title of the wanted Paper object to search
-	 * @return DB Entry of Paper with matching S2ID or null
+	 * @param title The title of the wanted paper object to search
+	 * @return DB entry of Paper with matching S2ID, null if not found
 	 */
-	@Deprecated
 	public Paper getByTitle( String title ) {
 		//1. Build JPQL query
 		if( title != null ) {
@@ -120,7 +136,7 @@ public class PaperJPAAccess implements CommonAccess<Paper> {
 			EntityManager entityManager = PersistenceManager.getEntityManager();
 			List<Paper> matches = entityManager.createQuery(query).getResultList();
 
-			if(matches.size() < 1) { //No matching Paper could be found in the DB
+			if(matches.size() < 1) { //No matching paper could be found in the DB
 				return new Paper();
 			}
 			else { 					//Choose first result

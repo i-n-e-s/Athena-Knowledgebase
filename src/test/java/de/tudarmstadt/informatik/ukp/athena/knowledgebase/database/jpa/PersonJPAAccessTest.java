@@ -101,6 +101,7 @@ public class PersonJPAAccessTest {
 		assertEquals("22473174", resultList.get(0).getSemanticScholarID());
 	}
 
+
 	@Test
 	public void updateTest() {
 		uut.add(testValue);
@@ -111,7 +112,7 @@ public class PersonJPAAccessTest {
 		assertEquals("UpdatedPrefix", returnValues.get(0).getPrefix());
 		testDB.createDB();//Don't pollute the Database
 	}
-	
+
 	private List<Person> getByFullName(String name) {
 		return PersistenceManager.getEntityManager().createQuery(String.format("SELECT p FROM Person p WHERE p.fullName = '%s'",name), Person.class).getResultList();
 	}

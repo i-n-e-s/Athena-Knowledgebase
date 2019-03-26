@@ -1,4 +1,4 @@
-package de.tudarmstadt.informatik.ukp.athena.knowledgebase.crawler.SemanticScholarAPI;
+package de.tudarmstadt.informatik.ukp.athena.knowledgebase.exception;
 
 /**
  * Thrown if the a response is accessed that is not ready

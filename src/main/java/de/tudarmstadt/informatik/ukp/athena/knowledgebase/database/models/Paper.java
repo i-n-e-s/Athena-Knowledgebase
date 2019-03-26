@@ -14,10 +14,11 @@ import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
-import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.jpa.PaperJPAAccess;
 import org.hibernate.annotations.GenericGenerator;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.jpa.PaperJPAAccess;
 
 @Entity
 @Table(name="paper")
@@ -58,7 +59,7 @@ public class Paper extends Model {
 	@Column (name = "anthology")
 	private String anthology;
 
-	/*SemanticScholars PaperId as String*/
+	/*Semantic Scholar's PaperId as String*/
 	@Column(name = "semanticScholarID")
 	private String semanticScholarID;
 	/*Abstract of paper as String*/
@@ -81,8 +82,8 @@ public class Paper extends Model {
 
 	// TODO: Rename to getPersons after Testbench integration?
 	/**
-	 * Gets List of this paper's authors
-	 * @return List of this paper's authors
+	 * Gets this paper's authors
+	 * @return A Set of this paper's authors
 	 */
 	public Set<Person> getAuthors() {
 		return persons;
@@ -91,7 +92,7 @@ public class Paper extends Model {
 	// TODO: Rename to setPersons after Testbench integration?
 	/**
 	 * Sets this paper's authors
-	 * @param authors The new author of this paper
+	 * @param authors The new authors of this paper
 	 */
 	public void setAuthors(Set<Person> authors) {
 		this.persons = authors;
@@ -126,7 +127,7 @@ public class Paper extends Model {
 	}
 
 	/**
-	 * Gets this papers topic
+	 * Gets this paper's topic
 	 *
 	 * @return The topic of this paper
 	 */
@@ -135,7 +136,7 @@ public class Paper extends Model {
 	}
 
 	/**
-	 * Sets this institution's topic
+	 * Sets this paper's topic
 	 *
 	 * @param topic The new topic
 	 */
@@ -144,7 +145,7 @@ public class Paper extends Model {
 	}
 
 	/**
-	 * Gets this papers title
+	 * Gets this paper's title
 	 *
 	 * @return The title of this paper
 	 */
@@ -153,7 +154,7 @@ public class Paper extends Model {
 	}
 
 	/**
-	 * Sets this institution's title
+	 * Sets this paper's title
 	 *
 	 * @param title The new title
 	 */
@@ -162,113 +163,113 @@ public class Paper extends Model {
 	}
 
 	/**
-	 * Gets the remote link to this papers PDF file
+	 * Gets the remote link to this paper's PDF file
 	 *
-	 * @return The remote link to this papers PDF file
+	 * @return The remote link to this paper's PDF file
 	 */
 	public String getRemoteLink() {
 		return remoteLink;
 	}
 
 	/**
-	 * Sets the remote link to this papers PDF file
+	 * Sets the remote link to this paper's PDF file
 	 *
-	 * @param remoteLink The new remote link to this papers PDF file
+	 * @param remoteLink The new remote link to this paper's PDF file
 	 */
 	public void setRemoteLink(String remoteLink) {
 		this.remoteLink = remoteLink;
 	}
 
 	/**
-	 * Gets the local link to this papers PDF file
+	 * Gets the local link to this paper's PDF file
 	 *
-	 * @return The local link to this papers PDF file
+	 * @return The local link to this paper's PDF file
 	 */
 	public String getLocalLink() {
 		return localLink;
 	}
 
 	/**
-	 * Sets the local link to this PDF file
+	 * Sets the local link to this paper's PDF file
 	 *
-	 * @param localLink The new local link to this papers PDF file
+	 * @param localLink The new local link to this paper's PDF file
 	 */
 	public void setLocalLink(String localLink) {
 		this.localLink = localLink;
 	}
 
 	/**
-	 * Gets the filesize of this papers PDF file in Bytes
+	 * Gets the filesize of this paper's PDF file in bytes
 	 *
-	 * @return The filesize of this papers PDF file in Bytes
+	 * @return The filesize of this paper's PDF file in bytes
 	 */
 	public Integer getPdfFileSize() {
 		return pdfFileSize;
 	}
 
 	/**
-	 * Sets the filesize of this papers PDF file in Bytes
+	 * Sets the filesize of this paper's PDF file in bytes
 	 *
-	 * @param pdfFileSize The new filesize of this papers PDF file in Bytes
+	 * @param pdfFileSize The new filesize of this paper's PDF file in bytes
 	 */
 	public void setPdfFileSize(Integer pdfFileSize) {
 		this.pdfFileSize = pdfFileSize;
 	}
 
 	/**
-	 * Gets the paper's anthology
-	 * @return the paper's anthology
+	 * Gets this paper's anthology
+	 * @return this paper's anthology
 	 */
 	public String getAnthology() {
 		return anthology;
 	}
 
 	/**
-	 * Sets the paper's anthology
-	 * @param anthology anthology of the paper as String
+	 * Sets this paper's anthology
+	 * @param anthology The anthology of this paper as a string
 	 */
 	public void setAnthology(String anthology) {
 		this.anthology = anthology;
 	}
 
 	/**
-	 * Gets the paper's ID on Semantic Scholar
+	 * Gets this paper's ID on Semantic Scholar
 	 *
-	 * @return the papers SemanticScholar ID
+	 * @return this paper's Semantic Scholar ID
 	 */
 	public String getSemanticScholarID() {
 		return semanticScholarID;
 	}
 
 	/**
-	 * Sets the paper's ID on Semantic Scholar
+	 * Sets this paper's Semantic Scholar ID
 	 *
-	 * @param semanticScholarID the papers new SemanticScholar ID
+	 * @param semanticScholarID the paper's updated Semantic Scholar ID
 	 */
 	public void setSemanticScholarID(String semanticScholarID) {
 		this.semanticScholarID = semanticScholarID;
 	}
 
 	/**
-	 * Gets the paper's abstract
+	 * Gets this paper's abstract
 	 *
-	 * @return the papers abstract
+	 * @return this paper's abstract
 	 */
 	public String getPaperAbstract() {
 		return paperAbstract;
 	}
 
 	/**
-	 * Sets the paper's abstract
+	 * Sets this paper's abstract
 	 *
-	 * @param paperAbstract the papers abstract
+	 * @param paperAbstract this paper's abstract
 	 */
 	public void setPaperAbstract(String paperAbstract) {
 		this.paperAbstract = paperAbstract;
 	}
 
 	/**
-	 * Gets the amount of papers, this paper is cited in
+	 * Gets the amount of papers this paper is cited in
 	 * @return the amount of citations
 	 */
 	public Integer getAmountOfCitations() {
@@ -276,7 +277,7 @@ public class Paper extends Model {
 	}
 
 	/**
-	 * Sets the amount of papers, this paper is cited in
+	 * Sets the amount of papers this paper is cited in
 	 * @param amountOfCitations the new amount of citations
 	 */
 	public void setAmountOfCitations(Integer amountOfCitations) {
@@ -285,17 +286,18 @@ public class Paper extends Model {
 
 
 	/**
-	 * Looks for Persons with equal attributes in the DB and returns found entities
-	 * If no matching DB entry was found, create and return a new Person Object
-	 * @param toFind The Person Object containing the query data
-	 * @return A matching Person from the DB or a new Person
+	 * Looks for papers with equal attributes in the DB and returns found entities
+	 * If no matching DB entry was found, create and return a new paper object
+	 * Read more about the search here {@link PaperJPAAccess#getByKnownAttributes(Paper)}
+	 * @param toFind The paper object containing the query data
+	 * @return A matching paper from the DB or a new paper
 	 */
 	public static Paper findOrCreate(Paper toFind) {
-		//Check if Paper with same S2ID exists in DB
+		//Check if paper with same S2ID exists in DB
 		PaperJPAAccess filer = new PaperJPAAccess();
 		List<Paper> searchResults = filer.getByKnownAttributes(toFind);
 
-		if(searchResults == null || searchResults.size() < 1) { //No matching Paper could be found in the DB
+		if(searchResults == null || searchResults.size() < 1) { //No matching paper could be found in the DB
 			return new Paper();
 		}
 		else { 		//Choose first result
@@ -304,11 +306,11 @@ public class Paper extends Model {
 	}
 
 	/**
-	 * Looks for papers with defined title or SemanticScholarID and returns matching DB Entry
-	 * If no match was found, create and return new Paper Object
-	 * @param s2id SemanticScholarID of searched paper or null if unknown
-	 * @param title Title of searched Paper or null if unknown
-	 * @return matching DB entry or new Paper
+	 * Looks for papers with defined title or Semantic Scholar ID and returns matching DB entry
+	 * If no match was found, create and return a new paper object
+	 * @param s2id Semantic Scholar ID of the searched paper or null if unknown
+	 * @param title The title of the searched paper or null if unknown
+	 * @return matching DB entry or new paper
 	 */
 	public static Paper findOrCreate(String s2id, String title) {
 		Paper tmpQuery = new Paper();
@@ -320,9 +322,9 @@ public class Paper extends Model {
 
 
 	/**
-	 * Creates a String representation of the Person Object.
-	 * Warning: String does not contain all information in the Object
-	 * @return String description of the Object
+	 * Creates a String representation of this paper object.
+	 * Warning: String does not contain all information in the object
+	 * @return String description of the object
 	 */
 	@Override
 	public String toString() {
