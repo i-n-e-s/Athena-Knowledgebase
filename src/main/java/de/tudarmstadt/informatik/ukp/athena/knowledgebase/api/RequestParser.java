@@ -89,14 +89,14 @@ public class RequestParser {
 
 		stringNode.setString(name);
 		node.setEntityName(stringNode);
-		//up until this point the name got saved to the node
+		//up to this point, the name got saved to the node
 
 		if(currentToken.type == RequestTokenType.ATTR_SPECIFIER)
 		{
 			accept(); //accept the :
 
 			//now parse the first attribute
-			node.addAttributeNode(parseAttribute()); //need this here so the first attribute gets parsed, otherwhise the parser would check for /name:&attr=val
+			node.addAttributeNode(parseAttribute()); //need this here so the first attribute gets parsed, otherwise the parser would check for /name:&attr=val
 
 			//parse any other attributes
 			while(currentToken.type == RequestTokenType.ATTR_SEPARATOR) {
@@ -161,7 +161,7 @@ public class RequestParser {
 			}
 
 			//...and check for more parts in the attribute
-			if(currentToken.type == RequestTokenType.SPACE) //if it's not a SPACE, then it will be something else and be catched by the while condition
+			if(currentToken.type == RequestTokenType.SPACE) //if it's not a SPACE, then it will be something else and be caught by the while condition
 			{
 				accept();
 				value += " ";
@@ -192,7 +192,7 @@ public class RequestParser {
 			node.addNumber(numberNode);
 
 			//...and check for more parts in the attribute
-			if(currentToken.type == RequestTokenType.SPACE) //if it's not a SPACE, then it will be something else and be catched by the while condition
+			if(currentToken.type == RequestTokenType.SPACE) //if it's not a SPACE, then it will be something else and be caught by the while condition
 				accept();
 		}
 

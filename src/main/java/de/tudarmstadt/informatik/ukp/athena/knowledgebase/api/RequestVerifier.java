@@ -89,7 +89,7 @@ public class RequestVerifier {
 	}
 
 	/**
-	 * Checks whether the attribue values in the request are correct. If there is no exception thrown, the verification was successful
+	 * Checks whether the attribute values in the request are correct. If there is no exception thrown, the verification was successful
 	 * @param tree The abstract syntax tree that depicts the API request, non-null
 	 * @throws VerificationFailedException If the verification fails
 	 */ //longer than 40 lines due to comments
@@ -107,7 +107,7 @@ public class RequestVerifier {
 
 			//checking if the entity exists
 			if(!ATTRIBUTES.containsKey(entityName))
-				throw new VerificationFailedException("Unkown entity " + entityName + "!");
+				throw new VerificationFailedException("Unknown entity " + entityName + "!");
 			//check if the hierarchy is valid
 			else if(previousEntityName != null && (!SET_ATTRIBUTES.containsKey(previousEntityName) || !SET_ATTRIBUTES.get(previousEntityName).containsKey(entityName)))
 				throw new VerificationFailedException("Entity " + previousEntityName + " does not have a hierarchical relationship with entity " + entityName + "!");
