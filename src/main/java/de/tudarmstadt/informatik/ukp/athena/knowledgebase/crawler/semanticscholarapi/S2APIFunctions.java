@@ -12,7 +12,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import de.tudarmstadt.informatik.ukp.athena.knowledgebase.ParsedDataInserter;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Model;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Paper;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Person;
@@ -24,7 +23,7 @@ import de.tudarmstadt.informatik.ukp.athena.knowledgebase.exception.NotAvailable
  * @author Philipp Emmer
  */
 public class S2APIFunctions {
-	private static Logger logger = LogManager.getLogger(ParsedDataInserter.class);
+	private static Logger logger = LogManager.getLogger(S2APIFunctions.class);
 
 
 	/**
