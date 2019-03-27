@@ -36,7 +36,7 @@ public class RequestNode extends BaseNode {
 
 	/**
 	 * Sets this hierarchy node's function
-	 * @param function The function to use
+	 * @param function The function to use, non-null
 	 */
 	public void setFunction(RequestFunction function) {
 		this.function = function;
