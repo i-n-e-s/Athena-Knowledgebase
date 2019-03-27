@@ -18,20 +18,19 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.crawler.CrawlerFacade;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.crawler.SupportedConferences;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.crawler.semanticscholarapi.S2APIFunctions;
-import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.access.CommonAccess;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.CommonAccess;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.jpa.ConferenceJPAAccess;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.jpa.EventJPAAccess;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.jpa.PaperJPAAccess;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.jpa.PersistenceManager;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.jpa.PersonJPAAccess;
-import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.jpa.SessionJPAAccess;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.jpa.WorkshopJPAAccess;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Conference;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Event;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Paper;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Person;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.ScheduleEntry;
-import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Session;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Workshop;
-
 
 @SpringBootApplication
 /**
@@ -147,8 +146,8 @@ public class ParsedDataInserter {
 			List<ScheduleEntry> entries = acl2018StoreSchedule();
 
 			for(ScheduleEntry entry : entries) {
-				if(entry instanceof Session)
-					acl2018.addSession((Session)entry);
+				if(entry instanceof Event)
+					acl2018.addEvent((Event)entry);
 				else if(entry instanceof Workshop)
 					acl2018.addWorkshop((Workshop)entry);
 			}
@@ -163,11 +162,11 @@ public class ParsedDataInserter {
 	}
 
 	/**
-	 * Stores the ACL 2018 conference's schedule into the database
-	 * @return The scraped and stored events
+	 * Stores the acl2018 conference's schedule into the database
+	 * @return The scraped and stored events and workshops
 	 */
 	private List<ScheduleEntry> acl2018StoreSchedule() {
-		CommonAccess<Session> sessionCommonAccess = new SessionJPAAccess();
+		CommonAccess<Event> eventCommonAccess = new EventJPAAccess();
 		CommonAccess<Workshop> workshopCommonAccess = new WorkshopJPAAccess();
 		List<ScheduleEntry> entries = new ArrayList<>(); //initialize in case anything fails
 
@@ -177,8 +176,8 @@ public class ParsedDataInserter {
 			logger.info("Inserting schedule into database...");
 			//add to database
 			for(ScheduleEntry entry : entries) {
-				if(entry instanceof Session)
-					sessionCommonAccess.add((Session)entry);
+				if(entry instanceof Event)
+					eventCommonAccess.add((Event)entry);
 				else if(entry instanceof Workshop)
 					workshopCommonAccess.add((Workshop)entry);
 			}

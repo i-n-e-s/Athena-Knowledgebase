@@ -80,7 +80,7 @@ public class RequestVerifierTest
 	@Test(expected = VerificationFailedException.class)
 	public void testIncorrectHierarchicalRelationship() throws VerificationFailedException {
 		try {
-			new RequestVerifier().verify(new RequestParser(new RequestScanner("/person:fullName=John+Smith/session").scan()).parse());
+			new RequestVerifier().verify(new RequestParser(new RequestScanner("/person:fullName=John+Smith/event").scan()).parse());
 		}
 		catch(SyntaxException e) {
 			fail("Syntactically correct request shouldn't throw a syntax exception");
@@ -143,9 +143,9 @@ public class RequestVerifierTest
 		assertFalse(RequestVerifier.entityContainsNumericalField("paper", "title"));
 		assertTrue(RequestVerifier.entityContainsNumericalField("institution", "institutionID"));
 		assertFalse(RequestVerifier.entityContainsNumericalField("institution", "name"));
-		assertTrue(RequestVerifier.entityContainsNumericalField("session", "begin"));
-		assertTrue(RequestVerifier.entityContainsNumericalField("session", "category"));
-		assertFalse(RequestVerifier.entityContainsNumericalField("session", "löjkfsd"));
+		assertTrue(RequestVerifier.entityContainsNumericalField("event", "begin"));
+		assertTrue(RequestVerifier.entityContainsNumericalField("event", "category"));
+		assertFalse(RequestVerifier.entityContainsNumericalField("event", "löjkfsd"));
 		assertFalse(RequestVerifier.entityContainsNumericalField("person", "begin"));
 	}
 }

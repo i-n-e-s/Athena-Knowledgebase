@@ -21,12 +21,12 @@ import org.jsoup.select.Elements;
 
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.JsoupHelper;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Conference;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Event;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.EventCategory;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.EventPart;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Paper;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Person;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.ScheduleEntry;
-import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Session;
-import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.SessionCategory;
-import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.SessionPart;
 
 /**
  * A class, which holds the capability to return a List of all authors, which
@@ -380,19 +380,19 @@ class ACLWebCrawler extends AbstractCrawler {
 	/**
 	 * Parses ACL 2018's first days' schedule (seperate method because it contains a special case)
 	 * @param day The day element of the website
-	 * @param result The resulting arraylist with the complete sessions of the first day
+	 * @param result The resulting arraylist with the complete events of the first day
 	 * @return An ArrayList<ScheduleEntry> containing the first days' schedule
 	 */
 	private ArrayList<ScheduleEntry> parseFirstDay(Element day, ArrayList<ScheduleEntry> result) {
 		String[] monthDay = day.selectFirst(".day").text().split(":")[1].trim().split(" "); //the text has the form of "Sunday: July 15"
 		Elements tr = day.select("tr");
 
-		//looping through all table rows, each contains a session
+		//looping through all table rows, each contains an event
 		for(int i = 0; i < tr.size(); i++) {
 			Element el = tr.get(i);
-			Session session = new Session();
+			Event event = new Event();
 
-			addGeneralSessionInfo(el, session, monthDay);
+			addGeneralEventInfo(el, event, monthDay);
 
 			//special case
 			if(i + 1 < tr.size() && tr.get(i + 1).hasClass("poster-session-row")) {
@@ -400,15 +400,15 @@ class ACLWebCrawler extends AbstractCrawler {
 				Elements tutorials = row.select(".poster-name");
 
 				//the table row might contain several tutorials in the same timeframe, so loop through those
-				for(Element sessionEl : tutorials) {
-					SessionPart sessionPart = new SessionPart();
+				for(Element eventEl : tutorials) {
+					EventPart eventPart = new EventPart();
 
-					sessionPart.setTitle(sessionEl.text());
-					session.addSessionPart(sessionPart);
+					eventPart.setTitle(eventEl.text());
+					event.addEventPart(eventPart);
 				}
 			}
 
-			result.add(session);
+			result.add(event);
 		}
 
 		return result;
@@ -417,39 +417,39 @@ class ACLWebCrawler extends AbstractCrawler {
 	/**
 	 * Parses ACL 2018's other days' schedule
 	 * @param day The day element of the website
-	 * @param result The resulting arraylist with the complete sessions of the given day
-	 * @return The resulting arraylist with the complete sessions of the given day
+	 * @param result The resulting arraylist with the complete events of the given day
+	 * @return The resulting arraylist with the complete events of the given day
 	 */
 	private ArrayList<ScheduleEntry> parseOtherDays(Element day, ArrayList<ScheduleEntry> result) {
 		String[] monthDay = day.selectFirst(".day").text().split(":")[1].trim().split(" "); //the text has the form of "Sunday: July 15"
 		Elements tr = day.select("tr");
 
-		//looping through all table rows, each contains a session
+		//looping through all table rows, each contains an event
 		for(int i = 0; i < tr.size(); i++) {
 			Element el = tr.get(i);
-			Session session = new Session();
+			Event event = new Event();
 
-			addGeneralSessionInfo(el, session, monthDay);
+			addGeneralEventInfo(el, event, monthDay);
 
-			if(session.getCategory() == SessionCategory.PRESENTATION)
-				addOralPresentationInfo(tr.get(++i).select(".conc-session"), tr.get(++i).select(".session-location"), tr.get(++i).select(".session-details"), session);
-			else if(session.getCategory() == SessionCategory.SESSION)
-				addPosterSessionInfo(tr.get(++i).select(".poster-sub-session"), session);
+			if(event.getCategory() == EventCategory.PRESENTATION)
+				addOralPresentationInfo(tr.get(++i).select(".conc-session"), tr.get(++i).select(".session-location"), tr.get(++i).select(".session-details"), event);
+			else if(event.getCategory() == EventCategory.SESSION)
+				addPosterSessionInfo(tr.get(++i).select(".poster-sub-session"), event);
 
-			result.add(session);
+			result.add(event);
 		}
 
 		return result;
 	}
 
 	/**
-	 * Adds general information about an session, such as name, timeframe, location etc.
-	 * @param el The session header element of the website
-	 * @param session The arraylist with the resulting session's information
-	 * @param monthDay The month (index 0) and day (index 1) where this session happens
+	 * Adds general information about an event, such as name, timeframe, location etc.
+	 * @param el The event header element of the website
+	 * @param event The arraylist with the resulting event's information
+	 * @param monthDay The month (index 0) and day (index 1) where this event happens
 	 */
-	private void addGeneralSessionInfo(Element el, Session session, String[] monthDay) {
-		//only try to extract the information when the table row is the header of an session and is not the more detailed description
+	private void addGeneralEventInfo(Element el, Event event, String[] monthDay) {
+		//only try to extract the information when the table row is the header of an event and is not the more detailed description
 		//the header is something like "09:00-10:00 		Welcome Session & Presidential Address 			PLENARY, MCEC"
 		if(el.id().startsWith("session")) {
 			//start extracting the data from the table row
@@ -457,108 +457,108 @@ class ACLWebCrawler extends AbstractCrawler {
 			String[] begin = time[0].split(":");
 			String[] end = time[1].split(":");
 			String title = el.select(".session-name").text();
-			//sometimes there is a suffix (after a ':'), use it as the session description
+			//sometimes there is a suffix (after a ':'), use it as the event description
 			//e.g. Oral Presentations [title]: Long Papers and TACL Papers) [suffix aka description]
 			String desc = el.select(".session-suffix").text();
 			Elements place = el.select(".session-location");
-			SessionCategory category = null;
+			EventCategory category = null;
 
 			//the title string contains everything, so remove the description to avoid duplicate data
 			if(!desc.isEmpty())
 				title = title.replace(desc, "");
 
 			//set the extracted data
-			session.setBegin(LocalDateTime.of(2018, CrawlerToolset.getMonthIndex(monthDay[0]), Integer.parseInt(monthDay[1]), Integer.parseInt(begin[0]), Integer.parseInt(begin[1])));
-			session.setEnd(LocalDateTime.of(2018, CrawlerToolset.getMonthIndex(monthDay[0]), Integer.parseInt(monthDay[1]), Integer.parseInt(end[0]), Integer.parseInt(end[1])));
-			session.setTitle(title);
-			session.setPlace(place.isEmpty() ? "?" : (place.get(0).text().isEmpty() ? "?" : place.get(0).text()));
-			session.setDescription(desc);
+			event.setBegin(LocalDateTime.of(2018, CrawlerToolset.getMonthIndex(monthDay[0]), Integer.parseInt(monthDay[1]), Integer.parseInt(begin[0]), Integer.parseInt(begin[1])));
+			event.setEnd(LocalDateTime.of(2018, CrawlerToolset.getMonthIndex(monthDay[0]), Integer.parseInt(monthDay[1]), Integer.parseInt(end[0]), Integer.parseInt(end[1])));
+			event.setTitle(title);
+			event.setPlace(place.isEmpty() ? "?" : (place.get(0).text().isEmpty() ? "?" : place.get(0).text()));
+			event.setDescription(desc);
 			title = title.toLowerCase(); //easier to work with this way
 
-			//decide which kind of category this session belongs to
+			//decide which kind of category this event belongs to
 			if(title.startsWith("tutorial"))
-				category = SessionCategory.TUTORIAL;
+				category = EventCategory.TUTORIAL;
 			else if(title.contains("welcome"))
-				category = SessionCategory.WELCOME;
+				category = EventCategory.WELCOME;
 			else if(title.startsWith("lunch") || title.contains("break"))
-				category = SessionCategory.BREAK;
+				category = EventCategory.BREAK;
 			else if(title.contains("oral"))
-				category = SessionCategory.PRESENTATION;
+				category = EventCategory.PRESENTATION;
 			else if(title.contains("poster"))
-				category = SessionCategory.SESSION;
+				category = EventCategory.SESSION;
 			else if(title.contains("recruitment"))
-				category = SessionCategory.RECRUITMENT;
+				category = EventCategory.RECRUITMENT;
 			else if(title.contains("talk"))
-				category = SessionCategory.TALK;
+				category = EventCategory.TALK;
 			else if(title.contains("meeting"))
-				category = SessionCategory.MEETING;
+				category = EventCategory.MEETING;
 			else if(title.contains("social"))
-				category = SessionCategory.SOCIAL;
+				category = EventCategory.SOCIAL;
 			else if(title.contains("award") || title.contains("achievement"))
-				category = SessionCategory.CEREMONY;
+				category = EventCategory.CEREMONY;
 
-			session.setCategory(category);
+			event.setCategory(category);
 		}
 	}
 
 	/**
 	 * Adds all available information about an oral presentation section
-	 * @param sessionParts The elements containing session part information
-	 * @param rooms The elements containing room information per session part
-	 * @param presentations The elements containing the presentations per session part
-	 * @param session The arraylist with the resulting oral presentation's information
+	 * @param eventParts The elements containing event part information
+	 * @param rooms The elements containing room information per event part
+	 * @param presentations The elements containing the presentations per event part
+	 * @param event The arraylist with the resulting oral presentation's information
 	 */
-	private void addOralPresentationInfo(Elements sessionParts, Elements rooms, Elements presentations, Session session) {
+	private void addOralPresentationInfo(Elements eventParts, Elements rooms, Elements presentations, Event event) {
 		//looping through the different columns of the OP table
-		for(int i = 0; i < presentations.size(); i++) { //seems like session parts, rooms, and presentations all have the same size, always
-			Element sessEl = sessionParts.get(i);
-			String sessTitle = sessEl.selectFirst(".conc-session-name").text();
-			String sessPlace = rooms.get(i).text();
+		for(int i = 0; i < presentations.size(); i++) { //seems like event parts, rooms, and presentations all have the same size, always
+			Element evEl = eventParts.get(i);
+			String evTitle = evEl.selectFirst(".conc-session-name").text();
+			String evPlace = rooms.get(i).text();
 
 			//looping through the rows of the current column
 			for(Element subEl : presentations.get(i).select(".talk")) {
-				SessionPart sessionPart = new SessionPart();
+				EventPart eventPart = new EventPart();
 				String[] sessTime = subEl.selectFirst(".talk-time").text().split(":");
-				LocalDateTime sessStart = LocalDateTime.of(session.getBegin().toLocalDate(), LocalTime.of(Integer.parseInt(sessTime[0]), Integer.parseInt(sessTime[1])));
+				LocalDateTime sessStart = LocalDateTime.of(event.getBegin().toLocalDate(), LocalTime.of(Integer.parseInt(sessTime[0]), Integer.parseInt(sessTime[1])));
 				LocalDateTime sessEnd = sessStart.plusMinutes(25);
 				String sessPaperTitle = subEl.selectFirst(".talk-title").text();
 
-				sessionPart.setTitle(sessTitle);
-				session.addPaper(papers.get(sessPaperTitle));
-				sessionPart.setBegin(sessStart);
-				sessionPart.setEnd(sessEnd);
-				sessionPart.setPlace(sessPlace);
-				session.addSessionPart(sessionPart);
+				eventPart.setTitle(evTitle);
+				event.addPaper(papers.get(sessPaperTitle));
+				eventPart.setBegin(sessStart);
+				eventPart.setEnd(sessEnd);
+				eventPart.setPlace(evPlace);
+				event.addEventPart(eventPart);
 			}
 		}
 	}
 
 	/**
 	 * Adds all available information about a poster session
-	 * @param sessionParts The elements containing the session part information
-	 * @param session The arraylist with the resulting poster session's information
+	 * @param eventParts The elements containing the event part information
+	 * @param event The arraylist with the resulting poster session's information
 	 */
-	private void addPosterSessionInfo(Elements sessionParts, Session session) {
+	private void addPosterSessionInfo(Elements eventParts, Event event) {
 		//looping through the poster sessions
-		for(Element sessEl : sessionParts) {
-			SessionPart sessionPart = new SessionPart();
-			String[] sessTitleDesc = sessEl.selectFirst(".poster-session-name").text().split(":");
-			String sessTitle = sessTitleDesc[0].trim();
-			String sessDesc = sessTitleDesc[1].trim();
+		for(Element sessEl : eventParts) {
+			EventPart eventPart = new EventPart();
+			String[] evTitleDesc = sessEl.selectFirst(".poster-session-name").text().split(":");
+			String evTitle = evTitleDesc[0].trim();
+			String evDesc = evTitleDesc[1].trim();
 
 			//looping through all papers that are part of this PS
 			for(Element subEl : sessEl.select(".poster-name")) {
 				String paperTitle = subEl.select("a").get(1).text().trim(); //let's hope it's always the second :D
 
-				session.addPaper(papers.get(paperTitle));
+				event.addPaper(papers.get(paperTitle));
 			}
 
-			sessionPart.setTitle(sessTitle);
-			sessionPart.setDescription(sessDesc);
-			sessionPart.setBegin(session.getBegin());
-			sessionPart.setEnd(session.getEnd());
-			sessionPart.setPlace(session.getPlace());
-			session.addSessionPart(sessionPart);
+			eventPart.setTitle(evTitle);
+			eventPart.setDescription(evDesc);
+			eventPart.setBegin(event.getBegin());
+			eventPart.setEnd(event.getEnd());
+			eventPart.setPlace(event.getPlace());
+			event.addEventPart(eventPart);
 		}
 	}
 

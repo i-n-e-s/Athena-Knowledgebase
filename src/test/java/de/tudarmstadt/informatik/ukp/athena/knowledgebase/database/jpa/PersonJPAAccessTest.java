@@ -20,7 +20,6 @@ import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Instit
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Paper;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Person;
 
-@SuppressWarnings("javadoc")
 public class PersonJPAAccessTest {
 
 	static JPATestdatabase testDB;

@@ -13,7 +13,6 @@ import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Model;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Paper;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Person;
 
-@SuppressWarnings("javadoc")
 public class ModelsTest{
 	/*Branchcoverage can't be reached yet, because we don't have fields which are accessible
 	Also catch (IllegalArgumentException | IllegalAccessException e) should never be reached because it's checked before */

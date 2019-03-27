@@ -16,12 +16,12 @@ import de.tudarmstadt.informatik.ukp.athena.knowledgebase.api.ast.RequestHierarc
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.api.ast.RequestNode;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.api.ast.StringAttributeNode;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Conference;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Event;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.EventPart;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Hierarchy;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Institution;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Paper;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Person;
-import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Session;
-import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.SessionPart;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Workshop;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.exception.VerificationFailedException;
 
@@ -37,11 +37,11 @@ public class RequestVerifier {
 	static { //preprocessing of attributes for verification, this code only runs once
 		Class<?>[] models = {
 				Conference.class,
+				Event.class,
+				EventPart.class,
 				Institution.class,
 				Paper.class,
 				Person.class,
-				Session.class,
-				SessionPart.class,
 				Workshop.class
 		};
 
@@ -66,7 +66,7 @@ public class RequestVerifier {
 						numberAttributeMap.put(field.getName(), 5);
 					else if(fieldTypeName.equals(java.time.LocalDate.class.getName()))
 						numberAttributeMap.put(field.getName(), 3);
-					else if(fieldTypeName.equals(de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.SessionCategory.class.getName()) || fieldTypeName.equals("long"))
+					else if(fieldTypeName.equals(de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.EventCategory.class.getName()) || fieldTypeName.equals("long"))
 						numberAttributeMap.put(field.getName(), 1);
 				}
 				//custom annotation to manage hierarchy between entities and collections

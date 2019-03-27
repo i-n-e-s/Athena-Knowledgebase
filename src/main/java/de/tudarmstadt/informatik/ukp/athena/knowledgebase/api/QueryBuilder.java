@@ -19,8 +19,9 @@ import de.tudarmstadt.informatik.ukp.athena.knowledgebase.api.ast.RequestHierarc
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.api.ast.RequestNode;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.api.ast.StringAttributeNode;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.jpa.PersistenceManager;
-import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.SessionCategory;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.EventCategory;
 
+//code in here is not tested because javax.persistence.Query does not provide a way to see if the built query looks like intended
 public class QueryBuilder {
 	private EntityManager entityManager = PersistenceManager.getEntityManager();
 
@@ -47,7 +48,7 @@ public class QueryBuilder {
 		for(RequestHierarchyNode hierarchyNode : tree.getHierarchy()) {
 			String normalEntityName = hierarchyNode.getEntity().getEntityName().getString();
 			String entityName = capitalizeFirstLetter(normalEntityName);
-			String entityVar = normalEntityName.equals("sessionpart") ? "sp" : normalEntityName.substring(0, 2);
+			String entityVar = normalEntityName.equals("eventpart") ? "ep" : normalEntityName.substring(0, 2);
 
 			jpqlVars.put(":entityVar", "" + entityVar); //the last one will be in the output
 
@@ -66,7 +67,7 @@ public class QueryBuilder {
 		//now set the attributes
 		for(RequestHierarchyNode hierarchyNode : tree.getHierarchy()) {
 			RequestEntityNode entityNode = hierarchyNode.getEntity();
-			String entityVar = entityNode.getEntityName().getString().equals("sessionpart") ? "sp" : entityNode.getEntityName().getString().substring(0, 2);
+			String entityVar = entityNode.getEntityName().getString().equals("eventpart") ? "ep" : entityNode.getEntityName().getString().substring(0, 2);
 
 			//loop through the attributes (if any)
 			for(AttributeNode attr : entityNode.getAttributes()) {
@@ -110,7 +111,7 @@ public class QueryBuilder {
 				case 1:
 					//differentiate between long and category
 					if(attr.getName().getString().toLowerCase().contains("category"))
-						jpqlVars.put(jpqlVar, SessionCategory.values()[numbers.get(0).getNumber()]);
+						jpqlVars.put(jpqlVar, EventCategory.values()[numbers.get(0).getNumber()]);
 					else
 						jpqlVars.put(jpqlVar, new Long(numbers.get(0).getNumber())); //needs to be in a wrapper class or else it doesn't work
 					break;

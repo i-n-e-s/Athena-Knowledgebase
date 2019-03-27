@@ -80,8 +80,11 @@ public class OpenStreetRequestBuilder {
 
 	/**
 	 * This method uses the generated request URL to obtain an input stream, which it reads, translates
-	 * into a JSON Array of data from the Overpass API, and finally resolves this data to a usable {@link java.util.List list} of {@link Location locations} for
+	 * into a JSON Array of data from the Overpass API, and finally resolves this data to a usable
+	 * {@link java.util.List list} of {@link Location locations} for
 	 * the {@link StreetMapsController}.
+	 * We assume the API works and do not test it - what would be the point? Faulty data would be spotted
+	 * in other (tested methods)
 	 * @throws  IOException in case of connection problems
 	 * @return A list of locations, can be null
 	 */

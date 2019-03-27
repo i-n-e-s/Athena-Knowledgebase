@@ -15,7 +15,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.JPATestdatabase;
-import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Session;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Event;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Workshop;
 
 @SuppressWarnings("javadoc")
@@ -24,8 +24,8 @@ public class WorkshopJPAAccessTest {
 	static JPATestdatabase testDB;
 	static WorkshopJPAAccess uut;
 	static Workshop testValue;
-	static Session testSession1;
-	static Session testSession2;
+	static Event testEvent1;
+	static Event testEvent2;
 
 	static ConfigurableApplicationContext ctx;
 
@@ -52,14 +52,14 @@ public class WorkshopJPAAccessTest {
 		testValue = new Workshop();
 		testValue.setTitle("TestWorkshopTitle");
 		testValue.setAbbreviation("TestAbbr");
-		testSession1 = new Session();
+		testEvent1 = new Event();
 
-		testSession1.setTitle("TestTitle1");
-		testSession2 = new Session();
-		testSession2.setTitle("TestTitle2");
+		testEvent1.setTitle("TestTitle1");
+		testEvent2 = new Event();
+		testEvent2.setTitle("TestTitle2");
 
-		testValue.addSession(testSession1);
-		testValue.addSession(testSession2);
+		testValue.addEvent(testEvent1);
+		testValue.addEvent(testEvent2);
 	}
 
 	@Test

@@ -15,19 +15,18 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.JPATestdatabase;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Event;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.EventCategory;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.EventPart;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Paper;
-import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Session;
-import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.SessionCategory;
-import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.SessionPart;
 
-@SuppressWarnings("javadoc")
-public class SessionJPAAccessTest {
+public class EventJPAAccessTest {
 
 	static JPATestdatabase testDB;
-	static SessionJPAAccess uut;
-	static Session testValue;
-	static SessionPart testSP1;
-	static SessionPart testSP2;
+	static EventJPAAccess uut;
+	static Event testValue;
+	static EventPart testEP1;
+	static EventPart testEP2;
 	static Paper testP1;
 	static Paper testP2;
 
@@ -37,7 +36,7 @@ public class SessionJPAAccessTest {
 	public static void setUpDatabase() {
 		ctx = SpringApplication.run(JPATestdatabase.class,"");
 		testDB = new JPATestdatabase();
-		uut = new SessionJPAAccess();
+		uut = new EventJPAAccess();
 		testDB.createDB();
 	}
 
@@ -53,22 +52,22 @@ public class SessionJPAAccessTest {
 	}
 
 	public void resetValues() {
-		testValue = new Session();
-		testValue.setTitle("TestSessionTitle");
-		testValue.setCategory(SessionCategory.BREAK);
-		testSP1 = new SessionPart();
+		testValue = new Event();
+		testValue.setTitle("TestEventTitle");
+		testValue.setCategory(EventCategory.BREAK);
+		testEP1 = new EventPart();
 
-		testSP1.setTitle("TestTitle1");
-		testSP2 = new SessionPart();
-		testSP2.setTitle("TestTitle2");
+		testEP1.setTitle("TestTitle1");
+		testEP2 = new EventPart();
+		testEP2.setTitle("TestTitle2");
 
 		testP1 = new Paper();
 		testP1.setTitle("TestPaperTitle1");
 		testP2 = new Paper();
 		testP2.setTitle("TestPaperTitle2");
 
-		testValue.addSessionPart(testSP1);
-		testValue.addSessionPart(testSP2);
+		testValue.addEventPart(testEP1);
+		testValue.addEventPart(testEP2);
 		testValue.addPaper(testP1);
 		testValue.addPaper(testP2);
 	}
@@ -76,7 +75,7 @@ public class SessionJPAAccessTest {
 	@Test
 	public void addAndDeleteTest() {
 		uut.add(testValue);
-		List<Session> returnValues = getByTitle(testValue.getTitle());
+		List<Event> returnValues = getByTitle(testValue.getTitle());
 		if(returnValues.size() == 0) fail("return of existing Database is empty");
 		if(returnValues.size() > 1) fail("more than one returnValue ");
 		assertTrue(testValue.equalsWithoutID(returnValues.get(0)));
@@ -86,11 +85,11 @@ public class SessionJPAAccessTest {
 
 	@Test
 	public void getTest() {
-		List<Session> resultList = uut.get();
-		assertTrue(testDB.getSessionQuantity() == resultList.size());
+		List<Event> resultList = uut.get();
+		assertTrue(testDB.getEventQuantity() == resultList.size());
 		List<String> resultTitles = new ArrayList<String>();
-		resultList.stream().forEach((Session s) -> resultTitles.add(s.getTitle()));;
-		for (int i = 0; i < testDB.getSessionQuantity(); i++) {
+		resultList.stream().forEach((Event s) -> resultTitles.add(s.getTitle()));;
+		for (int i = 0; i < testDB.getEventQuantity(); i++) {
 			assertTrue(resultTitles.contains("Title"+ i));
 		}
 	}
@@ -98,15 +97,15 @@ public class SessionJPAAccessTest {
 	@Test
 	public void updateTest() {
 		uut.add(testValue);
-		testValue.setCategory(SessionCategory.WORKSHOP);
-		List<Session> returnValues = getByTitle(testValue.getTitle());
+		testValue.setCategory(EventCategory.WORKSHOP);
+		List<Event> returnValues = getByTitle(testValue.getTitle());
 		if(returnValues.size() == 0) fail("return is empty");
 		if(returnValues.size() > 1) fail("more than one return value");
-		assertEquals(SessionCategory.WORKSHOP, returnValues.get(0).getCategory());
+		assertEquals(EventCategory.WORKSHOP, returnValues.get(0).getCategory());
 		testDB.createDB();//Don't pollute the Database
 	}
 
-	private List<Session> getByTitle(String title) {
-		return PersistenceManager.getEntityManager().createQuery(String.format("SELECT s FROM Session s WHERE s.title = '%s'",title), Session.class).getResultList();
+	private List<Event> getByTitle(String title) {
+		return PersistenceManager.getEntityManager().createQuery(String.format("SELECT e FROM Event e WHERE e.title = '%s'",title), Event.class).getResultList();
 	}
 }

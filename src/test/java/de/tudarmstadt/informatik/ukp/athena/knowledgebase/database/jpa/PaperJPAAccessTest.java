@@ -18,7 +18,6 @@ import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.JPATestdataba
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Paper;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Person;
 
-@SuppressWarnings("javadoc")
 public class PaperJPAAccessTest {
 
 	static JPATestdatabase testDB;
@@ -109,7 +108,6 @@ public class PaperJPAAccessTest {
 		assertTrue(testValue.equalsWithoutID(returnValues.get(0)));
 		testDB.createDB();//Don't pollute the Database
 	}
-
 
 	public List<Paper> getByPaperID(long id) {
 		return PersistenceManager.getEntityManager().createQuery(String.format("SELECT p FROM Paper AS p WHERE p.paperID = '%s'",Long.toString(id)), Paper.class).getResultList();
