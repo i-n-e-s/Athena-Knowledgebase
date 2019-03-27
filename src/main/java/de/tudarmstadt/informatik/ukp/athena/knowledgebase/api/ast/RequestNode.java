@@ -9,7 +9,7 @@ import java.util.List;
 public class RequestNode extends BaseNode {
 	/**Contains all entities incl. their attributes*/
 	private final List<RequestHierarchyNode> hierarchy = new ArrayList<>();
-	/**Can be added infront of a request*/
+	/**Can be added in front of a request*/
 	private RequestFunction function = RequestFunction.NONE;
 
 	/**
