@@ -1,5 +1,6 @@
 package de.tudarmstadt.informatik.ukp.athena.knowledgebase.models;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -14,7 +15,7 @@ import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Person
 
 @SuppressWarnings("javadoc")
 public class ModelsTest{
-	/*Branchcoverage can't be reached yet, because we don't have fields which are accessible 
+	/*Branchcoverage can't be reached yet, because we don't have fields which are accessible
 	Also catch (IllegalArgumentException | IllegalAccessException e) should never be reached because it's checked before */
 	Model uut;
 
@@ -29,7 +30,7 @@ public class ModelsTest{
 		assertTrue(uut.equalsWithoutID(uut));
 	}
 
-	@Test 
+	@Test
 	public void equalsWithoutIDSymmetricTest1() {
 		Person uut = new Person();
 		Person testAuthor1 = new Person();
@@ -44,7 +45,7 @@ public class ModelsTest{
 		assertFalse(testAuthor1.equalsWithoutID(uut));
 	}
 
-	@Test 
+	@Test
 	public void equalsWithoutIDNullTest() {
 		Person uut = new Person();
 		Person testAuthor1 = new Person();
@@ -78,7 +79,7 @@ public class ModelsTest{
 		assertTrue(uut.equalsWithoutID(uut));
 	}
 
-	@Test 
+	@Test
 	public void equalsWithoutIDSymmetricTest2() {
 		Conference uut = new Conference();
 		Conference testConference1 = new Conference();
@@ -93,7 +94,7 @@ public class ModelsTest{
 		assertFalse(testConference1.equalsWithoutID(uut));
 	}
 
-	@Test 
+	@Test
 	public void equalsWithoutIDNullTest2() {
 		Conference uut = new Conference();
 		Conference testConference1 = new Conference();
@@ -118,7 +119,7 @@ public class ModelsTest{
 		Conference uut = new Conference();
 		uut.equalsWithoutID(null);
 	}
-	
+
 	@Test
 	public void equalWithoutIDSetRelevanceTest() {
 		String testname = "testname";
@@ -133,19 +134,19 @@ public class ModelsTest{
 		assertTrue(uut.equalsWithoutID(author1));
 	}
 
-	@Test 
+	@Test
 	public void equalsNullAsWildcardNullTest() {
 		uut = new Person();
 		assertFalse(uut.equalsNullAsWildcard(null));
 	}
-	
+
 	@Test
 	public void equalsNullAsWildcardWrongGivenClassTest() {
 		Person uut = new Person();
 		Paper paper1 = new Paper();
 		assertFalse(uut.equalsWithoutID(paper1));
 	}
-	
+
 	@Test
 	public void equalsNullAsWildcardNullFieldTest() {
 		Conference uut = new Conference();
@@ -157,7 +158,7 @@ public class ModelsTest{
 		testConference1.setBegin(null);
 		uut.setBegin(LocalDate.of(11, 11, 11));
 	}
-	
+
 	@Test
 	public void equalsNullAsWildcardDifferentDataTest() {
 		uut = new Person();
@@ -168,11 +169,27 @@ public class ModelsTest{
 		author1.setFullName(((Person)uut).getFullName());
 		assertTrue(uut.equalsNullAsWildcard(author1));
 	}
-	
+
 	@Test
 	public void equalsNullAsWildcardDifferentClass() {
 		uut = new Person();
 		Paper paper1 = new Paper();
 		assertFalse(uut.equalsNullAsWildcard(paper1));
+	}
+
+	@Test
+	public void connectAuthorPaperTest() {
+		uut = new Person();
+		Paper testPaper = new Paper();
+		boolean connected = Model.connectAuthorPaper((Person) uut, testPaper);
+		assertTrue(connected);
+		assertTrue( testPaper.getAuthors().contains( uut) );
+		assertTrue( ((Person) uut).getPapers().contains(testPaper) );
+		assertEquals(1, ((Person) uut).getPapers().size() );
+		assertEquals(1, testPaper.getAuthors().size() );
+		connected = Model.connectAuthorPaper((Person) uut, testPaper);
+		assertFalse(connected);
+		assertEquals(1, ((Person) uut).getPapers().size() );
+		assertEquals(1, testPaper.getAuthors().size() );
 	}
 }

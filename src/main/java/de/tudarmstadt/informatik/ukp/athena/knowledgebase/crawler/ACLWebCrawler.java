@@ -5,17 +5,21 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-import org.jsoup.Jsoup;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.JsoupHelper;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Conference;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Paper;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Person;
@@ -32,11 +36,13 @@ import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Sessio
  */
 class ACLWebCrawler extends AbstractCrawler {
 
+	private static Logger logger = LogManager.getLogger(ACLWebCrawler.class);
 	private String startURLAuthors;
 	private String startURLPaper;
 	private String schedulePage = "https://acl2018.org/programme/schedule/";
 	private String aboutPage = "https://acl2018.org/";
 	private String[] conferences;
+	private Map<String,Paper> papers = new HashMap<>(); //title, corresponding paper
 
 	/**
 	 * Only parses in the given year range. If only one year is needed, use the same input for both
@@ -69,9 +75,9 @@ class ACLWebCrawler extends AbstractCrawler {
 	 * @throws IOException in case the connection is faulty and / or not present
 	 */
 	private ArrayList<Document> fetchWebpages(String startURL) throws IOException {
-		System.out.println("Fetching webpages starting from \"" + startURL +"\"...");
+		logger.info("Fetching webpages starting from \"{}\"...", startURL);
 		ArrayList<Document> docs = new ArrayList<Document>();
-		docs.add(Jsoup.connect(startURL).get());
+		docs.add(JsoupHelper.connect(startURL));
 		// find Link to next Page, if not found end loop
 		boolean nextSiteExist = true;
 		while (nextSiteExist) {
@@ -89,11 +95,11 @@ class ACLWebCrawler extends AbstractCrawler {
 			}
 			// add next page to docList
 			if (nextSiteExist) {
-				Document nxtDoc = Jsoup.connect(links.get(idxOfLink).absUrl("href")).get();
+				Document nxtDoc = JsoupHelper.connect(links.get(idxOfLink).absUrl("href"));
 				docs.add(nxtDoc);
 			}
 		}
-		System.out.println("Done fetching webpages!");
+		logger.info("Done fetching webpages!");
 		return docs;
 	}
 
@@ -102,9 +108,9 @@ class ACLWebCrawler extends AbstractCrawler {
 	 */
 	@Override
 	public ArrayList<Person> getAuthors() throws IOException {
-		System.out.println("Gathering all authors in the given year range...");
+		logger.info("Gathering all authors in the given year range...");
 		ArrayList<Person> persons = extractAuthors(fetchWebpages(startURLAuthors));
-		System.out.println("Done!");
+		logger.info("Done!");
 		return persons;
 	}
 
@@ -116,7 +122,7 @@ class ACLWebCrawler extends AbstractCrawler {
 	 * @return a list of authors with the name field set
 	 */
 	private ArrayList<Person> extractAuthors(ArrayList<Document> webpages) {
-		System.out.println("Scraping author pages...");
+		logger.info("Scraping author pages...");
 		ArrayList<Person> authors = new ArrayList<>();
 		// extract the authors from all webpages
 		for (Document doc : webpages) {
@@ -128,7 +134,7 @@ class ACLWebCrawler extends AbstractCrawler {
 				authors.add(author);
 			}
 		}
-		System.out.println("Done scraping!");
+		logger.info("Done scraping!");
 		return authors;
 	}
 
@@ -137,9 +143,9 @@ class ACLWebCrawler extends AbstractCrawler {
 	 */
 	@Override
 	public ArrayList<Paper> getPapers() throws IOException {
-		System.out.println("Gathering all papers in the given year range...");
+		logger.info("Gathering all papers in the given year range...");
 		ArrayList<Paper> papers = extractPapers(fetchWebpages(startURLPaper));
-		System.out.println("Done!");
+		logger.info("Done!");
 		return papers;
 	}
 
@@ -151,7 +157,7 @@ class ACLWebCrawler extends AbstractCrawler {
 	 * @return a list of papers
 	 */
 	private ArrayList<Paper> extractPapers(ArrayList<Document> webpages) {
-		System.out.println("Scraping paper pages...");
+		logger.info("Scraping paper pages...");
 		ArrayList<Paper> paperList = new ArrayList<>();
 		// extract the authors from all webpages
 		for (Document doc : webpages) {
@@ -170,7 +176,7 @@ class ACLWebCrawler extends AbstractCrawler {
 				}
 			}
 		}
-		System.out.println("Done scraping!");
+		logger.info("Done scraping!");
 		return paperList;
 	}
 
@@ -179,9 +185,9 @@ class ACLWebCrawler extends AbstractCrawler {
 	 */
 	@Override
 	public ArrayList<Paper> getPaperAuthor() throws IOException {
-		System.out.println("Gathering all paper author relationships...");
+		logger.info("Gathering all paper author relationships...");
 		List<Document> webpages = fetchWebpages(startURLPaper);
-		System.out.println("Preparing data and starting 4 scraper threads...");
+		logger.info("Preparing data and starting 4 scraper threads...");
 		//in the following lines the list gets split into 4 roughly equal parts so that each list part can be handled in a seperate thread (it's faster this way)
 		int quarterSize = (int)Math.ceil(webpages.size() / 4);
 		List<Document> input1 = webpages.subList(0, quarterSize);
@@ -195,7 +201,7 @@ class ACLWebCrawler extends AbstractCrawler {
 		Future<ArrayList<Paper>> f2 = executor.submit(() -> extractPaperAuthor(input2));
 		Future<ArrayList<Paper>> f3 = executor.submit(() -> extractPaperAuthor(input3));
 		Future<ArrayList<Paper>> f4 = executor.submit(() -> extractPaperAuthor(input4));
-		System.out.println("Waiting for thread results...");
+		logger.info("Waiting for thread results...");
 
 		//wait for the thread results and add all of those to the result list (.get() is blocking)
 		try {
@@ -203,11 +209,10 @@ class ACLWebCrawler extends AbstractCrawler {
 			result.addAll(f2.get());
 			result.addAll(f3.get());
 			result.addAll(f4.get());
-			System.out.println("Done gathering all paper and author results!");
+			logger.info("Done gathering all paper and author results!");
 		}
 		catch(Exception e) { //thread exceptions
-			System.err.println("Error while gathering results!");
-			e.printStackTrace();
+			logger.error("Error while gathering results!", e);
 		}
 
 		executor.shutdown();
@@ -222,7 +227,7 @@ class ACLWebCrawler extends AbstractCrawler {
 	 * @return a list of papers
 	 */
 	private ArrayList<Paper> extractPaperAuthor(List<Document> webpages) {
-		System.out.println("Scraping webpages for paper author relationships...");
+		logger.info("Scraping webpages for paper author relationships...");
 		ArrayList<Paper> paperList = new ArrayList<>();
 		for (Document doc : webpages) {
 			Elements paperListElements = doc.select("h5.index_title");
@@ -233,7 +238,6 @@ class ACLWebCrawler extends AbstractCrawler {
 						continue innerLoop; //label is not needed necessarily, but helps readability
 
 					// add Paper info
-					Paper paper = new Paper();
 					// clean up the titles in the form of [C18-1017] Simple Neologism Based Domain Independe...
 					// C18-1017 would be the anthology - we remove [] because the rest API dislikes the characters and they
 					// convey no meaning
@@ -242,6 +246,7 @@ class ACLWebCrawler extends AbstractCrawler {
 					String anthology = splitRawTitle[0].replace("[", "").replace("]", "");
 					String paperTitle = splitRawTitle[1];
 
+					Paper paper = new Paper();
 					paper.setTitle(paperTitle);
 					paper.setAnthology(anthology);
 					paper.setRemoteLink("http://aclweb.org/anthology/" + anthology); //wow that was easy
@@ -263,10 +268,11 @@ class ACLWebCrawler extends AbstractCrawler {
 						author.addPaper(paper);
 					}
 					paperList.add(paper);
+					papers.put(paper.getTitle(), paper);
 				}
 			}
 		}
-		System.out.println("Done scraping!");
+		logger.info("Done scraping!");
 		return paperList;
 	}
 
@@ -311,37 +317,30 @@ class ACLWebCrawler extends AbstractCrawler {
 	 * @return The paper's release date, null if errored
 	 */
 	private LocalDate extractPaperRelease(Element paper) {
-		try {
 			Document doc = Jsoup.connect("https://aclanthology.coli.uni-saarland.de" + paper.select("a").attr("href")).get();
 			ArrayList<Element> data = doc.select(".dl-horizontal").get(0).children(); //somewhere in those children is the date
 			String year = "0";
 			String month = "0";
 
-			//find the different parts of the date
-			for(int i = 0; i < data.size(); i++) {
-				if(data.get(i).text().startsWith("Month")) { //the line contains the month
-					month = data.get(i + 1).text();
+		//find the different parts of the date
+		for(int i = 0; i < data.size(); i++) {
+			if(data.get(i).text().startsWith("Month")) { //the line contains the month
+				month = data.get(i + 1).text();
 
-					if(month.contains("-")) //some papers have a release month of e.g. "October-November", assume the first month as the release month
-						month = month.split("-")[0];
+				if(month.contains("-")) //some papers have a release month of e.g. "October-November", assume the first month as the release month
+					month = month.split("-")[0];
 
-					month = "" + CrawlerToolset.getMonthIndex(month);
+				month = "" + CrawlerToolset.getMonthIndex(month);
 
-					if(month.equals("-1"))
-						month = "1"; //resort to january if no month is found
-				}
-				else if(data.get(i).text().startsWith("Year")) { //the line contains the year
-					year = data.get(i + 1).text().substring(0, 4); //hope that every year is given in 1234 format
-				}
+				if(month.equals("-1"))
+					month = "1"; //resort to january if no month is found
 			}
+			else if(data.get(i).text().startsWith("Year")) { //the line contains the year
+				year = data.get(i + 1).text().substring(0, 4); //hope that every year is given in 1234 format
+			}
+		}
 
 			return LocalDate.of(Integer.parseInt(year), Integer.parseInt(month), 1);
-		}
-		catch(IOException e) { //jsoup exception
-			e.printStackTrace();
-		}
-
-		return null;
 	}
 
 	/**
@@ -354,9 +353,9 @@ class ACLWebCrawler extends AbstractCrawler {
 	 */
 	@Override
 	public Conference getConferenceInformation() throws IOException {
-		System.out.println("Scraping conference information...");
+		logger.info("Scraping conference information...");
 		Conference currentConference = new Conference();
-		Document aboutPage = Jsoup.connect(this.aboutPage).get();
+		Document aboutPage = JsoupHelper.connect(this.aboutPage);
 		String conferenceName = aboutPage.select(".site-title a").text();
 		currentConference.setName(conferenceName);
 
@@ -390,7 +389,7 @@ class ACLWebCrawler extends AbstractCrawler {
 		String conferenceAddress = aboutPage.select("p a+ a").text();
 		currentConference.setAddress(conferenceAddress);
 
-		System.out.println("Done scraping!");
+		logger.info("Done scraping!");
 		return currentConference;
 	}
 
@@ -399,10 +398,10 @@ class ACLWebCrawler extends AbstractCrawler {
 	 */
 	@Override
 	public ArrayList<ScheduleEntry> getSchedule() throws IOException {
-		System.out.println("Scraping conference schedule...");
+		logger.info("Scraping conference schedule...");
 		ArrayList<ScheduleEntry> result = new ArrayList<>();
-		System.out.println("Preparing data and starting 5 scraper threads...");
-		Element schedule = Jsoup.connect(schedulePage).get().select("#schedule").get(0);
+		logger.info("Preparing data and starting 5 scraper threads...");
+		Element schedule = JsoupHelper.connect(schedulePage).select("#schedule").get(0);
 		Elements days = schedule.select(".day-schedule");
 		//threading :DD - takes about 1 minute 20 seconds without, 30 seconds with
 		ExecutorService executor = Executors.newFixedThreadPool(5);
@@ -411,7 +410,7 @@ class ACLWebCrawler extends AbstractCrawler {
 		Future<ArrayList<ScheduleEntry>> f3 = executor.submit(() -> parseOtherDays(days.get(2), new ArrayList<ScheduleEntry>()));
 		Future<ArrayList<ScheduleEntry>> f4 = executor.submit(() -> parseOtherDays(days.get(3), new ArrayList<ScheduleEntry>()));
 		Future<ArrayList<ScheduleEntry>> f5 = executor.submit(ACL18WorkshopParser::parseWorkshops);
-		System.out.println("Waiting for thread results...");
+		logger.info("Waiting for thread results...");
 
 		try {
 			result.addAll(f1.get());
@@ -419,11 +418,10 @@ class ACLWebCrawler extends AbstractCrawler {
 			result.addAll(f3.get());
 			result.addAll(f4.get());
 			result.addAll(f5.get());
-			System.out.println("Done scraping!");
+			logger.info("Done scraping!");
 		}
 		catch(InterruptedException | ExecutionException e) {
-			System.err.println("Error collecting results!");
-			e.printStackTrace();
+			logger.error("Error collecting results!", e);
 		}
 
 		executor.shutdown();
@@ -434,6 +432,7 @@ class ACLWebCrawler extends AbstractCrawler {
 	 * Parses ACL 2018's first days' schedule (seperate method because it contains a special case)
 	 * @param day The day element of the website
 	 * @param result The resulting arraylist with the complete sessions of the first day
+	 * @return An ArrayList<ScheduleEntry> containing the first days' schedule
 	 */
 	private ArrayList<ScheduleEntry> parseFirstDay(Element day, ArrayList<ScheduleEntry> result) {
 		String[] monthDay = day.selectFirst(".day").text().split(":")[1].trim().split(" "); //the text has the form of "Sunday: July 15"
@@ -470,6 +469,7 @@ class ACLWebCrawler extends AbstractCrawler {
 	 * Parses ACL 2018's other days' schedule
 	 * @param day The day element of the website
 	 * @param result The resulting arraylist with the complete sessions of the given day
+	 * @return The resulting arraylist with the complete sessions of the given day
 	 */
 	private ArrayList<ScheduleEntry> parseOtherDays(Element day, ArrayList<ScheduleEntry> result) {
 		String[] monthDay = day.selectFirst(".day").text().split(":")[1].trim().split(" "); //the text has the form of "Sunday: July 15"
@@ -575,7 +575,7 @@ class ACLWebCrawler extends AbstractCrawler {
 				String sessPaperTitle = subEl.selectFirst(".talk-title").text();
 
 				sessionPart.setTitle(sessTitle);
-				session.addPaperTitle(sessPaperTitle);
+				session.addPaper(papers.get(sessPaperTitle));
 				sessionPart.setBegin(sessStart);
 				sessionPart.setEnd(sessEnd);
 				sessionPart.setPlace(sessPlace);
@@ -601,7 +601,7 @@ class ACLWebCrawler extends AbstractCrawler {
 			for(Element subEl : sessEl.select(".poster-name")) {
 				String paperTitle = subEl.select("a").get(1).text().trim(); //let's hope it's always the second :D
 
-				session.addPaperTitle(paperTitle);
+				session.addPaper(papers.get(paperTitle));
 			}
 
 			sessionPart.setTitle(sessTitle);
@@ -611,5 +611,10 @@ class ACLWebCrawler extends AbstractCrawler {
 			sessionPart.setPlace(session.getPlace());
 			session.addSessionPart(sessionPart);
 		}
+	}
+
+	@Override
+	public void close() {
+		papers.clear();
 	}
 }

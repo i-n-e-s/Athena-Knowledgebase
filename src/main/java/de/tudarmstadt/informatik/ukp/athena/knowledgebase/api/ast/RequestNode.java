@@ -7,8 +7,10 @@ import java.util.List;
  * Represents the complete request
  */
 public class RequestNode extends BaseNode {
-	/**Join tables from left to right*/ //TODO: does this make sense with more than two '$'?
+	/**Contains all entities incl. their attributes*/
 	private final List<RequestHierarchyNode> hierarchy = new ArrayList<>();
+	/**Can be added in front of a request*/
+	private RequestFunction function = RequestFunction.NONE;
 
 	/**
 	 * @see {@link BaseNode#BaseNode(int) BaseNode}
@@ -18,7 +20,7 @@ public class RequestNode extends BaseNode {
 	}
 
 	/**
-	 * Adds an attribute node to this node
+	 * Adds a hierarchy node to this node
 	 * @param node The node to add
 	 */
 	public void addHierarchyNode(RequestHierarchyNode node) {
@@ -32,11 +34,29 @@ public class RequestNode extends BaseNode {
 		return hierarchy;
 	}
 
+	/**
+	 * Sets this hierarchy node's function
+	 * @param function The function to use, non-null
+	 */
+	public void setFunction(RequestFunction function) {
+		this.function = function;
+	}
+
+	/**
+	 * @return true This hierarchy node's function
+	 */
+	public RequestFunction getFunction() {
+		return function;
+	}
+
 	@Override
 	public String toString() {
-		String result = "<0>";
+		String result = "<0>"; //the index of this kind of node is always 0
 
-		for(RequestHierarchyNode node : hierarchy) {
+		if(function != RequestFunction.NONE) //if there is a request function, it has to be added infront of the actual request
+			result += "/" + function.name().toLowerCase(); //the name of the enum value is what gets written infront of the request by the user
+
+		for(RequestHierarchyNode node : hierarchy) { //build the rest of the request
 			result += node.toString();
 		}
 
@@ -45,6 +65,6 @@ public class RequestNode extends BaseNode {
 
 	@Override
 	public boolean equals(Object obj) {
-		return super.equals(obj) && obj instanceof RequestNode && hierarchy.equals(((RequestNode)obj).hierarchy);
+		return super.equals(obj) && obj instanceof RequestNode && ((RequestNode)obj).function == function && hierarchy.equals(((RequestNode)obj).hierarchy);
 	}
 }

@@ -1,0 +1,90 @@
+Beginn: 	 9:00 Uhr
+Ende:		10:40 Uhr
+
+
+Was ist bis jetzt passiert?
+
+Schreibt mal die andere Gruppe an um das Webinterface zu sehen und herumzuspielen - wenn Interesse
+	
+
+Jonas tritt ein
+
+Philipp erzählt wie weit der letzte Feature Branch ist
+Jonas arbeitet lokal am Wiki, dort soll auch schon viel passiert sein
+
+
+Daniel erklärt Konsolenargumente
+
+
+
+Gründe für zivilisierte Panik:
+--------------
+Geht auch NACL - kann man das einschränken? Kleines Feature falls es noch geht - wenn es groß ist
+
+Thomas schaut sich das Wiki baldig an
+
+Eine Sache wünscht er sich:
+	eine Seite auf der das Projekt zusammengefasst wird  "TLDR" "Ein Poster"  "Was hat meine Gruppe gemacht"
+		Stichpunkte möglich
+
+
+
+
+Note vor allem auf das Wiki basiert
+-----------
+
+Semantic scholar:
+	Bug hoffentlich gefixt 
+
+Einigung:
+Bugfixes werden reviewt und gepusht - Server wird aktualisiert
+ausstehende Fixes kommen in Philipps Branch
+
+session - Paper Beziehung ausstehend im clean-db
+
+
+
+
+Bei Serveränderung Daniel kontaktieren damit der öffentliche Wiki Kram auch aktualisiert wird
+
+
+
+lästiger Kram:
+Ein QS-Dokument mit Anhang, ein Dokument User Stories und ein Dokument Projekttagebuch
+	Code mit Syntaxhighliting
+	Code der Kernklassen sollte mit den Checklisten übereinstimmen
+
+
+
+Tests
+	ACLWebParser und ParsedDataInserter: TestCoverage nicht vorhanden
+
+
+
+Anhang muss leserlich sein aber sonst nichts
+
+
+SpringStart nicht nötig weil der argumentlose ParsedDataInserter das leistet
+
+
+Tests
+--------
+Begründung nachreichen
+ParsedDataInserter - keine Tests sind ok
+Integrationstest beim Crawler
+
+
+------
+Checkpunkten+Listen
+Transformation:
+Orientierungszeile könnte sich wiederholen
+Tabellen könnten sich transformieren
+"einfach drehen"
+
+
+Lieber einen Link dazu + angemessener Aufwand so schön wie es geht + reinklatschen
+
+
+Julian:
+	schaut nach wie man User Stories exportiert in Trello
+	Crawler + ParsedDataInserter Begründung 

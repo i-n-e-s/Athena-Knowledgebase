@@ -6,14 +6,19 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.Month;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 /**
  * A class with methods that might be useful across a variety of conferences / scraping tasks
  * currently mostly focused on converting Strings to LocalDates and LocalTimes
  * @author Julian Steitz, Daniel Lehmann
  */
 public class CrawlerToolset {
+	private static Logger logger = LogManager.getLogger(CrawlerToolset.class);
 
-	/**Converts a time in String format to a LocalDate instance
+	/**
+	 * Converts a time in String format to a LocalDate instance
 	 * @param timeString time in String format (e.g. 9:00 or 09:00)
 	 * @return corresponding LocalTime instance or null if the String was not in the expected format
 	 */
@@ -25,8 +30,7 @@ public class CrawlerToolset {
 			return LocalTime.of(startHours, startMinutes);
 
 		}catch (IndexOutOfBoundsException | NumberFormatException e){
-			System.err.println("invalid Input, got: "+ timeString
-					+ " expected: 9:00 or 09:00");
+			logger.error(String.format("invalid Input, got: {} expected: 9:00 or 09:00", timeString), e);
 			return null;
 		}
 	}
@@ -50,7 +54,7 @@ public class CrawlerToolset {
 					daysMonthsYearAndLocation[1], daysMonthsYearAndLocation[2]);
 			return dateRange;
 		}catch (IndexOutOfBoundsException e){
-			System.err.println("invalid format. expected dateString to be 15-20 July 2018 and got: " + dateString);
+			logger.error(String.format("invalid format. expected dateString to be 15-20 July 2018 and got: {}", dateString), e);
 			return dateRange;
 		}
 

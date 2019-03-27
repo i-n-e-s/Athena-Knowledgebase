@@ -10,6 +10,7 @@ public class RequestScanner {
 	private int tokenStart = 0;
 	private int currentIndex = 0;
 	private String currentActualToken;
+	private boolean previouslyEscaped = false;
 
 	/**
 	 * Sets up this scanner
@@ -21,7 +22,7 @@ public class RequestScanner {
 
 	/**
 	 * Sets up this scanner
-	 * @param request The request to be scanned
+	 * @param request The request to be scanned, non-null
 	 */
 	public RequestScanner(char[] request) {
 		this.request = request;
@@ -66,7 +67,8 @@ public class RequestScanner {
 	 */
 	private RequestTokenType scanToken() {
 		//if it's alphabetic, there is a name of some sort,
-		if(Character.isAlphabetic(request[currentIndex])) {
+		if(previouslyEscaped || Character.isAlphabetic(request[currentIndex])) { //previouslyEscaped: unknown symbols should be put into a string
+			previouslyEscaped = false;
 			appendCharacter();
 
 			while(currentIndex < request.length && Character.isAlphabetic(request[currentIndex]) && appendCharacter()) //add remaining characters to complete token
@@ -84,26 +86,17 @@ public class RequestScanner {
 			return RequestTokenType.NUMBER;
 		}
 
-		//if none of the above applies, select the proper token type here
-		switch(request[currentIndex]) {
-			case '=':
-				appendCharacter();
-				return RequestTokenType.ATTR_EQ;
-			case '&':
-				appendCharacter();
-				return RequestTokenType.ATTR_SEPARATOR;
-			case ':':
-				appendCharacter();
-				return RequestTokenType.ATTR_SPECIFIER;
-			case '/':
-				appendCharacter();
-				return RequestTokenType.HIERARCHY_SEPARATOR;
-			case '+':
-				appendCharacter();
-				return RequestTokenType.SPACE;
-		}
-
 		appendCharacter();
-		return RequestTokenType.ERROR;
+
+		//if none of the above applies, select the proper token type here
+		switch(request[currentIndex - 1]) { //-1 because appendCharacter was already called and incremented currentIndex
+			case '=': return RequestTokenType.ATTR_EQ;
+			case '&': return RequestTokenType.ATTR_SEPARATOR;
+			case ':': return RequestTokenType.ATTR_SPECIFIER;
+			case '/': return RequestTokenType.HIERARCHY_SEPARATOR;
+			case '`': previouslyEscaped = true; return RequestTokenType.ESCAPE; //backslash does not work in url, so use the backtick
+			case '+': return RequestTokenType.SPACE;
+			default: return RequestTokenType.ERROR;
+		}
 	}
 }

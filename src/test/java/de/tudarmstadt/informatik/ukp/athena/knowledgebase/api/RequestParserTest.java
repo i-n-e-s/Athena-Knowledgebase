@@ -8,6 +8,7 @@ import org.junit.Test;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.api.ast.NumberAttributeNode;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.api.ast.NumberNode;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.api.ast.RequestEntityNode;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.api.ast.RequestFunction;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.api.ast.RequestHierarchyNode;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.api.ast.RequestNode;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.api.ast.StringAttributeNode;
@@ -201,5 +202,122 @@ public class RequestParserTest {
 		//syntactically incorrect, symbol at incorrect position (& instead of = right here ------|
 		//                                                                        v--------------|)
 		new RequestParser(new RequestScanner("/paper:author=Daniel+Klingbein&topic&vogonpoetry").scan()).parse();
+	}
+
+	@Test
+	public void testCountFunction() {
+		try {
+			RequestNode actual = new RequestParser(new RequestScanner("/count/paper").scan()).parse();
+			RequestNode expected = new RequestNode(0);
+
+			RequestHierarchyNode theOneAndOnly = new RequestHierarchyNode(6);
+			RequestEntityNode entityNode = new RequestEntityNode(7);
+			StringNode entityNodeName = new StringNode(7);
+
+			entityNodeName.setString("paper");
+			entityNode.setEntityName(entityNodeName);
+			theOneAndOnly.setEntity(entityNode);
+			expected.addHierarchyNode(theOneAndOnly);
+			expected.setFunction(RequestFunction.COUNT);
+			assertEquals("ASTs are not the same!", expected, actual);
+		}
+		catch(SyntaxException e) {
+			fail("Syntactically correct request shouldn't throw a syntax exception");
+		}
+	}
+
+	@Test
+	public void testEnhanceFunction() {
+		try {
+			RequestNode actual = new RequestParser(new RequestScanner("/enhance/paper").scan()).parse();
+			RequestNode expected = new RequestNode(0);
+
+			RequestHierarchyNode theOneAndOnly = new RequestHierarchyNode(8);
+			RequestEntityNode entityNode = new RequestEntityNode(9);
+			StringNode entityNodeName = new StringNode(9);
+
+			entityNodeName.setString("paper");
+			entityNode.setEntityName(entityNodeName);
+			theOneAndOnly.setEntity(entityNode);
+			expected.addHierarchyNode(theOneAndOnly);
+			expected.setFunction(RequestFunction.ENHANCE);
+			assertEquals("ASTs are not the same!", expected, actual);
+		}
+		catch(SyntaxException e) {
+			fail("Syntactically correct request shouldn't throw a syntax exception");
+		}
+	}
+
+	@Test
+	public void testEscapeCorrect() {
+		try {
+			RequestNode actual = new RequestParser(new RequestScanner("/paper:title=Testing`:x").scan()).parse();
+			RequestNode expected = new RequestNode(0);
+
+			RequestHierarchyNode theOneAndOnly = new RequestHierarchyNode(0);
+			RequestEntityNode entityNode = new RequestEntityNode(1);
+			StringNode entityNodeName = new StringNode(1);
+			StringAttributeNode titleNode = new StringAttributeNode(7);
+			StringNode titleNodeName = new StringNode(7);
+			StringNode titleVal = new StringNode(13);
+
+			titleNodeName.setString("title");
+			titleVal.setString("Testing:x");
+			titleNode.setName(titleNodeName);
+			titleNode.setValue(titleVal);
+			entityNode.addAttributeNode(titleNode);
+			entityNodeName.setString("paper");
+			entityNode.setEntityName(entityNodeName);
+			theOneAndOnly.setEntity(entityNode);
+			expected.addHierarchyNode(theOneAndOnly);
+			assertEquals("ASTs are not the same!", expected, actual);
+		}
+		catch(SyntaxException e) {
+			fail("Syntactically correct request shouldn't throw a syntax exception");
+		}
+	}
+
+	@Test
+	public void testEscapeNoEffect() {
+		try {
+			RequestNode actual = new RequestParser(new RequestScanner("/paper:title=Tes`ting").scan()).parse();
+			RequestNode expected = new RequestNode(0);
+
+			RequestHierarchyNode theOneAndOnly = new RequestHierarchyNode(0);
+			RequestEntityNode entityNode = new RequestEntityNode(1);
+			StringNode entityNodeName = new StringNode(1);
+			StringAttributeNode titleNode = new StringAttributeNode(7);
+			StringNode titleNodeName = new StringNode(7);
+			StringNode titleVal = new StringNode(13);
+
+			titleNodeName.setString("title");
+			titleVal.setString("Testing");
+			titleNode.setName(titleNodeName);
+			titleNode.setValue(titleVal);
+			entityNode.addAttributeNode(titleNode);
+			entityNodeName.setString("paper");
+			entityNode.setEntityName(entityNodeName);
+			theOneAndOnly.setEntity(entityNode);
+			expected.addHierarchyNode(theOneAndOnly);
+			assertEquals("ASTs are not the same!", expected, actual);
+		}
+		catch(SyntaxException e) {
+			fail("Syntactically correct request shouldn't throw a syntax exception");
+		}
+	}
+
+	@Test(expected=SyntaxException.class)
+	public void testEscapeWrongPosition1() throws SyntaxException {
+		new RequestParser(new RequestScanner("/paper:t`itle=Testing").scan()).parse();
+	}
+
+	@Test(expected=SyntaxException.class)
+	public void testEscapeWrongPosition2() throws SyntaxException {
+		new RequestParser(new RequestScanner("/paper`:title=Testing").scan()).parse();
+	}
+
+	@Test(expected=SyntaxException.class)
+	public void testEscapeWrongPosition3() throws SyntaxException {
+		new RequestParser(new RequestScanner("`/paper:title=Testing").scan()).parse();
 	}
 }

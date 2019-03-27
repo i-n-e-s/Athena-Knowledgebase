@@ -1,4 +1,4 @@
-package de.tudarmstadt.informatik.ukp.athena.knowledgebase.database;
+package de.tudarmstadt.informatik.ukp.athena.knowledgebase;
 
 import java.io.IOException;
 import java.time.LocalTime;
@@ -8,39 +8,45 @@ import java.util.List;
 import java.util.TimeZone;
 
 import javax.annotation.PostConstruct;
+import javax.persistence.EntityManager;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-import de.tudarmstadt.informatik.ukp.athena.knowledgebase.JPASandBox;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.crawler.CrawlerFacade;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.crawler.SupportedConferences;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.crawler.semanticscholarapi.S2APIFunctions;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.access.CommonAccess;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.jpa.ConferenceJPAAccess;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.jpa.PaperJPAAccess;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.jpa.PersistenceManager;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.jpa.PersonJPAAccess;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.jpa.SessionJPAAccess;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.jpa.WorkshopJPAAccess;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Conference;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Paper;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Person;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.ScheduleEntry;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Session;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Workshop;
 
 
 @SpringBootApplication
-/*
-	a class which is meant to be run only once, which is why it is separate from application. Starts Spring and adds
-	data to an sql Database via hibernate
-	contains methods which reformat ParserData into a hibernate digestible format
-	@author Julian Steitz, Daniel Lehmann
+/**
+ *	A class which is meant to be run only once, which is why it is separate from application. Starts Spring and adds
+ *	data to an sql Database via hibernate
+ *	contains methods which reformat ParserData into a hibernate digestible format
+ *	@author Julian Steitz, Daniel Lehmann, Philipp Emmer
  */
 public class ParsedDataInserter {
 	private CrawlerFacade acl18WebParser;
 	private static Logger logger = LogManager.getLogger(ParsedDataInserter.class);
 
-	//needed so spring starts correctly
+	/**
+	 * Needed so spring works
+	 */
 	public ParsedDataInserter(){}
 
 	/**
@@ -52,22 +58,23 @@ public class ParsedDataInserter {
 		acl18WebParser = new CrawlerFacade(SupportedConferences.ACL, beginYear, endYear, conferences);
 	}
 
-	// This assures everything written into the database is in UTC.
-	// from https://aboullaite.me/spring-boot-time-zone-configuration-using-hibernate/
-	// took me far too long to find
-	// TODO: look into application.yml ?
+
+	/**
+	 * This assures that everything written into the database is in UTC.
+	 * From https://aboullaite.me/spring-boot-time-zone-configuration-using-hibernate/
+	 */
 	@PostConstruct
 	void started() {
-		TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
+		TimeZone.setDefault(TimeZone.getTimeZone("UTC")); // took me far too long to find
 	}
 
+	//length of 40 lines exceeded because this is all one startup sequence which manages everything
 	public static void main(String[] args) {
 		long then = System.nanoTime();
-		SpringApplication.run(JPASandBox.class, args);
+		SpringApplication.run(ParsedDataInserter.class, args);
 		ParsedDataInserter parsedDataInserter;
 		List<String> argsList = Arrays.asList(args); //for .contains
 		int beginYear = 2018, endYear = 2018;
-		String[] conferences = null;
 
 		for(String arg : args) {
 			if(arg.startsWith("-beginYear="))
@@ -76,12 +83,13 @@ public class ParsedDataInserter {
 				endYear = Integer.parseInt(arg.split("=")[1]); //parse to make sure that it's a number
 			else if(arg.startsWith("-conferences="))
 				conferences = arg.replace("-conferences=", "").split(",");
+
 		}
 
 		if(beginYear > endYear) {
 			int temp = beginYear;
 
-			System.out.printf("Received arguments beginYear=%s, endYear=%s. endYear is bigger than beginYear, swapping them.\n", beginYear, endYear);
+			logger.info("Received arguments beginYear={}, endYear={}. endYear is bigger than beginYear, swapping them.", beginYear, endYear);
 			beginYear = endYear;
 			endYear = temp;
 		}
@@ -93,51 +101,51 @@ public class ParsedDataInserter {
 
 		parsedDataInserter = new ParsedDataInserter(beginYear, endYear, conferences);
 
-		//only scrape if respective argument was found
+        //only scrape if respective argument was found
 		if(argsList.contains("-scrape-paper-author")) {
 			try {
-				System.out.printf("Scraping years %s through %s - this can take a couple of minutes...\n", beginYear, endYear);
+				logger.info("Scraping years {} through {} - this can take a couple of minutes...", beginYear, endYear);
 				parsedDataInserter.aclStorePapersAndAuthors();
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		}
 		else
-			System.out.println("\"-scrape-paper-author\" argument was not found, skipping paper author scraping");
+			logger.info("\"-scrape-paper-author\" argument was not found, skipping paper author scraping");
 
 		if(argsList.contains("-scrape-acl18-info"))
 			parsedDataInserter.acl2018StoreConferenceInformation(); //automatically saves the schedule as well
 		else
-			System.out.println("\"-scrape-acl18-info\" argument was not found, skipping ACL 2018 scraping");
+			logger.info("\"-scrape-acl18-info\" argument was not found, skipping ACL 2018 scraping");
 
-		System.out.printf("Done! (Took %s)\n", LocalTime.ofNanoOfDay(System.nanoTime() - then));
+		logger.info("Done! (Took {})", LocalTime.ofNanoOfDay(System.nanoTime() - then));
+		parsedDataInserter.acl18WebParser.close();
 	}
 
 	/**
-	 * Constructs Person (Author) and Paper Objects from ACL18Webparser().getPaperAuthor() and adds them to the database
-	 * see its documentation for its makeup
+	 * Constructs person (author) and paper objects from {@link de.tudarmstadt.informatik.ukp.athena.knowledgebase.crawler.ACLWebCrawler#getPaperAuthor()}
+	 * and adds them to the database. See its documentation for its makeup
 	 *
 	 * @throws IOException if jsoup was interrupted in the scraping process (during getPaperAuthor())
 	 * @author Julian Steitz, Daniel Lehmann
-	 * TODO: implement saveandupdate in Common Access? Otherwise implement check if entry exist. Expensive?
 	 */
 	private void aclStorePapersAndAuthors() throws IOException {
-		System.out.println("Scraping papers and authors...");
+		logger.info("Scraping papers and authors...");
 		ArrayList<Paper> papers = acl18WebParser.getPaperAuthor();
 		CommonAccess<Paper> paperFiler = new PaperJPAAccess();
-		// PersonCommonAccess personfiler = new PersonJPAAccess();
 
-		System.out.println("Inserting papers and authors into database...");
+		logger.info("Inserting papers and authors into database...");
 
 		for(Paper paper : papers) {
 			paperFiler.add(paper);
 		}
 
-		System.out.println("Done inserting papers and authors!");
+		logger.info("Done inserting papers and authors!");
 	}
 
 	/**
-	 * Stores the acl2018 conference including the schedule into the database
+	 * Stores the ACL 2018 conference including the schedule into the database
+	 * Since events contain papers, this should be run after having executed {@link ParsedDataInserter#aclStorePapersAndAuthors()}
 	 */
 	private void acl2018StoreConferenceInformation() {
 		CommonAccess<Conference> conferenceCommonAccess = new ConferenceJPAAccess();
@@ -153,9 +161,9 @@ public class ParsedDataInserter {
 					acl2018.addWorkshop((Workshop)entry);
 			}
 
-			System.out.println("Inserting conference into database...");
+			logger.info("Inserting conference into database...");
 			conferenceCommonAccess.add(acl2018);
-			System.out.println("Done inserting!");
+			logger.info("Done inserting!");
 		}
 		catch (IOException e) {
 			e.printStackTrace();
@@ -163,8 +171,8 @@ public class ParsedDataInserter {
 	}
 
 	/**
-	 * Stores the acl2018 conference's schedule into the database
-	 * @return The scraped and stored sessions
+	 * Stores the ACL 2018 conference's schedule into the database
+	 * @return The scraped and stored events
 	 */
 	private List<ScheduleEntry> acl2018StoreSchedule() {
 		CommonAccess<Session> sessionCommonAccess = new SessionJPAAccess();
@@ -174,7 +182,7 @@ public class ParsedDataInserter {
 		try {
 			entries = acl18WebParser.getSchedule();
 
-			System.out.println("Inserting schedule into database...");
+			logger.info("Inserting schedule into database...");
 			//add to database
 			for(ScheduleEntry entry : entries) {
 				if(entry instanceof Session)
@@ -182,7 +190,7 @@ public class ParsedDataInserter {
 				else if(entry instanceof Workshop)
 					workshopCommonAccess.add((Workshop)entry);
 			}
-			System.out.println("Done inserting!");
+			logger.info("Done inserting!");
 		}
 		catch(IOException e){
 			e.printStackTrace();
@@ -190,4 +198,38 @@ public class ParsedDataInserter {
 
 		return entries;
 	}
+
+
+	/**
+	 * This method runs through the DB and performs an author search for every
+	 * person in the DB. It then extends every entry with the new data
+	 *
+	 * @author Philipp Emmer
+	 * @param n The first n authors will be enhanced with Semantic Scholar data
+	 */
+	private void completeAuthorsByS2(int n) {
+		PersonJPAAccess personfiler = new PersonJPAAccess();
+		List<Person> authors = personfiler.get();
+		EntityManager entityManager = PersistenceManager.getEntityManager();
+
+
+		//Go through every author in the db
+		long failedAuthors = 0;
+		long totalAuthors = 0;
+		for ( Person currPerson : authors ) {
+			if( totalAuthors++ == n ) { break; }
+
+			//1. Update information about the author
+			entityManager.getTransaction().begin();
+			try { S2APIFunctions.completeAuthorInformationByAuthorSearch(currPerson, false); }
+			catch (IOException e) {
+				failedAuthors++;
+				e.printStackTrace();
+			}
+			entityManager.getTransaction().commit();
+		}
+		logger.info("Failed: {}\nDone",failedAuthors);
+
+	}
+
 }

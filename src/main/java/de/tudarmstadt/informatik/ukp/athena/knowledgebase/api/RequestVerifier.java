@@ -11,6 +11,7 @@ import javax.persistence.Column;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.api.ast.AttributeNode;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.api.ast.NumberAttributeNode;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.api.ast.RequestEntityNode;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.api.ast.RequestFunction;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.api.ast.RequestHierarchyNode;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.api.ast.RequestNode;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.api.ast.StringAttributeNode;
@@ -25,13 +26,13 @@ import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Worksh
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.exception.VerificationFailedException;
 
 public class RequestVerifier {
-	// <entity,	field name>
+	//<entity,	field name>
 	private static final Map<String,List<String>> ATTRIBUTES = new HashMap<>(); //denotes which fields (value) an entity (key) has
-	// <entity, <field name, number amount>>
+	//<entity, <field name, number amount>>
 	private static final Map<String,Map<String, Integer>> NUMERICAL_ATTRIBUTES = new HashMap<>(); //denotes which fields (value) of an entity (key) only accept numerical values
-	// <entity, <entity being stored, field name>>
+	//<entity, <entity being stored, field name>>
 	private static final Map<String,Map<String, String>> SET_ATTRIBUTES = new HashMap<>(); //denotes which fields (value) of an entity (key) are sets
-
+	private String resultEntity;
 
 	static { //preprocessing of attributes for verification, this code only runs once
 		Class<?>[] models = {
@@ -88,21 +89,25 @@ public class RequestVerifier {
 	}
 
 	/**
-	 * Checks whether the attribue values in the request are correct. If there is no exception thrown, the verification was successful
-	 * @param tree The abstract syntax tree that depicts the API request
+	 * Checks whether the attribute values in the request are correct. If there is no exception thrown, the verification was successful
+	 * @param tree The abstract syntax tree that depicts the API request, non-null
 	 * @throws VerificationFailedException If the verification fails
 	 */ //longer than 40 lines due to comments
-	public static void verify(RequestNode tree) throws VerificationFailedException {
+	public void verify(RequestNode tree) throws VerificationFailedException {
 		String previousEntityName = null;
 
 		//loop through the joins to get to the attributes
 		for(RequestHierarchyNode hierarchyEntry : tree.getHierarchy()) {
 			RequestEntityNode entity = hierarchyEntry.getEntity();
+
+			if(entity == null)
+				throw new VerificationFailedException("Entity at index " + hierarchyEntry.tokenIndex + " is null! Perhaps your request ends in a slash (it shouldn't)?");
+
 			String entityName = entity.getEntityName().getString();
 
 			//checking if the entity exists
 			if(!ATTRIBUTES.containsKey(entityName))
-				throw new VerificationFailedException("Unkown entity " + entityName + "!");
+				throw new VerificationFailedException("Unknown entity " + entityName + "!");
 			//check if the hierarchy is valid
 			else if(previousEntityName != null && (!SET_ATTRIBUTES.containsKey(previousEntityName) || !SET_ATTRIBUTES.get(previousEntityName).containsKey(entityName)))
 				throw new VerificationFailedException("Entity " + previousEntityName + " does not have a hierarchical relationship with entity " + entityName + "!");
@@ -133,12 +138,18 @@ public class RequestVerifier {
 				}
 			}
 		}
+
+		resultEntity = previousEntityName;
+
+
+		if(tree.getFunction() == RequestFunction.ENHANCE && !resultEntity.equals("paper") && !resultEntity.equals("person"))
+			throw new VerificationFailedException("Entity " + resultEntity + " cannot be enhanced with Semantic Scholar data.");
 	}
 
 	/**
 	 * Checks whether the given field of the given entity is a numerical field
-	 * @param entity The name of the entity to check the field of
-	 * @param theField The name of the field of the entity to check
+	 * @param entity The name of the entity to check the field of, non-null
+	 * @param theField The name of the field of the entity to check, non-null
 	 * @return true if the given field is numerical and a member of the given entity, false otherwhise
 	 */
 	public static boolean entityContainsNumericalField(String entity, String theField) {
@@ -148,5 +159,13 @@ public class RequestVerifier {
 		}
 
 		return false;
+	}
+
+	/**
+	 * @return The name of the entity that this request will return
+	 */
+	public String getResultEntity()
+	{
+		return resultEntity;
 	}
 }

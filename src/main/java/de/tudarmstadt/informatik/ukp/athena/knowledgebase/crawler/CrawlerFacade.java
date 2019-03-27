@@ -73,4 +73,12 @@ public class CrawlerFacade extends AbstractCrawler{
 	public ArrayList<ScheduleEntry> getSchedule() throws IOException {
 		return crawler.getSchedule();
 	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void close() {
+		crawler.close();
+	}
 }
