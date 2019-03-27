@@ -19,7 +19,7 @@ public class RequestParser {
 	private RequestToken currentToken;
 
 	/**
-	 * @param tokens The tokens to parse as constructed by the {@link RequestScanner}
+	 * @param tokens The tokens to parse as constructed by the {@link RequestScanner}, non-null
 	 */
 	public RequestParser(Deque<RequestToken> tokens) {
 		this.tokens = tokens;
@@ -137,7 +137,7 @@ public class RequestParser {
 
 	/**
 	 * Parses a string attribute ("foo=bar" or "foo=b+a+r")
-	 * @param attrIndex The attribute's index, as there was an accept() call before the call of this method (the name of the attr)
+	 * @param attrIndex The attribute's index, as there was an accept() call before the call of this method (the name of the attr), greater than or equal to 0
 	 * @return The abstract syntax tree representing this construct
 	 * @throws SyntaxException When an ERROR or unexpected token appears
 	 */
@@ -175,7 +175,7 @@ public class RequestParser {
 
 	/**
 	 * Parses a number attribute ("foo=123" or "foo=1+2+3")
-	 * @param attrIndex The attribute's index, as there was an accept() call before the call of this method (the name of the attr)
+	 * @param attrIndex The attribute's index, as there was an accept() call before the call of this method (the name of the attr), greater than or equal to 0
 	 * @return The abstract syntax tree representing this construct
 	 * @throws SyntaxException When an ERROR or unexpected token appears
 	 */
@@ -213,7 +213,7 @@ public class RequestParser {
 
 	/**
 	 * Only accepts a token of the given type, else throws a syntax exception
-	 * @param tokenType The token type to accept
+	 * @param tokenType The token type to accept, non-null
 	 * @return The actual token as defined in {@link RequestToken}
 	 * @throws SyntaxException When an ERROR or unexpected token appears
 	 */

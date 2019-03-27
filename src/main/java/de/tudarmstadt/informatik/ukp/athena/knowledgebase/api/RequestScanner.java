@@ -22,7 +22,7 @@ public class RequestScanner {
 
 	/**
 	 * Sets up this scanner
-	 * @param request The request to be scanned
+	 * @param request The request to be scanned, non-null
 	 */
 	public RequestScanner(char[] request) {
 		this.request = request;

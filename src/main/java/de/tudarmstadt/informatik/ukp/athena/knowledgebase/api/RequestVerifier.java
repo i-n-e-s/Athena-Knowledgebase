@@ -90,7 +90,7 @@ public class RequestVerifier {
 
 	/**
 	 * Checks whether the attribue values in the request are correct. If there is no exception thrown, the verification was successful
-	 * @param tree The abstract syntax tree that depicts the API request
+	 * @param tree The abstract syntax tree that depicts the API request, non-null
 	 * @throws VerificationFailedException If the verification fails
 	 */ //longer than 40 lines due to comments
 	public void verify(RequestNode tree) throws VerificationFailedException {
@@ -148,8 +148,8 @@ public class RequestVerifier {
 
 	/**
 	 * Checks whether the given field of the given entity is a numerical field
-	 * @param entity The name of the entity to check the field of
-	 * @param theField The name of the field of the entity to check
+	 * @param entity The name of the entity to check the field of, non-null
+	 * @param theField The name of the field of the entity to check, non-null
 	 * @return true if the given field is numerical and a member of the given entity, false otherwhise
 	 */
 	public static boolean entityContainsNumericalField(String entity, String theField) {

@@ -26,7 +26,7 @@ public class QueryBuilder {
 
 	/**
 	 * Sanitizes user input and builds the JPQL query
-	 * @param tree The request tree to build the request from
+	 * @param tree The request tree to build the request from, non-null
 	 * @return The generated query
 	 */ //size of 40 lines is exceeded in favor of readability (=> normalEntityName, entityName, entityVar etc. could be removed to meet the requirement)
 	public Query build(RequestNode tree) {
@@ -87,9 +87,9 @@ public class QueryBuilder {
 
 	/**
 	 * Sets the JPQL variable for the given attribute to the correct value
-	 * @param attr The attribute
-	 * @param jpqlVars The data structure to store the JPQL variable -> value mapping in
-	 * @param jpqlVar The JPQL variable name to use
+	 * @param attr The attribute, non-null
+	 * @param jpqlVars The data structure to store the JPQL variable -> value mapping in, non-null
+	 * @param jpqlVar The JPQL variable name to use, non-null
 	 */
 	private void setAttributeCorrectly(AttributeNode attr, Map<String,Object> jpqlVars, String jpqlVar) {
 		//nothing extra needs to be done for a string node other than assigning its value to the the jpql var
@@ -120,6 +120,8 @@ public class QueryBuilder {
 
 	/**
 	 * Creates a query that is ready to be sent to the database
+	 * @param queryList The broken down query string. Will be concatenated with spaces, non-null
+	 * @param sqlVars The variable -> value mappings for SQL variables. The values are user input and will be sanitized by this method, non-null
 	 * @param queryList The broken down query string. Will be concatenated with spaces
 	 * @param jpqlVars The variable -> value mappings for JPQL variables. The values are user input and will be sanitized by this method
 	 * @return The created query
