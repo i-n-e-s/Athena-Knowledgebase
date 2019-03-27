@@ -2,7 +2,7 @@
 
 ## Overview
 
-[[DatabaseDoc/Program scheme.svg]]
+![Project structure](DatabaseDoc/Program scheme.svg)
 
 The following sections intend to outline features/facts of this program
 
