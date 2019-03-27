@@ -75,6 +75,7 @@ public class ParsedDataInserter {
 		ParsedDataInserter parsedDataInserter;
 		List<String> argsList = Arrays.asList(args); //for .contains
 		int beginYear = 2018, endYear = 2018;
+		String[] conferences = null;
 
 		for(String arg : args) {
 			if(arg.startsWith("-beginYear="))
