@@ -20,6 +20,7 @@ import de.tudarmstadt.informatik.ukp.athena.knowledgebase.api.ast.StringAttribut
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.jpa.PersistenceManager;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.EventCategory;
 
+//code in here is not tested because javax.persistence.Query does not provide a way to see if the built query looks like intended
 public class QueryBuilder {
 	private EntityManager entityManager = PersistenceManager.getEntityManager();
 	private boolean countResults;
