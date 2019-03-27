@@ -1,8 +1,6 @@
 package de.tudarmstadt.informatik.ukp.athena.knowledgebase.api;
 
-import java.io.IOException;
 import java.util.Deque;
-import java.util.List;
 
 import javax.persistence.Query;
 import javax.servlet.http.HttpServletRequest;
@@ -12,9 +10,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.HandlerMapping;
 
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.api.ast.RequestNode;
-import de.tudarmstadt.informatik.ukp.athena.knowledgebase.crawler.semanticscholarapi.S2APIFunctions;
-import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Paper;
-import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Person;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.exception.SyntaxException;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.exception.VerificationFailedException;
 
@@ -47,38 +42,7 @@ public class APIController {
 			tree = parser.parse(); //parse the request
 			verifier.verify(tree); //if no exception is thrown, the verification was successful
 			query = queryBuilder.build(tree);
-
-			switch(tree.getFunction()) {
-				case NONE: return query.getResultList();
-				case COUNT:	return "{\"count\": " + query.getSingleResult() + "}";
-				case ENHANCE:
-					List<?> resultList = query.getResultList(); //get results to be enhanced
-
-					switch(verifier.getResultEntity()) {
-						case "paper":
-							for(Object o : resultList) { //enhance each result
-								try {
-									S2APIFunctions.completePaperInformationByGeneralSearch((Paper)o, true);
-								}
-								catch(IOException e) {}
-							}
-
-							break;
-						case "person":
-							for(Object o : resultList) { //enhance each result
-								try {
-									S2APIFunctions.completeAuthorInformationByAuthorSearch((Person)o, true);
-								}
-								catch(IOException e) {}
-							}
-
-							break;
-					}
-
-					return resultList; //the models were updated in-place
-			}
-
-			return "{\"error\": \"Request function was invalid value: " + tree.getFunction() + "\"}";
+			return tree.getFunction().getFunction().apply(query, verifier.getResultEntity()); //call the request function
 		}
 		catch(SyntaxException | VerificationFailedException e) {
 			String errorMessage = "<h4>" + e.getMessage() + "</h4>"
