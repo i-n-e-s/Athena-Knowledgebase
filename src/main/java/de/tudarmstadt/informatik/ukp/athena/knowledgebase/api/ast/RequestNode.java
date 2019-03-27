@@ -51,12 +51,12 @@ public class RequestNode extends BaseNode {
 
 	@Override
 	public String toString() {
-		String result = "<0>";
+		String result = "<0>"; //the index of this kind of node is always 0
 
-		if(function != RequestFunction.NONE)
-			result += "/" + function.name().toLowerCase();
+		if(function != RequestFunction.NONE) //if there is a request function, it has to be added infront of the actual request
+			result += "/" + function.name().toLowerCase(); //the name of the enum value is what gets written infront of the request by the user
 
-		for(RequestHierarchyNode node : hierarchy) {
+		for(RequestHierarchyNode node : hierarchy) { //build the rest of the request
 			result += node.toString();
 		}
 
