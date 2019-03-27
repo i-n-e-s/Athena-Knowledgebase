@@ -121,9 +121,7 @@ public class QueryBuilder {
 	/**
 	 * Creates a query that is ready to be sent to the database
 	 * @param queryList The broken down query string. Will be concatenated with spaces, non-null
-	 * @param sqlVars The variable -> value mappings for SQL variables. The values are user input and will be sanitized by this method, non-null
-	 * @param queryList The broken down query string. Will be concatenated with spaces
-	 * @param jpqlVars The variable -> value mappings for JPQL variables. The values are user input and will be sanitized by this method
+	 * @param jpqlVars The variable -> value mappings for JPQL variables. The values are user input and will be sanitized by this method, non-null
 	 * @return The created query
 	 */
 	private Query createQuery(List<String> queryList,  Map<String,Object> jpqlVars) {
