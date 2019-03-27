@@ -12,7 +12,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import de.tudarmstadt.informatik.ukp.athena.knowledgebase.ParsedDataInserter;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Model;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Paper;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Person;
@@ -24,7 +23,7 @@ import de.tudarmstadt.informatik.ukp.athena.knowledgebase.exception.NotAvailable
  * @author Philipp Emmer
  */
 public class S2APIFunctions {
-	private static Logger logger = LogManager.getLogger(ParsedDataInserter.class);
+	private static Logger logger = LogManager.getLogger(S2APIFunctions.class);
 
 
 	/**
@@ -314,7 +313,7 @@ public class S2APIFunctions {
 		//citations
 		if (overwrite || dest.getAmountOfCitations() == null) {
 			try {
-				int foundCitations = Integer.parseInt(paperJSON.getJSONObject("citationStats").getString("numCitations"));
+				long foundCitations = Long.parseLong(paperJSON.getJSONObject("citationStats").getString("numCitations"));
 				dest.setAmountOfCitations(foundCitations);
 			} catch (JSONException e) {
 			}
@@ -378,15 +377,15 @@ public class S2APIFunctions {
 			}
 			logger.info("Want to add author {} to paper {}", name, dest.getTitle());
 
-            Person authorObjToBeAdded = null;
-            //Check if author is already connected to paper
-            for ( Person papersKnownAuthor : dest.getAuthors() ) {
-               if ( (papersKnownAuthor.getSemanticScholarID() != null && papersKnownAuthor.getSemanticScholarID().equals(s2id)) || papersKnownAuthor.getFullName().equals(name)) {
-                    authorObjToBeAdded = papersKnownAuthor;
-                    logger.info("Found and reuse {}({})", authorObjToBeAdded.getFullName(), authorObjToBeAdded.getPersonID());
-                    break;
-                } else { logger.info("{} {} does not equal {} {}", name, s2id,papersKnownAuthor.getFullName(), papersKnownAuthor.getSemanticScholarID()); }
-            }
+			Person authorObjToBeAdded = null;
+			//Check if author is already connected to paper
+			for ( Person papersKnownAuthor : dest.getAuthors() ) {
+				if ( (papersKnownAuthor.getSemanticScholarID() != null && papersKnownAuthor.getSemanticScholarID().equals(s2id)) || papersKnownAuthor.getFullName().equals(name)) {
+					authorObjToBeAdded = papersKnownAuthor;
+					logger.info("Found and reuse {}({})", authorObjToBeAdded.getFullName(), authorObjToBeAdded.getPersonID());
+					break;
+				} else { logger.info("{} {} does not equal {} {}", name, s2id,papersKnownAuthor.getFullName(), papersKnownAuthor.getSemanticScholarID()); }
+			}
 
 			//If not already connected, check if author is in DB
 			if ( authorObjToBeAdded == null ) {

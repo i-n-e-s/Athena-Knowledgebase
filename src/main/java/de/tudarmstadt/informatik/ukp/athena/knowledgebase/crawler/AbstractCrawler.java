@@ -50,8 +50,8 @@ abstract class AbstractCrawler {
 	public abstract Conference getConferenceInformation() throws IOException;
 
 	/**
-	 * Returns a list of sessions.
-	 * @return A list of sessions, an empty list when data not available
+	 * Returns a list of schedule entries (can be events or workshops).
+	 * @return A list of schedule entries, an empty list when data not available
 	 * @throws IOException if Jsoup.connect fails
 	 */
 	public abstract ArrayList<ScheduleEntry> getSchedule() throws IOException;

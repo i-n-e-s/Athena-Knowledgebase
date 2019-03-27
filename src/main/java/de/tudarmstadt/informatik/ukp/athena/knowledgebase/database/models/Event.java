@@ -18,14 +18,14 @@ import javax.persistence.Table;
 import org.hibernate.annotations.GenericGenerator;
 
 @Entity
-@Table(name="session")
-public class Session extends Model implements ScheduleEntry {
+@Table(name="event")
+public class Event extends Model implements ScheduleEntry {
 	/*Unique id*/
 	@Id
 	@GeneratedValue(generator="increment")
 	@GenericGenerator(name="increment", strategy="increment")
-	@Column(name="sessionID")
-	private long sessionID;
+	@Column(name="eventID")
+	private long eventID;
 	/* Title */
 	@Column(name = "title")
 	private String title;
@@ -34,7 +34,7 @@ public class Session extends Model implements ScheduleEntry {
 	private String description;
 	/* Category */
 	@Column(name = "category")
-	private SessionCategory category;
+	private EventCategory category;
 
 	/*Start time*/
 	@Column(name="begin")
@@ -44,9 +44,9 @@ public class Session extends Model implements ScheduleEntry {
 	private LocalDateTime end;
 
 	/*Host*/
-	//	@Column(name = "host") //FIXME: crashes - perhaps save id?
+	//	@Column(name = "host")
 	//	private Person host;
-	/* Place where this session happens, if empty look in sessions */
+	/* Place where this event happens, if empty look in eventparts */
 	@Column(name = "place")
 	private String place;
 
@@ -54,8 +54,8 @@ public class Session extends Model implements ScheduleEntry {
 	@Hierarchy(entityName="paper")
 	@OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER)
 	@JoinTable(
-			name = "session_papers",
-			joinColumns = { @JoinColumn(name = "sessionID") },
+			name = "event_papers",
+			joinColumns = { @JoinColumn(name = "eventID") },
 			inverseJoinColumns = { @JoinColumn(name = "paperID") }
 			)
 	private Set<Paper> papers = new HashSet<>();
@@ -63,161 +63,162 @@ public class Session extends Model implements ScheduleEntry {
 	/* Papers, if any */
 	//	@Column(name = "papers")
 	//	private Set<Paper> papers;
-	/* Sessions, if any */
-	@Hierarchy(entityName="sessionpart")
+	/* Event parts, if any */
+	@Hierarchy(entityName="eventpart")
 	@OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER)
 	@JoinTable(
-			name = "session_sessionParts",
-			joinColumns = { @JoinColumn(name = "sessionID") },
-			inverseJoinColumns = { @JoinColumn(name = "sessionPartID") }
+			name = "event_eventParts",
+			joinColumns = { @JoinColumn(name = "eventID") },
+			inverseJoinColumns = { @JoinColumn(name = "eventPartID") }
 			)
-	private Set<SessionPart> sessionparts = new HashSet<>(); //lowercase to make it work with the api
+	private Set<EventPart> eventparts = new HashSet<>(); //lowercase to make it work with the api
 
 	/**
-	 * Gets the unique id of this session
-	 * @return The unique id of this session
+	 * Gets the unique id of this event
+	 * @return The unique id of this event
 	 */
 	public long getId() {
-		return sessionID;
+		return eventID;
 	}
 
 	/**
-	 * Sets this session's id
+	 * Sets this event's id
 	 * @param id The new id
 	 */
 	public void setId(long id) {
-		this.sessionID = id;
+		this.eventID = id;
 	}
 
 	/**
-	 * Gets the time this session begins
-	 * @return This session's begin time
+	 * Gets the time this event begins
+	 * @return This event's begin time
 	 */
 	public LocalDateTime getBegin() {
 		return begin;
 	}
 
 	/**
-	 * Sets the time this session begins
-	 * @param begin The time this session begins
+	 * Sets the time this event begins
+	 * @param begin The time this event begins
 	 */
 	public void setBegin(LocalDateTime begin) {
 		this.begin = begin;
 	}
 
 	/**
-	 * Gets the time this session ends
-	 * @return This session's new end time
+	 * Gets the time this event ends
+	 * @return This event's new end time
 	 */
 	public LocalDateTime getEnd() {
 		return end;
 	}
 
 	/**
-	 * Sets the time this session ends
-	 * @param end The new time this session ends
+	 * Sets the time this event ends
+	 * @param end The new time this event ends
 	 */
 	public void setEnd(LocalDateTime end) {
 		this.end = end;
 	}
 
 	//	/**
-	//	 * Gets the person who manages this session
-	//	 * @return This session's manager
+	//	 * Gets the person who manages this event
+	//	 * @return This event's manager
 	//	 */
 	//	public Person getHost() {
 	//		return host;
 	//	}
 	//
 	//	/**
-	//	 * Sets the person who manages this session
-	//	 * @param This session's new manager
+	//	 * Sets the person who manages this event
+	//	 * @param This event's new manager
 	//	 */
 	//	public void setHost(Person host) {
 	//		this.host = host;
 	//	}
 
 	/**
-	 * Gets the place where this session happens
-	 * @return The place where this session happens
+	 * Gets the place where this event happens
+	 * @return The place where this event happens
 	 */
 	public String getPlace() {
 		return place;
 	}
 
 	/**
-	 * Sets the place where this session happens
-	 * @param place The new place where this session happens
+	 * Sets the place where this event happens
+	 * @param place The new place where this event happens
 	 */
 	public void setPlace(String place) {
 		this.place = place;
 	}
 
 	/**
-	 * Gets the title of this session
-	 * @return The title of this session
+	 * Gets the title of this event
+	 * @return The title of this event
 	 */
 	public String getTitle() {
 		return title;
 	}
 
 	/**
-	 * Sets the title of this session
-	 * @param title The new title of this session
+	 * Sets the title of this event
+	 * @param title The new title of this event
 	 */
 	public void setTitle(String title) {
 		this.title = title;
 	}
 
 	/**
-	 * Gets a description of the session
-	 * @return A description of the session
+	 * Gets a description of the event
+	 * @return A description of the event
 	 */
 	public String getDescription() {
 		return description;
 	}
 
 	/**
-	 * Sets a description of the session
-	 * @param description A new description of the session
+	 * Sets a description of the event
+	 * @param description A new description of the event
 	 */
 	public void setDescription(String description) {
 		this.description = description;
 	}
 
 	/**
-	 * Gets this session's category
-	 * @return This session's category
+	 * Gets this event's category
+	 * @return This event's category
 	 */
-	public SessionCategory getCategory() {
+	public EventCategory getCategory() {
 		return category;
 	}
 
 	/**
-	 * Sets this session's category
+	 * Sets this event's category
+	 * @return This event's new category
 	 */
-	public void setCategory(SessionCategory category) {
+	public void setCategory(EventCategory category) {
 		this.category = category;
 	}
 
 	/**
-	 * Gets this session's papers (if any)
-	 * @return This session's papers
+	 * Gets this event's papers (if any)
+	 * * @return This event's papers
 	 */
 	public Set<Paper> getPapers() {
 		return papers;
 	}
 
 	/**
-	 * Sets this session's papers (if any)
-	 * @param papers This session's new papers
+	 * Sets this event's papers (if any)
+	 * @param papers This event's new papers
 	 */
 	public void setPapers(Set<Paper> papers) {
 		this.papers = papers;
 	}
 
 	/**
-	 * Adds a paper to this session's paper list
+	 * Adds a paper to this event's paper list
 	 * @param p The paper to add
 	 */
 	public void addPaper(Paper p) {
@@ -225,26 +226,26 @@ public class Session extends Model implements ScheduleEntry {
 	}
 
 	/**
-	 * Gets this session's session parts (if any)
-	 * @return This session's session parts
+	 * Gets this event's event parts (if any)
+	 * @return This event's event parts
 	 */
-	public Set<SessionPart> getSessionParts() {
-		return sessionparts;
+	public Set<EventPart> getEventParts() {
+		return eventparts;
 	}
 
 	/**
-	 * Sets this session's session parts (if any)
-	 * @param sessionParts This session's new session parts
+	 * Sets this event's event parts (if any)
+	 * @param eventParts This event's new event parts
 	 */
-	public void setSessionParts(Set<SessionPart> sessionParts) {
-		this.sessionparts = sessionParts;
+	public void setEventParts(Set<EventPart> eventParts) {
+		this.eventparts = eventParts;
 	}
 
 	/**
-	 * Adds a session part to this session's session part list
-	 * @param s The session part to add
+	 * Adds a event part to this event's event part list
+	 * @param e The event part to add
 	 */
-	public void addSessionPart(SessionPart s) {
-		sessionparts.add(s);
+	public void addEventPart(EventPart e) {
+		eventparts.add(e);
 	}
 }

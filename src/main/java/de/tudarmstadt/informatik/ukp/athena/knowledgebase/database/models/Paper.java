@@ -66,7 +66,7 @@ public class Paper extends Model {
 	@Column(name = "paperAbstract", columnDefinition="TEXT")
 	private String paperAbstract;
 	@Column(name = "amountOfCitations")
-	private Integer amountOfCitations = -1;    //-1 if not known yet
+	private long amountOfCitations = -1;    //-1 if not known yet
 
 	//	Removed all code concerning quotations and alike. Too time consuming right now.
 
@@ -272,7 +272,7 @@ public class Paper extends Model {
 	 * Gets the amount of papers this paper is cited in
 	 * @return the amount of citations
 	 */
-	public Integer getAmountOfCitations() {
+	public Long getAmountOfCitations() {
 		return amountOfCitations;
 	}
 
@@ -280,7 +280,7 @@ public class Paper extends Model {
 	 * Sets the amount of papers this paper is cited in
 	 * @param amountOfCitations the new amount of citations
 	 */
-	public void setAmountOfCitations(Integer amountOfCitations) {
+	public void setAmountOfCitations(Long amountOfCitations) {
 		this.amountOfCitations = amountOfCitations;
 	}
 

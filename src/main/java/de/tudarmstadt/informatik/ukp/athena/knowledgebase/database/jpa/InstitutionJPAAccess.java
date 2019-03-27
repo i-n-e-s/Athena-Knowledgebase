@@ -8,7 +8,7 @@ import javax.persistence.EntityManager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.access.CommonAccess;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.CommonAccess;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Institution;
 
 public class InstitutionJPAAccess implements CommonAccess<Institution> {

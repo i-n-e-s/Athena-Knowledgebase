@@ -1,4 +1,4 @@
-package de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.access;
+package de.tudarmstadt.informatik.ukp.athena.knowledgebase.database;
 
 import java.util.List;
 

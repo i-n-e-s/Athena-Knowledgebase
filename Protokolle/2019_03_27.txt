@@ -1,0 +1,48 @@
+Beginn: 	09:00
+Ende:   	10:04 wenn 9 CP abgearbeitet sind (nie)
+
+
+Thomas bekommt cheat-sheet und Daniels hübsche Flowchart
+
+Arbeitsstand wird mitgeteilt
+
+
+
+
+Protokolle nach finaler Abgabe aus Git entfernen
+
+aktuelle Zeiten eintragen
+
+
+Anfragen:
+
+	Jonas:
+		kleben und fehlende QS-Story Elemente suchen
+		Beispielhaft Coverage Erklärung dranhängen
+
+	Jonas und Julian:
+		cleanDB Leid
+		wurde alles umbenannt nach Thomas spezifikation
+
+	Daniel:
+		Schema!
+		SVG muss noch aktualisiert werden
+		ohne großen Aufwand Tests
+		übergibt Github Ownership an Thomas
+		Cheat Sheet ins Readme (Wiki)
+		Schaubild plus Beschreibung
+
+	Philipp:
+		ReviewBranch
+		Enhanced Branch Review
+
+	Tristan (bei positiver Antwort bis Freitag):
+		bisschen ausführlichere Schritt für Schritt Anleitung in Stichpunkten:
+		Wie komme ich von github-repository zu laufendem Server
+			Denkt an den hilflosen, neuen "HiWi"
+	 	e.g. clone repository oder Alternative, deploy, blah
+		"Wie bringe ich es auf den jetzt Stand"
+		Tristan anfragen
+
+
+Thomas ist an sich zufrieden, besonders wenn das Wiki geupdatet wird
