@@ -24,19 +24,22 @@ public class ACL18WorkshopParser {
 
 	/**
 	 * Parses ACL 2018's workshop schedule.
-	 * Some of this is hardcoded because why not
+	 * Some of this is hardcoded because why not - no easy solution to varying formats in the internet
+	 * needs a connection to scrape the workshopPage
 	 * @return The resulting arraylist with the complete workshop data
 	 */
 	public static ArrayList<ScheduleEntry> parseWorkshops() {
 		ArrayList<ScheduleEntry> result = new ArrayList<>();
+		// we build a JSOUP document via the JSOUP helper, extracting the HTML from workshopPage
 		Document doc = JsoupHelper.connect(workshopPage);
 		Elements content = doc.select(".post-content");
 		Elements days = content.select("ul");
-
+		// since we are looking to build a schedule, we iterate over each day
 		for(int i = 0; i < days.size(); i++) {
 			Element day = days.get(i);
 			Elements workshops = day.select("li");
 
+			// and select interesting metadata
 			for(Element workshopEl : workshops) {
 				Workshop workshop = new Workshop();
 				String[] dayMonth = content.select("h4").get(i).text().split(" ", 2)[1].split(" ");
@@ -45,6 +48,7 @@ public class ACL18WorkshopParser {
 				String[] titleAbbr = complTitleRoom[0].split("\\(");
 				LocalDate date = LocalDate.of(2018, CrawlerToolset.getMonthIndex(dayMonth[1]), Integer.parseInt(dayMonth[0]));
 
+				// these for example
 				workshop.setBegin(LocalDateTime.of(date, LocalTime.of(9, 0)));
 				workshop.setEnd(LocalDateTime.of(date, LocalTime.of(17, 0))); //assume 5pm, because the schedule table is not 100% proportional
 				workshop.setTitle(titleAbbr[0].trim());
