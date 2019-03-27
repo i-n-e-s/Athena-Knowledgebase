@@ -15,6 +15,7 @@ import java.util.concurrent.Future;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
@@ -126,7 +127,7 @@ class ACLWebCrawler extends AbstractCrawler {
 		ArrayList<Person> authors = new ArrayList<>();
 		// extract the authors from all webpages
 		for (Document doc : webpages) {
-			Elements authorListElements = doc.select("li");// authors are the only <li> Elements on the Page
+			Elements authorListElements = doc.select("li");// authors are the only <li> elements on the Page
 			for (Element elmnt : authorListElements) {
 				Person author = new Person();
 
@@ -243,8 +244,8 @@ class ACLWebCrawler extends AbstractCrawler {
 					// convey no meaning
 					String rawTitle = elmnt.text();
 					String[] splitRawTitle = rawTitle.split(" ", 2);
-					String anthology = splitRawTitle[0].replace("[", "").replace("]", "");
 					String paperTitle = splitRawTitle[1];
+					String anthology = splitRawTitle[0].replace("[", "").replace("]", "");
 
 					Paper paper = new Paper();
 					paper.setTitle(paperTitle);
@@ -277,9 +278,9 @@ class ACLWebCrawler extends AbstractCrawler {
 	}
 
 	/**
-	 * Checks with the given {@link conferences} whether or not to save this paper into the database or not
+	 * Checks with the given {@link conferences} whether or not to save this paper into the database
 	 * @param paper The web element of the paper to check
-	 * @return true if the paper should be saved into the database, false otherwhise
+	 * @return true if the paper should be saved into the database
 	 */
 	private boolean shouldSavePaper(Element paper) { //TODO: JsoupHelper
 		try {
@@ -317,10 +318,10 @@ class ACLWebCrawler extends AbstractCrawler {
 	 * @return The paper's release date, null if errored
 	 */
 	private LocalDate extractPaperRelease(Element paper) {
-			Document doc = Jsoup.connect("https://aclanthology.coli.uni-saarland.de" + paper.select("a").attr("href")).get();
-			ArrayList<Element> data = doc.select(".dl-horizontal").get(0).children(); //somewhere in those children is the date
-			String year = "0";
-			String month = "0";
+		Document doc = JsoupHelper.connect("https://aclanthology.coli.uni-saarland.de" + paper.select("a").attr("href"));
+		ArrayList<Element> data = doc.select(".dl-horizontal").get(0).children(); //somewhere in those children is the date
+		String year = "0";
+		String month = "0";
 
 		//find the different parts of the date
 		for(int i = 0; i < data.size(); i++) {
@@ -340,7 +341,7 @@ class ACLWebCrawler extends AbstractCrawler {
 			}
 		}
 
-			return LocalDate.of(Integer.parseInt(year), Integer.parseInt(month), 1);
+		return LocalDate.of(Integer.parseInt(year), Integer.parseInt(month), 1);
 	}
 
 	/**
