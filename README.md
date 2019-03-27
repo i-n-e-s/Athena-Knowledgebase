@@ -2,7 +2,7 @@
 
 ## Overview
 
-![Project structure](DatabaseDoc/Program scheme.svg)
+![Project structure](https://github.com/bl4ckscor3/BP-Athena/raw/master/DatabaseDoc/Program%20scheme.png)
 
 The following sections intend to outline features/facts of this program
 
