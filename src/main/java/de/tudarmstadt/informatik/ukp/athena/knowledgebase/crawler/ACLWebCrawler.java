@@ -15,7 +15,6 @@ import java.util.concurrent.Future;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
@@ -282,31 +281,26 @@ class ACLWebCrawler extends AbstractCrawler {
 	 * @param paper The web element of the paper to check
 	 * @return true if the paper should be saved into the database
 	 */
-	private boolean shouldSavePaper(Element paper) { //TODO: JsoupHelper
-		try {
-			Document doc = Jsoup.connect("https://aclanthology.coli.uni-saarland.de" + paper.select("a").attr("href")).get();
-			ArrayList<Element> data = doc.select(".dl-horizontal").get(0).children(); //somewhere in those children is the venue with which to filter
+	private boolean shouldSavePaper(Element paper) {
+		Document doc = JsoupHelper.connect("https://aclanthology.coli.uni-saarland.de" + paper.select("a").attr("href"));
+		ArrayList<Element> data = doc.select(".dl-horizontal").get(0).children(); //somewhere in those children is the venue with which to filter
 
-			//find it
-			for(int i = 0; i < data.size(); i++) {
-				if(data.get(i).text().startsWith("Venue")) { //the next line contains the venue
-					String text = data.get(i + 1).text();
-					boolean contains = false;
+		//find it
+		for(int i = 0; i < data.size(); i++) {
+			if(data.get(i).text().startsWith("Venue")) { //the next line contains the venue
+				String text = data.get(i + 1).text();
+				boolean contains = false;
 
-					//needed because some papers are published in multiple conferences
-					innerLoop: for(String c : conferences) {
-						if(text.contains(c)) {
-							contains = true;
-							break innerLoop; //no further processing needed
-						}
+				//needed because some papers are published in multiple conferences
+				innerLoop: for(String c : conferences) {
+					if(text.contains(c)) {
+						contains = true;
+						break innerLoop; //no further processing needed
 					}
-
-					return contains;
 				}
+
+				return contains;
 			}
-		}
-		catch(IOException e) {
-			e.printStackTrace();
 		}
 
 		return false;
