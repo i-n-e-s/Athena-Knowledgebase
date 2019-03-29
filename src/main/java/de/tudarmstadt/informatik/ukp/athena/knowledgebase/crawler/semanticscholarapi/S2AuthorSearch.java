@@ -94,8 +94,9 @@ public class S2AuthorSearch extends SemanticScholarAPIRequest {
 		catch (NotAvailableException e) { return; }    //Never thrown, because called after request is run
 
 		//set expected amount of papers
-		logger.info("Lookup name: {} S2ID: {}", String.valueOf(this.name), String.valueOf(this.s2id));
 		this.expectedAmountOfPapers = result.getJSONObject("author").getJSONObject("papers").getInt("totalResults");
+
+		logger.info("Lookup name: {} S2ID: {}, Papers: {}", String.valueOf(this.name), String.valueOf(this.s2id), expectedAmountOfPapers);
 
 		//Reset this request
 		this.validDataIsReady = false;
@@ -147,6 +148,7 @@ public class S2AuthorSearch extends SemanticScholarAPIRequest {
 	 */
 	@Override
 	public void run() throws IOException {
+
 
 		//Prepare (find ID & expectedAmountOfPapers) if necessary
 		if ( this.s2id == null || this.expectedAmountOfPapers < 0 ) {

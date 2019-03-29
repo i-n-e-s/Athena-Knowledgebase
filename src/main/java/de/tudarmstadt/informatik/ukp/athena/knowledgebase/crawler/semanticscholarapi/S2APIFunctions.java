@@ -221,6 +221,13 @@ public class S2APIFunctions {
 			author.setSemanticScholarID(foundS2ID);
 		}
 
+		//1.1 Set authors Name
+		if( author.getFullName() == null || overwrite ) {
+			String foundName = authorSearchResponse.getJSONObject("author").getString("name");
+			author.setFullName(foundName);
+		}
+
+
 		//2 Add all papers found on S2
 		JSONArray papersJSON = authorSearchResponse.getJSONObject("author").getJSONObject("papers").getJSONArray("results");
 		for (int i = 0; i < papersJSON.length(); i++) {   //Add all found papers
