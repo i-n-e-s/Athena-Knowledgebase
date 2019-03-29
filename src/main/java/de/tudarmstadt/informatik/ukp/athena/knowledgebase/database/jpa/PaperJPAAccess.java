@@ -73,7 +73,7 @@ public class PaperJPAAccess implements CommonAccess<Paper> {
 		}
 		if ( toFind.getTitle() != null && toFind.getTitle() != "" ) {
 			System.out.println("Got parameter title");
-			if (addedConstraint) { query = query + " and "; }
+			if (addedConstraint) { query = query + " AND "; }
 			query = query + "c.title = '"+toFind.getTitle().replace("'", "''") + "'";
 			addedConstraint = true;
 		}
@@ -116,7 +116,8 @@ public class PaperJPAAccess implements CommonAccess<Paper> {
 		if( semanticScholarID != null ) {
 			Paper query = new Paper();
 			query.setSemanticScholarID(semanticScholarID);
-			return Paper.findOrCreate(query);
+			List<Paper> results = getByKnownAttributes(query);
+			return (results != null && results.size() > 0) ? results.get(0) : null;
 		}
 		return null;
 	}
@@ -137,7 +138,7 @@ public class PaperJPAAccess implements CommonAccess<Paper> {
 			List<Paper> matches = entityManager.createQuery(query).getResultList();
 
 			if(matches.size() < 1) { //No matching paper could be found in the DB
-				return new Paper();
+				return null;
 			}
 			else { 					//Choose first result
 				return matches.get(0);

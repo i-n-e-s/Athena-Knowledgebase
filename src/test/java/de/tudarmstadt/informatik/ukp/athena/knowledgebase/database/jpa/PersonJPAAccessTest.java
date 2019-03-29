@@ -1,9 +1,5 @@
 package de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.jpa;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,6 +15,8 @@ import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.JPATestdataba
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Institution;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Paper;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Person;
+
+import static org.junit.Assert.*;
 
 public class PersonJPAAccessTest {
 
@@ -98,6 +96,22 @@ public class PersonJPAAccessTest {
 		List<Person> resultList = uut.getByKnownAttributes(testQuery);
 		if(resultList.size() == 0) fail("return is empty");
 		assertEquals("22473174", resultList.get(0).getSemanticScholarID());
+	}
+
+	@Test
+	public void getBySemanticScholarIDTest() {
+		Person testPerson = uut.getBySemanticScholarID("22473174");
+		assertEquals("Author 3", testPerson.getFullName());
+		testPerson = uut.getBySemanticScholarID("bla");
+		assertNull( testPerson );
+	}
+
+	@Test
+	public void getByFullNameTest() {
+		Person testPerson = uut.getByFullName("Author 3");
+		assertEquals("22473174", testPerson.getSemanticScholarID());
+		testPerson = uut.getByFullName("bla");
+		assertNull( testPerson );
 	}
 
 

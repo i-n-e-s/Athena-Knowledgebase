@@ -1,8 +1,5 @@
 package de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.jpa;
 
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,6 +14,9 @@ import org.springframework.context.ConfigurableApplicationContext;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.JPATestdatabase;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Paper;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Person;
+
+import static org.junit.Assert.*;
+import static org.junit.Assert.assertNull;
 
 public class PaperJPAAccessTest {
 
@@ -107,6 +107,22 @@ public class PaperJPAAccessTest {
 		if(returnValues.size() > 1) fail("more than one return value");
 		assertTrue(testValue.equalsWithoutID(returnValues.get(0)));
 		testDB.createDB();//Don't pollute the Database
+	}
+
+	@Test
+	public void getBySemanticScholarIDTest() {
+		Paper testPaper = uut.getBySemanticScholarID("22481184");
+		assertEquals("Title3", testPaper.getTitle());
+		testPaper = uut.getBySemanticScholarID("bla");
+		assertNull( testPaper );
+	}
+
+	@Test
+	public void getByFullNameTest() {
+		Paper testPaper = uut.getByTitle("Title3");
+		assertEquals("22481184", testPaper.getSemanticScholarID());
+		testPaper = uut.getByTitle("bla");
+		assertNull( testPaper );
 	}
 
 	public List<Paper> getByPaperID(long id) {

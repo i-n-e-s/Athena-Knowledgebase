@@ -181,7 +181,7 @@ public class SemanticScholarAPITest {
     public void completeAuthorInformationByAuthorSearchTest() {
 
         Person uut = new Person();
-        uut.setFullName("Iryna Gurevych");
+        /**uut.setFullName("Iryna Gurevych");
         try {
             S2APIFunctions.completeAuthorInformationByAuthorSearch(uut, false);
             assertEquals( "1730400", uut.getSemanticScholarID() );
@@ -195,7 +195,7 @@ public class SemanticScholarAPITest {
             Assert.fail();
         }
 
-        uut = new Person();
+        uut = new Person();*/
         uut.setSemanticScholarID("1730400");
         try {
             S2APIFunctions.completeAuthorInformationByAuthorSearch(uut, false);
