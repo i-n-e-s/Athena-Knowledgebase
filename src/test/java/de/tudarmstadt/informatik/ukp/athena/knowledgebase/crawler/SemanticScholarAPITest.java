@@ -187,6 +187,56 @@ public class SemanticScholarAPITest {
             Assert.fail();
         }
 
+        uut = new Person();
+        uut.setSemanticScholarID("1730400");
+        try {
+            S2APIFunctions.completeAuthorInformationByAuthorSearch(uut, false);
+            Assert.assertEquals( "Iryna Gurevych", uut.getFullName() );
+        } catch ( IOException e ) {
+            System.err.println(e.toString());
+            System.err.println("Some HTTP stuff went wrong");
+            Assert.fail();
+        } catch ( JSONException e ) {
+            System.err.println(e.toString());
+            e.printStackTrace();
+            Assert.fail();
+        }
+
+    }
+
+    @Test
+    public void completePaperInformationByGeneralSearchTest() {
+        Paper uut = new Paper();
+        uut.setTitle("A Monolingual Tree-based Translation Model for Sentence Simplification");
+        uut.setSemanticScholarID("test");
+        try {
+            S2APIFunctions.completePaperInformationByGeneralSearch(uut, true);
+            Assert.assertEquals( "5a4f7c894f4560c3205978d9277d744a910560f6", uut.getSemanticScholarID() );
+        }  catch ( IOException e ) {
+            System.err.println(e.toString());
+            System.err.println("Some HTTP stuff went wrong");
+            Assert.fail();
+        } catch ( JSONException e ) {
+            System.err.println(e.toString());
+            e.printStackTrace();
+            Assert.fail();
+        }
+
+        uut = new Paper();
+        uut.setTitle("A Monolingual Tree-based Translation Model for Sentence Simplification");
+        uut.setSemanticScholarID("test");
+        try {
+            S2APIFunctions.completePaperInformationByGeneralSearch(uut, false);
+            Assert.assertEquals( "test", uut.getSemanticScholarID() );
+        }  catch ( IOException e ) {
+            System.err.println(e.toString());
+            System.err.println("Some HTTP stuff went wrong");
+            Assert.fail();
+        } catch ( JSONException e ) {
+            System.err.println(e.toString());
+            e.printStackTrace();
+            Assert.fail();
+        }
     }
 
     /**

@@ -421,8 +421,8 @@ public class S2APIFunctions {
 	 * Information is added in-place, so the given object is altered
 	 * Only unset attributes will be overwritten
 	 * <p>
-	 * Optional search for s2Id of paper if known
-	 * TODO releaseDate will be set to 1.1. of release year, Semantic Scholar doesn't tell exact date
+	 * Optional improvement: search for s2Id of paper if known
+	 * Optional improvement: releaseDate will be set to 1.1. of release year, Semantic Scholar doesn't tell exact date
 	 *
 	 * @param paper     The paper to be looked up
 	 * @param overwrite true if already set attributes should be overwritten with Semantic Scholar's data, false to only set null attributes
