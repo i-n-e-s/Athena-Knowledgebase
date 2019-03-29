@@ -429,7 +429,7 @@ public class Person extends Model {
 			Person query = new Person();
 			query.setFullName(fullName);
 			query.setSemanticScholarID(s2id);
-			query.setPrefix("QueryCreated");
+			query.setPrefix("QueryCreated");	//For debugging
 			return findOrCreate(query);
 		}
 		else if ( fullName == null ) { searchResult = filer.getBySemanticScholarID(s2id); }
