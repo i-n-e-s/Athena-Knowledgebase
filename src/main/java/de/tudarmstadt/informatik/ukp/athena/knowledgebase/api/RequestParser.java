@@ -7,6 +7,7 @@ import de.tudarmstadt.informatik.ukp.athena.knowledgebase.api.ast.AttributeNode;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.api.ast.NumberAttributeNode;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.api.ast.NumberNode;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.api.ast.RequestEntityNode;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.api.ast.RequestFunction;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.api.ast.RequestHierarchyNode;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.api.ast.RequestNode;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.api.ast.StringAttributeNode;
@@ -18,7 +19,7 @@ public class RequestParser {
 	private RequestToken currentToken;
 
 	/**
-	 * @param tokens The tokens to parse as constructed by the {@link RequestScanner}
+	 * @param tokens The tokens to parse as constructed by the {@link RequestScanner}, non-null
 	 */
 	public RequestParser(Deque<RequestToken> tokens) {
 		this.tokens = tokens;
@@ -35,11 +36,22 @@ public class RequestParser {
 
 		//as long as there are tokens in the queue
 		while(currentToken != null && currentToken.type != RequestTokenType.END) { //can be null if the last thing was an entity name (before the :), poll returns null if the deque is empty
-			if(root.getHierarchy().size() == 0 && tokens.peek().actual.equals("count")) //peek because the currentToken is / and not count
+			if(root.getHierarchy().size() == 0)
 			{
-				accept(RequestTokenType.HIERARCHY_SEPARATOR);
-				accept(RequestTokenType.NAME);
-				root.setIsCountFunction(true);
+				if(tokens.peek().actual.equals("count")) //peek because the currentToken is / and not count
+				{
+					accept(RequestTokenType.HIERARCHY_SEPARATOR);
+					accept(RequestTokenType.NAME);
+					root.setFunction(RequestFunction.COUNT);
+				}
+				else if(tokens.peek().actual.equals("enhance")) //peek because the currentToken is / and not enhance
+				{
+					accept(RequestTokenType.HIERARCHY_SEPARATOR);
+					accept(RequestTokenType.NAME);
+					root.setFunction(RequestFunction.ENHANCE);
+				}
+				else
+					root.addHierarchyNode(parseHierarchyEntry());
 			}
 			else
 				root.addHierarchyNode(parseHierarchyEntry());
@@ -77,14 +89,14 @@ public class RequestParser {
 
 		stringNode.setString(name);
 		node.setEntityName(stringNode);
-		//up until this point the name got saved to the node
+		//up to this point, the name got saved to the node
 
 		if(currentToken.type == RequestTokenType.ATTR_SPECIFIER)
 		{
 			accept(); //accept the :
 
 			//now parse the first attribute
-			node.addAttributeNode(parseAttribute()); //need this here so the first attribute gets parsed, otherwhise the parser would check for /name:&attr=val
+			node.addAttributeNode(parseAttribute()); //need this here so the first attribute gets parsed, otherwise the parser would check for /name:&attr=val
 
 			//parse any other attributes
 			while(currentToken.type == RequestTokenType.ATTR_SEPARATOR) {
@@ -125,7 +137,7 @@ public class RequestParser {
 
 	/**
 	 * Parses a string attribute ("foo=bar" or "foo=b+a+r")
-	 * @param attrIndex The attribute's index, as there was an accept() call before the call of this method (the name of the attr)
+	 * @param attrIndex The attribute's index, as there was an accept() call before the call of this method (the name of the attr), greater than or equal to 0
 	 * @return The abstract syntax tree representing this construct
 	 * @throws SyntaxException When an ERROR or unexpected token appears
 	 */
@@ -149,7 +161,7 @@ public class RequestParser {
 			}
 
 			//...and check for more parts in the attribute
-			if(currentToken.type == RequestTokenType.SPACE) //if it's not a SPACE, then it will be something else and be catched by the while condition
+			if(currentToken.type == RequestTokenType.SPACE) //if it's not a SPACE, then it will be something else and be caught by the while condition
 			{
 				accept();
 				value += " ";
@@ -163,7 +175,7 @@ public class RequestParser {
 
 	/**
 	 * Parses a number attribute ("foo=123" or "foo=1+2+3")
-	 * @param attrIndex The attribute's index, as there was an accept() call before the call of this method (the name of the attr)
+	 * @param attrIndex The attribute's index, as there was an accept() call before the call of this method (the name of the attr), greater than or equal to 0
 	 * @return The abstract syntax tree representing this construct
 	 * @throws SyntaxException When an ERROR or unexpected token appears
 	 */
@@ -180,7 +192,7 @@ public class RequestParser {
 			node.addNumber(numberNode);
 
 			//...and check for more parts in the attribute
-			if(currentToken.type == RequestTokenType.SPACE) //if it's not a SPACE, then it will be something else and be catched by the while condition
+			if(currentToken.type == RequestTokenType.SPACE) //if it's not a SPACE, then it will be something else and be caught by the while condition
 				accept();
 		}
 
@@ -201,7 +213,7 @@ public class RequestParser {
 
 	/**
 	 * Only accepts a token of the given type, else throws a syntax exception
-	 * @param tokenType The token type to accept
+	 * @param tokenType The token type to accept, non-null
 	 * @return The actual token as defined in {@link RequestToken}
 	 * @throws SyntaxException When an ERROR or unexpected token appears
 	 */

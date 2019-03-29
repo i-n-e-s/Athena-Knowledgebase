@@ -10,13 +10,10 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.GenericGenerator;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name="conference")
@@ -45,18 +42,11 @@ public class Conference extends Model{
 	@Column(name="address")
 	private String address;
 
-	/*Authors that talked*/
-	@Hierarchy(entityName="person")
-	@ManyToMany
-	@JsonIgnore
-	@Column(name="authors")
-	private Set<Person> authors = new HashSet<>();
-
 	/*Basically the schedule*/
-	@Hierarchy(entityName="session")
+	@Hierarchy(entityName="event")
 	@OneToMany(orphanRemoval=true, fetch=FetchType.EAGER) //unidirectional relationship which
-	@JoinColumn(name="conferenceID")					  //is saved in the Session table
-	private Set<Session> sessions = new HashSet<>();
+	@JoinColumn(name="conferenceID")					  //is saved in the Event table
+	private Set<Event> events = new HashSet<>();
 	/*The workshops*/
 	@Hierarchy(entityName="workshop")
 	@OneToMany(orphanRemoval=true, fetch=FetchType.EAGER) //unidirectional relationship which
@@ -176,27 +166,27 @@ public class Conference extends Model{
 	}
 
 	/**
-	 * Gets the sessions building up this conference's schedule
-	 * @return The sessions building up this conference's schedule
+	 * Gets the events building up this conference's schedule
+	 * @return The events building up this conference's schedule
 	 */
-	public Set<Session> getSessions(){
-		return sessions;
+	public Set<Event> getEvents(){
+		return events;
 	}
 
 	/**
-	 * Sets the sessions building up this conference's schedule
-	 * @param sessions The new sessions building up this conference's schedule
+	 * Sets the events building up this conference's schedule
+	 * @param events The new events building up this conference's schedule
 	 */
-	public void setSessions(Set<Session> sessions){
-		this.sessions = sessions;
+	public void setEvents(Set<Event> events){
+		this.events = events;
 	}
 
 	/**
-	 * Adds a session to this conference's list of sessions
-	 * @param session The session to add
+	 * Adds an event to this conference's list of events
+	 * @param event The event to add
 	 */
-	public void addSession(Session session) {
-		sessions.add(session);
+	public void addEvent(Event event) {
+		events.add(event);
 	}
 
 	/**
@@ -222,12 +212,4 @@ public class Conference extends Model{
 	public void addWorkshop(Workshop workshop) {
 		workshops.add(workshop);
 	}
-
-	/*
-	 * Gets the authors that talked at this conference
-	 * @return The authors that talked at this conference
-	TODO: fix, see above at authors attribute
-	public Set<Person> getAuthors() {
-		return authors;
-	}*/
 }

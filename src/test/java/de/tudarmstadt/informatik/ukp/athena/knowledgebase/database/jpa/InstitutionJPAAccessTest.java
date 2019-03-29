@@ -17,17 +17,16 @@ import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.JPATestdataba
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Institution;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Person;
 
-@SuppressWarnings("javadoc")
 public class InstitutionJPAAccessTest {
-	
+
 	static JPATestdatabase testDB;
 	static InstitutionJPAAccess uut;
 	static Institution testValue;
 	static Person testPerson1;
 	static Person testPerson2;
-	
+
 	static ConfigurableApplicationContext ctx;
-	
+
 	@BeforeClass
 	public static void setUpDatabase() {
 		ctx = SpringApplication.run(JPATestdatabase.class,"");
@@ -35,12 +34,12 @@ public class InstitutionJPAAccessTest {
 		uut = new InstitutionJPAAccess();
 		testDB.createDB();
 	}
-	
+
 	@AfterClass
 	public static void shutdownDatabase() {
 		ctx.close();
 	}
-	
+
 	public static void resetValues() {
 		testValue = new Institution();
 		testValue.setName("TestInstitutionTest");
@@ -49,13 +48,13 @@ public class InstitutionJPAAccessTest {
 		testValue.addPerson(testPerson1);
 		testValue.addPerson(testPerson2);
 	}
-	
+
 	@Before
 	public void resetDB() {
 		resetValues();
 		testDB.createDB(); //Performance hungry if done before every test
 	}
-	
+
 	@Test
 	public void addAndDeleteTest() {
 		uut.add(testValue);
@@ -67,7 +66,7 @@ public class InstitutionJPAAccessTest {
 		returnValue = getByName(testValue.getName());
 		assertTrue(returnValue.size() == 0);
 	}
-	
+
 	@Test
 	public void updateTest() {
 		String oldName = testValue.getName();
@@ -85,15 +84,15 @@ public class InstitutionJPAAccessTest {
 		returnValue = getByName(oldName);
 		assertEquals(0,returnValue.size());
 	}
-	
-	@Test 
+
+	@Test
 	public void getTest() {
 		testDB.setDefaultParameters();
 		testDB.createDB();
 		List<Institution> returnValues = uut.get();
 		assertEquals(returnValues.size(),testDB.getInstitutionQuantity());
 	}
-	
+
 	public List<Institution> getByName(String name) {
 		return PersistenceManager.getEntityManager().createQuery(String.format("SELECT i FROM Institution i WHERE i.name = '%s'",name), Institution.class).getResultList();
 	}

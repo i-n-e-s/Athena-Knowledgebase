@@ -2,6 +2,7 @@ package de.tudarmstadt.informatik.ukp.athena.knowledgebase.api;
 
 import java.util.Deque;
 
+import javax.persistence.Query;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,19 +29,20 @@ public class APIController {
 		RequestNode tree = null;
 
 		try {
-			//scan and parse the request
+			//scan the request
 			String apiRequest = request.getAttribute(HandlerMapping.PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE).toString();
 			RequestScanner scanner = new RequestScanner(apiRequest);
 			Deque<RequestToken> tokens = scanner.scan();
 			RequestParser parser = new RequestParser(tokens);
+			RequestVerifier verifier = new RequestVerifier();
+			//prepare query and query builder
+			QueryBuilder queryBuilder = new QueryBuilder();
+			Query query;
 
-			tree = parser.parse();
-			RequestVerifier.verify(tree); //if no exception is thrown, the verification was successful
-
-			QueryBuilder queryManager = new QueryBuilder(tree.isCountFunction());
-			Object result = queryManager.buildAndSend(tree);
-
-			return result;
+			tree = parser.parse(); //parse the request
+			verifier.verify(tree); //if no exception is thrown, the verification was successful
+			query = queryBuilder.build(tree);
+			return tree.getFunction().getFunction().apply(query, verifier.getResultEntity()); //call the request function
 		}
 		catch(SyntaxException | VerificationFailedException e) {
 			String errorMessage = "<h4>" + e.getMessage() + "</h4>"

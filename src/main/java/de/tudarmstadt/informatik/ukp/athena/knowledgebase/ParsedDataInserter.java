@@ -18,20 +18,19 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.crawler.CrawlerFacade;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.crawler.SupportedConferences;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.crawler.semanticscholarapi.S2APIFunctions;
-import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.access.CommonAccess;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.CommonAccess;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.jpa.ConferenceJPAAccess;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.jpa.EventJPAAccess;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.jpa.PaperJPAAccess;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.jpa.PersistenceManager;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.jpa.PersonJPAAccess;
-import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.jpa.SessionJPAAccess;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.jpa.WorkshopJPAAccess;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Conference;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Event;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Paper;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Person;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.ScheduleEntry;
-import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Session;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Workshop;
-
 
 @SpringBootApplication
 /**
@@ -52,10 +51,12 @@ public class ParsedDataInserter {
 	/**
 	 * @param beginYear The first year to get data from
 	 * @param endYear The last year to get data from
+	 * @param conferences The abbreviations (see {@link https://aclanthology.info/}) of the conferences to scrape papers/authors from. null to scrape all. Does not work when only scraping authors
 	 */
-	public ParsedDataInserter(int beginYear, int endYear) {
-		acl18WebParser = new CrawlerFacade(SupportedConferences.ACL, beginYear, endYear);
+	public ParsedDataInserter(int beginYear, int endYear, String... conferences) {
+		acl18WebParser = new CrawlerFacade(SupportedConferences.ACL, beginYear, endYear, conferences);
 	}
+
 
 	/**
 	 * This assures that everything written into the database is in UTC.
@@ -73,12 +74,16 @@ public class ParsedDataInserter {
 		ParsedDataInserter parsedDataInserter;
 		List<String> argsList = Arrays.asList(args); //for .contains
 		int beginYear = 2018, endYear = 2018;
+		String[] conferences = null;
 
 		for(String arg : args) {
 			if(arg.startsWith("-beginYear="))
 				beginYear = Integer.parseInt(arg.split("=")[1]); //parse to make sure that it's a number
 			else if(arg.startsWith("-endYear="))
 				endYear = Integer.parseInt(arg.split("=")[1]); //parse to make sure that it's a number
+			else if(arg.startsWith("-conferences="))
+				conferences = arg.replace("-conferences=", "").split(",");
+
 		}
 
 		if(beginYear > endYear) {
@@ -89,8 +94,14 @@ public class ParsedDataInserter {
 			endYear = temp;
 		}
 
-		parsedDataInserter = new ParsedDataInserter(beginYear, endYear);
-		//only scrape if respective argument was found
+		if(conferences == null)
+			logger.info("No specific conferences given, will scrape papers and authors from all available conferences");
+		else
+			logger.info("Specific conferences given, will scrape papers and authors from the following: {}", Arrays.toString(conferences));
+
+		parsedDataInserter = new ParsedDataInserter(beginYear, endYear, conferences);
+
+        //only scrape if respective argument was found
 		if(argsList.contains("-scrape-paper-author")) {
 			try {
 				logger.info("Scraping years {} through {} - this can take a couple of minutes...", beginYear, endYear);
@@ -106,9 +117,6 @@ public class ParsedDataInserter {
 			parsedDataInserter.acl2018StoreConferenceInformation(); //automatically saves the schedule as well
 		else
 			logger.info("\"-scrape-acl18-info\" argument was not found, skipping ACL 2018 scraping");
-
-		//This hardcodes the SemanticScholar completion for debugging
-		//		parsedDataInserter.completeAuthorsByS2(5);	//TODO remove
 
 		logger.info("Done! (Took {})", LocalTime.ofNanoOfDay(System.nanoTime() - then));
 		parsedDataInserter.acl18WebParser.close();
@@ -147,8 +155,8 @@ public class ParsedDataInserter {
 			List<ScheduleEntry> entries = acl2018StoreSchedule();
 
 			for(ScheduleEntry entry : entries) {
-				if(entry instanceof Session)
-					acl2018.addSession((Session)entry);
+				if(entry instanceof Event)
+					acl2018.addEvent((Event)entry);
 				else if(entry instanceof Workshop)
 					acl2018.addWorkshop((Workshop)entry);
 			}
@@ -163,11 +171,11 @@ public class ParsedDataInserter {
 	}
 
 	/**
-	 * Stores the ACL 2018 conference's schedule into the database
-	 * @return The scraped and stored events
+	 * Stores the acl2018 conference's schedule into the database
+	 * @return The scraped and stored events and workshops
 	 */
 	private List<ScheduleEntry> acl2018StoreSchedule() {
-		CommonAccess<Session> sessionCommonAccess = new SessionJPAAccess();
+		CommonAccess<Event> eventCommonAccess = new EventJPAAccess();
 		CommonAccess<Workshop> workshopCommonAccess = new WorkshopJPAAccess();
 		List<ScheduleEntry> entries = new ArrayList<>(); //initialize in case anything fails
 
@@ -177,8 +185,8 @@ public class ParsedDataInserter {
 			logger.info("Inserting schedule into database...");
 			//add to database
 			for(ScheduleEntry entry : entries) {
-				if(entry instanceof Session)
-					sessionCommonAccess.add((Session)entry);
+				if(entry instanceof Event)
+					eventCommonAccess.add((Event)entry);
 				else if(entry instanceof Workshop)
 					workshopCommonAccess.add((Workshop)entry);
 			}

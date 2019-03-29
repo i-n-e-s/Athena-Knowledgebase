@@ -1,5 +1,6 @@
 package de.tudarmstadt.informatik.ukp.athena.knowledgebase.api;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -15,9 +16,12 @@ public class RequestVerifierTest
 	//by definition of RequestVerifier#verify, no exception means that the verification was successful
 
 	@Test
-	public void testVerfiyCorrect() {
+	public void testVerifyCorrect() {
 		try {
-			RequestVerifier.verify(new RequestParser(new RequestScanner("/paper:releaseDate=2018+02+29&topic=vogonpoetry").scan()).parse());
+			RequestVerifier uut = new RequestVerifier();
+
+			uut.verify(new RequestParser(new RequestScanner("/paper:releaseDate=2018+02+29&topic=vogonpoetry").scan()).parse());
+			assertEquals("Result entity is not correct!", uut.getResultEntity(), "paper");
 		}
 		catch(SyntaxException e) {
 			fail("Syntactically correct request shouldn't throw a syntax exception");
@@ -28,10 +32,12 @@ public class RequestVerifierTest
 	}
 
 	@Test
-	public void testVerfiyCorrectHierarchy() {
+	public void testVerifyCorrectHierarchy() {
 		try {
-			//by definition of RequestVerifier#verify, no exception means that the verification was successful
-			RequestVerifier.verify(new RequestParser(new RequestScanner("/paper:releaseDate=2018+02+29&topic=vogonpoetry/person:fullName=Daniel+Klingbein").scan()).parse());
+			RequestVerifier uut = new RequestVerifier();
+
+			uut.verify(new RequestParser(new RequestScanner("/paper:releaseDate=2018+02+29&topic=vogonpoetry/person:fullName=Daniel+Klingbein").scan()).parse());
+			assertEquals("Result entity is not correct!", uut.getResultEntity(), "person");
 		}
 		catch(SyntaxException e) {
 			fail("Syntactically correct request shouldn't throw a syntax exception");
@@ -41,10 +47,30 @@ public class RequestVerifierTest
 		}
 	}
 
+	@Test
+	public void testVerifyCorrectEnhance() {
+		try {
+			RequestVerifier uut1 = new RequestVerifier();
+			RequestVerifier uut2 = new RequestVerifier();
+
+			uut1.verify(new RequestParser(new RequestScanner("/enhance/paper").scan()).parse());
+			uut2.verify(new RequestParser(new RequestScanner("/enhance/person").scan()).parse());
+			assertEquals("Result entity is not correct!", uut1.getResultEntity(), "paper");
+			assertEquals("Result entity is not correct!", uut2.getResultEntity(), "person");
+		}
+		catch(SyntaxException e) {
+			fail("Syntactically correct request shouldn't throw a syntax exception");
+		}
+		catch(VerificationFailedException e) {
+			e.printStackTrace();
+			fail("Verification shouldn't fail with correct request");
+		}
+	}
+
 	@Test(expected = VerificationFailedException.class)
 	public void testIncorrectEntity() throws VerificationFailedException {
 		try {
-			RequestVerifier.verify(new RequestParser(new RequestScanner("/alien:planet=Kepler+22b").scan()).parse());
+			new RequestVerifier().verify(new RequestParser(new RequestScanner("/alien:planet=Kepler+22b").scan()).parse());
 		}
 		catch(SyntaxException e) {
 			fail("Syntactically correct request shouldn't throw a syntax exception");
@@ -54,7 +80,7 @@ public class RequestVerifierTest
 	@Test(expected = VerificationFailedException.class)
 	public void testIncorrectHierarchicalRelationship() throws VerificationFailedException {
 		try {
-			RequestVerifier.verify(new RequestParser(new RequestScanner("/person:fullName=John+Smith/session").scan()).parse());
+			new RequestVerifier().verify(new RequestParser(new RequestScanner("/person:fullName=John+Smith/event").scan()).parse());
 		}
 		catch(SyntaxException e) {
 			fail("Syntactically correct request shouldn't throw a syntax exception");
@@ -64,7 +90,7 @@ public class RequestVerifierTest
 	@Test(expected = VerificationFailedException.class)
 	public void testUnknownEntityAttribute() throws VerificationFailedException {
 		try {
-			RequestVerifier.verify(new RequestParser(new RequestScanner("/person:planet=Kepler+22b").scan()).parse());
+			new RequestVerifier().verify(new RequestParser(new RequestScanner("/person:planet=Kepler+22b").scan()).parse());
 		}
 		catch(SyntaxException e) {
 			fail("Syntactically correct request shouldn't throw a syntax exception");
@@ -74,7 +100,7 @@ public class RequestVerifierTest
 	@Test(expected = VerificationFailedException.class)
 	public void testStringAttributeWithNumberValueHasNumericalFields() throws VerificationFailedException {
 		try {
-			RequestVerifier.verify(new RequestParser(new RequestScanner("/person:fullName=42+69+1337").scan()).parse());
+			new RequestVerifier().verify(new RequestParser(new RequestScanner("/person:fullName=42+69+1337").scan()).parse());
 		}
 		catch(SyntaxException e) {
 			fail("Syntactically correct request shouldn't throw a syntax exception");
@@ -84,7 +110,7 @@ public class RequestVerifierTest
 	@Test(expected = VerificationFailedException.class)
 	public void testNumberAttributeWithIncorrectSize() throws VerificationFailedException {
 		try {
-			RequestVerifier.verify(new RequestParser(new RequestScanner("/paper:releaseDate=1+2+3+4+5").scan()).parse());
+			new RequestVerifier().verify(new RequestParser(new RequestScanner("/paper:releaseDate=1+2+3+4+5").scan()).parse());
 		}
 		catch(SyntaxException e) {
 			fail("Syntactically correct request shouldn't throw a syntax exception");
@@ -94,7 +120,17 @@ public class RequestVerifierTest
 	@Test(expected = VerificationFailedException.class)
 	public void testNumberAttributeWithStringValue() throws VerificationFailedException {
 		try {
-			RequestVerifier.verify(new RequestParser(new RequestScanner("/paper:releaseDate=twenty+ninth+february+two+thousand+eighteen").scan()).parse());
+			new RequestVerifier().verify(new RequestParser(new RequestScanner("/paper:releaseDate=twenty+ninth+february+two+thousand+eighteen").scan()).parse());
+		}
+		catch(SyntaxException e) {
+			fail("Syntactically correct request shouldn't throw a syntax exception");
+		}
+	}
+
+	@Test(expected = VerificationFailedException.class)
+	public void testInvalidEnhance() throws VerificationFailedException {
+		try {
+			new RequestVerifier().verify(new RequestParser(new RequestScanner("/enhance/conference").scan()).parse());
 		}
 		catch(SyntaxException e) {
 			fail("Syntactically correct request shouldn't throw a syntax exception");
@@ -107,9 +143,9 @@ public class RequestVerifierTest
 		assertFalse(RequestVerifier.entityContainsNumericalField("paper", "title"));
 		assertTrue(RequestVerifier.entityContainsNumericalField("institution", "institutionID"));
 		assertFalse(RequestVerifier.entityContainsNumericalField("institution", "name"));
-		assertTrue(RequestVerifier.entityContainsNumericalField("session", "begin"));
-		assertTrue(RequestVerifier.entityContainsNumericalField("session", "category"));
-		assertFalse(RequestVerifier.entityContainsNumericalField("session", "löjkfsd"));
+		assertTrue(RequestVerifier.entityContainsNumericalField("event", "begin"));
+		assertTrue(RequestVerifier.entityContainsNumericalField("event", "category"));
+		assertFalse(RequestVerifier.entityContainsNumericalField("event", "löjkfsd"));
 		assertFalse(RequestVerifier.entityContainsNumericalField("person", "begin"));
 	}
 }

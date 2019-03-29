@@ -15,14 +15,13 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.JPATestdatabase;
-import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.SessionPart;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.EventPart;
 
-@SuppressWarnings("javadoc")
-public class SessionPartJPAAccessTest {
+public class EventPartJPAAccessTest {
 
 	static JPATestdatabase testDB;
-	static SessionPartJPAAccess uut;
-	static SessionPart testValue;
+	static EventPartJPAAccess uut;
+	static EventPart testValue;
 
 	static ConfigurableApplicationContext ctx;
 
@@ -30,7 +29,7 @@ public class SessionPartJPAAccessTest {
 	public static void setUpDatabase() {
 		ctx = SpringApplication.run(JPATestdatabase.class,"");
 		testDB = new JPATestdatabase();
-		uut = new SessionPartJPAAccess();
+		uut = new EventPartJPAAccess();
 		testDB.createDB();
 	}
 
@@ -46,7 +45,7 @@ public class SessionPartJPAAccessTest {
 	}
 
 	public void resetValues() {
-		testValue = new SessionPart();
+		testValue = new EventPart();
 		testValue.setTitle("TestTitle");
 		testValue.setPlace("TestPlace");
 	}
@@ -54,7 +53,7 @@ public class SessionPartJPAAccessTest {
 	@Test
 	public void addAndDeleteTest() {
 		uut.add(testValue);
-		List<SessionPart> returnValues = getByTitle(testValue.getTitle());
+		List<EventPart> returnValues = getByTitle(testValue.getTitle());
 		if(returnValues.size() == 0) fail("return of existing Database is empty");
 		if(returnValues.size() > 1) fail("more than one returnValue ");
 		assertTrue(testValue.equalsWithoutID(returnValues.get(0)));
@@ -64,11 +63,11 @@ public class SessionPartJPAAccessTest {
 
 	@Test
 	public void getTest() {
-		List<SessionPart> resultList = uut.get();
-		assertTrue(testDB.getSessionPartQuantity() == resultList.size());
+		List<EventPart> resultList = uut.get();
+		assertTrue(testDB.getEventPartQuantity() == resultList.size());
 		List<String> resultTitles = new ArrayList<String>();
-		resultList.stream().forEach((SessionPart s) -> resultTitles.add(s.getTitle()));;
-		for (int i = 0; i < testDB.getSessionPartQuantity(); i++) {
+		resultList.stream().forEach((EventPart s) -> resultTitles.add(s.getTitle()));;
+		for (int i = 0; i < testDB.getEventPartQuantity(); i++) {
 			assertTrue(resultTitles.contains("Title"+ i));
 		}
 	}
@@ -77,14 +76,14 @@ public class SessionPartJPAAccessTest {
 	public void updateTest() {
 		uut.add(testValue);
 		testValue.setPlace("UpdatedPlace");
-		List<SessionPart> returnValues = getByTitle(testValue.getTitle());
+		List<EventPart> returnValues = getByTitle(testValue.getTitle());
 		if(returnValues.size() == 0) fail("return is empty");
 		if(returnValues.size() > 1) fail("more than one return value");
 		assertEquals("UpdatedPlace", returnValues.get(0).getPlace());
 		testDB.createDB();//Don't pollute the Database
 	}
 
-	private List<SessionPart> getByTitle(String title) {
-		return PersistenceManager.getEntityManager().createQuery(String.format("SELECT s FROM SessionPart s WHERE s.title = '%s'",title), SessionPart.class).getResultList();
+	private List<EventPart> getByTitle(String title) {
+		return PersistenceManager.getEntityManager().createQuery(String.format("SELECT e FROM EventPart e WHERE e.title = '%s'",title), EventPart.class).getResultList();
 	}
 }

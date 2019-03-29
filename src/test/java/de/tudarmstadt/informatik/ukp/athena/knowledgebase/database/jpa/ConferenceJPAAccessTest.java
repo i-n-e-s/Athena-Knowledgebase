@@ -17,15 +17,14 @@ import org.springframework.context.ConfigurableApplicationContext;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.JPATestdatabase;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Conference;
 
-@SuppressWarnings("javadoc")
 public class ConferenceJPAAccessTest {
 
 	static JPATestdatabase testDB;
 	static ConferenceJPAAccess uut;
 	static Conference testValue;
-	
+
 	static ConfigurableApplicationContext ctx;
-	
+
 	@BeforeClass
 	public static void setUpDatabase() {
 		ctx = SpringApplication.run(JPATestdatabase.class,"");
@@ -38,7 +37,7 @@ public class ConferenceJPAAccessTest {
 	public static void shutdownDatabase() {
 		ctx.close();
 	}
-	
+
 	public static void resetValues() {
 		testValue = new Conference();
 		testValue.setName("TestConferenceTest");
@@ -48,21 +47,21 @@ public class ConferenceJPAAccessTest {
 		testValue.setEnd(LocalDate.of(1234, 1, 2));
 		testValue.setBegin(LocalDate.of(1234, 1, 1));
 	}
-	
+
 	@Before
 	public void resetDB() {
 		resetValues();
 		//testDB.createDB(); //Performance hungry if done before every test
 	}
-	
-	@Test 
+
+	@Test
 	public void getTest() {
 		testDB.setDefaultParameters();
 		testDB.createDB();
 		List<Conference> returnValues = uut.get();
 		if(returnValues.size() != testDB.getConferenceQuantity()) fail("TestDatabase is not the expected size");
 	}
-	
+
 	@Test
 	public void addanddeleteTest() {
 		uut.add(testValue);
@@ -74,7 +73,7 @@ public class ConferenceJPAAccessTest {
 		returnValue = getByName("TestConferenceTest");
 		assertTrue(returnValue.size() == 0);
 	}
-	
+
 	@Test
 	public void updateTest() {
 		List<Conference> returnValue;
@@ -87,7 +86,7 @@ public class ConferenceJPAAccessTest {
 		assertEquals("TestAddressTestCorrected", returnValue.get(0).getAddress());
 		uut.delete(testValue);
 	}
-	
+
 	public List<Conference> getByName(String name) {
 		return PersistenceManager.getEntityManager().createQuery(String.format("SELECT c FROM Conference AS c WHERE c.name = '%s'",name), Conference.class).getResultList();
 	}
