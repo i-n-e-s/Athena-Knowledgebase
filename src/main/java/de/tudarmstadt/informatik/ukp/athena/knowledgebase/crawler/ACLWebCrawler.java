@@ -50,6 +50,7 @@ class ACLWebCrawler extends AbstractCrawler {
 	//with the same title/name already exists in the DB. If a match is found, reuse the Paper/Person from the DB
 	//To prevent interferences between threads, parallelization is disabled
 	//This decelerates the parsing process significantly
+	//TODO Currently irregularly leads to a DB connection timeout: use with caution until fixed
 	private boolean runWithDuplicateAvoidance = false;
 
 
