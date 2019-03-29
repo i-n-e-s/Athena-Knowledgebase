@@ -46,7 +46,8 @@ class ACLWebCrawler extends AbstractCrawler {
 
 	//If this is set true: Before any new Paper or Person is created, it is checked whether a Paper/Person
 	//with the same title/name already exists in the DB. If a match is found, reuse the Paper/Person from the DB
-	private boolean runWithDuplicateAvoidance = true;
+	//This decelerates the parsing process significantly
+	private boolean runWithDuplicateAvoidance = false;
 
 
 	/**
