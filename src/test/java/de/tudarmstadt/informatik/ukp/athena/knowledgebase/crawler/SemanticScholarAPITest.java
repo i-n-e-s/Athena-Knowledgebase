@@ -12,6 +12,10 @@ import org.junit.Test;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import static org.junit.Assert.assertEquals;
 
 
 /**
@@ -39,7 +43,7 @@ public class SemanticScholarAPITest {
         try {
             amount = S2APIFunctions.getCitationAmountByPaper( testPaper );
             Assert.assertTrue( amount >= 0 );   //Make sure amount is not -1
-            Assert.assertEquals(49, amount);
+            assertEquals(49, amount);
         }
         catch( JSONException e ) {
             System.err.println( e.toString() );
@@ -56,13 +60,15 @@ public class SemanticScholarAPITest {
      */
     @Test
     public void getAllPapersByAuthorTest() {
-        Person testAuthor = new Person();
-        testAuthor.setFullName("Iryna Gurevych");
+        Person uut = new Person();
+        uut.setFullName("Iryna Gurevych");
 
-        ArrayList<Paper> allPapers = null;
+        List<Paper> allPapers = null;
 
         try {
-            allPapers = S2APIFunctions.getAllPapersByAuthor(testAuthor);
+            allPapers = S2APIFunctions.getAllPapersByAuthor(uut);
+            Assert.assertTrue( allPapers.size() > 0 );
+            assertEquals( 0, allPapers.stream().filter(paper -> paper.getTitle() == null).collect(Collectors.toList()).size());
         } catch( IOException e ) {
             System.err.println("Connection Error");
             Assert.fail();
@@ -71,11 +77,13 @@ public class SemanticScholarAPITest {
             Assert.fail();
         }
 
-        for ( Paper p : allPapers ) {
-            if ( p.getReleaseDate() == null ) {
-                System.out.println("Title: "+p.getTitle()+"\t ID: "+p.getSemanticScholarID());
-            }
-        }
+        //Test null value
+        uut = new Person();
+        uut.setFullName(null);
+        try {
+            S2APIFunctions.getAllPapersByAuthor(uut);
+            Assert.fail();
+        } catch ( IOException | JSONException e ) { assertEquals(JSONException.class, e.getClass()); }
     }
 
     /**
@@ -92,7 +100,7 @@ public class SemanticScholarAPITest {
         testAuthor.setFullName("Iryna Gurevych");
         try {
             result = S2APIFunctions.getAuthorsS2ID(testAuthor);
-            Assert.assertEquals("1730400", result);
+            assertEquals("1730400", result);
         }
         catch( Exception e ) {
             System.err.println(e.toString());
@@ -176,7 +184,7 @@ public class SemanticScholarAPITest {
         uut.setFullName("Iryna Gurevych");
         try {
             S2APIFunctions.completeAuthorInformationByAuthorSearch(uut, false);
-            Assert.assertEquals( "1730400", uut.getSemanticScholarID() );
+            assertEquals( "1730400", uut.getSemanticScholarID() );
         } catch ( IOException e ) {
             System.err.println(e.toString());
             System.err.println("Some HTTP stuff went wrong");
@@ -191,7 +199,7 @@ public class SemanticScholarAPITest {
         uut.setSemanticScholarID("1730400");
         try {
             S2APIFunctions.completeAuthorInformationByAuthorSearch(uut, false);
-            Assert.assertEquals( "Iryna Gurevych", uut.getFullName() );
+            assertEquals( "Iryna Gurevych", uut.getFullName() );
         } catch ( IOException e ) {
             System.err.println(e.toString());
             System.err.println("Some HTTP stuff went wrong");
@@ -211,7 +219,7 @@ public class SemanticScholarAPITest {
         uut.setSemanticScholarID("test");
         try {
             S2APIFunctions.completePaperInformationByGeneralSearch(uut, true);
-            Assert.assertEquals( "5a4f7c894f4560c3205978d9277d744a910560f6", uut.getSemanticScholarID() );
+            assertEquals( "5a4f7c894f4560c3205978d9277d744a910560f6", uut.getSemanticScholarID() );
         }  catch ( IOException e ) {
             System.err.println(e.toString());
             System.err.println("Some HTTP stuff went wrong");
@@ -227,7 +235,7 @@ public class SemanticScholarAPITest {
         uut.setSemanticScholarID("test");
         try {
             S2APIFunctions.completePaperInformationByGeneralSearch(uut, false);
-            Assert.assertEquals( "test", uut.getSemanticScholarID() );
+            assertEquals( "test", uut.getSemanticScholarID() );
         }  catch ( IOException e ) {
             System.err.println(e.toString());
             System.err.println("Some HTTP stuff went wrong");
