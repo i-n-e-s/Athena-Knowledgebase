@@ -1,9 +1,11 @@
 package de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -318,6 +320,22 @@ public class Paper extends Model {
 		tmpQuery.setSemanticScholarID(s2id);
 		tmpQuery.setTopic("queryCreated");		//For debugging
 		return findOrCreate(tmpQuery);
+	}
+
+
+	/**
+	 * Same as {@link Paper#findOrCreate(String, String)}, but also searches in given list
+	 * @param s2id SemanticScholarID of searched Paper
+	 * @param title Title of searched Paper
+	 * @param list List to be searched
+	 * @return A matching paper from the List or the DB, or a new Paper
+	 */
+	public static Paper findOrCreateDbOrList(String s2id, String title, List<Paper> list) {
+		List<Paper> result = list.stream().filter( currPaper -> !(
+						( currPaper.getSemanticScholarID() != null && currPaper.getSemanticScholarID().equals(s2id)) ||
+						( currPaper.getTitle() != null && currPaper.getTitle().equals(title) ))).collect(Collectors.toList());
+
+		return result.size() > 0 ? result.get(0) : findOrCreate(s2id, title);
 	}
 
 

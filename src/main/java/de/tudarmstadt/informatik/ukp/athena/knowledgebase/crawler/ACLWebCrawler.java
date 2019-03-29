@@ -43,11 +43,13 @@ class ACLWebCrawler extends AbstractCrawler {
 	private String aboutPage = "https://acl2018.org/";
 	private String[] conferences;
 	private Map<String,Paper> papers = new HashMap<>(); //title, corresponding paper
+	private List<Paper> createdPapers = new ArrayList<>();
+	private List<Person> createdPersons = new ArrayList<>();
 
 	//If this is set true: Before any new Paper or Person is created, it is checked whether a Paper/Person
 	//with the same title/name already exists in the DB. If a match is found, reuse the Paper/Person from the DB
 	//This decelerates the parsing process significantly
-	private boolean runWithDuplicateAvoidance = false;
+	private boolean runWithDuplicateAvoidance = true;
 
 
 	/**
@@ -134,7 +136,8 @@ class ACLWebCrawler extends AbstractCrawler {
 		for (Document doc : webpages) {
 			Elements authorListElements = doc.select("li");// authors are the only <li> elements on the Page
 			for (Element elmnt : authorListElements) {
-				Person author = runWithDuplicateAvoidance ? Person.findOrCreate(null, elmnt.child(0).ownText()) : new Person();
+				Person author = runWithDuplicateAvoidance ? Person.findOrCreateDbOrList(null, elmnt.child(0).ownText(), createdPersons) : new Person();
+				if (runWithDuplicateAvoidance) { createdPersons.add(author); }
 
 				author.setFullName(elmnt.child(0).ownText());
 				authors.add(author);
@@ -175,7 +178,8 @@ class ACLWebCrawler extends AbstractCrawler {
 					if(conferences.length != 0 && !shouldSavePaper(elmnt))
 						continue innerLoop; //label is not needed necessarily, but helps readability
 
-					Paper paper = runWithDuplicateAvoidance ? Paper.findOrCreate(null, elmnt.text()) : new Paper();;
+					Paper paper = runWithDuplicateAvoidance ? Paper.findOrCreateDbOrList(null, elmnt.text(), createdPapers) : new Paper();;
+					if ( runWithDuplicateAvoidance ) { createdPapers.add( paper ); }
 
 					paper.setTitle(elmnt.text());
 					paperList.add(paper);
@@ -252,7 +256,8 @@ class ACLWebCrawler extends AbstractCrawler {
 					String paperTitle = splitRawTitle[1];
 					String anthology = splitRawTitle[0].replace("[", "").replace("]", "");
 
-					Paper paper = runWithDuplicateAvoidance ? Paper.findOrCreate(null, paperTitle) : new Paper();
+					Paper paper = runWithDuplicateAvoidance ? Paper.findOrCreateDbOrList(null, paperTitle, createdPapers) : new Paper();
+					if ( runWithDuplicateAvoidance ) { createdPapers.add(paper); }
 					paper.setTitle(paperTitle);
 					paper.setAnthology(anthology);
 					paper.setRemoteLink("http://aclweb.org/anthology/" + anthology); //wow that was easy
@@ -261,7 +266,8 @@ class ACLWebCrawler extends AbstractCrawler {
 					// find authors and add them to a list
 					Elements authorElements = elmnt.parent().parent().children().select("span").select("a");
 					for (Element authorEl : authorElements) {
-						Person author = runWithDuplicateAvoidance ? Person.findOrCreate(null, authorEl.text()) : new Person();
+						Person author = runWithDuplicateAvoidance ? Person.findOrCreateDbOrList(null, authorEl.text(), createdPersons) : new Person();
+						if (runWithDuplicateAvoidance) { createdPersons.add(author); }
 
 						// because acl2018 seems to not employ prefixes (e.g. Prof. Dr.), we do not need to scan them
 						// scanning them might make for a good user story

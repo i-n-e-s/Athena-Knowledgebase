@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -436,6 +437,22 @@ public class Person extends Model {
 		else if ( s2id == null ) { searchResult = filer.getByFullName(fullName); }
 
 		return searchResult != null ? searchResult : new Person();
+	}
+
+
+	/**
+	 * Same as {@link Person#findOrCreate(String, String)}, but also searches in given list
+	 * @param s2id SemanticScholarID of searched Person
+	 * @param fullName Full Name of searched Person
+	 * @param list List to be searched
+	 * @return A matching Person from the List or the DB, or a new Person
+	 */
+	public static Person findOrCreateDbOrList(String s2id, String fullName, List<Person> list) {
+		List<Person> result = list.stream().filter( currPers -> !(
+						( currPers.getSemanticScholarID() != null && currPers.getSemanticScholarID().equals(s2id)) ||
+						( currPers.getFullName() != null && currPers.getFullName().equals(fullName)))).collect(Collectors.toList());
+
+		return result.size() > 0 ? result.get(0) : findOrCreate(s2id, fullName);
 	}
 
 }
