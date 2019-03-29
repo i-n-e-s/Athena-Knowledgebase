@@ -48,6 +48,7 @@ class ACLWebCrawler extends AbstractCrawler {
 
 	//If this is set true: Before any new Paper or Person is created, it is checked whether a Paper/Person
 	//with the same title/name already exists in the DB. If a match is found, reuse the Paper/Person from the DB
+	//To prevent interferences between threads, parallelization is disabled
 	//This decelerates the parsing process significantly
 	private boolean runWithDuplicateAvoidance = true;
 
@@ -205,6 +206,25 @@ class ACLWebCrawler extends AbstractCrawler {
 		List<Document> input3 = webpages.subList(quarterSize * 2, quarterSize * 3);
 		List<Document> input4 = webpages.subList(quarterSize * 3, webpages.size());
 		ArrayList<Paper> result = new ArrayList<>();
+
+
+		//If DuplicateAvoidance is enabled, do not use threading, as the
+		if ( runWithDuplicateAvoidance ) {
+			try {
+				result.addAll(extractPaperAuthor(input1));
+				logger.info("Finished 1 / 4");
+				result.addAll(extractPaperAuthor(input2));
+				logger.info("Finished 2 / 4");
+				result.addAll(extractPaperAuthor(input3));
+				logger.info("Finished 3 / 4");
+				result.addAll(extractPaperAuthor(input4));
+				logger.info("Finished 4 / 4");
+			} catch (Exception e) { //thread exceptions
+				logger.error("Error while gathering results!", e);
+			}
+			return result;
+		}
+
 		//setup and start those threads
 		ExecutorService executor = Executors.newFixedThreadPool(4);
 		Future<ArrayList<Paper>> f1 = executor.submit(() -> extractPaperAuthor(input1));

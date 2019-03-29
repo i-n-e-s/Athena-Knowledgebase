@@ -102,7 +102,7 @@ public class ParsedDataInserter {
 		parsedDataInserter = new ParsedDataInserter(beginYear, endYear, conferences);
 
         //only scrape if respective argument was found
-		if(argsList.contains("-scrape-paper-author")) {
+		if(argsList.contains("-scrape-paper-author") || true) {
 			try {
 				logger.info("Scraping years {} through {} - this can take a couple of minutes...", beginYear, endYear);
 				parsedDataInserter.aclStorePapersAndAuthors();
