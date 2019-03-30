@@ -28,7 +28,7 @@ The following sections intend to outline features/facts of this program
 ### Special API accesses
 For information not suited for immediate storage in the database, a special API process has been included, providing the following functionality:
 
-- OpenStreeMap data
+- OpenStreetMap data
 	- Query locations of interest close to you (depends on locatoin data)
 - Semantic Scholar
 	- On demand: Find out and store information about authors and papers not provided by t he default scraping functionality, such as:
