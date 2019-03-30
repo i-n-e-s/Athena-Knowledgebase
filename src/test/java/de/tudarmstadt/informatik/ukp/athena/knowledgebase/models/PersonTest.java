@@ -1,17 +1,20 @@
 package de.tudarmstadt.informatik.ukp.athena.knowledgebase.models;
 
-import org.junit.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
+import java.util.ArrayList;
+
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.JPATestdatabase;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Person;
-
-import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.junit.Assert.*;
 
 @SuppressWarnings("javadoc")
 public class PersonTest {
