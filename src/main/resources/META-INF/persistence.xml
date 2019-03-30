@@ -16,7 +16,7 @@
                       <!--value="org.h2.Driver" />-->
 			
             <property name="javax.persistence.jdbc.url"
-                      value="jdbc:mysql://localhost:3306/athena?serverTimezone=UTC&amp;useLegacyDatetimeCode=false" />
+                      value="jdbc:mysql://localhost:3306/athena?serverTimezone=UTC&amp;useLegacyDatetimeCode=false&amp;autoReconnect=true" />
 
             <property name="javax.persistence.jdbc.user"
                       value="athena" />
