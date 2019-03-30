@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -412,6 +413,47 @@ public class Person extends Model {
 			return searchResults.get(0);
 		}
 
+	}
+
+	/**
+	 * Looks for persons with defined title or SemanticScholarID and returns matching DB Entry
+	 * If no match was found, create and return new Person Object
+	 * @param s2id SemanticScholarID of searched person or null if unknown
+	 * @param fullName Name of searched person or null if unknown
+	 * @return matching DB entry or new Person
+	 */
+	public static Person findOrCreate(String s2id, String fullName) {
+		PersonJPAAccess filer = new PersonJPAAccess();
+		Person searchResult = null;
+		if ( s2id == null && fullName == null ) { return new Person(); }
+		else if ( s2id != null && fullName != null ) {
+			Person query = new Person();
+			query.setFullName(fullName);
+			query.setSemanticScholarID(s2id);
+			return findOrCreate(query);
+		}
+		else if ( fullName == null ) { searchResult = filer.getBySemanticScholarID(s2id); }
+		else if ( s2id == null ) { searchResult = filer.getByFullName(fullName); }
+
+		return searchResult != null ? searchResult : new Person();
+	}
+
+
+	/**
+	 * Same as {@link Person#findOrCreate(String, String)}, but also searches in given list
+	 * @param s2id Semantic Scholar of of the person to seach
+	 * @param fullName Full name of the person to seach
+	 * @param list List to be searched
+	 * @return A matching person from the List or the DB, or a new person
+	 */
+	public static Person findOrCreateDbOrList(String s2id, String fullName, List<Person> list) {
+		//Filter out any person who does not have either a matching SemanticScholarID or matching name
+		List<Person> result = list.stream().filter( currPers -> (
+				( currPers.getSemanticScholarID() != null && currPers.getSemanticScholarID().equals(s2id)) ||
+				( currPers.getFullName() != null && currPers.getFullName().equals(fullName)))).collect(Collectors.toList());
+
+		//Result now contains only persons with either matching SemanticScholarID or matching name
+		return result.size() > 0 ? result.get(0) : findOrCreate(s2id, fullName);
 	}
 
 }

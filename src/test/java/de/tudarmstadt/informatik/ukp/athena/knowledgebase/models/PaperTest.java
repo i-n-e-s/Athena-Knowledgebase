@@ -13,6 +13,8 @@ import org.springframework.context.ConfigurableApplicationContext;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.JPATestdatabase;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Paper;
 
+import java.util.ArrayList;
+
 @SuppressWarnings("javadoc")
 public class PaperTest {
 
@@ -61,5 +63,23 @@ public class PaperTest {
 		assertEquals("Ant18", String.valueOf(uut.getAnthology()));
 		uut = Paper.findOrCreate(null, null);
 		assertNull(uut.getAnthology());
+	}
+
+	@Test
+	public void personFindOrCreateDbOrListTest() {
+		ArrayList<Paper> testList = new ArrayList<>();
+		Paper testPaper = new Paper();
+		testPaper.setTitle("Lorem Ipsum");
+		testPaper.setSemanticScholarID("12");
+		testList.add(testPaper);
+
+		Paper uut = Paper.findOrCreateDbOrList(null, "Title5", testList);
+		assertEquals("37468640", uut.getSemanticScholarID());
+
+		uut = Paper.findOrCreateDbOrList(null, "Lorem Ipsum", testList);
+		assertEquals("12", uut.getSemanticScholarID());
+
+		uut = Paper.findOrCreateDbOrList(null, "Peter Pan", testList);
+		assertNull(uut.getSemanticScholarID());
 	}
 }

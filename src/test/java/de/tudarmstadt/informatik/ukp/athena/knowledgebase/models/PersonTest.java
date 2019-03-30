@@ -1,6 +1,10 @@
 package de.tudarmstadt.informatik.ukp.athena.knowledgebase.models;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
+import java.util.ArrayList;
 
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -45,6 +49,58 @@ public class PersonTest {
 		assertEquals("Prefix" + (5 % 2), String.valueOf(uut.getPrefix()));
 		assertEquals("0", String.valueOf(query.getPersonID()));
 		assertEquals("Prefix" + (5 % 2), String.valueOf(uut.getPrefix()));
+	}
+
+	@Test
+	public void personFindOrCreateStrStrTest() {
+		Person uut = Person.findOrCreate(null, "Author 5");
+		assertEquals("37455290", String.valueOf(uut.getSemanticScholarID()));
+
+		uut = Person.findOrCreate("12365871", null);
+		assertEquals("Author 15", String.valueOf(uut.getFullName()));
+		uut = Person.findOrCreate("37455290", "Author 5");
+		assertEquals("Prefix1", String.valueOf(uut.getPrefix()));
+
+		uut = Person.findOrCreate("44946348", "Author 5");
+		assertEquals("Prefix0", String.valueOf(uut.getPrefix()));
+		uut = Person.findOrCreate(null, null);
+		assertNull(uut.getPrefix());
+	}
+
+	@Test
+	public void personFindOrCreateDbOrListTest() {
+		ArrayList<Person> testList = new ArrayList<>();
+		Person testPerson = new Person();
+		testPerson.setFullName("Lorem Ips");
+		testPerson.setSemanticScholarID("23");
+		testList.add(testPerson);
+
+		Person uut = Person.findOrCreateDbOrList(null, "Author 5", testList);
+		assertEquals("37455290", uut.getSemanticScholarID());
+
+		uut = Person.findOrCreateDbOrList(null, "Lorem Ips", testList);
+		assertEquals("23", uut.getSemanticScholarID());
+
+		uut = Person.findOrCreateDbOrList(null, "Peter Pan", testList);
+		assertNull(uut.getSemanticScholarID());
+	}
+
+	@Test
+	public void addInfluencedTest() {
+		Person uut = new Person();
+		Person influenced = new Person();
+		influenced.setFullName("Influ Enced");
+		uut.addInfluenced(influenced);
+		assertTrue(uut.getTop5influenced().contains(influenced));
+	}
+
+	@Test
+	public void addInfluencedByTest() {
+		Person uut = new Person();
+		Person influencer = new Person();
+		influencer.setFullName("Influ Encer");
+		uut.addInfluencedBy(influencer);
+		assertTrue(uut.getTop5influencedBy().contains(influencer));
 	}
 
 }

@@ -59,10 +59,9 @@ public class PaperJPAAccess implements CommonAccess<Paper> {
 	 * If multiple occurrences are found in DB, return the first result
 	 *
 	 * @param toFind Paper object to get the search constraints from
-	 * @return An object from the DB with matching attributes
+	 * @return An object from the DB with matching attributes, null if no object found or no search constraint set
 	 */
 	public List<Paper> getByKnownAttributes(Paper toFind) {
-
 		//1. Build JPQL query for combined search
 		String query = "SELECT c FROM Paper c WHERE ";
 		boolean addedConstraint = false;
@@ -73,7 +72,7 @@ public class PaperJPAAccess implements CommonAccess<Paper> {
 		}
 		if ( toFind.getTitle() != null && toFind.getTitle() != "" ) {
 			System.out.println("Got parameter title");
-			if (addedConstraint) { query = query + " and "; }
+			if (addedConstraint) { query = query + " AND "; }
 			query = query + "c.title = '"+toFind.getTitle().replace("'", "''") + "'";
 			addedConstraint = true;
 		}
@@ -116,7 +115,8 @@ public class PaperJPAAccess implements CommonAccess<Paper> {
 		if( semanticScholarID != null ) {
 			Paper query = new Paper();
 			query.setSemanticScholarID(semanticScholarID);
-			return Paper.findOrCreate(query);
+			List<Paper> results = getByKnownAttributes(query);
+			return (results != null && results.size() > 0) ? results.get(0) : null;
 		}
 		return null;
 	}
@@ -126,7 +126,7 @@ public class PaperJPAAccess implements CommonAccess<Paper> {
 	 *
 	 * @author Philipp Emmer
 	 * @param title The title of the wanted paper object to search
-	 * @return DB entry of Paper with matching S2ID, null if not found
+	 * @return DB entry of paper with matching S2ID, null if not found
 	 */
 	public Paper getByTitle( String title ) {
 		//1. Build JPQL query
@@ -137,7 +137,7 @@ public class PaperJPAAccess implements CommonAccess<Paper> {
 			List<Paper> matches = entityManager.createQuery(query).getResultList();
 
 			if(matches.size() < 1) { //No matching paper could be found in the DB
-				return new Paper();
+				return null;
 			}
 			else { 					//Choose first result
 				return matches.get(0);

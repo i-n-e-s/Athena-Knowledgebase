@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -68,10 +69,6 @@ public class Paper extends Model {
 	@Column(name = "amountOfCitations")
 	private long amountOfCitations = -1;    //-1 if not known yet
 
-	//	Removed all code concerning quotations and alike. Too time consuming right now.
-
-	//	TODO: Metadata?
-
 	/**
 	 * Get this paper's ID
 	 * @return This paper's ID
@@ -80,7 +77,6 @@ public class Paper extends Model {
 		return paperID;
 	}
 
-	// TODO: Rename to getPersons after Testbench integration?
 	/**
 	 * Gets this paper's authors
 	 * @return A Set of this paper's authors
@@ -89,7 +85,6 @@ public class Paper extends Model {
 		return persons;
 	}
 
-	// TODO: Rename to setPersons after Testbench integration?
 	/**
 	 * Sets this paper's authors
 	 * @param authors The new authors of this paper
@@ -98,7 +93,6 @@ public class Paper extends Model {
 		this.persons = authors;
 	}
 
-	// TODO: Rename to addPerson after Testbench integration?
 	/**
 	 * Adds an author to this paper's author list
 	 * @param author The author to add
@@ -270,7 +264,7 @@ public class Paper extends Model {
 
 	/**
 	 * Gets the amount of papers this paper is cited in
-	 * @return the amount of citations
+	 * @return the amount of citations, -1 if not known
 	 */
 	public Long getAmountOfCitations() {
 		return amountOfCitations;
@@ -317,6 +311,24 @@ public class Paper extends Model {
 		tmpQuery.setTitle(title);
 		tmpQuery.setSemanticScholarID(s2id);
 		return findOrCreate(tmpQuery);
+	}
+
+
+	/**
+	 * Same as {@link Paper#findOrCreate(String, String)}, but also searches in given list
+	 * @param s2id Semantic Scholar id of the paper to search
+	 * @param title Title of the paper to seach
+	 * @param list List to be searched
+	 * @return A matching paper from the list or the DB, or a new paper
+	 */
+	public static Paper findOrCreateDbOrList(String s2id, String title, List<Paper> list) {
+		//Filter out any paper who does not have either a matching SemanticScholarID or matching title
+		List<Paper> result = list.stream().filter( currPaper -> (
+				( currPaper.getSemanticScholarID() != null && currPaper.getSemanticScholarID().equals(s2id)) ||
+				( currPaper.getTitle() != null && currPaper.getTitle().equals(title) ))).collect(Collectors.toList());
+
+		//Result now contains only persons with either matching SemanticScholarID or matching name
+		return result.size() > 0 ? result.get(0) : findOrCreate(s2id, title);
 	}
 
 

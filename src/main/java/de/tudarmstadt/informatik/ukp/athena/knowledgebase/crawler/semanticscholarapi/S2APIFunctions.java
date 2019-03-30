@@ -86,15 +86,27 @@ public class S2APIFunctions {
 	private static ArrayList<Paper> parseS2PaperSearchJSONArrayToPaperArrayList(JSONArray paperJSONarr) {
 		ArrayList<Paper> paperList = new ArrayList<>();
 
+		//Add every paper returned in the JSONObject
 		for (int i = 0; i < paperJSONarr.length(); i++) {
-			Paper currPaper = new Paper();
+			String title = null;
+			String s2id = null;
+
+			//Read S2ID and title
 			JSONObject cSR = (JSONObject) paperJSONarr.get(i);
 			if (!cSR.getString("paperId").equals("null")) {
-				currPaper.setSemanticScholarID(cSR.getString("paperId"));
+				s2id = cSR.getString("paperId");
 			}
 			if (!cSR.getString("title").equals("null")) {
-				currPaper.setTitle(cSR.getString("title"));
+				title = cSR.getString("title");
 			}
+
+			//Create paper, if it doesn't exist in the DB already
+			Paper currPaper = Paper.findOrCreate(s2id, title);
+
+			//Set attributes at paper
+			if ( s2id != null ) { currPaper.setSemanticScholarID(s2id); }
+			if ( title != null ) { currPaper.setTitle(title); }
+
 			if (!cSR.getString("url").equals("null")) {
 				currPaper.setRemoteLink(cSR.getString("url"));
 			}
@@ -106,7 +118,7 @@ public class S2APIFunctions {
 			paperList.add(currPaper);
 		}
 
-		//5. Return list
+		//Return list
 		return paperList;
 
 	}
@@ -184,13 +196,10 @@ public class S2APIFunctions {
 			return false;
 		}
 
-		//3.1 Parse JSONObject to temp Author TODO overwrite?
+		//3.1 Parse JSONObject to temp Author
 		logger.info("Start to parse:\n\n{}", response.toString());
 		parseAddS2InternalAPIAuthorJSON(author, overwrite, response);
 		logger.info("\n\ngot:\n{}\n\n", author.toString());
-
-		//3.2 Add information from temp author to original author
-		//author.complementBy(temp);
 
 		return true;
 	}
@@ -198,16 +207,24 @@ public class S2APIFunctions {
 	/**
 	 * Helper method called in {@link S2APIFunctions#completeAuthorInformationByAuthorSearch}
 	 * Gets the JSONObject returned by the author search and adds the attributes to the given person object
+	 * This function exceeds the limit of 40 lines, because of the empty lines, the removal of which would decrease the readability
 	 * @param author The object to add the info to
 	 * @param overwrite true if already set attributes should be overwritten with Semantic Scholar's data, false to only set null attributes
 	 * @param authorSearchResponse response to an author search as JSONObject
 	 */
 	private static void parseAddS2InternalAPIAuthorJSON(Person author, boolean overwrite, JSONObject authorSearchResponse) {
-		//1 Set authors S2ID
+		//1.1 Set author's S2ID
 		if( author.getSemanticScholarID() == null || overwrite ) {
 			String foundS2ID = authorSearchResponse.getJSONObject("author").getString("id");
 			author.setSemanticScholarID(foundS2ID);
 		}
+
+		//1.2 Set author's name
+		if( author.getFullName() == null || overwrite ) {
+			String foundName = authorSearchResponse.getJSONObject("author").getString("name");
+			author.setFullName(foundName);
+		}
+
 
 		//2 Add all papers found on S2
 		JSONArray papersJSON = authorSearchResponse.getJSONObject("author").getJSONObject("papers").getJSONArray("results");
@@ -227,7 +244,7 @@ public class S2APIFunctions {
 			if( currPaper == null ) { currPaper = Paper.findOrCreate(null, title); }
 
 			//Always connect this author with paper
-			Model.connectAuthorPaper(author, currPaper);    //TODO check duplicates
+			Model.connectAuthorPaper(author, currPaper);
 
 			parseAddS2InternalAPIPaperJSON(papersJSON.getJSONObject(i), false, currPaper);
 
@@ -365,7 +382,7 @@ public class S2APIFunctions {
 
 		//Add authors
 		JSONArray authorsJSON = paperJSON.getJSONArray("authors");
-		for (int i = 0; i < authorsJSON.length(); i++) {                         //Add every author to the paper
+		for (int i = 0; i < authorsJSON.length(); i++) { //Add every author to the paper
 
 			String name, s2id;
 			try {
@@ -409,8 +426,8 @@ public class S2APIFunctions {
 	 * Information is added in-place, so the given object is altered
 	 * Only unset attributes will be overwritten
 	 * <p>
-	 * Optional search for s2Id of paper if known
-	 * TODO releaseDate will be set to 1.1. of release year, Semantic Scholar doesn't tell exact date
+	 * Optional improvement: search for s2Id of paper if known
+	 * Optional improvement: releaseDate will be set to 1.1. of release year, Semantic Scholar doesn't tell exact date
 	 *
 	 * @param paper     The paper to be looked up
 	 * @param overwrite true if already set attributes should be overwritten with Semantic Scholar's data, false to only set null attributes

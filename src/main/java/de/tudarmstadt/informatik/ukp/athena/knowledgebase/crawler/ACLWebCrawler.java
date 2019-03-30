@@ -29,7 +29,7 @@ import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Person
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.ScheduleEntry;
 
 /**
- * A class, which holds the capability to return a List of all authors, which
+ * A class, which holds the capability to return a list of all authors, who
  * wrote a paper in the frame of the ACL'18 conference
  *
  * @author Jonas Hake, Julian Steitz, Daniel Lehmann
@@ -43,6 +43,14 @@ class ACLWebCrawler extends AbstractCrawler {
 	private String aboutPage = "https://acl2018.org/";
 	private String[] conferences;
 	private Map<String,Paper> papers = new HashMap<>(); //title, corresponding paper
+	private List<Paper> createdPapers = new ArrayList<>();
+	private List<Person> createdPersons = new ArrayList<>();
+
+	//If this is set true: Before any new paper or person is created, it is checked whether a paper/person
+	//with the same title/name already exists in the DB. If a match is found, reuse the paper/person from the DB
+	//To prevent interferences between threads, parallelization is disabled
+	//This decelerates the parsing process significantly and may be quite unstable. Use with caution
+	private boolean runWithDuplicateAvoidance = false;
 
 	/**
 	 * Only parses in the given year range. If only one year is needed, use the same input for both
@@ -78,11 +86,11 @@ class ACLWebCrawler extends AbstractCrawler {
 		logger.info("Fetching webpages starting from \"{}\"...", startURL);
 		ArrayList<Document> docs = new ArrayList<Document>();
 		docs.add(JsoupHelper.connect(startURL));
-		// find Link to next Page, if not found end loop
+		// find link to next page, if not found end loop
 		boolean nextSiteExist = true;
 		while (nextSiteExist) {
 			nextSiteExist = false;
-			// find the Link to the next page
+			// find the link to the next page
 			Elements links = docs.get(docs.size() - 1).select("a[href]");
 			List<String> linkTexts = links.eachText();
 			int idxOfLink = -1;
@@ -93,7 +101,7 @@ class ACLWebCrawler extends AbstractCrawler {
 					break;
 				}
 			}
-			// add next page to docList
+			// add next page to doc list
 			if (nextSiteExist) {
 				Document nxtDoc = JsoupHelper.connect(links.get(idxOfLink).absUrl("href"));
 				docs.add(nxtDoc);
@@ -128,7 +136,8 @@ class ACLWebCrawler extends AbstractCrawler {
 		for (Document doc : webpages) {
 			Elements authorListElements = doc.select("li");// authors are the only <li> elements on the Page
 			for (Element elmnt : authorListElements) {
-				Person author = new Person();
+				Person author = runWithDuplicateAvoidance ? Person.findOrCreateDbOrList(null, elmnt.child(0).ownText(), createdPersons) : new Person();
+				if (runWithDuplicateAvoidance) { createdPersons.add(author); }
 
 				author.setFullName(elmnt.child(0).ownText());
 				authors.add(author);
@@ -169,7 +178,8 @@ class ACLWebCrawler extends AbstractCrawler {
 					if(conferences.length != 0 && !shouldSavePaper(elmnt))
 						continue innerLoop; //label is not needed necessarily, but helps readability
 
-					Paper paper = new Paper();
+					Paper paper = runWithDuplicateAvoidance ? Paper.findOrCreateDbOrList(null, elmnt.text(), createdPapers) : new Paper();;
+					if ( runWithDuplicateAvoidance ) { createdPapers.add( paper ); }
 
 					paper.setTitle(elmnt.text());
 					paperList.add(paper);
@@ -195,6 +205,24 @@ class ACLWebCrawler extends AbstractCrawler {
 		List<Document> input3 = webpages.subList(quarterSize * 2, quarterSize * 3);
 		List<Document> input4 = webpages.subList(quarterSize * 3, webpages.size());
 		ArrayList<Paper> result = new ArrayList<>();
+
+		//If duplicate avoidance is enabled, do not use threading, as the separate threads would interfere each other
+		if ( runWithDuplicateAvoidance ) {
+			try {
+				result.addAll(extractPaperAuthor(input1));
+				logger.info("Finished 1 / 4");
+				result.addAll(extractPaperAuthor(input2));
+				logger.info("Finished 2 / 4");
+				result.addAll(extractPaperAuthor(input3));
+				logger.info("Finished 3 / 4");
+				result.addAll(extractPaperAuthor(input4));
+				logger.info("Finished 4 / 4");
+			} catch (Exception e) { //thread exceptions
+				logger.error("Error while gathering results!", e);
+			}
+			return result;
+		}
+
 		//setup and start those threads
 		ExecutorService executor = Executors.newFixedThreadPool(4);
 		Future<ArrayList<Paper>> f1 = executor.submit(() -> extractPaperAuthor(input1));
@@ -237,16 +265,16 @@ class ACLWebCrawler extends AbstractCrawler {
 					if(conferences.length != 0 && !shouldSavePaper(elmnt))
 						continue innerLoop; //label is not needed necessarily, but helps readability
 
-					// add Paper info
+					// add paper info
 					// clean up the titles in the form of [C18-1017] Simple Neologism Based Domain Independe...
-					// C18-1017 would be the anthology - we remove [] because the rest API dislikes the characters and they
-					// convey no meaning
+					// C18-1017 would be the anthology - we remove [] because they convey no meaning
 					String rawTitle = elmnt.text();
 					String[] splitRawTitle = rawTitle.split(" ", 2);
 					String paperTitle = splitRawTitle[1];
 					String anthology = splitRawTitle[0].replace("[", "").replace("]", "");
 
-					Paper paper = new Paper();
+					Paper paper = runWithDuplicateAvoidance ? Paper.findOrCreateDbOrList(null, paperTitle, createdPapers) : new Paper();
+					if ( runWithDuplicateAvoidance ) { createdPapers.add(paper); }
 					paper.setTitle(paperTitle);
 					paper.setAnthology(anthology);
 					paper.setRemoteLink("http://aclweb.org/anthology/" + anthology); //wow that was easy
@@ -255,13 +283,11 @@ class ACLWebCrawler extends AbstractCrawler {
 					// find authors and add them to a list
 					Elements authorElements = elmnt.parent().parent().children().select("span").select("a");
 					for (Element authorEl : authorElements) {
-						Person author = new Person();
+						Person author = runWithDuplicateAvoidance ? Person.findOrCreateDbOrList(null, authorEl.text(), createdPersons) : new Person();
+						if (runWithDuplicateAvoidance) { createdPersons.add(author); }
 
 						// because acl2018 seems to not employ prefixes (e.g. Prof. Dr.), we do not need to scan them
-						// scanning them might make for a good user story
-						author.setFullName(authorEl.text());				// Both following statements seem necessary for the author_paper table but lead to Hibernate
-						// access returning an object (paper) as often as a relation in author_paper exists
-						// looking into the tables themselves, duplicate papers (even with the same PaperID) do not exist
+						author.setFullName(authorEl.text());
 						// set paper - author relation
 						paper.addAuthor(author);
 						// set author - paper relation
@@ -339,10 +365,9 @@ class ACLWebCrawler extends AbstractCrawler {
 	}
 
 	/**
-	 * A method which returns a Conference instance with its name, location and start and end date set
-	 * scrapes the aboutPage of ACL2018 for its information and employs String conversion found in CrawlerToolset
-	 * if an IO Exception occurs, it returns an empty Conference instance
-	 * @return a Conference instance with its name, location and start and end date set
+	 * A method which returns a conference instance with its name, location and start and end date set.
+	 * Scrapes the about page of ACL2018 for its information and employs String conversion found in CrawlerToolset.
+	 * @return a conference instance with its name, location and start and end date set, an empty conference instance if an IOException occured
 	 * @throws IOException if Jsoup.connect fails
 	 * @author Julian Steitz
 	 */
@@ -360,8 +385,8 @@ class ACLWebCrawler extends AbstractCrawler {
 		String conferenceEndTimeInformation = schedulePage.select(".day-wrapper:nth-child(6) " +
 				".overview-item~ .overview-item+ .overview-item .start-time").text();
 
-		LocalTime conferenceStartTime = crawlerToolset.acl2018ConvertStringToTime(conferenceStartTimeInformation);
-		LocalTime conferenceEndTime = crawlerToolset.acl2018ConvertStringToTime(conferenceEndTimeInformation);*/
+		LocalTime conferenceStartTime = CrawlerToolset.acl2018ConvertStringToTime(conferenceStartTimeInformation);
+		LocalTime conferenceEndTime = CrawlerToolset.acl2018ConvertStringToTime(conferenceEndTimeInformation);*/
 
 		String cityCountryInformation = aboutPage.select("p:nth-child(1) a:nth-child(1)").text();
 		String dateAndLocationString = aboutPage.select(".sub-title-extra").text();
@@ -463,7 +488,7 @@ class ACLWebCrawler extends AbstractCrawler {
 	/**
 	 * Parses ACL 2018's other days' schedule
 	 * @param day The day element of the website
-	 * @param result The resulting arraylist with the complete events of the given day
+	 * @param result The arraylist to write the data into
 	 * @return The resulting arraylist with the complete events of the given day
 	 */
 	private ArrayList<ScheduleEntry> parseOtherDays(Element day, ArrayList<ScheduleEntry> result) {
@@ -491,9 +516,9 @@ class ACLWebCrawler extends AbstractCrawler {
 	/**
 	 * Adds general information about an event, such as name, timeframe, location etc.
 	 * @param el The event header element of the website
-	 * @param event The arraylist with the resulting event's information
+	 * @param event The event to write the information to
 	 * @param monthDay The month (index 0) and day (index 1) where this event happens
-	 */
+	 */ //more than 40 lines because this method does one thing (add general information about an even) and splitting it up would worsen readability
 	private void addGeneralEventInfo(Element el, Event event, String[] monthDay) {
 		//only try to extract the information when the table row is the header of an event and is not the more detailed description
 		//the header is something like "09:00-10:00 		Welcome Session & Presidential Address 			PLENARY, MCEC"
@@ -552,7 +577,7 @@ class ACLWebCrawler extends AbstractCrawler {
 	 * @param eventParts The elements containing event part information
 	 * @param rooms The elements containing room information per event part
 	 * @param presentations The elements containing the presentations per event part
-	 * @param event The arraylist with the resulting oral presentation's information
+	 * @param event The event to write the information to
 	 */
 	private void addOralPresentationInfo(Elements eventParts, Elements rooms, Elements presentations, Event event) {
 		//looping through the different columns of the OP table
@@ -569,6 +594,7 @@ class ACLWebCrawler extends AbstractCrawler {
 				LocalDateTime sessEnd = sessStart.plusMinutes(25);
 				String sessPaperTitle = subEl.selectFirst(".talk-title").text();
 
+				//set the data
 				eventPart.setTitle(evTitle);
 				event.addPaper(papers.get(sessPaperTitle));
 				eventPart.setBegin(sessStart);
@@ -582,7 +608,7 @@ class ACLWebCrawler extends AbstractCrawler {
 	/**
 	 * Adds all available information about a poster session
 	 * @param eventParts The elements containing the event part information
-	 * @param event The arraylist with the resulting poster session's information
+	 * @param event The event to add the information to
 	 */
 	private void addPosterSessionInfo(Elements eventParts, Event event) {
 		//looping through the poster sessions
@@ -599,6 +625,7 @@ class ACLWebCrawler extends AbstractCrawler {
 				event.addPaper(papers.get(paperTitle));
 			}
 
+			//set the data
 			eventPart.setTitle(evTitle);
 			eventPart.setDescription(evDesc);
 			eventPart.setBegin(event.getBegin());
