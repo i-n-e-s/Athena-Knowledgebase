@@ -59,7 +59,7 @@ public class PaperJPAAccess implements CommonAccess<Paper> {
 	 * If multiple occurrences are found in DB, return the first result
 	 *
 	 * @param toFind Paper object to get the search constraints from
-	 * @return An object from the DB with matching attributes
+	 * @return An object from the DB with matching attributes, null if no object found or no search constraint set
 	 */
 	public List<Paper> getByKnownAttributes(Paper toFind) {
 		//1. Build JPQL query for combined search

@@ -207,7 +207,7 @@ class ACLWebCrawler extends AbstractCrawler {
 		List<Document> input4 = webpages.subList(quarterSize * 3, webpages.size());
 		ArrayList<Paper> result = new ArrayList<>();
 
-		//If duplicate avoidance is enabled, do not use threading, as the
+		//If duplicate avoidance is enabled, do not use threading, as the separate threads would interfere each other
 		if ( runWithDuplicateAvoidance ) {
 			try {
 				result.addAll(extractPaperAuthor(input1));

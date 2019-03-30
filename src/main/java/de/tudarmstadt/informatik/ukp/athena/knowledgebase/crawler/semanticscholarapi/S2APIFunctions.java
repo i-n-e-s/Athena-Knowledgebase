@@ -196,13 +196,10 @@ public class S2APIFunctions {
 			return false;
 		}
 
-		//3.1 Parse JSONObject to temp Author TODO overwrite?
+		//3.1 Parse JSONObject to temp Author
 		logger.info("Start to parse:\n\n{}", response.toString());
 		parseAddS2InternalAPIAuthorJSON(author, overwrite, response);
 		logger.info("\n\ngot:\n{}\n\n", author.toString());
-
-		//3.2 Add information from temp author to original author
-		//author.complementBy(temp);
 
 		return true;
 	}
@@ -246,7 +243,7 @@ public class S2APIFunctions {
 			if( currPaper == null ) { currPaper = Paper.findOrCreate(null, title); }
 
 			//Always connect this author with paper
-			Model.connectAuthorPaper(author, currPaper);    //TODO check duplicates
+			Model.connectAuthorPaper(author, currPaper);
 
 			parseAddS2InternalAPIPaperJSON(papersJSON.getJSONObject(i), false, currPaper);
 

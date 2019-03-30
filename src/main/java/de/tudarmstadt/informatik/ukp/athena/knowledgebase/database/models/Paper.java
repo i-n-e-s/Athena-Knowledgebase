@@ -310,7 +310,6 @@ public class Paper extends Model {
 		Paper tmpQuery = new Paper();
 		tmpQuery.setTitle(title);
 		tmpQuery.setSemanticScholarID(s2id);
-		tmpQuery.setTopic("queryCreated");		//For debugging
 		return findOrCreate(tmpQuery);
 	}
 
@@ -323,10 +322,12 @@ public class Paper extends Model {
 	 * @return A matching paper from the list or the DB, or a new paper
 	 */
 	public static Paper findOrCreateDbOrList(String s2id, String title, List<Paper> list) {
-		List<Paper> result = list.stream().filter( currPaper -> !(
+		//Filter out any paper who does not have either a matching SemanticScholarID or matching title
+		List<Paper> result = list.stream().filter( currPaper -> (
 				( currPaper.getSemanticScholarID() != null && currPaper.getSemanticScholarID().equals(s2id)) ||
 				( currPaper.getTitle() != null && currPaper.getTitle().equals(title) ))).collect(Collectors.toList());
 
+		//Result now contains only persons with either matching SemanticScholarID or matching name
 		return result.size() > 0 ? result.get(0) : findOrCreate(s2id, title);
 	}
 

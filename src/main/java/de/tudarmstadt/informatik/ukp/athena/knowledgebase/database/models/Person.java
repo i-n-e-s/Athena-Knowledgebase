@@ -430,7 +430,6 @@ public class Person extends Model {
 			Person query = new Person();
 			query.setFullName(fullName);
 			query.setSemanticScholarID(s2id);
-			query.setPrefix("QueryCreated");	//For debugging
 			return findOrCreate(query);
 		}
 		else if ( fullName == null ) { searchResult = filer.getBySemanticScholarID(s2id); }
@@ -448,10 +447,12 @@ public class Person extends Model {
 	 * @return A matching person from the List or the DB, or a new person
 	 */
 	public static Person findOrCreateDbOrList(String s2id, String fullName, List<Person> list) {
-		List<Person> result = list.stream().filter( currPers -> !(
+		//Filter out any person who does not have either a matching SemanticScholarID or matching name
+		List<Person> result = list.stream().filter( currPers -> (
 				( currPers.getSemanticScholarID() != null && currPers.getSemanticScholarID().equals(s2id)) ||
 				( currPers.getFullName() != null && currPers.getFullName().equals(fullName)))).collect(Collectors.toList());
 
+		//Result now contains only persons with either matching SemanticScholarID or matching name
 		return result.size() > 0 ? result.get(0) : findOrCreate(s2id, fullName);
 	}
 
