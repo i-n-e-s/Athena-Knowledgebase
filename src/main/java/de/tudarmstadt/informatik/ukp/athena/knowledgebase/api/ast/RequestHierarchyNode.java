@@ -7,7 +7,7 @@ public class RequestHierarchyNode extends BaseNode {
 	private RequestEntityNode entity;
 
 	/**
-	 * @see {@link BaseNode#BaseNode(int) BaseNode}
+	 * @see BaseNode#BaseNode(int)
 	 */
 	public RequestHierarchyNode(int tokenIndex) {
 		super(tokenIndex);

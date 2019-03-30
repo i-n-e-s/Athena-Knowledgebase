@@ -7,7 +7,7 @@ public class AttributeNode extends BaseNode {
 	protected StringNode name;
 
 	/**
-	 * @see {@link BaseNode#BaseNode(int) BaseNode}
+	 * @see BaseNode#BaseNode(int)
 	 */
 	protected AttributeNode(int tokenIndex) {
 		super(tokenIndex);

@@ -11,7 +11,7 @@ public class RequestEntityNode extends BaseNode {
 	private final List<AttributeNode> attributes = new ArrayList<>();
 
 	/**
-	 * @see {@link BaseNode#BaseNode(int) BaseNode}
+	 * @see BaseNode#BaseNode(int)
 	 */
 	public RequestEntityNode(int tokenIndex) {
 		super(tokenIndex);

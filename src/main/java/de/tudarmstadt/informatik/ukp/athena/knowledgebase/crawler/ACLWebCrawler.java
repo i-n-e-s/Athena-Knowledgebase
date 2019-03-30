@@ -427,7 +427,7 @@ class ACLWebCrawler extends AbstractCrawler {
 	 * Parses ACL 2018's first days' schedule (seperate method because it contains a special case)
 	 * @param day The day element of the website
 	 * @param result The resulting arraylist with the complete events of the first day
-	 * @return An ArrayList<ScheduleEntry> containing the first days' schedule
+	 * @return An ArrayList containing the first days' schedule
 	 */
 	private ArrayList<ScheduleEntry> parseFirstDay(Element day, ArrayList<ScheduleEntry> result) {
 		String[] monthDay = day.selectFirst(".day").text().split(":")[1].trim().split(" "); //the text has the form of "Sunday: July 15"

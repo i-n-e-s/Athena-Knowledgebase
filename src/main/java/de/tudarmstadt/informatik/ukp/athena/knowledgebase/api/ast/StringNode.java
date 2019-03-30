@@ -7,7 +7,7 @@ public class StringNode extends BaseNode {
 	private String string;
 
 	/**
-	 * @see {@link BaseNode#BaseNode(int) BaseNode}
+	 * @see BaseNode#BaseNode(int)
 	 */
 	public StringNode(int tokenIndex) {
 		super(tokenIndex);

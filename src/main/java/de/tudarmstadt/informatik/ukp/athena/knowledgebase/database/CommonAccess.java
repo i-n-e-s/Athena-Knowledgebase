@@ -7,7 +7,7 @@ import java.util.List;
  * as it demands implementation of basic database access functionality.
  *
  * @author Tristan Wettich
- * @param <T> The model-class and respective table to be accessed
+ * @param T The model-class and respective table to be accessed
  */
 public interface CommonAccess<T> {
 

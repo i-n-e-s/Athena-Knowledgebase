@@ -13,7 +13,7 @@ public class RequestNode extends BaseNode {
 	private RequestFunction function = RequestFunction.NONE;
 
 	/**
-	 * @see {@link BaseNode#BaseNode(int) BaseNode}
+	 * @see BaseNode#BaseNode(int)
 	 */
 	public RequestNode(int tokenIndex) {
 		super(tokenIndex);

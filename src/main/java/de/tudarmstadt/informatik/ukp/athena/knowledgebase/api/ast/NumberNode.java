@@ -7,7 +7,7 @@ public class NumberNode extends BaseNode {
 	private int number;
 
 	/**
-	 * @see {@link BaseNode#BaseNode(int) BaseNode}
+	 * @see BaseNode#BaseNode(int)
 	 */
 	public NumberNode(int tokenIndex) {
 		super(tokenIndex);

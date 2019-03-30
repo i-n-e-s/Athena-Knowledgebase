@@ -7,7 +7,7 @@ public class StringAttributeNode extends AttributeNode {
 	private StringNode value;
 
 	/**
-	 * @see {@link AttributeNode #AttributeNode(int, StringNode) AttributeNode}
+	 * @see AttributeNode#AttributeNode(int)
 	 */
 	public StringAttributeNode(int tokenIndex) {
 		super(tokenIndex);
