@@ -207,6 +207,7 @@ public class S2APIFunctions {
 	/**
 	 * Helper method called in {@link S2APIFunctions#completeAuthorInformationByAuthorSearch}
 	 * Gets the JSONObject returned by the author search and adds the attributes to the given person object
+	 * This function exceeds the limit of 40 lines, because of the empty lines, the removal of which would decrease the readability
 	 * @param author The object to add the info to
 	 * @param overwrite true if already set attributes should be overwritten with Semantic Scholar's data, false to only set null attributes
 	 * @param authorSearchResponse response to an author search as JSONObject

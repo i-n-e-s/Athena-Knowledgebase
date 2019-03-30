@@ -425,7 +425,7 @@ public class Person extends Model {
 	public static Person findOrCreate(String s2id, String fullName) {
 		PersonJPAAccess filer = new PersonJPAAccess();
 		Person searchResult = null;
-		if ( s2id == null && fullName == null ) { return null; }
+		if ( s2id == null && fullName == null ) { return new Person(); }
 		else if ( s2id != null && fullName != null ) {
 			Person query = new Person();
 			query.setFullName(fullName);
