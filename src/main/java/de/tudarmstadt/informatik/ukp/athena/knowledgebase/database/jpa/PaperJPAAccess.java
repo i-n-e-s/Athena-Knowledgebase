@@ -62,7 +62,6 @@ public class PaperJPAAccess implements CommonAccess<Paper> {
 	 * @return An object from the DB with matching attributes
 	 */
 	public List<Paper> getByKnownAttributes(Paper toFind) {
-
 		//1. Build JPQL query for combined search
 		String query = "SELECT c FROM Paper c WHERE ";
 		boolean addedConstraint = false;
@@ -127,7 +126,7 @@ public class PaperJPAAccess implements CommonAccess<Paper> {
 	 *
 	 * @author Philipp Emmer
 	 * @param title The title of the wanted paper object to search
-	 * @return DB entry of Paper with matching S2ID, null if not found
+	 * @return DB entry of paper with matching S2ID, null if not found
 	 */
 	public Paper getByTitle( String title ) {
 		//1. Build JPQL query

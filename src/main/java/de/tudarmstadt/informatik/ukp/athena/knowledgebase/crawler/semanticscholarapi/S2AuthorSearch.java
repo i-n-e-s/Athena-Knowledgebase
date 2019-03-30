@@ -34,7 +34,7 @@ public class S2AuthorSearch extends SemanticScholarAPIRequest {
 
 	/**
 	 * Sets the name of the author to be looked up.
-	 * Has a lower priority than the s2authorID (see set23id)
+	 * Has a lower priority than the s2authorID (see setS2id)
 	 *
 	 * @param name The name of the selected author
 	 */
@@ -148,8 +148,6 @@ public class S2AuthorSearch extends SemanticScholarAPIRequest {
 	 */
 	@Override
 	public void run() throws IOException {
-
-
 		//Prepare (find ID & expectedAmountOfPapers) if necessary
 		if ( this.s2id == null || this.expectedAmountOfPapers < 0 ) {
 			try { this.prepare(); }
@@ -161,7 +159,7 @@ public class S2AuthorSearch extends SemanticScholarAPIRequest {
 		}
 
 		//Create data payload of POST request, containing search parameters
-		String searchPayLoad = createSearchPayload();
+		String searchPayload = createSearchPayload();
 
 		//Create URL for general search request
 		String href = semanticScholarInternalApiUrl + "/author/" + this.s2id;
@@ -185,17 +183,16 @@ public class S2AuthorSearch extends SemanticScholarAPIRequest {
 		connection.setRequestProperty("User-Agent", userAgentString);
 
 		//Write search payload to server (BODY of POST request)
-		writeStringToServer(searchPayLoad, connection);
+		writeStringToServer(searchPayload, connection);
 
 		//Convert received JSON to String
 		this.rawResponse = readResponseInputStreamToString(connection);
-
 		this.httpResponseCode = Integer.toString(connection.getResponseCode());
 		this.validDataIsReady = true;
 	}
 
 	/**
-	 * Creates the Data Payload for the POST request of the search
+	 * Creates the data payload for the POST request of the search
 	 * Look here for fine tuning of the search parameters
 	 *
 	 * @return The JSON formatted payload String

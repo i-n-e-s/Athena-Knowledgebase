@@ -1,7 +1,6 @@
 package de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -70,10 +69,6 @@ public class Paper extends Model {
 	@Column(name = "amountOfCitations")
 	private long amountOfCitations = -1;    //-1 if not known yet
 
-	//	Removed all code concerning quotations and alike. Too time consuming right now.
-
-	//	TODO: Metadata?
-
 	/**
 	 * Get this paper's ID
 	 * @return This paper's ID
@@ -82,7 +77,6 @@ public class Paper extends Model {
 		return paperID;
 	}
 
-	// TODO: Rename to getPersons after Testbench integration?
 	/**
 	 * Gets this paper's authors
 	 * @return A Set of this paper's authors
@@ -91,7 +85,6 @@ public class Paper extends Model {
 		return persons;
 	}
 
-	// TODO: Rename to setPersons after Testbench integration?
 	/**
 	 * Sets this paper's authors
 	 * @param authors The new authors of this paper
@@ -100,7 +93,6 @@ public class Paper extends Model {
 		this.persons = authors;
 	}
 
-	// TODO: Rename to addPerson after Testbench integration?
 	/**
 	 * Adds an author to this paper's author list
 	 * @param author The author to add
@@ -272,7 +264,7 @@ public class Paper extends Model {
 
 	/**
 	 * Gets the amount of papers this paper is cited in
-	 * @return the amount of citations
+	 * @return the amount of citations, -1 if not known
 	 */
 	public Long getAmountOfCitations() {
 		return amountOfCitations;
@@ -325,15 +317,15 @@ public class Paper extends Model {
 
 	/**
 	 * Same as {@link Paper#findOrCreate(String, String)}, but also searches in given list
-	 * @param s2id SemanticScholarID of searched Paper
-	 * @param title Title of searched Paper
+	 * @param s2id Semantic Scholar id of the paper to search
+	 * @param title Title of the paper to seach
 	 * @param list List to be searched
-	 * @return A matching paper from the List or the DB, or a new Paper
+	 * @return A matching paper from the list or the DB, or a new paper
 	 */
 	public static Paper findOrCreateDbOrList(String s2id, String title, List<Paper> list) {
 		List<Paper> result = list.stream().filter( currPaper -> !(
-						( currPaper.getSemanticScholarID() != null && currPaper.getSemanticScholarID().equals(s2id)) ||
-						( currPaper.getTitle() != null && currPaper.getTitle().equals(title) ))).collect(Collectors.toList());
+				( currPaper.getSemanticScholarID() != null && currPaper.getSemanticScholarID().equals(s2id)) ||
+				( currPaper.getTitle() != null && currPaper.getTitle().equals(title) ))).collect(Collectors.toList());
 
 		return result.size() > 0 ? result.get(0) : findOrCreate(s2id, title);
 	}

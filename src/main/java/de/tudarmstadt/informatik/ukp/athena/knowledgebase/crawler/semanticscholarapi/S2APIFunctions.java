@@ -86,7 +86,7 @@ public class S2APIFunctions {
 	private static ArrayList<Paper> parseS2PaperSearchJSONArrayToPaperArrayList(JSONArray paperJSONarr) {
 		ArrayList<Paper> paperList = new ArrayList<>();
 
-		//Add every Paper returned in the JSONObject
+		//Add every paper returned in the JSONObject
 		for (int i = 0; i < paperJSONarr.length(); i++) {
 			String title = null;
 			String s2id = null;
@@ -100,10 +100,10 @@ public class S2APIFunctions {
 				title = cSR.getString("title");
 			}
 
-			//Create Paper, if it doesn't exist in the DB already
+			//Create paper, if it doesn't exist in the DB already
 			Paper currPaper = Paper.findOrCreate(s2id, title);
 
-			//Set Attributes at paper
+			//Set attributes at paper
 			if ( s2id != null ) { currPaper.setSemanticScholarID(s2id); }
 			if ( title != null ) { currPaper.setTitle(title); }
 
@@ -215,13 +215,13 @@ public class S2APIFunctions {
 	 * @param authorSearchResponse response to an author search as JSONObject
 	 */
 	private static void parseAddS2InternalAPIAuthorJSON(Person author, boolean overwrite, JSONObject authorSearchResponse) {
-		//1 Set authors S2ID
+		//1.1 Set author's S2ID
 		if( author.getSemanticScholarID() == null || overwrite ) {
 			String foundS2ID = authorSearchResponse.getJSONObject("author").getString("id");
 			author.setSemanticScholarID(foundS2ID);
 		}
 
-		//1.1 Set authors Name
+		//1.2 Set author's name
 		if( author.getFullName() == null || overwrite ) {
 			String foundName = authorSearchResponse.getJSONObject("author").getString("name");
 			author.setFullName(foundName);
@@ -384,7 +384,7 @@ public class S2APIFunctions {
 
 		//Add authors
 		JSONArray authorsJSON = paperJSON.getJSONArray("authors");
-		for (int i = 0; i < authorsJSON.length(); i++) {                         //Add every author to the paper
+		for (int i = 0; i < authorsJSON.length(); i++) { //Add every author to the paper
 
 			String name, s2id;
 			try {
