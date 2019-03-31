@@ -267,7 +267,7 @@ public class Person extends Model {
 	 * @return The top 5 of authors that influenced this author as an ArrayList
 	 */
 	public ArrayList<Person> getTop5influencedBy() {
-		ArrayList<Person> ret = new ArrayList<Person>();
+		ArrayList<Person> ret = new ArrayList<>();
 		if(this.top1influencedBy != null) { ret.add(this.top1influencedBy); }
 		if(this.top2influencedBy != null) { ret.add(this.top2influencedBy); }
 		if(this.top3influencedBy != null) { ret.add(this.top3influencedBy); }
@@ -328,7 +328,7 @@ public class Person extends Model {
 	 * @return The top 5 of authors that were influenced by this author as an ArrayList
 	 */
 	public ArrayList<Person> getTop5influenced() {
-		ArrayList<Person> ret = new ArrayList<Person>();
+		ArrayList<Person> ret = new ArrayList<>();
 		if(this.top1influenced != null) { ret.add(this.top1influenced); }
 		if(this.top2influenced != null) { ret.add(this.top2influenced); }
 		if(this.top3influenced != null) { ret.add(this.top3influenced); }

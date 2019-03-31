@@ -77,7 +77,7 @@ public class WorkshopJPAAccessTest {
 	public void getTest() {
 		List<Workshop> resultList = uut.get();
 		assertTrue(testDB.getWorkshopQuantity() == resultList.size());
-		List<String> resultTitles = new ArrayList<String>();
+		List<String> resultTitles = new ArrayList<>();
 		resultList.stream().forEach((Workshop s) -> resultTitles.add(s.getTitle()));;
 		for (int i = 0; i < testDB.getWorkshopQuantity(); i++) {
 			assertTrue(resultTitles.contains("Title"+ i));

@@ -14,7 +14,7 @@ public class PersistenceManager {
 	private static final EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("hibernate");
 
 	static EntityManager entityManager;
-	
+
 	/**
 	 * Get the Hibernate-SessionFactory.
 	 * @return the SessionFactory

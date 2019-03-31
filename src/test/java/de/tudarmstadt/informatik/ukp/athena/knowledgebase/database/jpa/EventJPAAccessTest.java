@@ -87,7 +87,7 @@ public class EventJPAAccessTest {
 	public void getTest() {
 		List<Event> resultList = uut.get();
 		assertTrue(testDB.getEventQuantity() == resultList.size());
-		List<String> resultTitles = new ArrayList<String>();
+		List<String> resultTitles = new ArrayList<>();
 		resultList.stream().forEach((Event s) -> resultTitles.add(s.getTitle()));;
 		for (int i = 0; i < testDB.getEventQuantity(); i++) {
 			assertTrue(resultTitles.contains("Title"+ i));

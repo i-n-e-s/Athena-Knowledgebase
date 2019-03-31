@@ -101,7 +101,7 @@ public class ParsedDataInserter {
 
 		parsedDataInserter = new ParsedDataInserter(beginYear, endYear, conferences);
 
-        //only scrape if respective argument was found
+		//only scrape if respective argument was found
 		if(argsList.contains("-scrape-paper-author")) {
 			try {
 				logger.info("Scraping years {} through {} - this can take a couple of minutes...", beginYear, endYear);

@@ -25,7 +25,7 @@ public class Institution extends Model {
 	private String name;
 
 	@OneToMany(mappedBy = "institution")
-	private Set<Person> persons = new HashSet<Person>();
+	private Set<Person> persons = new HashSet<>();
 
 	/**
 	 * Gets the institution's institutionID.

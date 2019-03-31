@@ -81,7 +81,7 @@ public class PersonJPAAccessTest {
 	public void getTest() {
 		List<Person> resultList = uut.get();
 		assertTrue(testDB.getAuthorQuantity() == resultList.size());
-		List<String> resultTitles = new ArrayList<String>();
+		List<String> resultTitles = new ArrayList<>();
 		resultList.stream().forEach((Person p) -> resultTitles.add(p.getFullName()));;
 		for (int i = 0; i < testDB.getAuthorQuantity(); i++) {
 			assertTrue(resultTitles.contains("Author "+ i));

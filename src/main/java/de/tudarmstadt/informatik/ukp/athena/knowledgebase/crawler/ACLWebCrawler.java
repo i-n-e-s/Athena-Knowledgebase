@@ -84,7 +84,7 @@ class ACLWebCrawler extends AbstractCrawler {
 	 */
 	private ArrayList<Document> fetchWebpages(String startURL) throws IOException {
 		logger.info("Fetching webpages starting from \"{}\"...", startURL);
-		ArrayList<Document> docs = new ArrayList<Document>();
+		ArrayList<Document> docs = new ArrayList<>();
 		docs.add(JsoupHelper.connect(startURL));
 		// find link to next page, if not found end loop
 		boolean nextSiteExist = true;

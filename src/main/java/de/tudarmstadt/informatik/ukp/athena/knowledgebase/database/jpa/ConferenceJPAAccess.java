@@ -17,6 +17,7 @@ public class ConferenceJPAAccess implements CommonAccess<Conference> {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public void add(Conference data) {
 		EntityManager entityManager = PersistenceManager.getEntityManager();
 

@@ -91,7 +91,7 @@ public abstract class Model {
 	 * @return All fields declared in the class hierarchy between the given object and model
 	 */
 	private Field[] getAllFields(Model model) {
-		ArrayList<Field> returnValue = new ArrayList<Field>();
+		ArrayList<Field> returnValue = new ArrayList<>();
 		Class<? extends Model> currentClass = model.getClass();
 		while (!currentClass.getName().endsWith(".Model")) {
 			Field[] fields = currentClass.getDeclaredFields();

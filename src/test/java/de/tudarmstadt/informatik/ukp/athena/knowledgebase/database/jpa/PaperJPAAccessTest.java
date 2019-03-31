@@ -69,7 +69,7 @@ public class PaperJPAAccessTest {
 	public void getTest() {
 		List<Paper> resultList = uut.get();
 		assertTrue(testDB.getPaperQuantity() == resultList.size());
-		List<String> resultTitles = new ArrayList<String>();
+		List<String> resultTitles = new ArrayList<>();
 		resultList.stream().forEach((Paper p) -> resultTitles.add(p.getTitle()));;
 		for (int i = 0; i < testDB.getPaperQuantity(); i++) {
 			assertTrue(resultTitles.contains("Title"+ i));

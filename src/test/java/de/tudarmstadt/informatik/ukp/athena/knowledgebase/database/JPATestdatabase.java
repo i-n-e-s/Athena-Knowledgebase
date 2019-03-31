@@ -192,7 +192,7 @@ public class JPATestdatabase {
 		}
 
 		for(int i = 0; i < workshops.length; i++) {
-			HashSet<Event> events = new HashSet<Event>();
+			HashSet<Event> events = new HashSet<>();
 
 			events.add(this.events[i]);
 			workshops[i] = new Workshop();
@@ -235,7 +235,7 @@ public class JPATestdatabase {
 	 * @return 1-3 Authors for a paper
 	 */
 	private HashSet<Person> findAuthorsForPaper(Person[] authors, int paperidx){
-		HashSet<Person> result = new HashSet<Person>();
+		HashSet<Person> result = new HashSet<>();
 		Person author1 = authors[(paperidx*1) %authors.length];
 		Person author2 = authors[(paperidx*2) %authors.length];
 		Person author3 = authors[(paperidx*3) %authors.length];
