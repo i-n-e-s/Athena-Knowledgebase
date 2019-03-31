@@ -197,7 +197,8 @@ public class S2APIFunctions {
 		}
 
 		//3.1 Parse JSONObject to temp Author
-		logger.info("Start to parse:\n\n{}", response.toString());
+		logger.info("Starting to parse response");
+		logger.debug("\n{}", response.toString()); //debug so it doesn't fill the log
 		parseAddS2InternalAPIAuthorJSON(author, overwrite, response);
 		logger.info("\n\ngot:\n{}\n\n", author.toString());
 
