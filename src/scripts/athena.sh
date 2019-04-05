@@ -16,7 +16,7 @@
 # jar file and passing the rest to the jar.
 # Reports failure if jar is not found.
 function start() {
-	if [ -f $1 && ${1: -4} == ".jar" ]; then
+	if [[ -f $1 && ${1: -4} == ".jar" ]]; then
 		nohup java -jar "${@:1}" > athena_srv.log 2>&1 &
 		echo $! > athena_pid.txt
 	else
