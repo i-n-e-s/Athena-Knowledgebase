@@ -6,6 +6,8 @@ import java.util.function.BiFunction;
 
 import javax.persistence.Query;
 
+import org.json.JSONException;
+
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.crawler.semanticscholarapi.S2APIFunctions;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Paper;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Person;
@@ -35,7 +37,7 @@ public enum RequestFunction
 					try {
 						S2APIFunctions.completePaperInformationByGeneralSearch((Paper)o, true);
 					}
-					catch(IOException e) {}
+					catch(IOException | JSONException e) {}
 				}
 
 				break;
@@ -44,7 +46,7 @@ public enum RequestFunction
 					try {
 						S2APIFunctions.completeAuthorInformationByAuthorSearch((Person)o, true);
 					}
-					catch(IOException e) {}
+					catch(IOException | JSONException e) {}
 				}
 
 				break;

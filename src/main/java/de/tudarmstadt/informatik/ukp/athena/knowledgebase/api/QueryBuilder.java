@@ -30,17 +30,18 @@ public class QueryBuilder {
 	 * @param tree The request tree to build the request from, non-null
 	 * @return The generated query
 	 */ //size of 40 lines is exceeded in favor of readability (=> normalEntityName, entityName, entityVar etc. could be removed to meet the requirement)
-	public Query build(RequestNode tree) {
+//	public Query build(RequestNode tree) {
+	public ArrayList build(RequestNode tree) {
 		List<String> queryList = new ArrayList<>();
 		Map<String,Object> jpqlVars = new HashMap<>(); //replace key with value later, this is user input
 		String previousEntityVar = null; //used for hierarchical relationship
 
-		queryList.add("SELECT");
-
-		if(tree.getFunction() == RequestFunction.COUNT)
-			queryList.add("count(:entityVar)");
-		else
-			queryList.add(":entityVar"); //when initially building the query, it's not known which entity is placed last in the request
+//		queryList.add("SELECT");
+//
+//		if(tree.getFunction() == RequestFunction.COUNT)
+//			queryList.add("count(:entityVar)");
+//		else
+//			queryList.add(":entityVar"); //when initially building the query, it's not known which entity is placed last in the request
 
 		queryList.add("FROM");
 
@@ -57,7 +58,7 @@ public class QueryBuilder {
 				queryList.add(entityName + " " + entityVar);
 			else //normal entity name because it's the name of the field
 				queryList.add("JOIN " + previousEntityVar + "." + normalEntityName + "s" + " " + entityVar); //TODO: this s is for the plural form, might want to rename the corresponding columns to singular just to not have to handle multiple plural forms in the future
-
+			
 			previousEntityVar = entityVar;
 		}
 
@@ -75,6 +76,14 @@ public class QueryBuilder {
 				String jpqlVar = entityVar + "_" + attrName; //used later to replace with actual user input after it was automatically sanitized
 
 				queryList.add(entityVar + "." + attrName + "=:" + jpqlVar);
+
+//				queryList.add(entityVar + "." + attrName + ">=:" + jpqlVar);
+//				queryList.add("ORDER BY " + entityVar + "." + attrName + " ASC");
+				
+//				queryList.add(entityVar + "." + attrName);
+//				queryList.add("LIKE");
+//				queryList.add(":" + jpqlVar);
+				
 				setAttributeCorrectly(attr, jpqlVars, jpqlVar);
 				queryList.add("and");
 			}
@@ -83,7 +92,15 @@ public class QueryBuilder {
 		if(queryList.get(queryList.size() - 1).equals("and")) //remove the last and if there is one
 			queryList.remove(queryList.size() - 1);
 
-		return createQuery(queryList, jpqlVars);
+//		System.out.println("*********************");
+//		System.out.println(queryList);
+//		System.out.println("*********************");
+		
+//		return createQuery(queryList, jpqlVars);
+		ArrayList ret = new ArrayList();
+		ret.add(queryList);
+		ret.add(jpqlVars);
+		return ret; 
 	}
 
 	/**
@@ -94,8 +111,12 @@ public class QueryBuilder {
 	 */
 	private void setAttributeCorrectly(AttributeNode attr, Map<String,Object> jpqlVars, String jpqlVar) {
 		//nothing extra needs to be done for a string node other than assigning its value to the the jpql var
-		if(attr instanceof StringAttributeNode)
-			jpqlVars.put(jpqlVar, ((StringAttributeNode)attr).getValue().getString());
+		if(attr instanceof StringAttributeNode) {
+			String val = ((StringAttributeNode)attr).getValue().getString();
+//			val = val + "%"; // "%" +   
+//			System.out.println(val);
+			jpqlVars.put(jpqlVar, val); // ((StringAttributeNode)attr).getValue().getString());
+		}
 		//construct the jpql value for the number node from the numbers
 		else if(attr instanceof NumberAttributeNode) {
 			List<NumberNode> numbers = ((NumberAttributeNode)attr).getNumbers();
@@ -125,7 +146,8 @@ public class QueryBuilder {
 	 * @param jpqlVars The variable -> value mappings for JPQL variables. The values are user input and will be sanitized by this method, non-null
 	 * @return The created query
 	 */
-	private Query createQuery(List<String> queryList,  Map<String,Object> jpqlVars) {
+//	private Query createQuery(List<String> queryList,  Map<String,Object> jpqlVars) {
+	Query createQuery(List<String> queryList,  Map<String,Object> jpqlVars) {
 		String qlString = "";
 
 		for(String s : queryList) { //build the complete query string
@@ -135,10 +157,11 @@ public class QueryBuilder {
 		//set the :entityVar variable manually as parameters are not supported in the SELECT part
 		if(jpqlVars.containsKey(":entityVar"))
 			qlString = qlString.replace(":entityVar", (String)jpqlVars.remove(":entityVar")); //remove returns the previously associated value as well
-
+			
 		Query query = entityManager.createQuery(qlString); //create the base query
 
 		//sanitize user input
+		System.out.println("jpqlVars: " + jpqlVars.toString());
 		for(String key : jpqlVars.keySet()) {
 			query = query.setParameter(key, jpqlVars.get(key));
 		}
