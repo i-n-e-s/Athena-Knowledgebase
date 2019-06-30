@@ -11,6 +11,7 @@ import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.api.APIController;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.JSONException;
@@ -34,6 +35,7 @@ import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Paper;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Person;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.ScheduleEntry;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Workshop;
+
 
 @SpringBootApplication
 /**
@@ -72,6 +74,7 @@ public class ParsedDataInserter {
 
 	//length of 40 lines exceeded because this is all one startup sequence which manages everything
 	public static void main(String[] args) {
+
 		long then = System.nanoTime();
 		SpringApplication.run(ParsedDataInserter.class, args);
 		ParsedDataInserter parsedDataInserter;

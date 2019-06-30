@@ -1,6 +1,11 @@
 package de.tudarmstadt.informatik.ukp.athena.knowledgebase.crawler;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -17,6 +22,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 
+import org.allenai.scienceparse.ExtractedMetadata;
+import org.allenai.scienceparse.Parser;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jsoup.Connection;
@@ -61,7 +68,7 @@ class ACLWebCrawler extends AbstractCrawler {
 	// To prevent interferences between threads, parallelization is disabled
 	// This decelerates the parsing process significantly and may be quite unstable.
 	// Use with caution
-	private boolean runWithDuplicateAvoidance = false;
+	private boolean runWithDuplicateAvoidance = true;
 
 	/**
 	 * Only parses in the given year range. If only one year is needed, use the same
@@ -343,64 +350,64 @@ class ACLWebCrawler extends AbstractCrawler {
 		return paperList;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public ArrayList<Paper> getPaperAuthor() throws IOException {
-		logger.info("Gathering all paper author relationships...");
-		List<Document> webpages = fetchWebpages(startURLPaper);
-		logger.info("Preparing data and starting 4 scraper threads...");
-		// in the following lines the list gets split into 4 roughly equal parts so that
-		// each list part can be handled in a seperate thread (it's faster this way)
-		int quarterSize = (int) Math.ceil(webpages.size() / 4);
-		List<Document> input1 = webpages.subList(0, quarterSize);
-		List<Document> input2 = webpages.subList(quarterSize, quarterSize * 2);
-		List<Document> input3 = webpages.subList(quarterSize * 2, quarterSize * 3);
-		List<Document> input4 = webpages.subList(quarterSize * 3, webpages.size());
-		ArrayList<Paper> result = new ArrayList<>();
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ArrayList<Paper> getPaperAuthor() throws IOException {
+        logger.info("Gathering all paper author relationships...");
+        List<Document> webpages = fetchWebpages(startURLPaper);
+        logger.info("Preparing data and starting 4 scraper threads...");
+        //in the following lines the list gets split into 4 roughly equal parts so that each list part can be handled in a seperate thread (it's faster this way)
+        //int quarterSize = (int) Math.ceil(webpages.size() / 4);
+        //List<Document> input1 = webpages.subList(0, quarterSize);
+        //List<Document> input2 = webpages.subList(quarterSize, quarterSize * 2);
+        //List<Document> input3 = webpages.subList(quarterSize * 2, quarterSize * 3);
+        //List<Document> input4 = webpages.subList(quarterSize * 3, webpages.size());
+        ArrayList<Paper> result = new ArrayList<>();
 
-		// If duplicate avoidance is enabled, do not use threading, as the separate
-		// threads would interfere each other
-		if (runWithDuplicateAvoidance) {
-			try {
-				result.addAll(extractPaperAuthor(input1));
-				logger.info("Finished 1 / 4");
-				result.addAll(extractPaperAuthor(input2));
-				logger.info("Finished 2 / 4");
-				result.addAll(extractPaperAuthor(input3));
-				logger.info("Finished 3 / 4");
-				result.addAll(extractPaperAuthor(input4));
-				logger.info("Finished 4 / 4");
-			} catch (Exception e) { // thread exceptions
-				logger.error("Error while gathering results!", e);
-			}
-			return result;
-		}
 
-		// setup and start those threads
-		ExecutorService executor = Executors.newFixedThreadPool(4);
-		Future<ArrayList<Paper>> f1 = executor.submit(() -> extractPaperAuthor(input1));
-		Future<ArrayList<Paper>> f2 = executor.submit(() -> extractPaperAuthor(input2));
-		Future<ArrayList<Paper>> f3 = executor.submit(() -> extractPaperAuthor(input3));
-		Future<ArrayList<Paper>> f4 = executor.submit(() -> extractPaperAuthor(input4));
-		logger.info("Waiting for thread results...");
+        //If duplicate avoidance is enabled, do not use threading, as the separate threads would interfere each other
+        if (runWithDuplicateAvoidance) {
+            try {
+                result.addAll(extractPaperAuthor(webpages));
+                //logger.info("Finished 1 / 4");
+                //result.addAll(extractPaperAuthor(input2));
+                //logger.info("Finished 2 / 4");
+                //result.addAll(extractPaperAuthor(input3));
+                //logger.info("Finished 3 / 4");
+                //result.addAll(extractPaperAuthor(input4));
+                //logger.info("Finished 4 / 4");
+            } catch (Exception e) { //thread exceptions
+                logger.error("Error while gathering results!", e);
+            }
+            return result;
+        }
 
-		// wait for the thread results and add all of those to the result list (.get()
-		// is blocking)
-		try {
-			result.addAll(f1.get());
-			result.addAll(f2.get());
-			result.addAll(f3.get());
-			result.addAll(f4.get());
-			logger.info("Done gathering all paper and author results!");
-		} catch (Exception e) { // thread exceptions
-			logger.error("Error while gathering results!", e);
-		}
+        //setup and start those threads
+        /*ExecutorService executor = Executors.newFixedThreadPool(4);
+        Future<ArrayList<Paper>> f1 = executor.submit(() -> extractPaperAuthor(input1));
+        Future<ArrayList<Paper>> f2 = executor.submit(() -> extractPaperAuthor(input2));
+        Future<ArrayList<Paper>> f3 = executor.submit(() -> extractPaperAuthor(input3));
+        Future<ArrayList<Paper>> f4 = executor.submit(() -> extractPaperAuthor(input4));
+        logger.info("Waiting for thread results...");
 
-		executor.shutdown();
-		return result;
-	}
+        //wait for the thread results and add all of those to the result list (.get() is blocking)
+        try {
+            result.addAll(f1.get());
+            result.addAll(f2.get());
+            result.addAll(f3.get());
+            result.addAll(f3.get());
+            result.addAll(f4.get());
+            System.out.println("In get Paper Author: " + result.get(0).getPaperAbstract());
+            logger.info("Done gathering all paper and author results!");
+        } catch (Exception e) { //thread exceptions
+            logger.error("Error while gathering results!", e);
+        }
+
+        executor.shutdown();*/
+        return result;
+    }
 
 	/**
 	 * Extracts all papers and authors from a given list of webpages, which are in
@@ -413,6 +420,13 @@ class ACLWebCrawler extends AbstractCrawler {
 	private ArrayList<Paper> extractPaperAuthor(List<Document> webpages) {
 		logger.info("Scraping webpages for paper author relationships...");
 		ArrayList<Paper> paperList = new ArrayList<>();
+		org.allenai.scienceparse.Parser parser = null;
+
+		try {
+			parser = Parser.getInstance();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		for (Document doc : webpages) {
 			// Elements paperListElements = doc.select("h5.index_title");
 			// innerLoop: for (Element elmnt : paperListElements) {
@@ -441,9 +455,25 @@ class ACLWebCrawler extends AbstractCrawler {
 
 				paper.setTitle(paperTitle);
 				paper.setAnthology(anthology);
-				paper.setRemoteLink("http://aclweb.org/anthology/" + anthology); // wow that was easy
+				String remoteLink = "http://aclweb.org/anthology/" + anthology;
+				paper.setRemoteLink(remoteLink); // wow that was easy
 				paper.setReleaseDate(extractPaperRelease(doc));
-
+				try {
+					ExtractedMetadata meDa = scienceParse(parser, new URL(remoteLink));
+					if(meDa == null) continue;
+					String plaintext = "";
+					for (org.allenai.scienceparse.Section sec : meDa.sections) {
+						plaintext = plaintext + sec.text;
+					}
+					paper.setPaperPlainText(plaintext);
+					paper.setPaperAbstract(meDa.abstractText);
+					//im allenai parser zwischenergebnisse abfangen und pdfs schließen
+					//treffen Mittwoch 10:00
+				} catch (MalformedURLException e) {
+					System.out.println("Parser abgestuerzt. Leere PDF-File? ");
+					System.out.println("Fehlerhafter Link: " + remoteLink);
+					e.printStackTrace();
+				}
 				// find authors and add them to a list
 
 				Elements authorElements = doc.select("#main > p> a");// elmnt.parent().parent().children().select("span").select("a");
@@ -472,8 +502,35 @@ class ACLWebCrawler extends AbstractCrawler {
 		return paperList;
 	}
 
+	private ExtractedMetadata scienceParse(Parser parser, URL url) {
+		ExtractedMetadata em = null;
+		try {
+			InputStream inputStream = getConnectionFromURL(url).getInputStream();
+			em = parser.doParse(inputStream);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return em;
+	}
+
+	private static HttpURLConnection getConnectionFromURL(URL url) throws IOException {
+		HttpURLConnection con = (HttpURLConnection) url.openConnection();
+		con.connect();
+		int responseCode = con.getResponseCode();
+		if (responseCode < 400 && responseCode > 299) {
+			String redirectUrl = con.getHeaderField("Location");
+			try {
+				URL newUrl = new URL(redirectUrl);
+				con = getConnectionFromURL(newUrl);
+			} catch (MalformedURLException e) {
+				System.out.println(e.getMessage());
+			}
+		}
+		return con;
+	}
+
 	/**
-	 * Checks with the given {@link conferences} whether or not to save this paper
+	 * Checks with the given {link conferences} whether or not to save this paper
 	 * into the database
 	 * 
 	 * @param paper The web element of the paper to check

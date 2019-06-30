@@ -64,10 +64,13 @@ public class Paper extends Model {
 	@Column(name = "semanticScholarID")
 	private String semanticScholarID;
 	/*Abstract of paper as String*/
-	@Column(name = "paperAbstract", columnDefinition="TEXT")
+	@Column(name = "paperAbstract", columnDefinition="LONGTEXT")
 	private String paperAbstract;
 	@Column(name = "amountOfCitations")
 	private long amountOfCitations = -1;    //-1 if not known yet
+	@Column(name= "plainText", columnDefinition = "LONGTEXT")
+	private String paperPlainText;
+
 
 	/**
 	 * Get this paper's ID
@@ -260,6 +263,22 @@ public class Paper extends Model {
 	 */
 	public void setPaperAbstract(String paperAbstract) {
 		this.paperAbstract = paperAbstract;
+	}
+
+	/**
+	 * Gets the parsed plaintext of the paper
+	 */
+	public String getPaperPlainText() {
+		return paperPlainText;
+	}
+
+	/**
+	 * Sets this paper's plain text
+	 *
+	 * @param paperPlainText this paper's abstract
+	 */
+	public void setPaperPlainText(String paperPlainText) {
+		this.paperPlainText = paperPlainText;
 	}
 
 	/**
