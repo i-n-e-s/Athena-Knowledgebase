@@ -230,7 +230,6 @@ class ACLWebCrawler extends AbstractCrawler {
 //					.method(Connection.Method.GET) //
 //					.execute();
 //			webPages.add(((Connection) resp).get());
-		}
 		return webPages;
 
 		/**

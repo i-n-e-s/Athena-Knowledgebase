@@ -159,6 +159,7 @@ public class ParsedDataInserter {
 		logger.info("Inserting papers and authors into database...");
 
 		for(Paper paper : papers) {
+            System.out.println("Paper added: " + paper.getTitle());
 			paperFiler.add(paper);
 		}
 
