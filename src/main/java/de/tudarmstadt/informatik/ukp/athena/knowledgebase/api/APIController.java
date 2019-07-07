@@ -18,6 +18,7 @@ import de.tudarmstadt.informatik.ukp.athena.knowledgebase.api.ast.RequestNode;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Person;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.exception.SyntaxException;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.exception.VerificationFailedException;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.api.NeedlemanWunsch;
 
 @RestController
 public class APIController {
@@ -31,18 +32,15 @@ public class APIController {
 	 * @return The result list of the query, or an error message.
 	 */
 	@RequestMapping("/**")
-	public Object apiConnector(HttpServletRequest request) { // String request) { //  //the argument contains everything that was not matched to any other argument
+	public Object apiConnector(HttpServletRequest request) { //the argument contains everything that was not matched to any other argument
+
 		RequestNode tree = null;
 
 		try {
-			// http://compjour.ukp.informatik.tu-darmstadt.de:8080/person:fullName=mark+finlayson/paper:paperID=1/person
 			//scan the request
 			String apiRequest = request.getAttribute(HandlerMapping.PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE).toString();
-//			request = request.substring(request.indexOf("8080")+4, request.length());
-//			System.out.println("Request: " + request);
-			RequestScanner scanner = new RequestScanner(apiRequest); // request); // 
+			RequestScanner scanner = new RequestScanner(apiRequest); 
 			Deque<RequestToken> tokens = scanner.scan();
-			System.out.println(tokens);
 			RequestParser parser = new RequestParser(tokens);
 			RequestVerifier verifier = new RequestVerifier();
 			//prepare query and query builder
@@ -51,30 +49,16 @@ public class APIController {
 
 			tree = parser.parse(); //parse the request
 			verifier.verify(tree); //if no exception is thrown, the verification was successful
-//			System.out.println("tree verified");
 			ArrayList queryoutput = queryBuilder.build(tree);
 			List<String> queryList = (List<String>) queryoutput.get(0);
 			Map<String,Object> jpqlVars = (Map<String, Object>) queryoutput.get(1);
 			query = queryBuilder.createQuery(queryList, jpqlVars);
 			
-//			long startTime = System.nanoTime();
 			ArrayList ret = (ArrayList) tree.getFunction().getFunction().apply(query, verifier.getResultEntity()); //call the request function
-//			long endTime = System.nanoTime();
-//			long duration = (endTime - startTime)/1000000;  //divide by 1000000 to get milliseconds.
-//			System.out.println("EXECUTION TIME = " + duration);
 			
-			System.out.println(ret);
-//			if (ret.isEmpty()) {
-//				System.out.println("no result found -> search 'wild'");
-//				startTime = System.nanoTime();
-//				//ret = searchDBwild(queryList, jpqlVars, tree, verifier);
-//				ret = searchNearsetNeighbor(queryList, jpqlVars, tree, verifier);
-//				endTime = System.nanoTime();
-//				duration = (endTime - startTime)/1000000;
-//				System.out.println("EXECUTION TIME WILD SEARCH = " + duration);
-////				ret = (ArrayList) tree.getFunction().getFunction().apply(query, verifier.getResultEntity());
-//				System.out.println(ret);
-//			}
+			if (ret.isEmpty()) {
+				ret = searchNearsetNeighbor(queryList, jpqlVars, tree, verifier);
+			}
 			return ret;
 		}
 		catch(SyntaxException | VerificationFailedException e) {
@@ -95,108 +79,102 @@ public class APIController {
 			return errorMessage + "</div></div>";
 		}
 	}
-	
-	
-private static ArrayList searchNearsetNeighbor(List<String> queryList, Map<String, Object> jpqlVars, RequestNode tree, RequestVerifier verifier) {
+
+	private static ArrayList searchNearsetNeighbor(List<String> queryList, Map<String, Object> jpqlVars,
+			RequestNode tree, RequestVerifier verifier) {
+
+		String searchTerm = queryList.get(queryList.size() - 1);
+		String attr = "";
+		attr = searchTerm.substring(searchTerm.indexOf(".") + 1, searchTerm.indexOf("="));
+
+		ArrayList geq = getNN(queryList, attr, jpqlVars, tree, verifier, "min");
+		ArrayList leq = getNN(queryList, attr, jpqlVars, tree, verifier, "max");
+
+		String result1 = extractResult(geq);
+		String result2 = extractResult(leq);
+
+		String key = searchTerm.substring(searchTerm.indexOf("=") + 2);
+		String search = (String) jpqlVars.get(key);
+
+		if (result1.contains(search))
+			return geq;
+		if (result2.contains(search))
+			return leq;
+
+		NeedlemanWunsch nw1 = new NeedlemanWunsch(search, result1);
+		int dist1 = nw1.getScore();
+
+		NeedlemanWunsch nw2 = new NeedlemanWunsch(search, result2);
+		int dist2 = nw2.getScore();
+
+		int threshold = 0; // decide for which distance to the search the result should be kept
+		if (dist1 < threshold && dist2 < threshold) { // if both distances are smaller than threshold: search with
+														// wildcards
+			return searchDBwild(queryList, jpqlVars, tree, verifier);
+		}
+		if (dist1 > dist2)
+			return geq; // geq -> result1 --> dist1
+		else
+			return leq;
+	}
+
+	private static ArrayList getNN(List<String> queryList, String attr, Map<String, Object> jpqlVars, RequestNode tree,
+			RequestVerifier verifier, String mode) {
 
 		QueryBuilder queryBuilder = new QueryBuilder();
-		
-		Integer listlen = queryList.size()-1;
+		Integer listlen = queryList.size() - 1;
 		String searchTerm = queryList.get(listlen);
 		String newSearchTerm = "";
-		String attr = searchTerm.substring(0, searchTerm.indexOf("="));
-		newSearchTerm = searchTerm.replace("=", ">=");
-		queryList.set(listlen, newSearchTerm);
-		queryList.add("ORDER BY " + attr + " ASC");
-	
-		Query query = queryBuilder.createQuery(queryList, jpqlVars);
-		query.setMaxResults(1);
-		ArrayList geq = (ArrayList) tree.getFunction().getFunction().apply(query, verifier.getResultEntity());
-		
-		newSearchTerm = searchTerm.replace("=", "<=");
-		queryList.set(listlen, newSearchTerm);
-		queryList.set(queryList.size()-1, "ORDER BY " + attr + " DESC");
-		query = queryBuilder.createQuery(queryList, jpqlVars);
-		query.setMaxResults(1);
-		ArrayList leq = (ArrayList) tree.getFunction().getFunction().apply(query, verifier.getResultEntity());
-		
-		System.out.println(geq.toString());
-		String name1 = geq.toString().substring(geq.toString().indexOf(":")+1, geq.toString().indexOf(","));
-		String name2 = leq.toString().substring(leq.toString().indexOf(":")+1, leq.toString().indexOf(","));
 
-		String key = searchTerm.substring(newSearchTerm.indexOf("=")+1);
-		String name = (String) jpqlVars.get(key);
-		System.out.println(name1);
-		System.out.println(name2);
-
-		Integer dist1 = levenshteinDistance(name1, name);
-		Integer dist2 = levenshteinDistance(name2, name);
-		System.out.println(dist1);
-		System.out.println(dist2);
-		
-		if (dist1 < dist2) return geq;
-		else return leq;
-	}
-	
-	private static int levenshteinDistance (CharSequence lhs, CharSequence rhs) {                          
-    int len0 = lhs.length() + 1;                                                     
-    int len1 = rhs.length() + 1;                                                     
-                                                                                      
-    int[] cost = new int[len0];                                                     
-    int[] newcost = new int[len0];                                                  
-                                                                                    
-    for (int i = 0; i < len0; i++) cost[i] = i;                                     
-                                                                                      
-    for (int j = 1; j < len1; j++) {                                                
-        newcost[0] = j;                                                              
-        for(int i = 1; i < len0; i++) {                                            
-            int match = (lhs.charAt(i - 1) == rhs.charAt(j - 1)) ? 0 : 1;             
-                                                                                     
-            int cost_replace = cost[i - 1] + match;                                 
-            int cost_insert  = cost[i] + 1;                                         
-            int cost_delete  = newcost[i - 1] + 1;                                  
-                                                                                          
-            newcost[i] = Math.min(Math.min(cost_insert, cost_delete), cost_replace);
-        }                                                                            
-        int[] swap = cost; cost = newcost; newcost = swap;                          
-    }                                                                               
-    return cost[len0 - 1];                                                          
-}
-
-
-	private static ArrayList searchDBwild(List<String> queryList, Map<String, Object> jpqlVars, RequestNode tree, RequestVerifier verifier) {
-		
-		ArrayList ret = new ArrayList();
-		Integer pos = 0;
-		QueryBuilder queryBuilder = new QueryBuilder();
-		Map<String, Object> jpqlCopy = new HashMap<String, Object>(jpqlVars);
-		
-		while (ret.isEmpty()) {
-			System.out.println("in loop");
-			
-			for (String key : jpqlVars.keySet()) {
-				Object val = jpqlVars.get(key);
-				String searchTerm = val.toString().substring(0, val.toString().length()-1);
-				Integer len = searchTerm.length();
-				if (pos >= searchTerm.length())
-					return ret;
-				if (pos < 1) {
-					searchTerm = "%" + searchTerm + "%";
-				} else {
-//					searchTerm = "%" + searchTerm.substring(0, pos) + "%"
-//							+ searchTerm.substring(pos + 1, len) + "%";
-					searchTerm = searchTerm.substring(0, len-pos) + "%"
-							+ searchTerm.substring(len-pos + 1, searchTerm.length()) + "%";
-				}
-				jpqlCopy.put(key, searchTerm);
-			}
-
-			Query query = queryBuilder.createQuery(queryList, jpqlCopy);
-			ret = (ArrayList) tree.getFunction().getFunction().apply(query, verifier.getResultEntity());
-			pos += 1;
-			
+		if (mode == "min") {
+			queryList.set(1, "MIN(" + attr + ")");
+			newSearchTerm = searchTerm.replace("=", ">=");
+		}
+		if (mode == "max") {
+			queryList.set(1, "MAX(" + attr + ")");
+			newSearchTerm = searchTerm.replace(">=", "<=");
 		}
 
+		queryList.set(listlen, newSearchTerm);
+		Query query = queryBuilder.createQuery(queryList, jpqlVars);
+		ArrayList nn = (ArrayList) tree.getFunction().getFunction().apply(query, verifier.getResultEntity());
+		return nn;
+
+	}
+
+	private static String extractResult(ArrayList nn) {
+		String result = "";
+		if (nn.toString().contains(":")) {
+			result = nn.toString().substring(nn.toString().indexOf(":") + 1, nn.toString().indexOf(","));
+		} else {
+			result = nn.toString();
+		}
+		return result;
+	}
+
+	private static ArrayList searchDBwild(List<String> queryList, Map<String, Object> jpqlVars, RequestNode tree,
+			RequestVerifier verifier) {
+
+		QueryBuilder queryBuilder = new QueryBuilder();
+		Map<String, Object> jpqlCopy = new HashMap<String, Object>(jpqlVars);
+
+		String likeStat = queryList.get(queryList.size() - 1);
+		String dbObj = likeStat.substring(0, likeStat.indexOf("=") - 1);
+		String searchObj = likeStat.substring(likeStat.indexOf("=") + 2);
+		queryList.remove(queryList.size() - 1);
+		queryList.add(dbObj);
+		queryList.add("LIKE");
+		queryList.add(":" + searchObj);
+
+		for (String key : jpqlVars.keySet()) {
+			Object val = jpqlVars.get(key);
+			String searchTerm = val.toString().substring(0, val.toString().length());
+			searchTerm = "%" + searchTerm + "%";
+			jpqlCopy.put(key, searchTerm);
+		}
+
+		Query query = queryBuilder.createQuery(queryList, jpqlCopy);
+		ArrayList ret = (ArrayList) tree.getFunction().getFunction().apply(query, verifier.getResultEntity());
 		return ret;
 	}
 }

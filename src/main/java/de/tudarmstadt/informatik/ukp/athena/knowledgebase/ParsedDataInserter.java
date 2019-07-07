@@ -123,21 +123,6 @@ public class ParsedDataInserter {
 
 		logger.info("Done! (Took {})", LocalTime.ofNanoOfDay(System.nanoTime() - then));
 
-		// test API
-//		APIController apic = new APIController();		
-//		String request = "/paper:title=Emoji+Prediction"; // paper:title=wrror+rate+estimation"; //tako+kudo/paper:paperID=1/person";// 
-//		// Multimodal+Frame+Identification+with+Multilingual+Evaluation 
-//		apic.apiConnector(request);
-
-
-//		// testing my code
-//		PersonJPAAccess personfiler = new PersonJPAAccess();
-//		Person testperson = new Person();
-//		testperson.setFullName("irina gure");
-////		List<Person> result = personfiler.getByKnownAttributes(testperson);
-//		Person result = personfiler.getByFullName(testperson.getFullName());
-//		System.out.println(result);
-		
 		parsedDataInserter.acl18WebParser.close();
 	}
 

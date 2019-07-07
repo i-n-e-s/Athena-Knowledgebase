@@ -72,7 +72,6 @@ public class PersonJPAAccess implements CommonAccess<Person> {
 
 		//2. Build JPQL query string
 		String query = "SELECT c FROM Person c WHERE ";
-//		String query = "SELECT c.fullName FROM Person c WHERE ";
 		boolean addedConstraint = false;
 		if( toFind.getSemanticScholarID() != null ) {	//if s2id is known, add it to the query phrase
 			query = query + "c.semanticScholarID LIKE '"+toFind.getSemanticScholarID() + "'";
@@ -81,7 +80,6 @@ public class PersonJPAAccess implements CommonAccess<Person> {
 		if ( toFind.getFullName() != null && toFind.getFullName() != "" ) {	//if name is known, add it to query phrase
 			if (addedConstraint) { query = query + " and "; }
 			query = query + "c.fullName = '"+toFind.getFullName().replace("'", "''") + "'";
-//			query = query + "LOWER(c.fullName) LIKE LOWER('%"+toFind.getFullName().replace("'", "''") + "%')";
 			
 			addedConstraint = true;
 		}
@@ -94,12 +92,6 @@ public class PersonJPAAccess implements CommonAccess<Person> {
 
 		//4. If results are found, return them
 		if( result.size() > 0 ) { return result; }
-//		else {
-//			System.out.println("No results found :( now search with 'wildcards'");
-//			List<Person> r = searchDBwild(query, toFind.getFullName(), entityManager);
-//			if( r != null ) { return r; }
-//		}
-//		System.out.println("### 4 ### no results found ");
 
 		//5. If not, repeat search, but only use s2id
 		if( toFind.getSemanticScholarID() != null ) {
@@ -111,13 +103,11 @@ public class PersonJPAAccess implements CommonAccess<Person> {
 		//6. If still no results found, repeat search but use full name as only search filter
 		if ( toFind.getFullName() != null && toFind.getFullName() != "" ) {
 			query = "SELECT c FROM Person c WHERE c.fullName = '"+toFind.getFullName().replace("'", "''") + "'";
-//			query = query + "LOWER(c.fullName) LIKE LOWER('%"+toFind.getFullName().replace("'", "''") + "%')";
 			result = entityManager.createQuery(query).getResultList();
 			if( result.size() > 0 ) { return result; }		///if search delivered results, break up and return them
 		}
  
 		//7. If no search succeeded, return null
-//		System.out.println("### 7 ### no search succeeded :/");
 		return null;
 	} 
 
@@ -153,11 +143,9 @@ public class PersonJPAAccess implements CommonAccess<Person> {
 	 */
 	public Person getByFullName( String name ) {
 		if( name == null ) { return null; }
-//		System.out.println("**************************************");
 
 		//Build query string
 		String query = "SELECT c FROM Person c WHERE c.fullName = '"+name.replace("'","''") + "'";
-//		String query = "SELECT c FROM Person c WHERE LOWER(c.fullName) LIKE LOWER('%"+name.replace("'", "''") + "%')";
 		logger.info(query);
 		EntityManager entityManager = PersistenceManager.getEntityManager();
 
@@ -166,28 +154,6 @@ public class PersonJPAAccess implements CommonAccess<Person> {
 
 		//If results are found, return them. Otherwise return null
 		return (matches.size() > 0) ? matches.get(0) : null;
-//		if( matches.size() > 0 ) { return matches.get(0); }
-//		else {
-//			System.out.println("No results found :( now search with 'wildcards'");
-//			List<Person> r = searchDBwild(query, name, entityManager);
-//			return (r.size() > 0) ? r.get(0) : null;
-//		}
 	}
 	
-//	private static List<Person> searchDBwild(String query, String toFind, EntityManager entityManager) {
-//
-//		query = query.substring(0, query.indexOf("'"));
-//		
-//		for (int c = 0; c < toFind.length(); c++) {
-//			StringBuilder adaptedTerm = new StringBuilder(toFind);
-//			adaptedTerm.setCharAt(c, '%');
-//			String newquery = query + "'%" + adaptedTerm + "%')";
-//			List<Person> result = entityManager.createQuery(newquery).getResultList();
-//			if (result.size() > 0) {
-//				return result;
-//			}
-//		}
-//		return null;
-//	}
-
 }
