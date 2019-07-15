@@ -19,6 +19,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.api.APIController;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.api.NeedlemanWunsch;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.crawler.CrawlerFacade;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.crawler.SupportedConferences;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.crawler.semanticscholarapi.S2APIFunctions;
@@ -49,7 +50,7 @@ public class ParsedDataInserter {
 	private static Logger logger = LogManager.getLogger(ParsedDataInserter.class);
 
 	/**
-	 * Needed so spring works
+	 * Needed so spring works avoidance
 	 */
 	public ParsedDataInserter(){}
 
@@ -125,23 +126,9 @@ public class ParsedDataInserter {
 			logger.info("\"-scrape-acl18-info\" argument was not found, skipping ACL 2018 scraping");
 
 		logger.info("Done! (Took {})", LocalTime.ofNanoOfDay(System.nanoTime() - then));
-
-		// test API
-//		APIController apic = new APIController();		
-//		String request = "/paper:title=Emoji+Prediction"; // paper:title=wrror+rate+estimation"; //tako+kudo/paper:paperID=1/person";// 
-//		// Multimodal+Frame+Identification+with+Multilingual+Evaluation 
-//		apic.apiConnector(request);
-
-
-//		// testing my code
-//		PersonJPAAccess personfiler = new PersonJPAAccess();
-//		Person testperson = new Person();
-//		testperson.setFullName("irina gure");
-////		List<Person> result = personfiler.getByKnownAttributes(testperson);
-//		Person result = personfiler.getByFullName(testperson.getFullName());
-//		System.out.println(result);
 		
 		parsedDataInserter.acl18WebParser.close();
+	
 	}
 
 	/**
@@ -164,6 +151,7 @@ public class ParsedDataInserter {
 		}
 
 		logger.info("Done inserting papers and authors!");
+		
 	}
 
 	/**
