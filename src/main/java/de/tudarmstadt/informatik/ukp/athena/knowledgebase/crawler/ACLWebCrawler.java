@@ -230,7 +230,8 @@ class ACLWebCrawler extends AbstractCrawler {
 //					.method(Connection.Method.GET) //
 //					.execute();
 //			webPages.add(((Connection) resp).get());
-		return webPages;
+		}
+        	return webPages; }
 
 		/**
 		 * Jsoup.connect
@@ -248,7 +249,7 @@ class ACLWebCrawler extends AbstractCrawler {
 		 * JsoupHelper.connect(links.get(idxOfLink).absUrl("href")); docs.add(nxtDoc); }
 		 * } logger.info("Done fetching webpages!"); return docs;
 		 **/
-	}
+	
 
 	/**
 	 * {@inheritDoc}
@@ -354,7 +355,14 @@ class ACLWebCrawler extends AbstractCrawler {
      */
     @Override
     public ArrayList<Paper> getPaperAuthor() throws IOException {
-        logger.info("Gathering all paper author relationships...");
+        if(true) {
+        	
+        	return getPaperAuthorEvent();
+        }else {
+    	
+    	
+    	
+    	logger.info("Gathering all paper author relationships...");
         List<Document> webpages = fetchWebpages(startURLPaper);
         logger.info("Preparing data and starting 4 scraper threads...");
         //in the following lines the list gets split into 4 roughly equal parts so that each list part can be handled in a seperate thread (it's faster this way)
@@ -405,7 +413,7 @@ class ACLWebCrawler extends AbstractCrawler {
         }
 
         executor.shutdown();*/
-        return result;
+        return result;}
     }
 
 	/**
@@ -500,6 +508,320 @@ class ACLWebCrawler extends AbstractCrawler {
 		logger.info("Done scraping!");
 		return paperList;
 	}
+	
+	
+	private ArrayList<Paper> getPaperAuthorEvent() throws IOException {
+		ArrayList<Paper> paperList=new ArrayList<Paper>();
+		
+
+        Set<String> uniqueURL=get_links("https://aclweb.org/anthology/events/");
+        System.out.println("Projekt läuft!");
+        HashSet<String> uniqueConverenceURLs = uniqueURL.stream()
+        	    .filter(p -> p.contains("https://aclweb.org/anthology/events/")).collect(Collectors.toCollection(HashSet::new));
+        
+        ArrayList<String> converenceURLs= selector(uniqueConverenceURLs,this.conferences,this.beginYear,this.endYear).stream().collect(Collectors.toCollection(ArrayList::new));;
+        String[] array = converenceURLs.stream().toArray(n -> new String[n]);
+        System.out.println(array.length);
+        System.out.println(Arrays.toString(array));
+
+        ArrayList<ArrayList<String>> eventsPerConference=new ArrayList<ArrayList<String>>();
+        
+        int i=0;
+        for(String s : array) {
+        	i++;
+        eventsPerConference.add(get_links(s).stream()
+        	    .filter(p -> p.contains("volumes")&&!p.contains(".bib")).collect(Collectors.toCollection(ArrayList::new)));
+
+        if(i==1000) {
+        break;
+        }}
+        
+    	System.out.println(eventsPerConference.size());
+
+        
+        ArrayList<ArrayList<HashSet<String>>> paperPerEventPerConference=new ArrayList<ArrayList<HashSet<String>>>();
+        
+        
+        for(ArrayList<String> events :eventsPerConference) {
+        	
+        	
+        	ArrayList<HashSet<String>> urlsPerEvent  =new ArrayList<HashSet<String>>(); 
+        	for(String l: events) {
+        		
+        		
+        		urlsPerEvent.add(get_links(l).stream().filter(p -> p.contains("https://aclweb.org/anthology/papers/")&& !p.contains(".bib")).collect(Collectors.toCollection(HashSet::new)));
+        	System.out.println("UrlsPerEvent:"+urlsPerEvent.size());
+        	}
+        	
+        	
+        	paperPerEventPerConference.add(urlsPerEvent);	
+        	
+        	
+        }
+        	
+        
+    	System.out.println(paperPerEventPerConference.size());
+
+    	
+    	for(int x=0;x<converenceURLs.size();x++ ) {
+    		Conference conference=new Conference();
+    		
+        	Document conferenceSite=Jsoup.connect(converenceURLs.get(x)).get();
+
+        	
+    		Elements confernceTitleElement= conferenceSite.select("#title");
+			
+			String conferenceTitle = confernceTitleElement.get(0).text();//splitRawTitle[1];
+
+    		
+    		conference.setName(conferenceTitle);
+    		
+    		for(int y=0; y<eventsPerConference.get(x).size();y++) {
+    			Event event=new Event();//über eventsPerConference.get(x) scrapen
+    			
+    			Document eventDocument=Jsoup.connect(eventsPerConference.get(x).get(y)).get();
+
+    			Elements id= eventDocument.select("#main > div.row.acl-paper-details > div.col.col-lg-10.order-2 > dl > dd");
+
+
+            	
+        		Elements titel= eventDocument.select("#title");
+    			
+    			String titleString = titel.get(0).text();//splitRawTitle[1];
+	
+    			String monthString = id.get(1).text();//splitRawTitle[1];
+
+    			String yearString = id.get(2).text();//splitRawTitle[1];
+    			
+    			LocalDate date= null;
+    			
+    			try {
+    			
+    			int monthInt =monthToInt(monthString);
+    			int yearInt=Integer.parseInt(yearString);
+    			
+    			if(monthInt!=0) {
+    				date = LocalDate.of(yearInt, monthInt, 1);
+    				event.setBegin(date.atStartOfDay());
+    				event.setEnd(date.atStartOfDay());
+    			}
+    			
+    			}catch(NumberFormatException e){
+    				System.out.println("yearString: "+yearString);
+    				
+    			}
+    			
+    			
+    			String locationString = id.get(3).text();//splitRawTitle[1];
+    			String[] locationArray=locationString.split(", ");
+    			
+    			
+    			
+    			if(y==0) {
+    				
+    			
+    			if(locationArray.length==2) {	
+    			conference.setCity(locationArray[0]);	
+    			conference.setCountry(locationArray[1]);
+    			}
+    				
+    			//conference.setId(id);
+    			
+    			if(date !=null) {
+    				conference.setBegin(date);
+    				conference.setEnd(date);
+    				
+    			}
+    			
+    			
+    			}
+    			
+    			
+
+            	
+    		
+    			//String idString = id.get(0).text();//splitRawTitle[1];
+    			//String cityString = id.get(3).text();//splitRawTitle[1];
+
+    			
+    			
+    			//event.setId(idString);
+    			event.setTitle(titleString);
+    			EventCategory category=getWorkshopType(titleString);
+    			if(category!=null) {
+    			event.setCategory(category);
+    			}
+    			
+    			//event.setConferenceName(conferenceTitel);
+    			
+    			
+    			
+    			for(String s: paperPerEventPerConference.get(x).get(y)) {
+    				
+    	        	try {
+    	        		System.out.println(s);
+    	        		
+						Document doc= Jsoup.connect(s).get();
+						
+						Elements paperInformationElements = doc.select("#main > div > div.col.col-lg-10.order-2 > dl > dd");
+						if (!doc.title().contains("VOLUME")) {
+							// check is not earlier because the elmnt is needed
+							if (conferences.length != 0 && !shouldSavePaper(doc))
+								continue; // innerLoop; //label is not needed necessarily, but helps readability
+
+							// add paper info
+							// clean up the titles in the form of [C18-1017] Simple Neologism Based Domain
+							// Independe...
+							// C18-1017 would be the anthology - we remove [] because they convey no meaning
+							// String rawTitle = elmnt.text();
+							// String[] splitRawTitle = rawTitle.split(" ", 2);
+
+							String paperTitle = doc.title();// splitRawTitle[1];
+							String anthology = paperInformationElements.get(0).text();// splitRawTitle[0].replace("[",
+																						// "").replace("]", "");
+
+							Paper paper = runWithDuplicateAvoidance ? Paper.findOrCreateDbOrList(null, paperTitle, createdPapers)
+									: new Paper();
+							if (runWithDuplicateAvoidance) {
+								createdPapers.add(paper);
+							}
+
+							paper.setTitle(paperTitle);
+							paper.setAnthology(anthology);
+							String remoteLink = "http://aclweb.org/anthology/" + anthology;
+							paper.setRemoteLink(remoteLink); // wow that was easy
+							paper.setReleaseDate(extractPaperRelease(doc));
+							/**try {
+								ExtractedMetadata meDa = scienceParse(parser, new URL(remoteLink));
+								if(meDa == null) continue;
+								String plaintext = "";
+								for (org.allenai.scienceparse.Section sec : meDa.sections) {
+									plaintext = plaintext + sec.text;
+								}
+								paper.setPaperPlainText(plaintext);
+								paper.setPaperAbstract(meDa.abstractText);
+								//im allenai parser zwischenergebnisse abfangen und pdfs schließen
+								//treffen Mittwoch 10:00
+							} catch (MalformedURLException e) {
+								System.out.println("Parser abgestuerzt. Leere PDF-File? ");
+								System.out.println("Fehlerhafter Link: " + remoteLink);
+								e.printStackTrace();
+							}**/
+							// find authors and add them to a list
+
+							Elements authorElements = doc.select("#main > p> a");// elmnt.parent().parent().children().select("span").select("a");
+							for (Element authorEl : authorElements) {
+								Person author = runWithDuplicateAvoidance
+										? Person.findOrCreateDbOrList(null, authorEl.text(), createdPersons)
+										: new Person();
+								if (runWithDuplicateAvoidance) {
+									createdPersons.add(author);
+								}
+
+								// because acl2018 seems to not employ prefixes (e.g. Prof. Dr.), we do not need
+								// to scan them
+								
+								String linkAuthor=authorEl.attr("abs:href");
+								
+								try {
+								Document docAuthor= Jsoup.connect(linkAuthor).get();
+								
+								Elements authorFirstNameElement = docAuthor.select("#title > span.font-weight-normal");
+								Elements authorLastNameElement = docAuthor.select("#title > span.font-weight-bold");
+
+								String firstName= authorFirstNameElement.text();
+								String lastName= authorLastNameElement.text();
+
+								author.setFirstName(firstName);
+								author.setLastName(lastName);
+								
+								}catch(IOException e) {
+									
+									
+								}
+								
+								author.setFullName(authorEl.text());
+								// set paper - author relation
+								paper.addAuthor(author);
+								// set author - paper relation
+								author.addPaper(paper);
+								event.addPaper(paper);
+			    	        	//event.addPaper(paper);
+			    	        	paperList.add(paper);
+							
+							}
+							
+							// }
+						}
+					
+						
+						
+						
+						
+					    	        	
+    				
+    	        	} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+    	        	
+    			}
+    			    				
+    			
+    			conference.addEvent(event);
+    			
+    		}
+    		
+    		
+    	}
+		
+		return paperList;
+	}
+	
+	
+	
+	private int monthToInt(String month) {
+		switch(month) {
+		case "January": return 1;
+		case "February": return 2;
+		case "March": return 3;
+		case "April": return 4;
+		case "May": return 5; 
+		case "June": return 6;
+		case "July": return 7; 
+		case "August": return 8;
+		case "September": return 9;
+		case "October": return 10;
+		case "November": return 11;
+		case "December": return 12;
+			default: return 0;	
+			
+		
+		}
+		
+	}
+	
+	
+	private EventCategory getWorkshopType(String workshopTitle) {
+		if(workshopTitle.toLowerCase().contains("BREAK")) {return EventCategory.BREAK;}
+		if(workshopTitle.toLowerCase().contains("CEREMONY")) {return EventCategory.CEREMONY;}
+		if(workshopTitle.toLowerCase().contains("MEETING")) {return EventCategory.MEETING;}
+		if(workshopTitle.toLowerCase().contains("PRESENTATION")) {return EventCategory.PRESENTATION;}
+		if(workshopTitle.toLowerCase().contains("RECRUITMENT")) {return EventCategory.RECRUITMENT;}
+		if(workshopTitle.toLowerCase().contains("SESSION")) {return EventCategory.SESSION;}
+		if(workshopTitle.toLowerCase().contains("SOCIAL")) {return EventCategory.SOCIAL;}
+		if(workshopTitle.toLowerCase().contains("TALK")) {return EventCategory.TALK;}
+		if(workshopTitle.toLowerCase().contains("TUTORIAL")) {return EventCategory.TUTORIAL;}
+		if(workshopTitle.toLowerCase().contains("WELCOME")) {return EventCategory.WELCOME;}
+		if(workshopTitle.toLowerCase().contains("WORKSHOP")) {return EventCategory.WORKSHOP;}
+	
+		return null;
+	}
+	
+	
+	
+	
+	
 
 	private ExtractedMetadata scienceParse(Parser parser, URL url) {
 		ExtractedMetadata em = null;
