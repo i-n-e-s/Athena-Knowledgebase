@@ -51,8 +51,8 @@ public class NeedlemanWunsch {
 	}
 
 	/**
-	 * Constructor taking in two strands and the scoring system. Default values:
-	 * allowedMismatch = true
+	 * Constructor taking in two strands and the scoring system. 
+	 * Default values: allowedMismatch = true
 	 */
 	public NeedlemanWunsch(String strand1, String strand2, int match, int mismatch, int indel) {
 		this(strand1, strand2, match, mismatch, indel, true);

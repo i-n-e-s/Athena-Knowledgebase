@@ -39,7 +39,7 @@ public class APIController {
 		try {
 			//scan the request
 			String apiRequest = request.getAttribute(HandlerMapping.PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE).toString();
-			RequestScanner scanner = new RequestScanner(apiRequest); 
+			RequestScanner scanner = new RequestScanner(apiRequest);
 			Deque<RequestToken> tokens = scanner.scan();
 			RequestParser parser = new RequestParser(tokens);
 			RequestVerifier verifier = new RequestVerifier();
@@ -49,15 +49,22 @@ public class APIController {
 
 			tree = parser.parse(); //parse the request
 			verifier.verify(tree); //if no exception is thrown, the verification was successful
-			ArrayList queryoutput = queryBuilder.build(tree);
+			ArrayList<?> queryoutput = queryBuilder.build(tree);
 			List<String> queryList = (List<String>) queryoutput.get(0);
 			Map<String,Object> jpqlVars = (Map<String, Object>) queryoutput.get(1);
+			String entityVar = (String) queryoutput.get(2);
+			queryList.set(1, entityVar);
 			query = queryBuilder.createQuery(queryList, jpqlVars);
 			
-			ArrayList ret = (ArrayList) tree.getFunction().getFunction().apply(query, verifier.getResultEntity()); //call the request function
+			ArrayList<?> ret = (ArrayList<?>) tree.getFunction().getFunction().apply(query, verifier.getResultEntity()); //call the request function
 			
 			if (ret.isEmpty()) {
-				ret = searchNearsetNeighbor(queryList, jpqlVars, tree, verifier);
+				// search nearest neighbor only if it is no nested query
+				if (queryList.contains("and")) {
+					ret = searchDBwild(queryList, jpqlVars, tree, verifier);
+				} else {
+					ret = searchNearsetNeighbor(queryList, jpqlVars, tree, verifier);
+				}
 			}
 			return ret;
 		}
@@ -80,15 +87,16 @@ public class APIController {
 		}
 	}
 
-	private static ArrayList searchNearsetNeighbor(List<String> queryList, Map<String, Object> jpqlVars,
+	private static ArrayList<?> searchNearsetNeighbor(List<String> queryList, Map<String, Object> jpqlVars,
 			RequestNode tree, RequestVerifier verifier) {
 
 		String searchTerm = queryList.get(queryList.size() - 1);
 		String attr = "";
 		attr = searchTerm.substring(searchTerm.indexOf(".") + 1, searchTerm.indexOf("="));
-
-		ArrayList geq = getNN(queryList, attr, jpqlVars, tree, verifier, "min");
-		ArrayList leq = getNN(queryList, attr, jpqlVars, tree, verifier, "max");
+		List<String> originalQueryList = new ArrayList<>(queryList);
+		
+		ArrayList<?> geq = getNN(queryList, attr, jpqlVars, tree, verifier, "min");
+		ArrayList<?> leq = getNN(queryList, attr, jpqlVars, tree, verifier, "max");
 
 		String result1 = extractResult(geq);
 		String result2 = extractResult(leq);
@@ -96,29 +104,49 @@ public class APIController {
 		String key = searchTerm.substring(searchTerm.indexOf("=") + 2);
 		String search = (String) jpqlVars.get(key);
 
-		if (result1.contains(search))
-			return geq;
-		if (result2.contains(search))
-			return leq;
+		if (result1.toLowerCase().contains(search.toLowerCase())) {
+			return getResultObject(originalQueryList, result1, key, jpqlVars, tree, verifier);
+		}
+		if (result2.toLowerCase().contains(search.toLowerCase())) {
+			return getResultObject(originalQueryList, result2, key, jpqlVars, tree, verifier);
+		}
 
 		NeedlemanWunsch nw1 = new NeedlemanWunsch(search, result1);
 		int dist1 = nw1.getScore();
-
 		NeedlemanWunsch nw2 = new NeedlemanWunsch(search, result2);
 		int dist2 = nw2.getScore();
 
-		int threshold = 0; // decide for which distance to the search the result should be kept
-		if (dist1 < threshold && dist2 < threshold) { // if both distances are smaller than threshold: search with
+		int threshold = 1; // decide for which distance to the search the result should be kept
+		int ratio1 = result1.length() / dist1;
+		int ratio2 = result2.length() / dist2;
+//		System.out.println(ratio1);
+//		System.out.println(ratio2);
+//		System.out.println(search.length()/dist1);
+//		System.out.println(search.length()/dist2);
+		if (ratio1 < threshold && ratio2 < threshold) { // if both distances are smaller than threshold: search with
 														// wildcards
-			return searchDBwild(queryList, jpqlVars, tree, verifier);
+			return searchDBwild(originalQueryList, jpqlVars, tree, verifier);
 		}
 		if (dist1 > dist2)
-			return geq; // geq -> result1 --> dist1
+			return getResultObject(originalQueryList, result1, key, jpqlVars, tree, verifier);
+//			return geq; // geq -> result1 --> dist1
 		else
-			return leq;
+			return getResultObject(originalQueryList, result2, key, jpqlVars, tree, verifier);
+//			return leq;
 	}
+	
+	private static ArrayList<?> getResultObject(List<String> queryList, String name, String searchAttr, 
+			Map<String, Object> jpqlVars,RequestNode tree, RequestVerifier verifier) {
 
-	private static ArrayList getNN(List<String> queryList, String attr, Map<String, Object> jpqlVars, RequestNode tree,
+		jpqlVars.put(searchAttr, name);
+		System.out.println(jpqlVars);
+		QueryBuilder queryBuilder = new QueryBuilder();
+		Query query = queryBuilder.createQuery(queryList, jpqlVars);
+		ArrayList<?> obj = (ArrayList<?>) tree.getFunction().getFunction().apply(query, verifier.getResultEntity());
+		return obj;
+	}
+	
+	private static ArrayList<?> getNN(List<String> queryList, String attr, Map<String, Object> jpqlVars, RequestNode tree,
 			RequestVerifier verifier, String mode) {
 
 		QueryBuilder queryBuilder = new QueryBuilder();
@@ -137,44 +165,61 @@ public class APIController {
 
 		queryList.set(listlen, newSearchTerm);
 		Query query = queryBuilder.createQuery(queryList, jpqlVars);
-		ArrayList nn = (ArrayList) tree.getFunction().getFunction().apply(query, verifier.getResultEntity());
+		ArrayList<?> nn = (ArrayList<?>) tree.getFunction().getFunction().apply(query, verifier.getResultEntity());
 		return nn;
 
 	}
 
-	private static String extractResult(ArrayList nn) {
+	private static String extractResult(ArrayList<?> nn) {
 		String result = "";
 		if (nn.toString().contains(":")) {
 			result = nn.toString().substring(nn.toString().indexOf(":") + 1, nn.toString().indexOf(","));
 		} else {
 			result = nn.toString();
 		}
-		return result;
+		return result.substring(1, result.length()-1);
 	}
 
-	private static ArrayList searchDBwild(List<String> queryList, Map<String, Object> jpqlVars, RequestNode tree,
+	private static ArrayList<?> searchDBwild(List<String> queryList, Map<String, Object> jpqlVars, RequestNode tree,
 			RequestVerifier verifier) {
 
 		QueryBuilder queryBuilder = new QueryBuilder();
 		Map<String, Object> jpqlCopy = new HashMap<String, Object>(jpqlVars);
-
-		String likeStat = queryList.get(queryList.size() - 1);
-		String dbObj = likeStat.substring(0, likeStat.indexOf("=") - 1);
-		String searchObj = likeStat.substring(likeStat.indexOf("=") + 2);
-		queryList.remove(queryList.size() - 1);
-		queryList.add(dbObj);
-		queryList.add("LIKE");
-		queryList.add(":" + searchObj);
-
-		for (String key : jpqlVars.keySet()) {
-			Object val = jpqlVars.get(key);
-			String searchTerm = val.toString().substring(0, val.toString().length());
-			searchTerm = "%" + searchTerm + "%";
-			jpqlCopy.put(key, searchTerm);
+		
+		int whereIdx = queryList.indexOf("WHERE");
+		List<String> newQueryList = new ArrayList<>(queryList.subList(0, whereIdx+1));
+		for (int i=whereIdx+1; i < queryList.size(); i++) {
+			String likeStat = queryList.get(i);
+			if (likeStat.equals("and")) {
+				newQueryList.add("and");
+				continue;
+			}
+			String dbObj = likeStat.substring(0, likeStat.indexOf("="));
+			String searchObj = likeStat.substring(likeStat.indexOf("=") + 2);
+			// wildcards only for String objects
+			if (searchObj.contains("fullName") || searchObj.contains("name") || searchObj.contains("title")) {
+				newQueryList.add(dbObj);
+				newQueryList.add("LIKE");
+				newQueryList.add(":" + searchObj);
+			} else {
+				newQueryList.add(likeStat);
+				continue;
+			}
 		}
 
-		Query query = queryBuilder.createQuery(queryList, jpqlCopy);
-		ArrayList ret = (ArrayList) tree.getFunction().getFunction().apply(query, verifier.getResultEntity());
-		return ret;
+		for (String key : jpqlVars.keySet()) {
+			// wildcards only for String objects
+			if (key.contains("fullName") || key.contains("name") || key.contains("title")) {
+				Object val = jpqlVars.get(key);
+				String searchTerm = val.toString().substring(0, val.toString().length());
+				searchTerm = "%" + searchTerm + "%";
+				jpqlCopy.put(key, searchTerm);
+			} else {
+				continue;
+			}
+		}
+
+		Query query = queryBuilder.createQuery(newQueryList, jpqlCopy);
+		return (ArrayList<?>) tree.getFunction().getFunction().apply(query, verifier.getResultEntity());
 	}
 }

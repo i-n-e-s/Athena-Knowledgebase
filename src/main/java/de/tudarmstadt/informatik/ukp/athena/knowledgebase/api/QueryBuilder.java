@@ -65,10 +65,11 @@ public class QueryBuilder {
 		if(tree.getHierarchy().get(0).getEntity().getAttributes().size() > 0) //this is only the case if the request is not something like /paper to get all the papers
 			queryList.add("WHERE");
 
+		String entityVar = "";
 		//now set the attributes
 		for(RequestHierarchyNode hierarchyNode : tree.getHierarchy()) {
 			RequestEntityNode entityNode = hierarchyNode.getEntity();
-			String entityVar = entityNode.getEntityName().getString().equals("eventpart") ? "ep" : entityNode.getEntityName().getString().substring(0, 2);
+			entityVar = entityNode.getEntityName().getString().equals("eventpart") ? "ep" : entityNode.getEntityName().getString().substring(0, 2);
 
 			//loop through the attributes (if any)
 			for(AttributeNode attr : entityNode.getAttributes()) {
@@ -88,6 +89,7 @@ public class QueryBuilder {
 		ArrayList ret = new ArrayList();
 		ret.add(queryList);
 		ret.add(jpqlVars);
+		ret.add(entityVar);
 		return ret; 
 	}
 

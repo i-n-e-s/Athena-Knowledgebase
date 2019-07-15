@@ -18,6 +18,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.api.APIController;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.api.NeedlemanWunsch;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.crawler.CrawlerFacade;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.crawler.SupportedConferences;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.crawler.semanticscholarapi.S2APIFunctions;
@@ -47,7 +48,7 @@ public class ParsedDataInserter {
 	private static Logger logger = LogManager.getLogger(ParsedDataInserter.class);
 
 	/**
-	 * Needed so spring works
+	 * Needed so spring works avoidance
 	 */
 	public ParsedDataInserter(){}
 
@@ -122,8 +123,9 @@ public class ParsedDataInserter {
 			logger.info("\"-scrape-acl18-info\" argument was not found, skipping ACL 2018 scraping");
 
 		logger.info("Done! (Took {})", LocalTime.ofNanoOfDay(System.nanoTime() - then));
-
+		
 		parsedDataInserter.acl18WebParser.close();
+	
 	}
 
 	/**
@@ -145,6 +147,7 @@ public class ParsedDataInserter {
 		}
 
 		logger.info("Done inserting papers and authors!");
+		
 	}
 
 	/**
