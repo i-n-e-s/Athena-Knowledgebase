@@ -26,6 +26,7 @@ import org.allenai.scienceparse.ExtractedMetadata;
 import org.allenai.scienceparse.Parser;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.pdfbox.text.PDFTextStripper;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -222,9 +223,12 @@ class ACLWebCrawler extends AbstractCrawler {
 					.collect(Collectors.toSet());
 
 		}
-
+		int i = 0;
 		for (String s : selectedURLs) {
+			i += 1;
         	webPages.add( Jsoup.connect(s).get());
+			if(i > 30) break;
+			}
 //			Connection.Response resp = Jsoup.connect(s) //
 //					.timeout(20000) //
 //					.method(Connection.Method.GET) //
@@ -420,9 +424,12 @@ class ACLWebCrawler extends AbstractCrawler {
 		logger.info("Scraping webpages for paper author relationships...");
 		ArrayList<Paper> paperList = new ArrayList<>();
 		org.allenai.scienceparse.Parser parser = null;
+		PDFTextStripper stripper = null;
+		de.tudarmstadt.informatik.ukp.athena.knowledgebase.PDFParser.Parser myparse = new de.tudarmstadt.informatik.ukp.athena.knowledgebase.PDFParser.Parser();
 
 		try {
-			parser = Parser.getInstance();
+			//parser = Parser.getInstance();
+			stripper = new PDFTextStripper();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -458,14 +465,12 @@ class ACLWebCrawler extends AbstractCrawler {
 				paper.setRemoteLink(remoteLink); // wow that was easy
 				paper.setReleaseDate(extractPaperRelease(doc));
 				try {
-					ExtractedMetadata meDa = scienceParse(parser, new URL(remoteLink));
-					if(meDa == null) continue;
-					String plaintext = "";
-					for (org.allenai.scienceparse.Section sec : meDa.sections) {
-						plaintext = plaintext + sec.text;
-					}
-					paper.setPaperPlainText(plaintext);
-					paper.setPaperAbstract(meDa.abstractText);
+					URL urli = new URL(remoteLink);
+					//ExtractedMetadata meDa = myparse.scienceParse(parser, urli);
+					String plainText = myparse.plainParse(stripper, urli);
+					//if(meDa == null) continue;
+					paper.setPaperPlainText(plainText);
+					//paper.setPaperAbstract(meDa.abstractText);
 					//im allenai parser zwischenergebnisse abfangen und pdfs schließen
 					//treffen Mittwoch 10:00
 				} catch (MalformedURLException e) {
@@ -501,32 +506,8 @@ class ACLWebCrawler extends AbstractCrawler {
 		return paperList;
 	}
 
-	private ExtractedMetadata scienceParse(Parser parser, URL url) {
-		ExtractedMetadata em = null;
-		try {
-			InputStream inputStream = getConnectionFromURL(url).getInputStream();
-			em = parser.doParse(inputStream);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return em;
-	}
 
-	private static HttpURLConnection getConnectionFromURL(URL url) throws IOException {
-		HttpURLConnection con = (HttpURLConnection) url.openConnection();
-		con.connect();
-		int responseCode = con.getResponseCode();
-		if (responseCode < 400 && responseCode > 299) {
-			String redirectUrl = con.getHeaderField("Location");
-			try {
-				URL newUrl = new URL(redirectUrl);
-				con = getConnectionFromURL(newUrl);
-			} catch (MalformedURLException e) {
-				System.out.println(e.getMessage());
-			}
-		}
-		return con;
-	}
+
 
 	/**
 	 * Checks with the given {link conferences} whether or not to save this paper
