@@ -1,6 +1,11 @@
 package de.tudarmstadt.informatik.ukp.athena.knowledgebase.crawler;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -17,8 +22,11 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 
+import org.allenai.scienceparse.ExtractedMetadata;
+import org.allenai.scienceparse.Parser;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.pdfbox.text.PDFTextStripper;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -184,6 +192,7 @@ class ACLWebCrawler extends AbstractCrawler {
 	 * @return the list of visited webpages in form of a Jsoup document
 	 * @throws IOException in case the connection is faulty and / or not present
 	 */
+
 	private ArrayList<Document> fetchWebpages(String startURL) throws IOException {
 
 		HashSet<String> allURLs = new HashSet<String>();
@@ -413,6 +422,16 @@ class ACLWebCrawler extends AbstractCrawler {
 	private ArrayList<Paper> extractPaperAuthor(List<Document> webpages) {
 		logger.info("Scraping webpages for paper author relationships...");
 		ArrayList<Paper> paperList = new ArrayList<>();
+		org.allenai.scienceparse.Parser parser = null;
+		PDFTextStripper stripper = null;
+		de.tudarmstadt.informatik.ukp.athena.knowledgebase.PDFParser.Parser myparse = new de.tudarmstadt.informatik.ukp.athena.knowledgebase.PDFParser.Parser();
+
+		try {
+			//parser = Parser.getInstance();
+			stripper = new PDFTextStripper();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		for (Document doc : webpages) {
 			// Elements paperListElements = doc.select("h5.index_title");
 			// innerLoop: for (Element elmnt : paperListElements) {
@@ -441,9 +460,23 @@ class ACLWebCrawler extends AbstractCrawler {
 
 				paper.setTitle(paperTitle);
 				paper.setAnthology(anthology);
-				paper.setRemoteLink("http://aclweb.org/anthology/" + anthology); // wow that was easy
+				String remoteLink = "http://aclweb.org/anthology/" + anthology;
+				paper.setRemoteLink(remoteLink); // wow that was easy
 				paper.setReleaseDate(extractPaperRelease(doc));
-
+				try {
+					URL urli = new URL(remoteLink);
+					//ExtractedMetadata meDa = myparse.scienceParse(parser, urli);
+					String plainText = myparse.plainParse(stripper, urli);
+					//if(meDa == null) continue;
+					paper.setPaperPlainText(plainText);
+					//paper.setPaperAbstract(meDa.abstractText);
+					//im allenai parser zwischenergebnisse abfangen und pdfs schließen
+					//treffen Mittwoch 10:00
+				} catch (MalformedURLException e) {
+					System.out.println("Parser abgestuerzt. Leere PDF-File? ");
+					System.out.println("Fehlerhafter Link: " + remoteLink);
+					e.printStackTrace();
+				}
 				// find authors and add them to a list
 
 				Elements authorElements = doc.select("#main > p> a");// elmnt.parent().parent().children().select("span").select("a");

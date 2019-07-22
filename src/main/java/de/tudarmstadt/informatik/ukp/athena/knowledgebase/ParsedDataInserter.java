@@ -11,6 +11,8 @@ import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.PDFParser.Parser;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.api.APIController;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.JSONException;
@@ -34,6 +36,7 @@ import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Paper;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Person;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.ScheduleEntry;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Workshop;
+
 
 @SpringBootApplication
 /**
@@ -86,7 +89,6 @@ public class ParsedDataInserter {
 				endYear = Integer.parseInt(arg.split("=")[1]); //parse to make sure that it's a number
 			else if(arg.startsWith("-conferences="))
 				conferences = arg.replace("-conferences=", "").split(",");
-
 		}
 
 		if(beginYear > endYear) {
@@ -120,7 +122,9 @@ public class ParsedDataInserter {
 			parsedDataInserter.acl2018StoreConferenceInformation(); //automatically saves the schedule as well
 		else
 			logger.info("\"-scrape-acl18-info\" argument was not found, skipping ACL 2018 scraping");
-
+		Parser parse = new Parser();
+		if(argsList.contains("-parse-institutions"))
+			parse.parseInstitution();
 		logger.info("Done! (Took {})", LocalTime.ofNanoOfDay(System.nanoTime() - then));
 
 		// test API
@@ -156,6 +160,7 @@ public class ParsedDataInserter {
 		logger.info("Inserting papers and authors into database...");
 
 		for(Paper paper : papers) {
+            System.out.println("Paper added: " + paper.getTitle());
 			paperFiler.add(paper);
 		}
 

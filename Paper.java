@@ -64,11 +64,13 @@ public class Paper extends Model {
 	@Column(name = "semanticScholarID")
 	private String semanticScholarID;
 	/*Abstract of paper as String*/
-	@Column(name = "paperAbstract", columnDefinition="TEXT")
+	@Column(name = "paperAbstracti")
+	//, columnDefinition="TEXT")
 	private String paperAbstract;
 	@Column(name = "amountOfCitations")
 	private long amountOfCitations = -1;    //-1 if not known yet
-	@Column(name= "plainText", columnDefinition = "LONGTEXT")
+	@Column(name= "plainText")
+			//, columnDefinition = "LONGTEXT")
 	private String paperPlainText;
 
 
