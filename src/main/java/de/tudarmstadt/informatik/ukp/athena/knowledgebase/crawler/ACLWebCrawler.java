@@ -341,7 +341,10 @@ class ACLWebCrawler extends AbstractCrawler {
 					createdPapers.add(paper);
 				}
 
-				paper.setTitle(doc.title());
+			    Elements titleElement=doc.select("#title > a");
+
+				
+				paper.setTitle(titleElement.get(0).text());
 				paperList.add(paper);
 			}
 		}
@@ -450,7 +453,9 @@ class ACLWebCrawler extends AbstractCrawler {
 				// String rawTitle = elmnt.text();
 				// String[] splitRawTitle = rawTitle.split(" ", 2);
 
-				String paperTitle = doc.title();// splitRawTitle[1];
+			    Elements titleElement=doc.select("#title > a");
+				
+				String paperTitle = titleElement.get(0).text();// splitRawTitle[1];
 				String anthology = paperInformationElements.get(0).text();// splitRawTitle[0].replace("[",
 																			// "").replace("]", "");
 
@@ -460,6 +465,7 @@ class ACLWebCrawler extends AbstractCrawler {
 					createdPapers.add(paper);
 				}
 
+				
 				paper.setTitle(paperTitle);
 				paper.setAnthology(anthology);
 				String remoteLink = "http://aclweb.org/anthology/" + anthology;
@@ -675,8 +681,12 @@ class ACLWebCrawler extends AbstractCrawler {
 							// C18-1017 would be the anthology - we remove [] because they convey no meaning
 							// String rawTitle = elmnt.text();
 							// String[] splitRawTitle = rawTitle.split(" ", 2);
-
-							String paperTitle = doc.title();// splitRawTitle[1];
+							
+							
+						    Elements titleElement=doc.select("#title > a");
+						    	
+							
+							String paperTitle = titleElement.get(0).text();//doc.title();// splitRawTitle[1];
 							String anthology = paperInformationElements.get(0).text();// splitRawTitle[0].replace("[",
 																						// "").replace("]", "");
 
