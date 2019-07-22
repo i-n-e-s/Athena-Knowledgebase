@@ -48,3 +48,5 @@ bin
 
 # linux files
 .directory
+src/scripts/athena_pid.txt
+src/main/resources/META-INF/persistence.xml

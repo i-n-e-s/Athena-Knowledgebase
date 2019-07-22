@@ -20,6 +20,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.api.APIController;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.api.NeedlemanWunsch;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.crawler.CrawlerFacade;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.crawler.SupportedConferences;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.crawler.semanticscholarapi.S2APIFunctions;
@@ -36,7 +37,6 @@ import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Paper;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Person;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.ScheduleEntry;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Workshop;
-
 
 @SpringBootApplication
 /**
@@ -160,7 +160,6 @@ public class ParsedDataInserter {
 		logger.info("Inserting papers and authors into database...");
 
 		for(Paper paper : papers) {
-            System.out.println("Paper added: " + paper.getTitle());
 			paperFiler.add(paper);
 		}
 

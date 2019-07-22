@@ -42,6 +42,17 @@ public class Person extends Model {
 	/*Full Name*/
 	@Column(name = "fullName", nullable = false)
 	private String fullName;
+	
+	/*First Name*/
+	@Column(name = "firstName", nullable = false)
+	private String firstName;
+	
+	/*Full Name*/
+	@Column(name = "lastName", nullable = false)
+	private String lastName;
+	
+	
+	
 
 	/*Birthday and day of death*/
 	@Column(name = "birth")
@@ -151,6 +162,39 @@ public class Person extends Model {
 		this.fullName = fullName;
 	}
 
+	/**
+	 * Gets this person's full name.
+	 * @return This person's full name.
+	 */
+	public String getFirstName() {
+		return firstName;
+	}
+
+	/**
+	 * Sets this person's full name.
+	 * @param fullName This person's full name.
+	 */
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
+	}
+	
+	/**
+	 * Gets this person's full name.
+	 * @return This person's full name.
+	 */
+	public String getLastName() {
+		return lastName;
+	}
+
+	/**
+	 * Sets this person's full name.
+	 * @param fullName This person's full name.
+	 */
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
+	}
+	
+	
 	/**
 	 * Gets this person's birthday.
 	 * @return This person's birthday
