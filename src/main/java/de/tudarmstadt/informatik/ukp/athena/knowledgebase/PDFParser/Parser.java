@@ -28,7 +28,7 @@ public class Parser {
         }
         return em;
     }
-
+    //parsing of plain text
     public String plainParse(PDFTextStripper stripper, URL urli){
         String doc = null;
         try {
