@@ -98,6 +98,7 @@ public class Parser {
                         for (Person a : authorCandidates) {
                             insti.addPerson(a);
                             a.setInstitution(insti);
+                            System.out.println(insti);
                         }
                     } else {
                         for (Person a : authorCandidates) {
@@ -105,6 +106,7 @@ public class Parser {
                             if (a.getInstitution().equals(insti)) continue;
                             insti.addPerson(a);
                             a.setInstitution(insti);
+                            System.out.println(insti);
                         }
                     }
                 }
@@ -114,6 +116,7 @@ public class Parser {
             }// author name eine der columns --> namen speichern und i neu setzen
         }
         }
+
     }
 }
 
