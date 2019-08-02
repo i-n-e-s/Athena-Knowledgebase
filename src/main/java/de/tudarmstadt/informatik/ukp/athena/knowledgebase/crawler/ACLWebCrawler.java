@@ -358,12 +358,6 @@ class ACLWebCrawler extends AbstractCrawler {
      */
     @Override
     public ArrayList<Paper> getPaperAuthor() throws IOException {
-        if(true) {
-        	
-        	return getPaperAuthorEvent();
-        }else {
-    	
-    	
     	
     	logger.info("Gathering all paper author relationships...");
         List<Document> webpages = fetchWebpages(startURLPaper);
@@ -416,7 +410,7 @@ class ACLWebCrawler extends AbstractCrawler {
         }
 
         executor.shutdown();*/
-        return result;}
+        return result;
     }
 
 	/**
@@ -516,7 +510,7 @@ class ACLWebCrawler extends AbstractCrawler {
 	}
 	
 	
-	private ArrayList<Paper> getPaperAuthorEvent() throws IOException {
+	public ArrayList<Conference> getPaperAuthorEvent() throws IOException {
 		ArrayList<Paper> paperList=new ArrayList<Paper>();
 		
 
@@ -567,7 +561,8 @@ class ACLWebCrawler extends AbstractCrawler {
         	
         
     	System.out.println(paperPerEventPerConference.size());
-
+    	
+    	ArrayList<Conference> conferencesList=new ArrayList<Conference>();
     	
     	for(int x=0;x<converenceURLs.size();x++ ) {
     		Conference conference=new Conference();
@@ -781,11 +776,11 @@ class ACLWebCrawler extends AbstractCrawler {
     			conference.addEvent(event);
     			
     		}
-    		
+    		conferencesList.add(conference);
     		
     	}
 		
-		return paperList;
+		return conferencesList;
 	}
 	
 	

@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -44,12 +45,12 @@ public class Conference extends Model{
 
 	/*Basically the schedule*/
 	@Hierarchy(entityName="event")
-	@OneToMany(orphanRemoval=true, fetch=FetchType.EAGER) //unidirectional relationship which
+	@OneToMany(orphanRemoval=true, fetch=FetchType.EAGER,cascade = {CascadeType.ALL}) //unidirectional relationship which
 	@JoinColumn(name="conferenceID")					  //is saved in the Event table
 	private Set<Event> events = new HashSet<>();
 	/*The workshops*/
 	@Hierarchy(entityName="workshop")
-	@OneToMany(orphanRemoval=true, fetch=FetchType.EAGER) //unidirectional relationship which
+	@OneToMany(orphanRemoval=true, fetch=FetchType.EAGER,cascade = {CascadeType.ALL}) //unidirectional relationship which
 	@JoinColumn(name="conferenceID")					  //is saved in the Workshop table
 	private Set<Workshop> workshops = new HashSet<>();
 

@@ -40,6 +40,11 @@ abstract class AbstractCrawler {
 	 */
 	public abstract ArrayList<Paper> getPaperAuthor() throws IOException;
 
+	
+	
+	public abstract ArrayList<Conference> getPaperAuthorEvent() throws IOException;
+
+	
 	/**
 	 * A method which returns a conference instance with its name, location, and start and end date set.
 	 * Scrapes an about page for its information and employs string conversion found in CrawlerToolset

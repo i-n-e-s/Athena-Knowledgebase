@@ -108,6 +108,17 @@ public class ParsedDataInserter {
 
 		parsedDataInserter = new ParsedDataInserter(beginYear, endYear, conferences);
 
+		if(argsList.contains("-scrape-paper-author-event")) {
+			try {
+				logger.info("Scraping years {} through {} - this can take a couple of minutes...", beginYear, endYear);
+				parsedDataInserter.aclStorePapersAndAuthorsAndEvents();
+			} catch (IOException e) {
+				e.printStackTrace();}
+			
+			
+		}else {
+		logger.info("\"-scrape-paper-author-event\" argument was not found, skipping event scraping");
+
 		//only scrape if respective argument was found
 		if(argsList.contains("-scrape-paper-author")) {
 			try {
@@ -120,6 +131,8 @@ public class ParsedDataInserter {
 		else
 			logger.info("\"-scrape-paper-author\" argument was not found, skipping paper author scraping");
 
+		}
+		
 		if(argsList.contains("-scrape-acl18-info"))
 			parsedDataInserter.acl2018StoreConferenceInformation(); //automatically saves the schedule as well
 		else
@@ -129,6 +142,21 @@ public class ParsedDataInserter {
 		
 		parsedDataInserter.acl18WebParser.close();
 	
+	}
+
+	private void aclStorePapersAndAuthorsAndEvents() throws IOException {
+		logger.info("Scraping papers and authors...");
+		ArrayList<Conference> conferences = acl18WebParser.getPaperAuthorEvent();
+		CommonAccess<Conference> conferenceFiler = new ConferenceJPAAccess();
+
+		logger.info("Inserting papers and authors into database...");
+
+		for(Conference conference : conferences) {
+            System.out.println("Paper added: " + conference.getName());
+			conferenceFiler.add(conference);
+		}
+
+		logger.info("Done inserting papers and authors!");		
 	}
 
 	/**
