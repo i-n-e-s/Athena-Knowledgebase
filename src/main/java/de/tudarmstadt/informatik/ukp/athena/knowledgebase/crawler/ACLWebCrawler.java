@@ -223,13 +223,19 @@ class ACLWebCrawler extends AbstractCrawler {
 
 		}
 
+		int i=0;
 		for (String s : selectedURLs) {
+			i=i++;
         	webPages.add( Jsoup.connect(s).get());
 //			Connection.Response resp = Jsoup.connect(s) //
 //					.timeout(20000) //
 //					.method(Connection.Method.GET) //
 //					.execute();
 //			webPages.add(((Connection) resp).get());
+		
+		if(i>1) {
+			break;
+		}
 		}
 		return webPages;
 
@@ -387,72 +393,21 @@ class ACLWebCrawler extends AbstractCrawler {
             }
             return result;
         }
-=======
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public ArrayList<Paper> getPaperAuthor() throws IOException {
-		logger.info("Gathering all paper author relationships...");
-		List<Document> webpages = fetchWebpages(startURLPaper);
-		logger.info("Preparing data and starting 4 scraper threads...");
-		// in the following lines the list gets split into 4 roughly equal parts so that
-		// each list part can be handled in a seperate thread (it's faster this way)
-		int quarterSize = (int) Math.ceil(webpages.size() / 4);
-		List<Document> input1 = webpages.subList(0, quarterSize);
-		List<Document> input2 = webpages.subList(quarterSize, quarterSize * 2);
-		List<Document> input3 = webpages.subList(quarterSize * 2, quarterSize * 3);
-		List<Document> input4 = webpages.subList(quarterSize * 3, webpages.size());
-		ArrayList<Paper> result = new ArrayList<>();
 
-		// If duplicate avoidance is enabled, do not use threading, as the separate
-		// threads would interfere each other
-		if (runWithDuplicateAvoidance) {
-			try {
-				result.addAll(extractPaperAuthor(input1));
-				logger.info("Finished 1 / 4");
-				result.addAll(extractPaperAuthor(input2));
-				logger.info("Finished 2 / 4");
-				result.addAll(extractPaperAuthor(input3));
-				logger.info("Finished 3 / 4");
-				result.addAll(extractPaperAuthor(input4));
-				logger.info("Finished 4 / 4");
-			} catch (Exception e) { // thread exceptions
-				logger.error("Error while gathering results!", e);
-			}
-			return result;
-		}
->>>>>>> 5a34507f8ab304ced94c7f3b51aac1f75d956dcb
 
 		// setup and start those threads
-		ExecutorService executor = Executors.newFixedThreadPool(4);
-		Future<ArrayList<Paper>> f1 = executor.submit(() -> extractPaperAuthor(input1));
-		Future<ArrayList<Paper>> f2 = executor.submit(() -> extractPaperAuthor(input2));
-		Future<ArrayList<Paper>> f3 = executor.submit(() -> extractPaperAuthor(input3));
-		Future<ArrayList<Paper>> f4 = executor.submit(() -> extractPaperAuthor(input4));
+		//ExecutorService executor = Executors.newFixedThreadPool(4);
+		//Future<ArrayList<Paper>> f1 = executor.submit(() -> extractPaperAuthor(input1));
+		//Future<ArrayList<Paper>> f2 = executor.submit(() -> extractPaperAuthor(input2));
+		//Future<ArrayList<Paper>> f3 = executor.submit(() -> extractPaperAuthor(input3));
+		//Future<ArrayList<Paper>> f4 = executor.submit(() -> extractPaperAuthor(input4));
 		logger.info("Waiting for thread results...");
 
-<<<<<<< HEAD
-        executor.shutdown();*/
+
+//        executor.shutdown();
         return result;
     }
-=======
-		// wait for the thread results and add all of those to the result list (.get()
-		// is blocking)
-		try {
-			result.addAll(f1.get());
-			result.addAll(f2.get());
-			result.addAll(f3.get());
-			result.addAll(f4.get());
-			logger.info("Done gathering all paper and author results!");
-		} catch (Exception e) { // thread exceptions
-			logger.error("Error while gathering results!", e);
-		}
 
-		executor.shutdown();
-		return result;
-	}
->>>>>>> 5a34507f8ab304ced94c7f3b51aac1f75d956dcb
 
 	/**
 	 * Extracts all papers and authors from a given list of webpages, which are in
@@ -547,15 +502,10 @@ class ACLWebCrawler extends AbstractCrawler {
 		logger.info("Done scraping!");
 		return paperList;
 	}
-<<<<<<< HEAD
 	
 	
 	public ArrayList<Conference> getPaperAuthorEvent() throws IOException {
-=======
 
-
-	private ArrayList<Paper> getPaperAuthorEvent() throws IOException {
->>>>>>> 5a34507f8ab304ced94c7f3b51aac1f75d956dcb
 		ArrayList<Paper> paperList=new ArrayList<Paper>();
 
 
@@ -606,14 +556,10 @@ class ACLWebCrawler extends AbstractCrawler {
 
 
     	System.out.println(paperPerEventPerConference.size());
-<<<<<<< HEAD
     	
     	ArrayList<Conference> conferencesList=new ArrayList<Conference>();
     	
-=======
 
-
->>>>>>> 5a34507f8ab304ced94c7f3b51aac1f75d956dcb
     	for(int x=0;x<converenceURLs.size();x++ ) {
     		Conference conference=new Conference();
 
@@ -826,19 +772,13 @@ class ACLWebCrawler extends AbstractCrawler {
     			conference.addEvent(event);
 
     		}
-<<<<<<< HEAD
+
     		conferencesList.add(conference);
     		
     	}
 		
 		return conferencesList;
-=======
 
-
-    	}
-
-		return paperList;
->>>>>>> 5a34507f8ab304ced94c7f3b51aac1f75d956dcb
 	}
 
 
