@@ -1,5 +1,4 @@
 package de.tudarmstadt.informatik.ukp.athena.knowledgebase.crawler;
-
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -26,6 +25,7 @@ import org.allenai.scienceparse.ExtractedMetadata;
 import org.allenai.scienceparse.Parser;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.pdfbox.text.PDFTextStripper;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -231,7 +231,7 @@ class ACLWebCrawler extends AbstractCrawler {
 //					.execute();
 //			webPages.add(((Connection) resp).get());
 		}
-        	return webPages; }
+		return webPages;
 
 		/**
 		 * Jsoup.connect
@@ -249,7 +249,7 @@ class ACLWebCrawler extends AbstractCrawler {
 		 * JsoupHelper.connect(links.get(idxOfLink).absUrl("href")); docs.add(nxtDoc); }
 		 * } logger.info("Done fetching webpages!"); return docs;
 		 **/
-	
+	}
 
 	/**
 	 * {@inheritDoc}
@@ -343,7 +343,7 @@ class ACLWebCrawler extends AbstractCrawler {
 
 			    Elements titleElement=doc.select("#title > a");
 
-				
+
 				paper.setTitle(titleElement.get(0).text());
 				paperList.add(paper);
 			}
@@ -387,31 +387,72 @@ class ACLWebCrawler extends AbstractCrawler {
             }
             return result;
         }
+=======
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public ArrayList<Paper> getPaperAuthor() throws IOException {
+		logger.info("Gathering all paper author relationships...");
+		List<Document> webpages = fetchWebpages(startURLPaper);
+		logger.info("Preparing data and starting 4 scraper threads...");
+		// in the following lines the list gets split into 4 roughly equal parts so that
+		// each list part can be handled in a seperate thread (it's faster this way)
+		int quarterSize = (int) Math.ceil(webpages.size() / 4);
+		List<Document> input1 = webpages.subList(0, quarterSize);
+		List<Document> input2 = webpages.subList(quarterSize, quarterSize * 2);
+		List<Document> input3 = webpages.subList(quarterSize * 2, quarterSize * 3);
+		List<Document> input4 = webpages.subList(quarterSize * 3, webpages.size());
+		ArrayList<Paper> result = new ArrayList<>();
 
-        //setup and start those threads
-        /*ExecutorService executor = Executors.newFixedThreadPool(4);
-        Future<ArrayList<Paper>> f1 = executor.submit(() -> extractPaperAuthor(input1));
-        Future<ArrayList<Paper>> f2 = executor.submit(() -> extractPaperAuthor(input2));
-        Future<ArrayList<Paper>> f3 = executor.submit(() -> extractPaperAuthor(input3));
-        Future<ArrayList<Paper>> f4 = executor.submit(() -> extractPaperAuthor(input4));
-        logger.info("Waiting for thread results...");
+		// If duplicate avoidance is enabled, do not use threading, as the separate
+		// threads would interfere each other
+		if (runWithDuplicateAvoidance) {
+			try {
+				result.addAll(extractPaperAuthor(input1));
+				logger.info("Finished 1 / 4");
+				result.addAll(extractPaperAuthor(input2));
+				logger.info("Finished 2 / 4");
+				result.addAll(extractPaperAuthor(input3));
+				logger.info("Finished 3 / 4");
+				result.addAll(extractPaperAuthor(input4));
+				logger.info("Finished 4 / 4");
+			} catch (Exception e) { // thread exceptions
+				logger.error("Error while gathering results!", e);
+			}
+			return result;
+		}
+>>>>>>> 5a34507f8ab304ced94c7f3b51aac1f75d956dcb
 
-        //wait for the thread results and add all of those to the result list (.get() is blocking)
-        try {
-            result.addAll(f1.get());
-            result.addAll(f2.get());
-            result.addAll(f3.get());
-            result.addAll(f3.get());
-            result.addAll(f4.get());
-            System.out.println("In get Paper Author: " + result.get(0).getPaperAbstract());
-            logger.info("Done gathering all paper and author results!");
-        } catch (Exception e) { //thread exceptions
-            logger.error("Error while gathering results!", e);
-        }
+		// setup and start those threads
+		ExecutorService executor = Executors.newFixedThreadPool(4);
+		Future<ArrayList<Paper>> f1 = executor.submit(() -> extractPaperAuthor(input1));
+		Future<ArrayList<Paper>> f2 = executor.submit(() -> extractPaperAuthor(input2));
+		Future<ArrayList<Paper>> f3 = executor.submit(() -> extractPaperAuthor(input3));
+		Future<ArrayList<Paper>> f4 = executor.submit(() -> extractPaperAuthor(input4));
+		logger.info("Waiting for thread results...");
 
+<<<<<<< HEAD
         executor.shutdown();*/
         return result;
     }
+=======
+		// wait for the thread results and add all of those to the result list (.get()
+		// is blocking)
+		try {
+			result.addAll(f1.get());
+			result.addAll(f2.get());
+			result.addAll(f3.get());
+			result.addAll(f4.get());
+			logger.info("Done gathering all paper and author results!");
+		} catch (Exception e) { // thread exceptions
+			logger.error("Error while gathering results!", e);
+		}
+
+		executor.shutdown();
+		return result;
+	}
+>>>>>>> 5a34507f8ab304ced94c7f3b51aac1f75d956dcb
 
 	/**
 	 * Extracts all papers and authors from a given list of webpages, which are in
@@ -425,9 +466,12 @@ class ACLWebCrawler extends AbstractCrawler {
 		logger.info("Scraping webpages for paper author relationships...");
 		ArrayList<Paper> paperList = new ArrayList<>();
 		org.allenai.scienceparse.Parser parser = null;
+		PDFTextStripper stripper = null;
+		de.tudarmstadt.informatik.ukp.athena.knowledgebase.PDFParser.Parser myparse = new de.tudarmstadt.informatik.ukp.athena.knowledgebase.PDFParser.Parser();
 
 		try {
-			parser = Parser.getInstance();
+			//parser = Parser.getInstance();
+			stripper = new PDFTextStripper();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -448,7 +492,7 @@ class ACLWebCrawler extends AbstractCrawler {
 				// String[] splitRawTitle = rawTitle.split(" ", 2);
 
 			    Elements titleElement=doc.select("#title > a");
-				
+
 				String paperTitle = titleElement.get(0).text();// splitRawTitle[1];
 				String anthology = paperInformationElements.get(0).text();// splitRawTitle[0].replace("[",
 																			// "").replace("]", "");
@@ -459,23 +503,18 @@ class ACLWebCrawler extends AbstractCrawler {
 					createdPapers.add(paper);
 				}
 
-				
 				paper.setTitle(paperTitle);
 				paper.setAnthology(anthology);
 				String remoteLink = "http://aclweb.org/anthology/" + anthology;
 				paper.setRemoteLink(remoteLink); // wow that was easy
 				paper.setReleaseDate(extractPaperRelease(doc));
 				try {
-					ExtractedMetadata meDa = scienceParse(parser, new URL(remoteLink));
-					if(meDa == null) continue;
-					String plaintext = "";
-					for (org.allenai.scienceparse.Section sec : meDa.sections) {
-						plaintext = plaintext + sec.text;
-					}
-					paper.setPaperPlainText(plaintext);
+					URL urli = new URL(remoteLink);
+					ExtractedMetadata meDa = myparse.scienceParse(parser, urli);
+					String plainText = myparse.plainParse(stripper, urli);
+					//if(meDa == null) continue;
+					paper.setPaperPlainText(plainText);
 					paper.setPaperAbstract(meDa.abstractText);
-					//im allenai parser zwischenergebnisse abfangen und pdfs schließen
-					//treffen Mittwoch 10:00
 				} catch (MalformedURLException e) {
 					System.out.println("Parser abgestuerzt. Leere PDF-File? ");
 					System.out.println("Fehlerhafter Link: " + remoteLink);
@@ -508,24 +547,30 @@ class ACLWebCrawler extends AbstractCrawler {
 		logger.info("Done scraping!");
 		return paperList;
 	}
+<<<<<<< HEAD
 	
 	
 	public ArrayList<Conference> getPaperAuthorEvent() throws IOException {
+=======
+
+
+	private ArrayList<Paper> getPaperAuthorEvent() throws IOException {
+>>>>>>> 5a34507f8ab304ced94c7f3b51aac1f75d956dcb
 		ArrayList<Paper> paperList=new ArrayList<Paper>();
-		
+
 
         Set<String> uniqueURL=get_links("https://aclweb.org/anthology/events/");
         System.out.println("Projekt läuft!");
         HashSet<String> uniqueConverenceURLs = uniqueURL.stream()
         	    .filter(p -> p.contains("https://aclweb.org/anthology/events/")).collect(Collectors.toCollection(HashSet::new));
-        
+
         ArrayList<String> converenceURLs= selector(uniqueConverenceURLs,this.conferences,this.beginYear,this.endYear).stream().collect(Collectors.toCollection(ArrayList::new));;
         String[] array = converenceURLs.stream().toArray(n -> new String[n]);
         System.out.println(array.length);
         System.out.println(Arrays.toString(array));
 
         ArrayList<ArrayList<String>> eventsPerConference=new ArrayList<ArrayList<String>>();
-        
+
         int i=0;
         for(String s : array) {
         	i++;
@@ -535,135 +580,140 @@ class ACLWebCrawler extends AbstractCrawler {
         if(i==1000) {
         break;
         }}
-        
+
     	System.out.println(eventsPerConference.size());
 
-        
+
         ArrayList<ArrayList<HashSet<String>>> paperPerEventPerConference=new ArrayList<ArrayList<HashSet<String>>>();
-        
-        
+
+
         for(ArrayList<String> events :eventsPerConference) {
-        	
-        	
-        	ArrayList<HashSet<String>> urlsPerEvent  =new ArrayList<HashSet<String>>(); 
+
+
+        	ArrayList<HashSet<String>> urlsPerEvent  =new ArrayList<HashSet<String>>();
         	for(String l: events) {
-        		
-        		
+
+
         		urlsPerEvent.add(get_links(l).stream().filter(p -> p.contains("https://aclweb.org/anthology/papers/")&& !p.contains(".bib")).collect(Collectors.toCollection(HashSet::new)));
         	System.out.println("UrlsPerEvent:"+urlsPerEvent.size());
         	}
-        	
-        	
-        	paperPerEventPerConference.add(urlsPerEvent);	
-        	
-        	
+
+
+        	paperPerEventPerConference.add(urlsPerEvent);
+
+
         }
-        	
-        
+
+
     	System.out.println(paperPerEventPerConference.size());
+<<<<<<< HEAD
     	
     	ArrayList<Conference> conferencesList=new ArrayList<Conference>();
     	
+=======
+
+
+>>>>>>> 5a34507f8ab304ced94c7f3b51aac1f75d956dcb
     	for(int x=0;x<converenceURLs.size();x++ ) {
     		Conference conference=new Conference();
-    		
+
         	Document conferenceSite=Jsoup.connect(converenceURLs.get(x)).get();
 
-        	
+
     		Elements confernceTitleElement= conferenceSite.select("#title");
-			
+
 			String conferenceTitle = confernceTitleElement.get(0).text();//splitRawTitle[1];
 
-    		
+
     		conference.setName(conferenceTitle);
-    		
+
     		for(int y=0; y<eventsPerConference.get(x).size();y++) {
     			Event event=new Event();//über eventsPerConference.get(x) scrapen
-    			
+
     			Document eventDocument=Jsoup.connect(eventsPerConference.get(x).get(y)).get();
 
     			Elements id= eventDocument.select("#main > div.row.acl-paper-details > div.col.col-lg-10.order-2 > dl > dd");
 
 
-            	
+
         		Elements titel= eventDocument.select("#title");
-    			
+
     			String titleString = titel.get(0).text();//splitRawTitle[1];
-	
+
     			String monthString = id.get(1).text();//splitRawTitle[1];
 
     			String yearString = id.get(2).text();//splitRawTitle[1];
-    			
+
     			LocalDate date= null;
-    			
+
     			try {
-    			
+
     			int monthInt =monthToInt(monthString);
     			int yearInt=Integer.parseInt(yearString);
-    			
+
     			if(monthInt!=0) {
     				date = LocalDate.of(yearInt, monthInt, 1);
     				event.setBegin(date.atStartOfDay());
     				event.setEnd(date.atStartOfDay());
     			}
-    			
+
     			}catch(NumberFormatException e){
     				System.out.println("yearString: "+yearString);
-    				
+
     			}
-    			
-    			
+
+
     			String locationString = id.get(3).text();//splitRawTitle[1];
     			String[] locationArray=locationString.split(", ");
-    			
-    			
-    			
+
+
+
     			if(y==0) {
-    				
-    			
-    			if(locationArray.length==2) {	
-    			conference.setCity(locationArray[0]);	
+
+
+    			if(locationArray.length==2) {
+    			conference.setCity(locationArray[0]);
     			conference.setCountry(locationArray[1]);
     			}
-    				
+
     			//conference.setId(id);
-    			
+
     			if(date !=null) {
     				conference.setBegin(date);
     				conference.setEnd(date);
-    				
-    			}
-    			
-    			
-    			}
-    			
-    			
 
-            	
-    		
+    			}
+
+
+    			}
+
+
+
+
+
     			//String idString = id.get(0).text();//splitRawTitle[1];
     			//String cityString = id.get(3).text();//splitRawTitle[1];
 
-    			
-    			
+
+
     			//event.setId(idString);
     			event.setTitle(titleString);
     			EventCategory category=getWorkshopType(titleString);
     			if(category!=null) {
     			event.setCategory(category);
     			}
-    			
+
     			//event.setConferenceName(conferenceTitel);
-    			
-    			
-    			
+
+
+
     			for(String s: paperPerEventPerConference.get(x).get(y)) {
-    				
+
     	        	try {
     	        		System.out.println(s);
-    	        		
+
 						Document doc= Jsoup.connect(s).get();
-						
+
 						Elements paperInformationElements = doc.select("#main > div > div.col.col-lg-10.order-2 > dl > dd");
 						if (!doc.title().contains("VOLUME")) {
 							// check is not earlier because the elmnt is needed
@@ -676,11 +726,11 @@ class ACLWebCrawler extends AbstractCrawler {
 							// C18-1017 would be the anthology - we remove [] because they convey no meaning
 							// String rawTitle = elmnt.text();
 							// String[] splitRawTitle = rawTitle.split(" ", 2);
-							
-							
+
+
 						    Elements titleElement=doc.select("#title > a");
-						    	
-							
+
+
 							String paperTitle = titleElement.get(0).text();//doc.title();// splitRawTitle[1];
 							String anthology = paperInformationElements.get(0).text();// splitRawTitle[0].replace("[",
 																						// "").replace("]", "");
@@ -725,12 +775,12 @@ class ACLWebCrawler extends AbstractCrawler {
 
 								// because acl2018 seems to not employ prefixes (e.g. Prof. Dr.), we do not need
 								// to scan them
-								
+
 								String linkAuthor=authorEl.attr("abs:href");
-								
+
 								try {
 								Document docAuthor= Jsoup.connect(linkAuthor).get();
-								
+
 								Elements authorFirstNameElement = docAuthor.select("#title > span.font-weight-normal");
 								Elements authorLastNameElement = docAuthor.select("#title > span.font-weight-bold");
 
@@ -739,12 +789,12 @@ class ACLWebCrawler extends AbstractCrawler {
 
 								author.setFirstName(firstName);
 								author.setLastName(lastName);
-								
+
 								}catch(IOException e) {
-									
-									
+
+
 								}
-								
+
 								author.setFullName(authorEl.text());
 								// set paper - author relation
 								paper.addAuthor(author);
@@ -753,60 +803,68 @@ class ACLWebCrawler extends AbstractCrawler {
 								event.addPaper(paper);
 			    	        	//event.addPaper(paper);
 			    	        	paperList.add(paper);
-							
+
 							}
-							
+
 							// }
 						}
-					
-						
-						
-						
-						
-					    	        	
-    				
+
+
+
+
+
+
+
     	        	} catch (IOException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
-    	        	
+
     			}
-    			    				
-    			
+
+
     			conference.addEvent(event);
-    			
+
     		}
+<<<<<<< HEAD
     		conferencesList.add(conference);
     		
     	}
 		
 		return conferencesList;
+=======
+
+
+    	}
+
+		return paperList;
+>>>>>>> 5a34507f8ab304ced94c7f3b51aac1f75d956dcb
 	}
-	
-	
-	
+
+
+
 	private int monthToInt(String month) {
 		switch(month) {
 		case "January": return 1;
 		case "February": return 2;
 		case "March": return 3;
 		case "April": return 4;
-		case "May": return 5; 
+		case "May": return 5;
 		case "June": return 6;
-		case "July": return 7; 
+		case "July": return 7;
 		case "August": return 8;
 		case "September": return 9;
 		case "October": return 10;
 		case "November": return 11;
 		case "December": return 12;
-			default: return 0;	
-			
-		
+			default: return 0;
+
+
 		}
-		
+
 	}
-	
-	
+
+
 	private EventCategory getWorkshopType(String workshopTitle) {
 		if(workshopTitle.toLowerCase().contains("BREAK")) {return EventCategory.BREAK;}
 		if(workshopTitle.toLowerCase().contains("CEREMONY")) {return EventCategory.CEREMONY;}
@@ -819,14 +877,14 @@ class ACLWebCrawler extends AbstractCrawler {
 		if(workshopTitle.toLowerCase().contains("TUTORIAL")) {return EventCategory.TUTORIAL;}
 		if(workshopTitle.toLowerCase().contains("WELCOME")) {return EventCategory.WELCOME;}
 		if(workshopTitle.toLowerCase().contains("WORKSHOP")) {return EventCategory.WORKSHOP;}
-	
+
 		return null;
 	}
-	
-	
-	
-	
-	
+
+
+
+
+
 
 	private ExtractedMetadata scienceParse(Parser parser, URL url) {
 		ExtractedMetadata em = null;
@@ -856,7 +914,7 @@ class ACLWebCrawler extends AbstractCrawler {
 	}
 
 	/**
-	 * Checks with the given {link conferences} whether or not to save this paper
+	 * Checks with the given {@link conferences} whether or not to save this paper
 	 * into the database
 	 * 
 	 * @param paper The web element of the paper to check

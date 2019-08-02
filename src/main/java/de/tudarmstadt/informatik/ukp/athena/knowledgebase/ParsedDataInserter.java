@@ -11,6 +11,7 @@ import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.PDFParser.Parser;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.api.APIController;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -37,7 +38,6 @@ import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Person
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.ScheduleEntry;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Workshop;
 
-
 @SpringBootApplication
 /**
  *	A class which is meant to be run only once, which is why it is separate from application. Starts Spring and adds
@@ -50,7 +50,7 @@ public class ParsedDataInserter {
 	private static Logger logger = LogManager.getLogger(ParsedDataInserter.class);
 
 	/**
-	 * Needed so spring works avoidance
+	 * Needed so spring works
 	 */
 	public ParsedDataInserter(){}
 
@@ -75,7 +75,6 @@ public class ParsedDataInserter {
 
 	//length of 40 lines exceeded because this is all one startup sequence which manages everything
 	public static void main(String[] args) {
-
 		long then = System.nanoTime();
 		SpringApplication.run(ParsedDataInserter.class, args);
 		ParsedDataInserter parsedDataInserter;
@@ -90,7 +89,6 @@ public class ParsedDataInserter {
 				endYear = Integer.parseInt(arg.split("=")[1]); //parse to make sure that it's a number
 			else if(arg.startsWith("-conferences="))
 				conferences = arg.replace("-conferences=", "").split(",");
-
 		}
 
 		if(beginYear > endYear) {
@@ -137,11 +135,27 @@ public class ParsedDataInserter {
 			parsedDataInserter.acl2018StoreConferenceInformation(); //automatically saves the schedule as well
 		else
 			logger.info("\"-scrape-acl18-info\" argument was not found, skipping ACL 2018 scraping");
-
+		Parser parse = new Parser();
+		if(argsList.contains("-parse-institutions"))
+			parse.parseInstitution();
 		logger.info("Done! (Took {})", LocalTime.ofNanoOfDay(System.nanoTime() - then));
+
+		// test API
+//		APIController apic = new APIController();		
+//		String request = "/paper:title=Emoji+Prediction"; // paper:title=wrror+rate+estimation"; //tako+kudo/paper:paperID=1/person";// 
+//		// Multimodal+Frame+Identification+with+Multilingual+Evaluation 
+//		apic.apiConnector(request);
+
+
+//		// testing my code
+//		PersonJPAAccess personfiler = new PersonJPAAccess();
+//		Person testperson = new Person();
+//		testperson.setFullName("irina gure");
+////		List<Person> result = personfiler.getByKnownAttributes(testperson);
+//		Person result = personfiler.getByFullName(testperson.getFullName());
+//		System.out.println(result);
 		
 		parsedDataInserter.acl18WebParser.close();
-	
 	}
 
 	private void aclStorePapersAndAuthorsAndEvents() throws IOException {
@@ -174,12 +188,10 @@ public class ParsedDataInserter {
 		logger.info("Inserting papers and authors into database...");
 
 		for(Paper paper : papers) {
-            System.out.println("Paper added: " + paper.getTitle());
 			paperFiler.add(paper);
 		}
 
 		logger.info("Done inserting papers and authors!");
-		
 	}
 
 	/**
