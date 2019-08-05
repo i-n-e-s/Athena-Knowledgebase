@@ -22,6 +22,7 @@ public class Parser {
         ExtractedMetadata em = null;
         try {
             InputStream inputStream = getConnectionFromURL(url).getInputStream();
+            System.out.println("URL Für Stream: " + url);
             em = parser.doParse(inputStream);
         } catch (IOException e) {
             e.printStackTrace();

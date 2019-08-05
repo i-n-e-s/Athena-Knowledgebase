@@ -15,6 +15,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.GenericGenerator;
 
 @Entity
@@ -52,6 +53,7 @@ public class Event extends Model implements ScheduleEntry {
 
 	/* Associated papers */
 	@Hierarchy(entityName="paper")
+	@JsonIgnore
 	@OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER)
 	@JoinTable(
 			name = "event_papers",
@@ -65,6 +67,7 @@ public class Event extends Model implements ScheduleEntry {
 	//	private Set<Paper> papers;
 	/* Event parts, if any */
 	@Hierarchy(entityName="eventpart")
+	@JsonIgnore
 	@OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER)
 	@JoinTable(
 			name = "event_eventParts",

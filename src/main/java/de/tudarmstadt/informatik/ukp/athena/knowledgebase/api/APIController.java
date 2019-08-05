@@ -60,11 +60,11 @@ public class APIController {
 			
 			if (ret.isEmpty()) {
 				// search nearest neighbor only if it is no nested query
-				if (queryList.contains("and")) {
-					ret = searchDBwild(queryList, jpqlVars, tree, verifier);
-				} else {
-					ret = searchNearsetNeighbor(queryList, jpqlVars, tree, verifier);
-				}
+				//if (queryList.contains("and")) {
+				ret = searchDBwild(queryList, jpqlVars, tree, verifier);
+				//} else {
+				//	ret = searchNearsetNeighbor(queryList, jpqlVars, tree, verifier);
+				//}
 			}
 			return ret;
 		}
@@ -197,7 +197,8 @@ public class APIController {
 			String dbObj = likeStat.substring(0, likeStat.indexOf("="));
 			String searchObj = likeStat.substring(likeStat.indexOf("=") + 2);
 			// wildcards only for String objects
-			if (searchObj.contains("fullName") || searchObj.contains("name") || searchObj.contains("title")) {
+			if (searchObj.contains("fullName") || searchObj.contains("name") || searchObj.contains("firstName")
+					|| searchObj.contains("lastName") || searchObj.contains("title")) {
 				newQueryList.add(dbObj);
 				newQueryList.add("LIKE");
 				newQueryList.add(":" + searchObj);
@@ -209,7 +210,7 @@ public class APIController {
 
 		for (String key : jpqlVars.keySet()) {
 			// wildcards only for String objects
-			if (key.contains("fullName") || key.contains("name") || key.contains("title")) {
+			if (key.contains("fullName") || key.contains("name") ||  key.contains("firstName") || key.contains("lastName") || key.contains("title")) {
 				Object val = jpqlVars.get(key);
 				String searchTerm = val.toString().substring(0, val.toString().length());
 				searchTerm = "%" + searchTerm + "%";

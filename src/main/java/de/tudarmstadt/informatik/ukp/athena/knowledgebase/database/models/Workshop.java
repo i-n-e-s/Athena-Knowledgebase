@@ -15,6 +15,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.GenericGenerator;
 
 @Entity
@@ -45,6 +46,7 @@ public class Workshop extends Model implements ScheduleEntry {
 	private String place;
 	/*Basically the schedule. Might be empty since not all workshops provide an easily scrapable schedule*/
 	@Hierarchy(entityName="event")
+	@JsonIgnore
 	@OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER)
 	@JoinTable(
 			name = "workshop_event",

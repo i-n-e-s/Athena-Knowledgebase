@@ -83,12 +83,15 @@ public class ParsedDataInserter {
 		String[] conferences = null;
 
 		for(String arg : args) {
-			if(arg.startsWith("-beginYear="))
+			if(arg.contains("-beginYear=")) {
 				beginYear = Integer.parseInt(arg.split("=")[1]); //parse to make sure that it's a number
-			else if(arg.startsWith("-endYear="))
+			}
+			if(arg.contains("-endYear=")) {
 				endYear = Integer.parseInt(arg.split("=")[1]); //parse to make sure that it's a number
-			else if(arg.startsWith("-conferences="))
+			}
+			if(arg.contains("-conferences=")) {
 				conferences = arg.replace("-conferences=", "").split(",");
+			}
 		}
 
 		if(beginYear > endYear) {

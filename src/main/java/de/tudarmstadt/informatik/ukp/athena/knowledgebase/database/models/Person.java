@@ -62,6 +62,7 @@ public class Person extends Model {
 
 	/*The person's institution, eg. an university or a company*/
 	//@Column(name = "institution")
+	@JsonIgnore
 	@ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
 	@JoinColumn(name = "institutionID")
 	private Institution institution;

@@ -14,6 +14,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.GenericGenerator;
 
 @Entity
@@ -45,11 +46,14 @@ public class Conference extends Model{
 
 	/*Basically the schedule*/
 	@Hierarchy(entityName="event")
+
+	@JsonIgnore
 	@OneToMany(orphanRemoval=true, fetch=FetchType.EAGER,cascade = {CascadeType.ALL}) //unidirectional relationship which
 	@JoinColumn(name="conferenceID")					  //is saved in the Event table
 	private Set<Event> events = new HashSet<>();
 	/*The workshops*/
 	@Hierarchy(entityName="workshop")
+	@JsonIgnore
 	@OneToMany(orphanRemoval=true, fetch=FetchType.EAGER,cascade = {CascadeType.ALL}) //unidirectional relationship which
 	@JoinColumn(name="conferenceID")					  //is saved in the Workshop table
 	private Set<Workshop> workshops = new HashSet<>();

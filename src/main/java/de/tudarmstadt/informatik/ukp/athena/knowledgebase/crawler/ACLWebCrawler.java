@@ -222,20 +222,17 @@ class ACLWebCrawler extends AbstractCrawler {
 					.collect(Collectors.toSet());
 
 		}
-
-		int i=0;
+		//int i = 0;
 		for (String s : selectedURLs) {
-			i=i++;
+			//if(i > 5 )break;
+			//i ++;
+			System.out.println(s);
         	webPages.add( Jsoup.connect(s).get());
 //			Connection.Response resp = Jsoup.connect(s) //
 //					.timeout(20000) //
 //					.method(Connection.Method.GET) //
 //					.execute();
 //			webPages.add(((Connection) resp).get());
-		
-		if(i>1) {
-			break;
-		}
 		}
 		return webPages;
 
@@ -364,7 +361,7 @@ class ACLWebCrawler extends AbstractCrawler {
      */
     @Override
     public ArrayList<Paper> getPaperAuthor() throws IOException {
-    	
+
     	logger.info("Gathering all paper author relationships...");
         List<Document> webpages = fetchWebpages(startURLPaper);
         logger.info("Preparing data and starting 4 scraper threads...");
@@ -376,23 +373,23 @@ class ACLWebCrawler extends AbstractCrawler {
         //List<Document> input4 = webpages.subList(quarterSize * 3, webpages.size());
         ArrayList<Paper> result = new ArrayList<>();
 
-
-        //If duplicate avoidance is enabled, do not use threading, as the separate threads would interfere each other
-        if (runWithDuplicateAvoidance) {
-            try {
-                result.addAll(extractPaperAuthor(webpages));
-                //logger.info("Finished 1 / 4");
-                //result.addAll(extractPaperAuthor(input2));
-                //logger.info("Finished 2 / 4");
-                //result.addAll(extractPaperAuthor(input3));
-                //logger.info("Finished 3 / 4");
-                //result.addAll(extractPaperAuthor(input4));
-                //logger.info("Finished 4 / 4");
-            } catch (Exception e) { //thread exceptions
-                logger.error("Error while gathering results!", e);
-            }
-            return result;
-        }
+		// If duplicate avoidance is enabled, do not use threading, as the separate
+		// threads would interfere each other
+		if (runWithDuplicateAvoidance) {
+			try {
+				result.addAll(extractPaperAuthor(webpages));
+				/*logger.info("Finished 1 / 4");
+				result.addAll(extractPaperAuthor(input2));
+				logger.info("Finished 2 / 4");
+				result.addAll(extractPaperAuthor(input3));
+				logger.info("Finished 3 / 4");
+				result.addAll(extractPaperAuthor(input4));
+				logger.info("Finished 4 / 4");*/
+			} catch (Exception e) { // thread exceptions
+				logger.error("Error while gathering results!", e);
+			}
+			return result;
+		}
 
 
 		// setup and start those threads
@@ -425,7 +422,7 @@ class ACLWebCrawler extends AbstractCrawler {
 		de.tudarmstadt.informatik.ukp.athena.knowledgebase.PDFParser.Parser myparse = new de.tudarmstadt.informatik.ukp.athena.knowledgebase.PDFParser.Parser();
 
 		try {
-			//parser = Parser.getInstance();
+			parser = Parser.getInstance();
 			stripper = new PDFTextStripper();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -467,7 +464,7 @@ class ACLWebCrawler extends AbstractCrawler {
 					URL urli = new URL(remoteLink);
 					ExtractedMetadata meDa = myparse.scienceParse(parser, urli);
 					String plainText = myparse.plainParse(stripper, urli);
-					//if(meDa == null) continue;
+					if(meDa == null) continue;
 					paper.setPaperPlainText(plainText);
 					paper.setPaperAbstract(meDa.abstractText);
 				} catch (MalformedURLException e) {
@@ -502,8 +499,8 @@ class ACLWebCrawler extends AbstractCrawler {
 		logger.info("Done scraping!");
 		return paperList;
 	}
-	
-	
+
+
 	public ArrayList<Conference> getPaperAuthorEvent() throws IOException {
 
 		ArrayList<Paper> paperList=new ArrayList<Paper>();
@@ -556,9 +553,9 @@ class ACLWebCrawler extends AbstractCrawler {
 
 
     	System.out.println(paperPerEventPerConference.size());
-    	
+
     	ArrayList<Conference> conferencesList=new ArrayList<Conference>();
-    	
+
 
     	for(int x=0;x<converenceURLs.size();x++ ) {
     		Conference conference=new Conference();
@@ -774,11 +771,10 @@ class ACLWebCrawler extends AbstractCrawler {
     		}
 
     		conferencesList.add(conference);
-    		
-    	}
-		
-		return conferencesList;
 
+    	}
+
+		return conferencesList;
 	}
 
 
