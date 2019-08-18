@@ -1,5 +1,6 @@
 package de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
@@ -73,6 +74,66 @@ public class Event extends Model implements ScheduleEntry {
 			)
 	private Set<EventPart> eventparts = new HashSet<>(); //lowercase to make it work with the api
 
+	
+	
+	//@Column(name = "speaker")
+//	private Person speaker;
+	@Column(name = "link")
+	private String link;
+	/*Date*/
+	@Column(name="date")
+	private LocalDate date;
+	
+	/**
+	 * Gets the date of this event
+	 * @return event's date
+	 */
+	public LocalDate getDate() {
+		return date;
+	}
+
+	/**
+	 * Sets the date of this event
+	 * @param event's date
+	 */
+	public void setDate(LocalDate date) {
+		this.date = date;
+	}
+	
+	/**
+	 * Gets the speaker of a tutorial (the first listed person in the corresponding paper)
+	 * @return speaker of tutorial
+	 */
+	//public Person getSpeaker() {
+		//return speaker;
+	//}
+
+	/**
+	 * Sets the speaker of a tutorial (the first listed person in the corresponding paper)
+	 * @param speaker of tutorial
+	 */
+	//public void setSpeaker(Person speaker) {
+	//	this.speaker = speaker;
+	//}
+	
+	/**
+	 * Gets the link of workshops to the corresponding workshop page
+	 * @return link to workshop page
+	 */
+	public String getLink() {
+		return link;
+	}
+
+	/**
+	 * Sets the link of workshops to the corresponding workshop page
+	 * @param link to workshop page
+	 */
+	public void setLink(String link) {
+		this.link = link;
+	}
+	
+	
+	
 	/**
 	 * Gets the unique id of this event
 	 * @return The unique id of this event

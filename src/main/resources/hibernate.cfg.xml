@@ -12,7 +12,7 @@
          server and application timzones differ, might help  ?serverTimezone=UTC&amp;useLegacyDatetimeCode=false-->
         <property name="connection.url">jdbc:mysql://localhost:3306/athena?serverTimezone=UTC&amp;useLegacyDatetimeCode=false</property>
         <property name="connection.user">athena</property>
-        <property name="connection.password">ihavesecurityissues</property>
+        <property name="connection.password">nurnenwald</property>
 
         <!--Hibernate Properties-->
         <property name="show_sql">false</property> <!--Echoes all SQL to stdout-->
@@ -25,8 +25,8 @@
         <mapping class="de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Institution" />
         <mapping class="de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Paper" />
         <mapping class="de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Person" />
-        <mapping class="de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Session" />
-        <mapping class="de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.SessionPart" />
+        <mapping class="de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Event"/>  <!--  Session" /> -->
+        <mapping class="de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.EventPart"/>   <!--  SessionPart" /> -->
         <mapping class="de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Workshop" />
         <!--<mapping class="/roseindia/Employee" />-->
 

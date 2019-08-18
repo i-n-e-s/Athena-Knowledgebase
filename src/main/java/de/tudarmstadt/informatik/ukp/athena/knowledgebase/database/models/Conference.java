@@ -54,6 +54,82 @@ public class Conference extends Model{
 	@JoinColumn(name="conferenceID")					  //is saved in the Workshop table
 	private Set<Workshop> workshops = new HashSet<>();
 
+	
+	@Column(name="description")
+	private String description;
+	@Column(name="submissionDeadlineLongPaper")
+	private String submissionDeadlineLongPaper;
+	@Column(name="submissionDeadlineShortPaper")
+	private String submissionDeadlineShortPaper;
+	@Column(name="reviewNotification")
+	private LocalDate review_notification;
+	
+	
+	/**
+	 * Gets a description of the given conference
+	 * @return description of the conference
+	 */
+	public String getDescription() {
+		return description;
+	}
+	
+	/**
+	 * Sets a description of the given conference
+	 * @param description of the conference
+	 */
+	public void setDescription(String description) {
+		this.description = description;		
+	}
+	
+	/**
+	 * Gets the submission deadline for long papers
+	 * @return submission deadline
+	 */
+	public String getSubmissionDeadlineLongPaper() {
+		return submissionDeadlineLongPaper;
+	}
+	
+	/**
+	 * Sets the submission deadline for long papers
+	 * @param submission deadline
+	 */
+	public void setSubmissionDeadlineLongPaper(String deadline) {
+		this.submissionDeadlineLongPaper = deadline;
+	}
+	
+	/**
+	 * Gets the submission deadline for short papers
+	 * @return submission deadline
+	 */
+	public String getSubmissionDeadlineShortPaper() {
+		return submissionDeadlineShortPaper;
+	}
+	
+	/**
+	 * Sets the submission deadline for short papers
+	 * @param submission deadline
+	 */
+	public void setSubmissionDeadlineShortPaper(String deadline) {
+		this.submissionDeadlineShortPaper = deadline;
+	}
+	
+	/**
+	 * Gets the notification of acceptance date for papers
+	 * @return date for notification of acceptance
+	 */
+	public LocalDate getReviewNotification() {
+		return review_notification;
+	}
+	
+	/**
+	 * Sets the notification of acceptance date for papers
+	 * @param date for notification of acceptance
+	 */
+	public void setReviewNotification(LocalDate review_notification) {
+		this.review_notification = review_notification;
+	}
+	
+	
 	/**
 	 * Gets the unique id of this conference
 	 * @return The unique id of this conference

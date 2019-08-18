@@ -36,7 +36,14 @@ public class EventPart extends Model{
 	/* Place where this event happens */
 	@Column(name = "place")
 	private String place;
-
+	
+	@Column(name = "speaker")
+	private Person speaker;
+	
+	@Column(name = "paper")
+	private Paper paper;
+	
+	
 	/**
 	 * Gets the unique id of this event part
 	 * @return The unique id of this event part
@@ -85,6 +92,40 @@ public class EventPart extends Model{
 		this.begin = begin;
 	}
 
+	/**
+	 * Gets the speaker of a EventPart (the first listed person in the corresponding paper)
+	 * @return speaker of tutorial
+	 */
+	public Person getSpeaker() {
+		return speaker;
+	}
+
+	/**
+	 * Sets the speaker of a EventPart (the first listed person in the corresponding paper)
+	 * @param speaker of tutorial
+	 */
+	public void setSpeaker(Person speaker) {
+		this.speaker = speaker;
+	}
+	
+	
+	/**
+	 * Gets the corresponding paper
+	 * @return speaker of tutorial
+	 */
+	public Paper getPaper() {
+		return paper;
+	}
+
+	/**
+	 * Sets the the corresponding paper
+	 * @param speaker of tutorial
+	 */
+	public void setPaper(Paper paper) {
+		this.paper= paper;
+	}
+	
+	
 	/**
 	 * Gets the time this event part ends
 	 * @return This event part's new end time
