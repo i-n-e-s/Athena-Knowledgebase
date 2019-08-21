@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -209,6 +210,7 @@ class ACLWebCrawler extends AbstractCrawler {
 			allURLs.addAll(get_links(s));
 
 			System.out.println(allURLs.size());
+			
 		}
 
 		if (startURL.equals("paper")) {
@@ -222,12 +224,17 @@ class ACLWebCrawler extends AbstractCrawler {
 					.collect(Collectors.toSet());
 
 		}
-		//int i = 0;
+		int i = 0;
 		for (String s : selectedURLs) {
-			//if(i > 5 )break;
-			//i ++;
+			if(i > 5 )break;
+			i ++;
 			System.out.println(s);
-        	webPages.add( Jsoup.connect(s).get());
+			try {
+				webPages.add( Jsoup.connect(s).get());
+			} catch (IOException e) {
+				e.printStackTrace();
+				System.out.println("IO Exception at " + s);
+			}
 //			Connection.Response resp = Jsoup.connect(s) //
 //					.timeout(20000) //
 //					.method(Connection.Method.GET) //
@@ -365,26 +372,27 @@ class ACLWebCrawler extends AbstractCrawler {
     	logger.info("Gathering all paper author relationships...");
         List<Document> webpages = fetchWebpages(startURLPaper);
         logger.info("Preparing data and starting 4 scraper threads...");
+             
         //in the following lines the list gets split into 4 roughly equal parts so that each list part can be handled in a seperate thread (it's faster this way)
-        //int quarterSize = (int) Math.ceil(webpages.size() / 4);
-        //List<Document> input1 = webpages.subList(0, quarterSize);
-        //List<Document> input2 = webpages.subList(quarterSize, quarterSize * 2);
-        //List<Document> input3 = webpages.subList(quarterSize * 2, quarterSize * 3);
-        //List<Document> input4 = webpages.subList(quarterSize * 3, webpages.size());
+        int quarterSize = (int) Math.ceil(webpages.size() / 4);
+        List<Document> input1 = webpages.subList(0, quarterSize);
+        List<Document> input2 = webpages.subList(quarterSize, quarterSize * 2);
+        List<Document> input3 = webpages.subList(quarterSize * 2, quarterSize * 3);
+        List<Document> input4 = webpages.subList(quarterSize * 3, webpages.size());
         ArrayList<Paper> result = new ArrayList<>();
 
 		// If duplicate avoidance is enabled, do not use threading, as the separate
 		// threads would interfere each other
 		if (runWithDuplicateAvoidance) {
 			try {
-				result.addAll(extractPaperAuthor(webpages));
-				/*logger.info("Finished 1 / 4");
+				result.addAll(extractPaperAuthor(input1));
+				logger.info("Finished 1 / 4");
 				result.addAll(extractPaperAuthor(input2));
 				logger.info("Finished 2 / 4");
 				result.addAll(extractPaperAuthor(input3));
 				logger.info("Finished 3 / 4");
 				result.addAll(extractPaperAuthor(input4));
-				logger.info("Finished 4 / 4");*/
+				logger.info("Finished 4 / 4");
 			} catch (Exception e) { // thread exceptions
 				logger.error("Error while gathering results!", e);
 			}
@@ -421,12 +429,12 @@ class ACLWebCrawler extends AbstractCrawler {
 		PDFTextStripper stripper = null;
 		de.tudarmstadt.informatik.ukp.athena.knowledgebase.PDFParser.Parser myparse = new de.tudarmstadt.informatik.ukp.athena.knowledgebase.PDFParser.Parser();
 
-		try {
-			parser = Parser.getInstance();
-			stripper = new PDFTextStripper();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+//		try {
+//			parser = Parser.getInstance();
+//			stripper = new PDFTextStripper();
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
 		for (Document doc : webpages) {
 			// Elements paperListElements = doc.select("h5.index_title");
 			// innerLoop: for (Element elmnt : paperListElements) {
@@ -460,18 +468,18 @@ class ACLWebCrawler extends AbstractCrawler {
 				String remoteLink = "http://aclweb.org/anthology/" + anthology;
 				paper.setRemoteLink(remoteLink); // wow that was easy
 				paper.setReleaseDate(extractPaperRelease(doc));
-				try {
-					URL urli = new URL(remoteLink);
-					ExtractedMetadata meDa = myparse.scienceParse(parser, urli);
-					String plainText = myparse.plainParse(stripper, urli);
-					if(meDa == null) continue;
-					paper.setPaperPlainText(plainText);
-					paper.setPaperAbstract(meDa.abstractText);
-				} catch (MalformedURLException e) {
-					System.out.println("Parser abgestuerzt. Leere PDF-File? ");
-					System.out.println("Fehlerhafter Link: " + remoteLink);
-					e.printStackTrace();
-				}
+//				try {
+//					URL urli = new URL(remoteLink);
+//					ExtractedMetadata meDa = myparse.scienceParse(parser, urli);
+//					String plainText = myparse.plainParse(stripper, urli);
+//					if(meDa == null) continue;
+//					paper.setPaperPlainText(plainText);
+//					paper.setPaperAbstract(meDa.abstractText);
+//				} catch (MalformedURLException e) {
+//					System.out.println("Parser abgestuerzt. Leere PDF-File? ");
+//					System.out.println("Fehlerhafter Link: " + remoteLink);
+//					e.printStackTrace();
+//				}
 				// find authors and add them to a list
 
 				Elements authorElements = doc.select("#main > p> a");// elmnt.parent().parent().children().select("span").select("a");
@@ -587,23 +595,26 @@ class ACLWebCrawler extends AbstractCrawler {
 
     			String yearString = id.get(2).text();//splitRawTitle[1];
 
-    			LocalDate date= null;
+    			String date = "a date"; // null;
 
-    			try {
-
-    			int monthInt =monthToInt(monthString);
-    			int yearInt=Integer.parseInt(yearString);
-
-    			if(monthInt!=0) {
-    				date = LocalDate.of(yearInt, monthInt, 1);
-    				event.setBegin(date.atStartOfDay());
-    				event.setEnd(date.atStartOfDay());
-    			}
-
-    			}catch(NumberFormatException e){
-    				System.out.println("yearString: "+yearString);
-
-    			}
+//    			#######################################################
+				event.setBegin(yearString);
+				event.setEnd(yearString);
+//    			try {
+//
+//    			int monthInt =monthToInt(monthString);
+//    			int yearInt=Integer.parseInt(yearString);
+//
+//    			if(monthInt!=0) {
+//    				date = LocalDate.of(yearInt, monthInt, 1);
+//    				event.setBegin(date.atStartOfDay());
+//    				event.setEnd(date.atStartOfDay());
+//    			}
+//
+//    			}catch(NumberFormatException e){
+//    				System.out.println("yearString: "+yearString);
+//
+//    			}
 
 
     			String locationString = id.get(3).text();//splitRawTitle[1];
@@ -958,8 +969,11 @@ class ACLWebCrawler extends AbstractCrawler {
 
 		String cityCountryInformation = aboutPage.select("p:nth-child(1) a:nth-child(1)").text();
 		String dateAndLocationString = aboutPage.select(".sub-title-extra").text();
-		LocalDate conferenceStartDate = CrawlerToolset.acl2018ConvertStringToDateRange(dateAndLocationString)[0];
-		LocalDate conferenceEndDate = CrawlerToolset.acl2018ConvertStringToDateRange(dateAndLocationString)[1];
+//		##############################################
+		String conferenceStartDate = CrawlerToolset.acl2018ConvertStringToDateRange(dateAndLocationString)[0];
+		String conferenceEndDate = CrawlerToolset.acl2018ConvertStringToDateRange(dateAndLocationString)[1];
+//		LocalDate conferenceStartDate = CrawlerToolset.acl2018ConvertStringToDateRange(dateAndLocationString)[0];
+//		LocalDate conferenceEndDate = CrawlerToolset.acl2018ConvertStringToDateRange(dateAndLocationString)[1];
 		// Maybe we need to look at a timezone api? Probably not feasible to keep it
 		// free, which is why it is set as
 		// manual for now
@@ -1127,10 +1141,13 @@ class ACLWebCrawler extends AbstractCrawler {
 				title = title.replace(desc, "");
 
 			// set the extracted data
-			event.setBegin(LocalDateTime.of(2018, CrawlerToolset.getMonthIndex(monthDay[0]),
-					Integer.parseInt(monthDay[1]), Integer.parseInt(begin[0]), Integer.parseInt(begin[1])));
-			event.setEnd(LocalDateTime.of(2018, CrawlerToolset.getMonthIndex(monthDay[0]),
-					Integer.parseInt(monthDay[1]), Integer.parseInt(end[0]), Integer.parseInt(end[1])));
+//			####################################################
+			event.setBegin(begin[1]);
+			event.setEnd(end[1]);
+//			event.setBegin(LocalDateTime.of(2018, CrawlerToolset.getMonthIndex(monthDay[0]),
+//					Integer.parseInt(monthDay[1]), Integer.parseInt(begin[0]), Integer.parseInt(begin[1])));
+//			event.setEnd(LocalDateTime.of(2018, CrawlerToolset.getMonthIndex(monthDay[0]),
+//					Integer.parseInt(monthDay[1]), Integer.parseInt(end[0]), Integer.parseInt(end[1])));
 			event.setTitle(title);
 			event.setPlace(place.isEmpty() ? "?" : (place.get(0).text().isEmpty() ? "?" : place.get(0).text()));
 			event.setDescription(desc);
@@ -1182,9 +1199,12 @@ class ACLWebCrawler extends AbstractCrawler {
 			for (Element subEl : presentations.get(i).select(".talk")) {
 				EventPart eventPart = new EventPart();
 				String[] sessTime = subEl.selectFirst(".talk-time").text().split(":");
-				LocalDateTime sessStart = LocalDateTime.of(event.getBegin().toLocalDate(),
-						LocalTime.of(Integer.parseInt(sessTime[0]), Integer.parseInt(sessTime[1])));
-				LocalDateTime sessEnd = sessStart.plusMinutes(25);
+//				#############################################
+				String sessStart = event.getBegin();
+				String sessEnd = sessStart;
+//				LocalDateTime sessStart = LocalDateTime.of(event.getBegin().toLocalDate(),
+//						LocalTime.of(Integer.parseInt(sessTime[0]), Integer.parseInt(sessTime[1])));
+//				LocalDateTime sessEnd = sessStart.plusMinutes(25);
 				String sessPaperTitle = subEl.selectFirst(".talk-title").text();
 
 				// set the data

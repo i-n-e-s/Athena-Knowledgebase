@@ -21,6 +21,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.jpa.PersonJPAAccess;
 
@@ -34,7 +35,7 @@ public class Person extends Model {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "personID", updatable = false, nullable = false)
-	private long personID;
+	private Long personID;
 
 	/*Prefixes like academic titles*/
 	@Column(name = "prefix")
@@ -44,11 +45,11 @@ public class Person extends Model {
 	private String fullName;
 	
 	/*First Name*/
-	@Column(name = "firstName", nullable = false)
+//	@Column(name = "firstName")
 	private String firstName;
 	
 	/*Full Name*/
-	@Column(name = "lastName", nullable = false)
+//	@Column(name = "lastName")
 	private String lastName;
 	
 	
@@ -119,7 +120,7 @@ public class Person extends Model {
 	 * Gets the unique id of this person.
 	 * @return The unique id of this person
 	 */
-	public long getPersonID() {
+	public Long getPersonID() {
 		return personID;
 	}
 
@@ -127,7 +128,7 @@ public class Person extends Model {
 	 * Sets this person's id
 	 * @param id The new id
 	 */
-	public void setPersonID(long id) {
+	public void setPersonID(Long id) {
 		this.personID = id;
 	}
 

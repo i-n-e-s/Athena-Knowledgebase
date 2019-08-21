@@ -4,18 +4,22 @@ import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
+//import javax.persistence.CascadeType;
+//import javax.persistence.Column;
+//import javax.persistence.Entity;
+//import javax.persistence.FetchType;
+//import javax.persistence.GeneratedValue;
+//import javax.persistence.Id;
+//import javax.persistence.JoinColumn;
+//import javax.persistence.JoinTable;
+//import javax.persistence.OneToMany;
+//import javax.persistence.Table;
+
+import javax.persistence.*;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import org.hibernate.annotations.GenericGenerator;
 
 @Entity
@@ -26,7 +30,7 @@ public class Event extends Model implements ScheduleEntry {
 	@GeneratedValue(generator="increment")
 	@GenericGenerator(name="increment", strategy="increment")
 	@Column(name="eventID")
-	private long eventID;
+	private Long eventID;
 	/* Title */
 	@Column(name = "title")
 	private String title;
@@ -39,10 +43,10 @@ public class Event extends Model implements ScheduleEntry {
 
 	/*Start time*/
 	@Column(name="begin")
-	private LocalDateTime begin;
+	private String begin;
 	/*End time*/
 	@Column(name="end")
-	private LocalDateTime end;
+	private String end;
 
 	/*Host*/
 	//	@Column(name = "host")
@@ -54,7 +58,7 @@ public class Event extends Model implements ScheduleEntry {
 	/* Associated papers */
 	@Hierarchy(entityName="paper")
 	@JsonIgnore
-	@OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER)
+	@OneToMany(orphanRemoval = true, fetch = FetchType.EAGER, cascade = { CascadeType.ALL })
 	@JoinTable(
 			name = "event_papers",
 			joinColumns = { @JoinColumn(name = "eventID") },
@@ -68,7 +72,7 @@ public class Event extends Model implements ScheduleEntry {
 	/* Event parts, if any */
 	@Hierarchy(entityName="eventpart")
 	@JsonIgnore
-	@OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER)
+	@OneToMany(orphanRemoval = true, fetch = FetchType.EAGER, cascade = { CascadeType.ALL })
 	@JoinTable(
 			name = "event_eventParts",
 			joinColumns = { @JoinColumn(name = "eventID") },
@@ -80,7 +84,7 @@ public class Event extends Model implements ScheduleEntry {
 	 * Gets the unique id of this event
 	 * @return The unique id of this event
 	 */
-	public long getId() {
+	public Long getId() {
 		return eventID;
 	}
 
@@ -88,7 +92,7 @@ public class Event extends Model implements ScheduleEntry {
 	 * Sets this event's id
 	 * @param id The new id
 	 */
-	public void setId(long id) {
+	public void setId(Long id) {
 		this.eventID = id;
 	}
 
@@ -96,32 +100,32 @@ public class Event extends Model implements ScheduleEntry {
 	 * Gets the time this event begins
 	 * @return This event's begin time
 	 */
-	public LocalDateTime getBegin() {
+	public String getBegin() {
 		return begin;
 	}
 
 	/**
 	 * Sets the time this event begins
-	 * @param begin The time this event begins
+	 * @param yearString The time this event begins
 	 */
-	public void setBegin(LocalDateTime begin) {
-		this.begin = begin;
+	public void setBegin(String yearString) {
+		this.begin = yearString;
 	}
 
 	/**
 	 * Gets the time this event ends
 	 * @return This event's new end time
 	 */
-	public LocalDateTime getEnd() {
+	public String getEnd() {
 		return end;
 	}
 
 	/**
 	 * Sets the time this event ends
-	 * @param end The new time this event ends
+	 * @param yearString The new time this event ends
 	 */
-	public void setEnd(LocalDateTime end) {
-		this.end = end;
+	public void setEnd(String yearString) {
+		this.end = yearString;
 	}
 
 	//	/**

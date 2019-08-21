@@ -15,6 +15,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import org.hibernate.annotations.GenericGenerator;
 
 @Entity
@@ -25,17 +27,17 @@ public class Conference extends Model{
 	@GeneratedValue(generator="increment")
 	@GenericGenerator(name="increment", strategy="increment")
 	@Column(name="conferenceID")
-	private long conferenceID;
+	private Long conferenceID;
 	/*Name of conference*/
 	@Column(name="name")
 	private String name;
 
 	/*First day of conference, no need for the temporal annotation with java.time (indeed this would break it)*/
 	@Column (name="begin")
-	private LocalDate begin;
+	private String begin;
 	/*Last day of conference*/
 	@Column(name="end")
-	private LocalDate end;
+	private String end;
 
 	@Column(name="country")
 	private String country;
@@ -62,7 +64,7 @@ public class Conference extends Model{
 	 * Gets the unique id of this conference
 	 * @return The unique id of this conference
 	 */
-	public long getId() {
+	public Long getId() {
 		return conferenceID;
 	}
 
@@ -70,7 +72,7 @@ public class Conference extends Model{
 	 * Sets this conference's id
 	 * @param id The new id
 	 */
-	public void setId(long id) {
+	public void setId(Long id) {
 		this.conferenceID = id;
 	}
 
@@ -94,7 +96,7 @@ public class Conference extends Model{
 	 * Gets the date of the day this conference started
 	 * @return The date of the day this conference started
 	 */
-	public LocalDate getBegin() {
+	public String getBegin() {
 		return begin;
 	}
 
@@ -102,7 +104,7 @@ public class Conference extends Model{
 	 * Sets the date of the day this conference started
 	 * @param begin The new start date
 	 */
-	public void setBegin(LocalDate begin) {
+	public void setBegin(String begin) {
 		this.begin = begin;
 	}
 
@@ -110,7 +112,7 @@ public class Conference extends Model{
 	 * Gets the date of the day this conference ended
 	 * @return The date of the day this conference ended
 	 */
-	public LocalDate getEnd() {
+	public String getEnd() {
 		return end;
 	}
 
@@ -118,7 +120,7 @@ public class Conference extends Model{
 	 * Sets the date of the day this conference ended
 	 * @param end The new end date
 	 */
-	public void setEnd(LocalDate end) {
+	public void setEnd(String end) {
 		this.end = end;
 	}
 

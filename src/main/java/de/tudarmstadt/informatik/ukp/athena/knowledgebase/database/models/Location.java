@@ -2,9 +2,9 @@ package de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models;
 
 public class Location {
 	// the id of the location
-	private long id;
-	// the longitude of the location
-	private double longitude;
+	private Long id;
+	// the Longitude of the location
+	private double Longitude;
 	// the latitude of the location
 	private double latitude;
 	// the type of the location
@@ -29,30 +29,30 @@ public class Location {
 	}
 
 	/**
-	 * Gets the location's longitude
-	 * @return The location's longitude
+	 * Gets the location's Longitude
+	 * @return The location's Longitude
 	 */
 	public double getLongitude() {
-		return longitude;
+		return Longitude;
 	}
 
 	/**
-	 * Sets the location's longitude
-	 * @param longitude The location's longitude restricted to -180 to 180
-	 * @throws IllegalArgumentException if the longitude was not in range
+	 * Sets the location's Longitude
+	 * @param Longitude The location's Longitude restricted to -180 to 180
+	 * @throws IllegalArgumentException if the Longitude was not in range
 	 */
-	public void setLongitude(double longitude) {
-		if (longitude > 180 || longitude < -180){
-			throw new IllegalArgumentException("value is not a valid longitude");
+	public void setLongitude(double Longitude) {
+		if (Longitude > 180 || Longitude < -180){
+			throw new IllegalArgumentException("value is not a valid Longitude");
 		}
-		this.longitude = longitude;
+		this.Longitude = Longitude;
 	}
 
 	/**
 	 * Gets the location's id
 	 * @return The location's id
 	 */
-	public long getId() {
+	public Long getId() {
 		return id;
 	}
 
@@ -60,7 +60,7 @@ public class Location {
 	 * Sets the location's id
 	 * @param id The location's id
 	 */
-	public void setId(long id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 

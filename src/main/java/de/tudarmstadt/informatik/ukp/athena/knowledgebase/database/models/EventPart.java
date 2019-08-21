@@ -18,20 +18,20 @@ public class EventPart extends Model{
 	@GeneratedValue(generator="increment")
 	@GenericGenerator(name="increment", strategy="increment")
 	@Column(name="eventPartID")
-	private long eventPartID;
+	private Long eventPartID;
 	/* Title */
 	@Column(name = "title")
 	private String title;
 	/* Brief Description */
-	@Column(name = "description", columnDefinition = "VARCHAR(1000)") //fixes titles that are too long for being storable in the column
+	@Column(name = "description", columnDefinition = "VARCHAR(1000)") //fixes titles that are too Long for being storable in the column
 	private String description;
 
 	/*Start time*/
 	@Column(name="begin")
-	private LocalDateTime begin;
+	private String begin;
 	/*End time*/
 	@Column(name="end")
-	private LocalDateTime end;
+	private String end;
 
 	/* Place where this event happens */
 	@Column(name = "place")
@@ -41,7 +41,7 @@ public class EventPart extends Model{
 	 * Gets the unique id of this event part
 	 * @return The unique id of this event part
 	 */
-	public long getId() {
+	public Long getId() {
 		return eventPartID;
 	}
 
@@ -49,7 +49,7 @@ public class EventPart extends Model{
 	 * Sets this event part's id
 	 * @param id The new id
 	 */
-	public void setId(long id) {
+	public void setId(Long id) {
 		this.eventPartID = id;
 	}
 
@@ -73,32 +73,32 @@ public class EventPart extends Model{
 	 * Gets the time this event part begins
 	 * @return This event part's begin time
 	 */
-	public LocalDateTime getBegin() {
+	public String getBegin() {
 		return begin;
 	}
 
 	/**
 	 * Sets the time this event part begins
-	 * @param begin The time this event part begins
+	 * @param sessStart The time this event part begins
 	 */
-	public void setBegin(LocalDateTime begin) {
-		this.begin = begin;
+	public void setBegin(String sessStart) {
+		this.begin = sessStart;
 	}
 
 	/**
 	 * Gets the time this event part ends
 	 * @return This event part's new end time
 	 */
-	public LocalDateTime getEnd() {
+	public String getEnd() {
 		return end;
 	}
 
 	/**
 	 * Sets the time this event part ends
-	 * @param end the new time this event part ends
+	 * @param sessEnd the new time this event part ends
 	 */
-	public void setEnd(LocalDateTime end) {
-		this.end = end;
+	public void setEnd(String sessEnd) {
+		this.end = sessEnd;
 	}
 
 	/**

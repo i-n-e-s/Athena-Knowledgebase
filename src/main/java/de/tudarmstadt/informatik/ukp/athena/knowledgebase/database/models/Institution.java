@@ -19,7 +19,7 @@ public class Institution extends Model {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "institutionID", updatable = false, nullable = false)
-	private long institutionID;
+	private Long institutionID;
 
 	@Column(name = "name", nullable = false)
 	private String name;
@@ -31,7 +31,7 @@ public class Institution extends Model {
 	 * Gets the institution's institutionID.
 	 * @return The institution's institutionID.
 	 */
-	public long getInstitutionID() {
+	public Long getInstitutionID() {
 		return institutionID;
 	}
 
@@ -39,7 +39,7 @@ public class Institution extends Model {
 	 * Sets the institution's institutionID.
 	 * @param institutionID The institution's institutionID.
 	 */
-	public void setInstitutionID(long institutionID) {
+	public void setInstitutionID(Long institutionID) {
 		this.institutionID = institutionID;
 	}
 

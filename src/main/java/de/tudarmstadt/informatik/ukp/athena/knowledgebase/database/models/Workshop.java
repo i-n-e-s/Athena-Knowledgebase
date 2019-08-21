@@ -16,6 +16,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import org.hibernate.annotations.GenericGenerator;
 
 @Entity
@@ -26,7 +28,7 @@ public class Workshop extends Model implements ScheduleEntry {
 	@GeneratedValue(generator="increment")
 	@GenericGenerator(name="increment", strategy="increment")
 	@Column(name="workshopID")
-	private long workshopID;
+	private Long workshopID;
 	/* Title */
 	@Column(name = "title")
 	private String title;
@@ -36,10 +38,10 @@ public class Workshop extends Model implements ScheduleEntry {
 
 	/*Start time*/
 	@Column(name="begin")
-	private LocalDateTime begin;
+	private String begin;
 	/*End time*/
 	@Column(name="end")
-	private LocalDateTime end;
+	private String end;
 
 	/* Place where this workshop happens */
 	@Column(name = "place")
@@ -59,7 +61,7 @@ public class Workshop extends Model implements ScheduleEntry {
 	 * Gets the unique id of this workshop
 	 * @return The unique id of this workshop
 	 */
-	public long getId() {
+	public Long getId() {
 		return workshopID;
 	}
 
@@ -67,7 +69,7 @@ public class Workshop extends Model implements ScheduleEntry {
 	 * Sets this workshop's id
 	 * @param id The new id
 	 */
-	public void setId(long id) {
+	public void setId(Long id) {
 		this.workshopID = id;
 	}
 
@@ -75,7 +77,7 @@ public class Workshop extends Model implements ScheduleEntry {
 	 * Gets the time this workshop begins
 	 * @return This workshop's begin time
 	 */
-	public LocalDateTime getBegin() {
+	public String getBegin() {
 		return begin;
 	}
 
@@ -83,7 +85,7 @@ public class Workshop extends Model implements ScheduleEntry {
 	 * Sets the time this workshop begins
 	 * @param begin The time this workshop begins
 	 */
-	public void setBegin(LocalDateTime begin) {
+	public void setBegin(String begin) {
 		this.begin = begin;
 	}
 
@@ -91,16 +93,16 @@ public class Workshop extends Model implements ScheduleEntry {
 	 * Gets the time this workshop ends
 	 * @return This workshop's new end time
 	 */
-	public LocalDateTime getEnd() {
+	public String getEnd() {
 		return end;
 	}
 
 	/**
 	 * Sets the time this workshop ends
-	 * @param end the new time this workshop ends
+	 * @param string the new time this workshop ends
 	 */
-	public void setEnd(LocalDateTime end) {
-		this.end = end;
+	public void setEnd(String string) {
+		this.end = string;
 	}
 
 	/**

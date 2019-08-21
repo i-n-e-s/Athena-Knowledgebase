@@ -1,0 +1,63 @@
+SLF4J: Class path contains multiple SLF4J bindings.
+SLF4J: Found binding in [jar:file:/C:/Users/Ines/.m2/repository/ch/qos/logback/logback-classic/1.2.3/logback-classic-1.2.3.jar!/org/slf4j/impl/StaticLoggerBinder.class]
+SLF4J: Found binding in [jar:file:/C:/Users/Ines/.m2/repository/org/slf4j/slf4j-log4j12/1.6.1/slf4j-log4j12-1.6.1.jar!/org/slf4j/impl/StaticLoggerBinder.class]
+SLF4J: See http://www.slf4j.org/codes.html#multiple_bindings for an explanation.
+15:43:33,753 |-INFO in ch.qos.logback.classic.LoggerContext[default] - Could NOT find resource [logback-test.xml]
+15:43:33,753 |-INFO in ch.qos.logback.classic.LoggerContext[default] - Could NOT find resource [logback.groovy]
+15:43:33,753 |-INFO in ch.qos.logback.classic.LoggerContext[default] - Found resource [logback.xml] at [file:/C:/Users/Ines/Documents/Ines/Java/Athena-Knowledgebase/target/classes/logback.xml]
+15:43:33,753 |-WARN in ch.qos.logback.classic.LoggerContext[default] - Resource [logback.xml] occurs multiple times on the classpath.
+15:43:33,753 |-WARN in ch.qos.logback.classic.LoggerContext[default] - Resource [logback.xml] occurs at [file:/C:/Users/Ines/Documents/Ines/Java/Athena-Knowledgebase/target/classes/logback.xml]
+15:43:33,753 |-WARN in ch.qos.logback.classic.LoggerContext[default] - Resource [logback.xml] occurs at [jar:file:/C:/Users/Ines/.m2/repository/org/allenai/pdffigures2_2.11/0.0.11/pdffigures2_2.11-0.0.11.jar!/logback.xml]
+15:43:33,877 |-INFO in ch.qos.logback.classic.joran.action.ConfigurationAction - debug attribute not set
+15:43:33,877 |-INFO in ch.qos.logback.core.joran.action.AppenderAction - About to instantiate appender of type [ch.qos.logback.core.ConsoleAppender]
+15:43:33,909 |-INFO in ch.qos.logback.core.joran.action.AppenderAction - Naming appender as [STDOUT]
+15:43:33,924 |-INFO in ch.qos.logback.core.joran.action.NestedComplexPropertyIA - Assuming default type [ch.qos.logback.classic.encoder.PatternLayoutEncoder] for [encoder] property
+15:43:34,049 |-INFO in ch.qos.logback.classic.joran.action.RootLoggerAction - Setting level of ROOT logger to INFO
+15:43:34,049 |-INFO in ch.qos.logback.core.joran.action.AppenderRefAction - Attaching appender named [STDOUT] to Logger[ROOT]
+15:43:34,065 |-INFO in ch.qos.logback.classic.joran.action.ConfigurationAction - End of configuration.
+15:43:34,065 |-INFO in ch.qos.logback.classic.joran.JoranConfigurator@224edc67 - Registering current configuration as safe fallback point
+
+SLF4J: Actual binding is of type [ch.qos.logback.classic.util.ContextSelectorStaticBinder]
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+ :: Spring Boot ::        (v2.0.5.RELEASE)
+
+15:43:35.485 [main] INFO  d.t.i.u.a.k.ParsedDataInserter - Starting ParsedDataInserter on Ines-PC with PID 8060 (C:\Users\Ines\Documents\Ines\Java\Athena-Knowledgebase\target\classes started by Ines in C:\Users\Ines\Documents\Ines\Java\Athena-Knowledgebase)
+15:43:35.485 [main] INFO  d.t.i.u.a.k.ParsedDataInserter - No active profile set, falling back to default profiles: default
+15:43:35.595 [main] INFO  o.s.b.w.s.c.AnnotationConfigServletWebServerApplicationContext - Refreshing org.springframework.boot.web.servlet.context.AnnotationConfigServletWebServerApplicationContext@2c767a52: startup date [Tue Aug 20 15:43:35 CEST 2019]; root of context hierarchy
+15:43:37.202 [main] INFO  o.s.b.f.a.AutowiredAnnotationBeanPostProcessor - JSR-330 'javax.inject.Inject' annotation found and supported for autowiring
+15:43:38.170 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8080 (http)
+15:43:38.202 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+15:43:38.249 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+15:43:38.249 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet Engine: Apache Tomcat/8.5.34
+15:43:38.265 [localhost-startStop-1] INFO  o.a.c.core.AprLifecycleListener - The APR based Apache Tomcat Native library which allows optimal performance in production environments was not found on the java.library.path: [C:\Program Files\Java\jdk1.8.0_25\bin;C:\Windows\Sun\Java\bin;C:\Windows\system32;C:\Windows;C:/Program Files/Java/jre1.8.0_25/bin/server;C:/Program Files/Java/jre1.8.0_25/bin;C:/Program Files/Java/jre1.8.0_25/lib/amd64;C:\ProgramData\Oracle\Java\javapath;C:\Program Files\Common Files\Microsoft Shared\Windows Live;C:\Program Files (x86)\Common Files\Microsoft Shared\Windows Live;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Program Files (x86)\Windows Live\Shared;C:\Program Files (x86)\EgisTec MyWinLocker\x64;C:\Program Files (x86)\EgisTec MyWinLocker\;C:\Users\Ines\Documents\Ines\Java\DependencyFinder-1.2.1-beta4\bin;C:\Users\Ines\Documents\Ines\C++\Qt\5.5\mingw492_32\bin;C:\Program Files (x86)\mingw-w64\i686-4.9.1-posix-dwarf-rt_v3-rev3\mingw32\bin;C:\Program Files\nodejs\;C:\Program Files\Git\cmd;C:\cUrl;C:\Program Files (x86)\GnuPG\bin;C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common;C:\Program Files\Git2.17.0\cmd;C:\Users\Ines\Anaconda3;C:\Users\Ines\Anaconda3\Scripts;C:\Users\Ines\Anaconda3\Library\bin;C:\Ruby23-x64\bin;C:\Users\Ines\Documents\Ines\LaTeX\MiKTeX\miktex\bin\x64\;C:\Program Files\Docker Toolbox;C:\Users\Ines\AppData\Roaming\npm;C:\Users\Ines\AppData\Local\atom\bin;C:\Users\Ines\Desktop;;.]
+15:43:38.515 [localhost-startStop-1] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+15:43:38.515 [localhost-startStop-1] INFO  o.s.web.context.ContextLoader - Root WebApplicationContext: initialization completed in 2920 ms
+15:43:38.624 [localhost-startStop-1] INFO  o.s.b.w.s.ServletRegistrationBean - Servlet dispatcherServlet mapped to [/]
+15:43:38.624 [localhost-startStop-1] INFO  o.s.b.w.s.FilterRegistrationBean - Mapping filter: 'characterEncodingFilter' to: [/*]
+15:43:38.624 [localhost-startStop-1] INFO  o.s.b.w.s.FilterRegistrationBean - Mapping filter: 'hiddenHttpMethodFilter' to: [/*]
+15:43:38.624 [localhost-startStop-1] INFO  o.s.b.w.s.FilterRegistrationBean - Mapping filter: 'httpPutFormContentFilter' to: [/*]
+15:43:38.624 [localhost-startStop-1] INFO  o.s.b.w.s.FilterRegistrationBean - Mapping filter: 'requestContextFilter' to: [/*]
+15:43:38.858 [main] INFO  o.s.w.s.h.SimpleUrlHandlerMapping - Mapped URL path [/**/favicon.ico] onto handler of type [class org.springframework.web.servlet.resource.ResourceHttpRequestHandler]
+15:43:39.263 [main] INFO  o.s.w.s.m.m.a.RequestMappingHandlerAdapter - Looking for @ControllerAdvice: org.springframework.boot.web.servlet.context.AnnotationConfigServletWebServerApplicationContext@2c767a52: startup date [Tue Aug 20 13:43:35 UTC 2019]; root of context hierarchy
+15:43:39.405 [main] INFO  o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped "{[/**]}" onto public java.lang.Object de.tudarmstadt.informatik.ukp.athena.knowledgebase.api.APIController.apiConnector(javax.servlet.http.HttpServletRequest)
+15:43:39.405 [main] INFO  o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped "{[/openStreetMaps/location/minLatitude/{minLatitude}/minLongitude/{minLongitude}/maxLatitude/{maxLatitude}/maxLongitude/{maxLongitude}/amenity/{amenity}/radiusInMeter/{radius}]}" onto public java.util.List<de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Location> de.tudarmstadt.informatik.ukp.athena.knowledgebase.api.StreetMapsController.returnAmenities(java.lang.String,java.lang.Integer,java.lang.Double,java.lang.Double,java.lang.Double,java.lang.Double)
+15:43:39.405 [main] INFO  o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped "{[/error]}" onto public org.springframework.http.ResponseEntity<java.util.Map<java.lang.String, java.lang.Object>> org.springframework.boot.autoconfigure.web.servlet.error.BasicErrorController.error(javax.servlet.http.HttpServletRequest)
+15:43:39.405 [main] INFO  o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped "{[/error],produces=[text/html]}" onto public org.springframework.web.servlet.ModelAndView org.springframework.boot.autoconfigure.web.servlet.error.BasicErrorController.errorHtml(javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse)
+15:43:39.452 [main] INFO  o.s.w.s.h.SimpleUrlHandlerMapping - Mapped URL path [/webjars/**] onto handler of type [class org.springframework.web.servlet.resource.ResourceHttpRequestHandler]
+15:43:39.452 [main] INFO  o.s.w.s.h.SimpleUrlHandlerMapping - Mapped URL path [/**] onto handler of type [class org.springframework.web.servlet.resource.ResourceHttpRequestHandler]
+15:43:39.717 [main] INFO  o.s.j.e.a.AnnotationMBeanExporter - Registering beans for JMX exposure on startup
+15:43:39.748 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+15:43:39.764 [main] INFO  o.a.tomcat.util.net.NioSelectorPool - Using a shared selector for servlet write/read
+15:43:39.795 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port(s): 8080 (http) with context path ''
+15:43:39.795 [main] INFO  d.t.i.u.a.k.ParsedDataInserter - Started ParsedDataInserter in 5.464 seconds (JVM running for 7.104)
+15:43:39.810 [main] INFO  d.t.i.u.a.k.ParsedDataInserter - No specific conferences given, will scrape papers and authors from all available conferences
+15:43:40.029 [main] INFO  d.t.i.u.a.k.ParsedDataInserter - "-scrape-paper-author-event" argument was not found, skipping event scraping
+15:43:40.029 [main] INFO  d.t.i.u.a.k.ParsedDataInserter - "-scrape-paper-author" argument was not found, skipping paper author scraping
+15:43:40.029 [main] INFO  d.t.i.u.a.k.ParsedDataInserter - "-scrape-acl18-info" argument was not found, skipping ACL 2018 scraping
+15:43:40.029 [main] INFO  d.t.i.u.a.k.ParsedDataInserter - Done! (Took 00:00:05.961912652)

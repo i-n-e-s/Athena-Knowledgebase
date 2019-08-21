@@ -18,6 +18,7 @@ import javax.persistence.Table;
 import org.hibernate.annotations.GenericGenerator;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.jpa.PaperJPAAccess;
 
@@ -29,10 +30,10 @@ public class Paper extends Model {
 	@GeneratedValue(generator="increment")
 	@GenericGenerator(name="increment", strategy="increment")
 	@Column(name = "paperID", updatable = false, nullable = false)
-	private long paperID;
+	private Long paperID;
 
 	/*Title of the paper*/
-	@Column(name = "title", columnDefinition = "varchar(1023)") //fixes titles that are too long for being storable in the column
+	@Column(name = "title", columnDefinition = "varchar(1023)") //fixes titles that are too Long for being storable in the column
 	private String title;
 	/*Topic of the paper*/
 	@Column(name = "topic")
@@ -64,11 +65,11 @@ public class Paper extends Model {
 	@Column(name = "semanticScholarID")
 	private String semanticScholarID;
 	/*Abstract of paper as String*/
-	@Column(name = "paperAbstract", columnDefinition="LONGTEXT")
+	@Column(name = "paperAbstract", columnDefinition="LongTEXT")
 	private String paperAbstract;
 	@Column(name = "amountOfCitations")
-	private long amountOfCitations = -1;    //-1 if not known yet
-	@Column(name= "plainText", columnDefinition = "LONGTEXT")
+	private Long amountOfCitations = (long) -1;    //-1 if not known yet
+	@Column(name= "plainText", columnDefinition = "LongTEXT")
 	private String paperPlainText;
 
 
@@ -76,7 +77,7 @@ public class Paper extends Model {
 	 * Get this paper's ID
 	 * @return This paper's ID
 	 */
-	public long getPaperID(){
+	public Long getPaperID(){
 		return paperID;
 	}
 
