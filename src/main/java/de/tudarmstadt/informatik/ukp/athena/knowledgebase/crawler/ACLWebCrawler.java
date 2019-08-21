@@ -225,7 +225,7 @@ class ACLWebCrawler extends AbstractCrawler {
 					.collect(Collectors.toSet());
 
 		}
-		int i = 0;
+
 		for (String s : selectedURLs) {
 			i += 1;
 			System.out.println(s);
