@@ -331,8 +331,8 @@ public class S2APIFunctions {
 		//citations
 		if (overwrite || dest.getAmountOfCitations() == null) {
 			try {
-				long foundCitations = Long.parseLong(paperJSON.getJSONObject("citationStats").getString("numCitations"));
-				dest.setAmountOfCitations(foundCitations);
+				Long foundCitations = Long.parseLong(paperJSON.getJSONObject("citationStats").getString("numCitations"));
+				if(foundCitations != null) dest.setAmountOfCitations(foundCitations);
 			} catch (JSONException e) {
 			}
 		}

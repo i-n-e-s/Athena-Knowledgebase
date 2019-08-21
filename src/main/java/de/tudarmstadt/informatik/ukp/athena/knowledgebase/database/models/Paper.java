@@ -67,10 +67,23 @@ public class Paper extends Model {
 	@Column(name = "paperAbstract", columnDefinition="LONGTEXT")
 	private String paperAbstract;
 	@Column(name = "amountOfCitations")
-	private long amountOfCitations = -1;    //-1 if not known yet
+	private Long amountOfCitations = -1l;    //-1 if not known yet
 	@Column(name= "plainText", columnDefinition = "LONGTEXT")
 	private String paperPlainText;
-
+	@Column(name= "introduction", columnDefinition = "LONGTEXT")
+	private String introduction;
+	@Column(name= "relatedWork", columnDefinition = "LONGTEXT")
+	private String relatedWork;
+	@Column(name= "result", columnDefinition = "LONGTEXT")
+	private String result;
+	@Column(name= "discussion", columnDefinition = "LONGTEXT")
+	private String discussion;
+	@Column(name= "conclusion", columnDefinition = "LONGTEXT")
+	private String conclusion;
+	@Column(name= "dataset", columnDefinition = "LONGTEXT")
+	private String dataset;
+	@Column(name= "sectionNames")
+	private String sectionNames;
 
 	/**
 	 * Get this paper's ID
@@ -280,6 +293,118 @@ public class Paper extends Model {
 	public void setPaperPlainText(String paperPlainText) {
 		this.paperPlainText = paperPlainText;
 	}
+
+	/**
+	 * Gets the parsed plaintext of the paper
+	 */
+	public String getIntroduction() {
+		return introduction;
+	}
+
+	/**
+	 * Sets this paper's plain text
+	 *
+	 * @param paperPlainText this paper's abstract
+	 */
+	public void setIntroduction(String introduction) { this.introduction = introduction;
+	}
+
+	/**
+	 * Gets the parsed plaintext of the paper
+	 */
+	public String getDiscussion() {
+		return discussion;
+	}
+
+	/**
+	 * Sets this paper's plain text
+	 *
+	 * @param paperPlainText this paper's abstract
+	 */
+	public void setDiscussion(String discussion) {
+		this.discussion = discussion;
+	}
+
+	/**
+	 * Gets the parsed plaintext of the paper
+	 */
+	public String getResult() {
+		return result;
+	}
+
+	/**
+	 * Sets this paper's plain text
+	 *
+	 * @param paperPlainText this paper's abstract
+	 */
+	public void setResult(String result) {
+		this.result = result;
+	}
+
+	/**
+	 * Gets the parsed plaintext of the paper
+	 */
+	public String getRelatedWork() {
+		return relatedWork;
+	}
+
+	/**
+	 * Sets this paper's plain text
+	 *
+	 * @param paperPlainText this paper's abstract
+	 */
+	public void setRelatedWork(String relatedWork) {
+		this.relatedWork = relatedWork;
+	}
+
+	/**
+	 * Gets the parsed plaintext of the paper
+	 */
+	public String getConclusion() {
+		return conclusion;
+	}
+
+	/**
+	 * Sets this paper's plain text
+	 *
+	 * @param paperPlainText this paper's abstract
+	 */
+	public void setConclusion(String conclusion) {
+		this.conclusion = conclusion;
+	}
+
+	/**
+	 * Gets the parsed plaintext of the paper
+	 */
+	public String getDataset() {
+		return dataset;
+	}
+
+	/**
+	 * Sets this paper's plain text
+	 *
+	 * @param paperPlainText this paper's abstract
+	 */
+	public void setDataset(String dataset) {
+		this.dataset = dataset;
+	}
+
+	/**
+	 * Gets the parsed plaintext of the paper
+	 */
+	public String getSectionNames() {
+		return sectionNames;
+	}
+
+	/**
+	 * Sets this paper's plain text
+	 *
+	 * @param paperPlainText this paper's abstract
+	 */
+	public void setSectionNames(String sectionNames) {
+		this.sectionNames = sectionNames;
+	}
+
 
 	/**
 	 * Gets the amount of papers this paper is cited in

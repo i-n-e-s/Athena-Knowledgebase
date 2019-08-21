@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -24,8 +25,10 @@ import java.util.stream.Collectors;
 
 import org.allenai.scienceparse.ExtractedMetadata;
 import org.allenai.scienceparse.Parser;
+import org.allenai.scienceparse.Section;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.pdfbox.text.PDFTextStripper;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -222,9 +225,17 @@ class ACLWebCrawler extends AbstractCrawler {
 					.collect(Collectors.toSet());
 
 		}
-
+		int i = 0;
 		for (String s : selectedURLs) {
-        	webPages.add( Jsoup.connect(s).get());
+			i += 1;
+			System.out.println(s);
+			try {
+				webPages.add( Jsoup.connect(s).get());
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+
+		}
 //			Connection.Response resp = Jsoup.connect(s) //
 //					.timeout(20000) //
 //					.method(Connection.Method.GET) //
@@ -358,24 +369,24 @@ class ACLWebCrawler extends AbstractCrawler {
         List<Document> webpages = fetchWebpages(startURLPaper);
         logger.info("Preparing data and starting 4 scraper threads...");
         //in the following lines the list gets split into 4 roughly equal parts so that each list part can be handled in a seperate thread (it's faster this way)
-        //int quarterSize = (int) Math.ceil(webpages.size() / 4);
-        //List<Document> input1 = webpages.subList(0, quarterSize);
-        //List<Document> input2 = webpages.subList(quarterSize, quarterSize * 2);
-        //List<Document> input3 = webpages.subList(quarterSize * 2, quarterSize * 3);
-        //List<Document> input4 = webpages.subList(quarterSize * 3, webpages.size());
+        int quarterSize = (int) Math.ceil(webpages.size() / 4);
+        List<Document> input1 = webpages.subList(0, quarterSize);
+        List<Document> input2 = webpages.subList(quarterSize, quarterSize * 2);
+        List<Document> input3 = webpages.subList(quarterSize * 2, quarterSize * 3);
+        List<Document> input4 = webpages.subList(quarterSize * 3, webpages.size());
         ArrayList<Paper> result = new ArrayList<>();
 
 
         //If duplicate avoidance is enabled, do not use threading, as the separate threads would interfere each other
         if (runWithDuplicateAvoidance) {
             try {
-                result.addAll(extractPaperAuthor(webpages));
+                result.addAll(extractPaperAuthor(input1));
                 //logger.info("Finished 1 / 4");
-                //result.addAll(extractPaperAuthor(input2));
+                result.addAll(extractPaperAuthor(input2));
                 //logger.info("Finished 2 / 4");
-                //result.addAll(extractPaperAuthor(input3));
+                result.addAll(extractPaperAuthor(input3));
                 //logger.info("Finished 3 / 4");
-                //result.addAll(extractPaperAuthor(input4));
+                result.addAll(extractPaperAuthor(input4));
                 //logger.info("Finished 4 / 4");
             } catch (Exception e) { //thread exceptions
                 logger.error("Error while gathering results!", e);
@@ -419,13 +430,18 @@ class ACLWebCrawler extends AbstractCrawler {
 	private ArrayList<Paper> extractPaperAuthor(List<Document> webpages) {
 		logger.info("Scraping webpages for paper author relationships...");
 		ArrayList<Paper> paperList = new ArrayList<>();
+
 		org.allenai.scienceparse.Parser parser = null;
+		PDFTextStripper stripper = null;
+		de.tudarmstadt.informatik.ukp.athena.knowledgebase.PDFParser.Parser myparse = new de.tudarmstadt.informatik.ukp.athena.knowledgebase.PDFParser.Parser();
 
 		try {
 			parser = Parser.getInstance();
+			stripper = new PDFTextStripper();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+
 		for (Document doc : webpages) {
 			// Elements paperListElements = doc.select("h5.index_title");
 			// innerLoop: for (Element elmnt : paperListElements) {
@@ -457,22 +473,43 @@ class ACLWebCrawler extends AbstractCrawler {
 				String remoteLink = "http://aclweb.org/anthology/" + anthology;
 				paper.setRemoteLink(remoteLink); // wow that was easy
 				paper.setReleaseDate(extractPaperRelease(doc));
+				ExtractedMetadata meDa = null;
 				try {
-					ExtractedMetadata meDa = scienceParse(parser, new URL(remoteLink));
-					if(meDa == null) continue;
-					String plaintext = "";
-					for (org.allenai.scienceparse.Section sec : meDa.sections) {
-						plaintext = plaintext + sec.text;
-					}
-					paper.setPaperPlainText(plaintext);
-					paper.setPaperAbstract(meDa.abstractText);
-					//im allenai parser zwischenergebnisse abfangen und pdfs schließen
-					//treffen Mittwoch 10:00
+					URL urli = new URL(remoteLink);
+					meDa = myparse.scienceParse(parser, urli);
+					String plainText = myparse.plainParse(stripper, urli);
+					paper.setPaperPlainText(plainText);
+
 				} catch (MalformedURLException e) {
 					System.out.println("Parser abgestuerzt. Leere PDF-File? ");
 					System.out.println("Fehlerhafter Link: " + remoteLink);
 					e.printStackTrace();
 				}
+
+				if(meDa == null || meDa.getSections() == null)continue;
+				paper.setPaperAbstract(meDa.abstractText);
+				List<Section> sections = meDa.getSections();
+				String intro = null;
+				String relatedWork = null;
+				String result = null;
+				String discussion = null;
+				String concl = null;
+				String dataset = null;
+				String heading = null;
+
+				for(Section s : sections) {
+					if (s == null || s.getHeading() == null) continue;
+						String h = s.getHeading().trim().toLowerCase();
+						if (h.contains("introduction")) paper.setIntroduction(s.getText());
+						else if (h.contains("related work")) paper.setRelatedWork(s.getText());
+						else if (h.contains("results")) paper.setResult(s.getText());
+						else if (h.contains("discussion")) paper.setDiscussion(s.getText());
+						else if (h.contains("conclusion")) paper.setConclusion(s.getText());
+						else if (h.contains("datasets")) paper.setDataset(s.getText());
+				}
+
+
+
 				// find authors and add them to a list
 
 				Elements authorElements = doc.select("#main > p> a");// elmnt.parent().parent().children().select("span").select("a");
@@ -501,32 +538,8 @@ class ACLWebCrawler extends AbstractCrawler {
 		return paperList;
 	}
 
-	private ExtractedMetadata scienceParse(Parser parser, URL url) {
-		ExtractedMetadata em = null;
-		try {
-			InputStream inputStream = getConnectionFromURL(url).getInputStream();
-			em = parser.doParse(inputStream);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return em;
-	}
 
-	private static HttpURLConnection getConnectionFromURL(URL url) throws IOException {
-		HttpURLConnection con = (HttpURLConnection) url.openConnection();
-		con.connect();
-		int responseCode = con.getResponseCode();
-		if (responseCode < 400 && responseCode > 299) {
-			String redirectUrl = con.getHeaderField("Location");
-			try {
-				URL newUrl = new URL(redirectUrl);
-				con = getConnectionFromURL(newUrl);
-			} catch (MalformedURLException e) {
-				System.out.println(e.getMessage());
-			}
-		}
-		return con;
-	}
+
 
 	/**
 	 * Checks with the given {link conferences} whether or not to save this paper
