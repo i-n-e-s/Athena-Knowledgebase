@@ -4,12 +4,15 @@ import java.util.List;
 
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
+import javax.persistence.EntityTransaction;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.CommonAccess;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Paper;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
 
 public class PaperJPAAccess implements CommonAccess<Paper> {
 	private static Logger logger = LogManager.getLogger(PaperJPAAccess.class);
@@ -20,15 +23,23 @@ public class PaperJPAAccess implements CommonAccess<Paper> {
 	@Override
 	public void add(Paper data) {
 		EntityManager entityManager = PersistenceManager.getEntityManager();
-
-		entityManager.getTransaction().begin();
+		EntityTransaction trans = entityManager.getTransaction();
+		if(!trans.isActive()) entityManager.getTransaction().begin();
 		try {
 			entityManager.persist(data);
 		}catch(EntityExistsException e) { //branch not tested because exception shouldn't be thrown again just so junit can test for it
 			logger.warn("{} already exists in the database. Maybe try update", data.getID());
 		}
+	}
+
+	@Override
+	public void commitChanges(Paper data){
+		EntityManager entityManager = PersistenceManager.getEntityManager();
+		EntityTransaction trans = entityManager.getTransaction();
+		if(!trans.isActive()) entityManager.getTransaction().begin();
 		entityManager.getTransaction().commit();
 	}
+
 
 	/**
 	 * {@inheritDoc}
@@ -36,10 +47,17 @@ public class PaperJPAAccess implements CommonAccess<Paper> {
 	@Override
 	public void delete(Paper data) {
 		EntityManager entityManager = PersistenceManager.getEntityManager();
-
-		entityManager.getTransaction().begin();
+		EntityTransaction trans = entityManager.getTransaction();
+		if(!trans.isActive()) entityManager.getTransaction().begin();
 		entityManager.remove(data);
 		entityManager.getTransaction().commit();
+	}
+
+	public void merge (Paper data){
+		EntityManager entityManager = PersistenceManager.getEntityManager();
+
+		entityManager.getTransaction().begin();
+
 	}
 
 	/**
@@ -76,17 +94,13 @@ public class PaperJPAAccess implements CommonAccess<Paper> {
 			query = query + "c.title = '"+toFind.getTitle().replace("'", "''") + "'";
 			addedConstraint = true;
 		}
-
 		if ( !addedConstraint ) { return null; }
 		logger.info(query);
-
 		//2. Execute query
 		EntityManager entityManager = PersistenceManager.getEntityManager();
 		List<Paper> result = entityManager.createQuery(query).getResultList();
 		System.out.println("Got "+ result.size()+ " results");
-
 		if( result.size() > 0 ) { return result; }
-
 		//3. If nothing found, try searching for Attributes separately
 		if( toFind.getSemanticScholarID() != null ) {
 			query = "SELECT c FROM Paper c WHERE c.semanticScholarID LIKE '"+toFind.getSemanticScholarID() + "'";

@@ -451,9 +451,10 @@ public class Person extends Model {
 		//Check if person with same S2ID exists in DB
 		PersonJPAAccess filer = new PersonJPAAccess();
 		List<Person> searchResults = filer.getByKnownAttributes(toFind);
-
 		if(searchResults == null || searchResults.size() < 1) { //No matching person could be found in the DB
-			return new Person();
+			Person p = new Person();
+			filer.add(p);
+			return p;
 		}
 		else { 		//Choose first result
 			return searchResults.get(0);
@@ -471,7 +472,10 @@ public class Person extends Model {
 	public static Person findOrCreate(String s2id, String fullName) {
 		PersonJPAAccess filer = new PersonJPAAccess();
 		Person searchResult = null;
-		if ( s2id == null && fullName == null ) { return new Person(); }
+		if ( s2id == null && fullName == null ) {
+			Person p = new Person();
+			filer.add(p);
+			return p; }
 		else if ( s2id != null && fullName != null ) {
 			Person query = new Person();
 			query.setFullName(fullName);
@@ -480,8 +484,14 @@ public class Person extends Model {
 		}
 		else if ( fullName == null ) { searchResult = filer.getBySemanticScholarID(s2id); }
 		else if ( s2id == null ) { searchResult = filer.getByFullName(fullName); }
-
-		return searchResult != null ? searchResult : new Person();
+		if(searchResult != null) return searchResult;
+		else{
+			Person p = new Person();
+			p.setFullName(fullName);
+			p.setSemanticScholarID(s2id); //Achtung kann null sein
+			filer.add(p);
+			return p;
+		}
 	}
 
 

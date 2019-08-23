@@ -166,14 +166,13 @@ public class ParsedDataInserter {
 		ArrayList<Conference> conferences = acl18WebParser.getPaperAuthorEvent();
 		CommonAccess<Conference> conferenceFiler = new ConferenceJPAAccess();
 
-		logger.info("Inserting papers and authors into database...");
+		logger.info("Inserting papers, authors and events into database...");
 
 		for(Conference conference : conferences) {
-            System.out.println("Paper added: " + conference.getName());
-			conferenceFiler.add(conference);
+            System.out.println("Conference added: " + conference.getName());
+			conferenceFiler.commitChanges(conference);
 		}
-
-		logger.info("Done inserting papers and authors!");		
+		logger.info("Done inserting papers, authors and events!");
 	}
 
 	/**
