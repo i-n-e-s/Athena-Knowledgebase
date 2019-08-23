@@ -116,7 +116,7 @@ public class APIController {
 		NeedlemanWunsch nw2 = new NeedlemanWunsch(search, result2);
 		int dist2 = nw2.getScore();
 
-		int threshold = 1; // decide for which distance to the search the result should be kept
+		int threshold = 1; // decide for which distance the search result should be kept
 		int ratio1 = result1.length() / dist1;
 		int ratio2 = result2.length() / dist2;
 //		System.out.println(ratio1);

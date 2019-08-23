@@ -1,6 +1,5 @@
 package de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -57,9 +56,9 @@ public class Person extends Model {
 
 	/*Birthday and day of death*/
 	@Column(name = "birth")
-	private LocalDate birth;
+	private String birth;
 	@Column(name = "obit")
-	private LocalDate obit;
+	private String obit;
 
 	/*The person's institution, eg. an university or a company*/
 	//@Column(name = "institution")
@@ -201,7 +200,7 @@ public class Person extends Model {
 	 * Gets this person's birthday.
 	 * @return This person's birthday
 	 */
-	public LocalDate getBirth() {
+	public String getBirth() {
 		return birth;
 	}
 
@@ -209,7 +208,7 @@ public class Person extends Model {
 	 * Sets this person's birthday
 	 * @param birth This person's birthday
 	 */
-	public void setBirth(LocalDate birth) {
+	public void setBirth(String birth) {
 		this.birth = birth;
 	}
 
@@ -217,7 +216,7 @@ public class Person extends Model {
 	 * Gets this person's day of death.
 	 * @return This person's day of death
 	 */
-	public LocalDate getObit() {
+	public String getObit() {
 		return obit;
 	}
 
@@ -225,7 +224,7 @@ public class Person extends Model {
 	 * Sets this person's day of death.
 	 * @param obit This person's day of death
 	 */
-	public void setObit(LocalDate obit) {
+	public void setObit(String obit) {
 		this.obit = obit;
 	}
 

@@ -467,7 +467,9 @@ class ACLWebCrawler extends AbstractCrawler {
 				paper.setAnthology(anthology);
 				String remoteLink = "http://aclweb.org/anthology/" + anthology;
 				paper.setRemoteLink(remoteLink); // wow that was easy
-				paper.setReleaseDate(extractPaperRelease(doc));
+//				###############################################
+				paper.setReleaseDate("a date");
+//				paper.setReleaseDate(extractPaperRelease(doc));
 //				try {
 //					URL urli = new URL(remoteLink);
 //					ExtractedMetadata meDa = myparse.scienceParse(parser, urli);
@@ -699,7 +701,9 @@ class ACLWebCrawler extends AbstractCrawler {
 							paper.setAnthology(anthology);
 							String remoteLink = "http://aclweb.org/anthology/" + anthology;
 							paper.setRemoteLink(remoteLink); // wow that was easy
-							paper.setReleaseDate(extractPaperRelease(doc));
+//							##############################################
+							paper.setReleaseDate("a date");
+//							paper.setReleaseDate(extractPaperRelease(doc));
 							/**try {
 								ExtractedMetadata meDa = scienceParse(parser, new URL(remoteLink));
 								if(meDa == null) continue;
