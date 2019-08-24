@@ -39,6 +39,30 @@ public class EventJPAAccess implements CommonAccess<Event> {
 	}
 
 	@Override
+	public boolean alreadyExists(String identifier){
+		String query = "SELECT e FROM Event e WHERE e.title = '"+identifier.replace("'","''") + "'";
+		EntityManager entityManager = PersistenceManager.getEntityManager();
+
+		//Execute query
+		List<Event> matches = entityManager.createQuery(query).getResultList();
+
+		//If results are found, return them. Otherwise return null
+		return (matches.size() > 0) ? true : false;
+	}
+
+	public Event getByName(String identifier){
+		String query = "SELECT e FROM Event e WHERE e.title = '"+identifier.replace("'","''") + "'";
+		EntityManager entityManager = PersistenceManager.getEntityManager();
+
+		//Execute query
+		List<Event> matches = entityManager.createQuery(query).getResultList();
+
+		//If results are found, return the first. Otherwise return null
+		return (matches.size() > 0) ? matches.get(0) : null;
+	}
+
+
+	@Override
 	public void delete(Event data) {
 		EntityManager entityManager = PersistenceManager.getEntityManager();
 		EntityTransaction trans = entityManager.getTransaction();

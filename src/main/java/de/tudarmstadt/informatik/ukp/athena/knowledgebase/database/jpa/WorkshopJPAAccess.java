@@ -32,6 +32,11 @@ public class WorkshopJPAAccess implements CommonAccess<Workshop> {
 	}
 
 	@Override
+	public boolean alreadyExists(String name){
+		return false;
+	}
+
+	@Override
 	public void commitChanges(Workshop data){
 		EntityManager entityManager = PersistenceManager.getEntityManager();
 		EntityTransaction trans = entityManager.getTransaction();

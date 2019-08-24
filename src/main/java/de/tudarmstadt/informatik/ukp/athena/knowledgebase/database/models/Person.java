@@ -34,14 +34,14 @@ public class Person extends Model {
 	/*Unique id*/
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	@Column(name = "personID", updatable = false, nullable = false)
+	@Column(name = "personID", updatable = false)
 	private Long personID;
 
 	/*Prefixes like academic titles*/
 	@Column(name = "prefix")
 	private String prefix;
 	/*Full Name*/
-	@Column(name = "fullName", nullable = false)
+	@Column(name = "fullName")
 	private String fullName;
 	
 	/*First Name*/
@@ -446,21 +446,6 @@ public class Person extends Model {
 	 * @param toFind The person object containing the query data
 	 * @return A matching person from the DB or a new person
 	 */
-	public static Person findOrCreate(Person toFind) {
-
-		//Check if person with same S2ID exists in DB
-		PersonJPAAccess filer = new PersonJPAAccess();
-		List<Person> searchResults = filer.getByKnownAttributes(toFind);
-		if(searchResults == null || searchResults.size() < 1) { //No matching person could be found in the DB
-			Person p = new Person();
-			filer.add(p);
-			return p;
-		}
-		else { 		//Choose first result
-			return searchResults.get(0);
-		}
-
-	}
 
 	/**
 	 * Looks for persons with defined title or SemanticScholarID and returns matching DB Entry
@@ -473,17 +458,11 @@ public class Person extends Model {
 		PersonJPAAccess filer = new PersonJPAAccess();
 		Person searchResult = null;
 		if ( s2id == null && fullName == null ) {
-			Person p = new Person();
-			filer.add(p);
-			return p; }
-		else if ( s2id != null && fullName != null ) {
-			Person query = new Person();
-			query.setFullName(fullName);
-			query.setSemanticScholarID(s2id);
-			return findOrCreate(query);
+			System.out.println("ID and Full Name null");
+			return null;
 		}
-		else if ( fullName == null ) { searchResult = filer.getBySemanticScholarID(s2id); }
-		else if ( s2id == null ) { searchResult = filer.getByFullName(fullName); }
+		else if ( fullName == null ) searchResult = filer.getBySemanticScholarID(s2id);
+		else searchResult = filer.getByFullName(fullName);
 		if(searchResult != null) return searchResult;
 		else{
 			Person p = new Person();
@@ -492,24 +471,6 @@ public class Person extends Model {
 			filer.add(p);
 			return p;
 		}
-	}
-
-
-	/**
-	 * Same as {@link Person#findOrCreate(String, String)}, but also searches in given list
-	 * @param s2id Semantic Scholar of of the person to seach
-	 * @param fullName Full name of the person to seach
-	 * @param list List to be searched
-	 * @return A matching person from the List or the DB, or a new person
-	 */
-	public static Person findOrCreateDbOrList(String s2id, String fullName, List<Person> list) {
-		//Filter out any person who does not have either a matching SemanticScholarID or matching name
-		List<Person> result = list.stream().filter( currPers -> (
-				( currPers.getSemanticScholarID() != null && currPers.getSemanticScholarID().equals(s2id)) ||
-				( currPers.getFullName() != null && currPers.getFullName().equals(fullName)))).collect(Collectors.toList());
-
-		//Result now contains only persons with either matching SemanticScholarID or matching name
-		return result.size() > 0 ? result.get(0) : findOrCreate(s2id, fullName);
 	}
 
 }

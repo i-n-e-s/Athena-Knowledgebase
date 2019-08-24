@@ -50,6 +50,18 @@ public class ConferenceJPAAccess implements CommonAccess<Conference> {
 		entityManager.getTransaction().commit();
 	}
 
+	@Override
+	public boolean alreadyExists(String identifier){
+		String query = "SELECT c FROM Conference c WHERE c.name = '"+identifier.replace("'","''") + "'";
+		EntityManager entityManager = PersistenceManager.getEntityManager();
+
+		//Execute query
+		List<Conference> matches = entityManager.createQuery(query).getResultList();
+
+		//If results are found, return them. Otherwise return null
+		return (matches.size() > 0) ? true : false;
+	}
+
 	/**
 	 * {@inheritDoc}
 	 */

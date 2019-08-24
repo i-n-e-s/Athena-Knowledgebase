@@ -20,6 +20,15 @@ public interface CommonAccess<T> {
 
 	public void commitChanges(T data);
 
+
+
+	/**
+	 * checks if object data already exists in database
+	 * @param data
+	 * @return true if already exists
+	 */
+	public boolean alreadyExists(String identifier);
+
 	/**
 	 * Delete data from database.
 	 * @param data Object of model T to be removed

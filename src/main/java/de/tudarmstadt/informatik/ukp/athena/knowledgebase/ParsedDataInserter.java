@@ -183,20 +183,9 @@ public class ParsedDataInserter {
 	 * @author Julian Steitz, Daniel Lehmann
 	 */
 	private void aclStorePapersAndAuthors() throws IOException {
-		logger.info("Scraping papers and authors...");
-		ArrayList<Paper> papers = acl18WebParser.getPaperAuthor();
-		CommonAccess<Paper> paperFiler = new PaperJPAAccess();
-
-		logger.info("Inserting papers and authors into database...");
-
-		for(Paper paper : papers) {
-			paperFiler.add(paper);
-		}
-
-		logger.info("Done inserting papers and authors!");
 	}
 
-	/**
+		/**
 	 * Stores the ACL 2018 conference including the schedule into the database
 	 * Since events contain papers, this should be run after having executed {@link ParsedDataInserter#aclStorePapersAndAuthors()}
 	 */
@@ -264,14 +253,11 @@ public class ParsedDataInserter {
 		PersonJPAAccess personfiler = new PersonJPAAccess();
 		List<Person> authors = personfiler.get();
 		EntityManager entityManager = PersistenceManager.getEntityManager();
-
-
 		//Go through every author in the db
 		long failedAuthors = 0;
 		long totalAuthors = 0;
 		for ( Person currPerson : authors ) {
 			if( totalAuthors++ == n ) { break; }
-
 			//1. Update information about the author
 			entityManager.getTransaction().begin();
 			try { S2APIFunctions.completeAuthorInformationByAuthorSearch(currPerson, false); }

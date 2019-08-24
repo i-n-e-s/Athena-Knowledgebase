@@ -20,6 +20,7 @@ import javax.persistence.*;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.jpa.EventJPAAccess;
 import org.hibernate.annotations.GenericGenerator;
 
 @Entity
@@ -65,7 +66,7 @@ public class Event extends Model implements ScheduleEntry {
 	/* Event parts, if any */
 	@Hierarchy(entityName="eventpart")
 	@JsonIgnore
-	@OneToMany(orphanRemoval = true, fetch = FetchType.EAGER, cascade = { CascadeType.ALL })
+	@OneToMany(orphanRemoval = true, fetch = FetchType.LAZY)
 	@JoinTable(
 			name = "event_eventParts",
 			joinColumns = { @JoinColumn(name = "eventID") },
@@ -119,6 +120,19 @@ public class Event extends Model implements ScheduleEntry {
 	 */
 	public void setEnd(String yearString) {
 		this.end = yearString;
+	}
+
+
+	public static Event findOrCreate(String name){
+		EventJPAAccess eventFiler = new EventJPAAccess();
+		if(name != null){
+			Event e = eventFiler.getByName(name);
+			if(e != null) return e;
+		}
+		Event e = new Event();
+		e.setTitle(name); //Achtung kann hier null werden
+		eventFiler.add(e);
+		return e;
 	}
 
 	//	/**

@@ -297,54 +297,23 @@ public class Paper extends Model {
 	 * Looks for papers with equal attributes in the DB and returns found entities
 	 * If no matching DB entry was found, create and return a new paper object
 	 * Read more about the search here {@link PaperJPAAccess#getByKnownAttributes(Paper)}
-	 * @param toFind The paper object containing the query data
+	 * @param name The paper title
+	 * @param id the paper id, if unknown null
 	 * @return A matching paper from the DB or a new paper
 	 */
-	public static Paper findOrCreate(Paper toFind) {
+	public static Paper findOrCreate(String id, String name) {
 		//Check if paper with same S2ID exists in DB
 		PaperJPAAccess filer = new PaperJPAAccess();
-		List<Paper> searchResults = filer.getByKnownAttributes(toFind);
+		Paper searchResults = filer.getByKnownAttributes(id, name);
 
-		if(searchResults == null || searchResults.size() < 1) { //No matching paper could be found in the DB
-			return new Paper();
+		if(searchResults == null){
+			Paper p = new Paper();
+			p.setTitle(name);
+			p.setSemanticScholarID(id);
+			filer.add(p);
+			return p;
 		}
-		else { 		//Choose first result
-			return searchResults.get(0);
-		}
-	}
-
-	/**
-	 * Looks for papers with defined title or Semantic Scholar ID and returns matching DB entry
-	 * If no match was found, create and return a new paper object
-	 * @param s2id Semantic Scholar ID of the searched paper or null if unknown
-	 * @param title The title of the searched paper or null if unknown
-	 * @return matching DB entry or new paper
-	 */
-	public static Paper findOrCreate(String s2id, String title) {
-		Paper tmpQuery = new Paper();
-		tmpQuery.setTitle(title);
-		tmpQuery.setSemanticScholarID(s2id);
-		PaperJPAAccess paperFiler = new PaperJPAAccess();
-		paperFiler.add(tmpQuery);
-		return findOrCreate(tmpQuery);
-	}
-
-
-	/**
-	 * Same as {@link Paper#findOrCreate(String, String)}, but also searches in given list
-	 * @param s2id Semantic Scholar id of the paper to search
-	 * @param title Title of the paper to seach
-	 * @param list List to be searched
-	 * @return A matching paper from the list or the DB, or a new paper
-	 */
-	public static Paper findOrCreateDbOrList(String s2id, String title, List<Paper> list) {
-		//Filter out any paper who does not have either a matching SemanticScholarID or matching title
-		List<Paper> result = list.stream().filter( currPaper -> (
-				( currPaper.getSemanticScholarID() != null && currPaper.getSemanticScholarID().equals(s2id)) ||
-				( currPaper.getTitle() != null && currPaper.getTitle().equals(title) ))).collect(Collectors.toList());
-
-		//Result now contains only persons with either matching SemanticScholarID or matching name
-		return result.size() > 0 ? result.get(0) : findOrCreate(s2id, title);
+		return searchResults;
 	}
 
 	/**

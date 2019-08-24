@@ -54,6 +54,16 @@ public class PersonJPAAccess implements CommonAccess<Person> {
 		entityManager.getTransaction().commit();
 	}
 
+	@Override
+	public boolean alreadyExists(String identifier){
+		String query = "SELECT p FROM person p WHERE p.fullname = '"+identifier.replace("'","''") + "'";
+		EntityManager entityManager = PersistenceManager.getEntityManager();
+		//Execute query
+		List<Person> matches = entityManager.createQuery(query).getResultList();
+		//If results are found, return true.
+		return (matches.size() > 0) ? true : false;
+	}
+
 	/**
 	 * {@inheritDoc}
 	 */

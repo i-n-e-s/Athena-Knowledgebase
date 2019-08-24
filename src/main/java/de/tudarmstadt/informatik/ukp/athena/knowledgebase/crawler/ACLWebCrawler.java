@@ -62,19 +62,8 @@ class ACLWebCrawler extends AbstractCrawler {
     private String aboutPage = "https://acl2018.org/";
     private String[] conferences;
     private Map<String, Paper> papers = new HashMap<>(); // title, corresponding paper
-    private List<Paper> createdPapers = new ArrayList<>();
-    private List<Person> createdPersons = new ArrayList<>();
     private int beginYear = 0;
     private int endYear = 0;
-
-    // If this is set true: Before any new paper or person is created, it is checked
-    // whether a paper/person
-    // with the same title/name already exists in the DB. If a match is found, reuse
-    // the paper/person from the DB
-    // To prevent interferences between threads, parallelization is disabled
-    // This decelerates the parsing process significantly and may be quite unstable.
-    // Use with caution
-    private boolean runWithDuplicateAvoidance = true;
 
     /**
      * Only parses in the given year range. If only one year is needed, use the same
@@ -188,332 +177,13 @@ class ACLWebCrawler extends AbstractCrawler {
     }
 
     /**
-     * Fetches the given webpage, and follows the link, which contains 'Next' as
-     * long as there is one. The method returns a list of all visited webpages
-     * <p>
-     * Works only with a search site from aclanthology.coli.uni-saarland.de
-     *
-     * @param startURL the URL of the webpage, where the crawler starts
-     * @return the list of visited webpages in form of a Jsoup document
-     * @throws IOException in case the connection is faulty and / or not present
-     */
-    private ArrayList<Document> fetchWebpages(String startURL) throws IOException {
-
-        HashSet<String> allURLs = new HashSet<String>();
-        Set<String> selectedURLs = new HashSet<String>();
-
-        ArrayList<Document> webPages = new ArrayList<Document>();
-
-        Set<String> conferenceLinks = get_links("https://aclweb.org/anthology/events/");
-        Set<String> converenceURLs = conferenceLinks.stream()
-                .filter(p -> p.contains("https://aclweb.org/anthology/events/")).collect(Collectors.toSet());
-
-        converenceURLs = selector(converenceURLs, this.conferences, this.beginYear, this.endYear);
-
-        for (String s : converenceURLs) {
-
-            allURLs.addAll(get_links(s));
-
-            System.out.println(allURLs.size());
-
-        }
-
-        if (startURL.equals("paper")) {
-            selectedURLs = allURLs.stream()
-                    .filter(p -> p.contains("https://aclweb.org/anthology/papers/") && !p.endsWith(".bib"))
-                    .collect(Collectors.toSet());
-
-        } else {
-
-            selectedURLs = allURLs.stream().filter(p -> p.contains("https://aclweb.org/anthology/people/"))
-                    .collect(Collectors.toSet());
-
-        }
-        int i = 0;
-        for (String s : selectedURLs) {
-            if (i > 5) break;
-            i++;
-            System.out.println(s);
-            try {
-                webPages.add(Jsoup.connect(s).get());
-            } catch (IOException e) {
-                e.printStackTrace();
-                System.out.println("IO Exception at " + s);
-            }
-//			Connection.Response resp = Jsoup.connect(s) //
-//					.timeout(20000) //
-//					.method(Connection.Method.GET) //
-//					.execute();
-//			webPages.add(((Connection) resp).get());
-        }
-        return webPages;
-
-        /**
-         * Jsoup.connect
-         *
-         * logger.info("Fetching webpages starting from \"{}\"...", startURL);
-         * ArrayList<Document> docs = new ArrayList<>();
-         * docs.add(JsoupHelper.connect(startURL)); // find link to next page, if not
-         * found end loop boolean nextSiteExist = true; while (nextSiteExist) {
-         * nextSiteExist = false; // find the link to the next page Elements links =
-         * docs.get(docs.size() - 1).select("a[href]"); List<String> linkTexts =
-         * links.eachText(); int idxOfLink = -1; for (String lnktxt : linkTexts) { if
-         * (lnktxt.contains("Next")) { nextSiteExist = true; idxOfLink =
-         * linkTexts.indexOf(lnktxt); break; } } // add next page to doc list if
-         * (nextSiteExist) { Document nxtDoc =
-         * JsoupHelper.connect(links.get(idxOfLink).absUrl("href")); docs.add(nxtDoc); }
-         * } logger.info("Done fetching webpages!"); return docs;
-         **/
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public ArrayList<Person> getAuthors() throws IOException {
-        logger.info("Gathering all authors in the given year range...");
-        ArrayList<Person> persons = extractAuthors(fetchWebpages(startURLAuthors));
-        logger.info("Done!");
-        return persons;
-    }
-
-    /**
-     * Extracts all authors from a given list of webpages, which are in the ACL
-     * search form (e.g. <a href=
-     * "https://aclanthology.coli.uni-saarland.de/catalog/facet/author?commit=facet.page%3D1&facet.page=1">here</a>)
-     *
-     * @param webpages a list of webpages
-     * @return a list of authors with the name field set
-     */
-    private ArrayList<Person> extractAuthors(ArrayList<Document> webpages) {
-        logger.info("Scraping author pages...");
-        ArrayList<Person> authors = new ArrayList<>();
-        // extract the authors from all webpages
-        for (Document doc : webpages) {
-
-            Element authorNameElement = doc.select("#title").get(0);
-
-            // Elements authorListElements = doc.select("li");// authors are the only <li>
-            // elements on the Page
-
-            // for (Element elmnt : authorListElements) {
-
-            Person author = runWithDuplicateAvoidance
-                    ? Person.findOrCreateDbOrList(null, authorNameElement.text(), createdPersons)
-                    : new Person();
-            if (runWithDuplicateAvoidance) {
-                createdPersons.add(author);
-            }
-
-            author.setFullName(authorNameElement.text());
-            authors.add(author);
-            // }
-        }
-        logger.info("Done scraping!");
-        return authors;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public ArrayList<Paper> getPapers() throws IOException {
-        logger.info("Gathering all papers in the given year range...");
-        ArrayList<Paper> papers = extractPapers(fetchWebpages(startURLPaper));
-        logger.info("Done!");
-        return papers;
-    }
-
-    /**
-     * Extracts all papers from a given list of webpages, which are in the ACL
-     * search form (e.g. <a href=
-     * "https://aclanthology.coli.uni-saarland.de/catalog/facet/author?commit=facet.page%3D1&facet.page=1">here</a>)
-     *
-     * @param webpages a list of webpages
-     * @return a list of papers
-     */
-    private ArrayList<Paper> extractPapers(ArrayList<Document> webpages) {
-        logger.info("Scraping paper pages...");
-        ArrayList<Paper> paperList = new ArrayList<>();
-        // extract the authors from all webpages
-        for (Document doc : webpages) {
-            // if no conferences were given, let the papers through. else see if the
-            // conference of the paper is given in the launch arg
-            // Elements paperListElements = doc.select("h5.index_title");// papers are all
-            // <h5 class = "index_title">
-            // innerLoop: for (Element elmnt : paperListElements) {
-            if (!doc.title().contains("VOLUME")) {// VOLUMES/Overview-Pdfs are also part of the search-result and
-                // removed here
-                // check is not earlier because the elmnt is needed
-                if (conferences.length != 0 && !shouldSavePaper(doc)) // TODO: verstehen was sie hier mit den
-                    // Konferenzen wollen
-                    continue; // innerLoop; //label is not needed necessarily, but helps readability
-
-                Paper paper = runWithDuplicateAvoidance ? Paper.findOrCreateDbOrList(null, doc.title(), createdPapers)
-                        : new Paper();
-                ;
-                if (runWithDuplicateAvoidance) {
-                    createdPapers.add(paper);
-                }
-
-                Elements titleElement = doc.select("#title > a");
-
-
-                paper.setTitle(titleElement.get(0).text());
-                paperList.add(paper);
-            }
-        }
-
-        logger.info("Done scraping!");
-        return paperList;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public ArrayList<Paper> getPaperAuthor() throws IOException {
-
-        logger.info("Gathering all paper author relationships...");
-        List<Document> webpages = fetchWebpages(startURLPaper);
-        logger.info("Preparing data and starting 4 scraper threads...");
-
-        //in the following lines the list gets split into 4 roughly equal parts so that each list part can be handled in a seperate thread (it's faster this way)
-        int quarterSize = (int) Math.ceil(webpages.size() / 4);
-        List<Document> input1 = webpages.subList(0, quarterSize);
-        List<Document> input2 = webpages.subList(quarterSize, quarterSize * 2);
-        List<Document> input3 = webpages.subList(quarterSize * 2, quarterSize * 3);
-        List<Document> input4 = webpages.subList(quarterSize * 3, webpages.size());
-        ArrayList<Paper> result = new ArrayList<>();
-
-        // If duplicate avoidance is enabled, do not use threading, as the separate
-        // threads would interfere each other
-        if (runWithDuplicateAvoidance) {
-            try {
-                result.addAll(extractPaperAuthor(input1));
-                logger.info("Finished 1 / 4");
-                result.addAll(extractPaperAuthor(input2));
-                logger.info("Finished 2 / 4");
-                result.addAll(extractPaperAuthor(input3));
-                logger.info("Finished 3 / 4");
-                result.addAll(extractPaperAuthor(input4));
-                logger.info("Finished 4 / 4");
-            } catch (Exception e) { // thread exceptions
-                logger.error("Error while gathering results!", e);
-            }
-            return result;
-        }
-
-
-        // setup and start those threads
-        //ExecutorService executor = Executors.newFixedThreadPool(4);
-        //Future<ArrayList<Paper>> f1 = executor.submit(() -> extractPaperAuthor(input1));
-        //Future<ArrayList<Paper>> f2 = executor.submit(() -> extractPaperAuthor(input2));
-        //Future<ArrayList<Paper>> f3 = executor.submit(() -> extractPaperAuthor(input3));
-        //Future<ArrayList<Paper>> f4 = executor.submit(() -> extractPaperAuthor(input4));
-        logger.info("Waiting for thread results...");
-
-
-//        executor.shutdown();
-        return result;
-    }
-
-
-    /**
-     * Extracts all papers and authors from a given list of webpages, which are in
+     * Extracts all papers authors and events from a given list of webpages, which are in
      * the ACL search form (e.g. <a href=
      * "https://aclanthology.coli.uni-saarland.de/catalog/facet/author?commit=facet.page%3D1&facet.page=1">here</a>)
      *
      * @param webpages a list of webpages
      * @return a list of papers
      */
-    private ArrayList<Paper> extractPaperAuthor(List<Document> webpages) {
-        logger.info("Scraping webpages for paper author relationships...");
-        ArrayList<Paper> paperList = new ArrayList<>();
-        org.allenai.scienceparse.Parser parser = null;
-        PDFTextStripper stripper = null;
-        de.tudarmstadt.informatik.ukp.athena.knowledgebase.PDFParser.Parser myparse = new de.tudarmstadt.informatik.ukp.athena.knowledgebase.PDFParser.Parser();
-
-//		try {
-//			parser = Parser.getInstance();
-//			stripper = new PDFTextStripper();
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//		}
-        for (Document doc : webpages) {
-            // Elements paperListElements = doc.select("h5.index_title");
-            // innerLoop: for (Element elmnt : paperListElements) {
-            Elements paperInformationElements = doc.select("#main > div > div.col.col-lg-10.order-2 > dl > dd");
-            if (!doc.title().contains("VOLUME")) {
-                // check is not earlier because the elmnt is needed
-                if (conferences.length != 0 && !shouldSavePaper(doc))
-                    continue; // innerLoop; //label is not needed necessarily, but helps readability
-
-                // add paper info
-                // clean up the titles in the form of [C18-1017] Simple Neologism Based Domain
-                // Independe...
-                // C18-1017 would be the anthology - we remove [] because they convey no meaning
-                // String rawTitle = elmnt.text();
-                // String[] splitRawTitle = rawTitle.split(" ", 2);
-
-                Elements titleElement = doc.select("#title > a");
-
-                String paperTitle = titleElement.get(0).text();// splitRawTitle[1];
-                String anthology = paperInformationElements.get(0).text();// splitRawTitle[0].replace("[",
-                // "").replace("]", "");
-
-                Paper paper = runWithDuplicateAvoidance ? Paper.findOrCreateDbOrList(null, paperTitle, createdPapers)
-                        : new Paper();
-                if (runWithDuplicateAvoidance) {
-                    createdPapers.add(paper);
-                }
-
-                paper.setTitle(paperTitle);
-                paper.setAnthology(anthology);
-                String remoteLink = "http://aclweb.org/anthology/" + anthology;
-                paper.setRemoteLink(remoteLink); // wow that was easy
-                paper.setReleaseDate(extractPaperRelease(doc));
-//				try {
-//					URL urli = new URL(remoteLink);
-//					ExtractedMetadata meDa = myparse.scienceParse(parser, urli);
-//					String plainText = myparse.plainParse(stripper, urli);
-//					if(meDa == null) continue;
-//					paper.setPaperPlainText(plainText);
-//					paper.setPaperAbstract(meDa.abstractText);
-//				} catch (MalformedURLException e) {
-//					System.out.println("Parser abgestuerzt. Leere PDF-File? ");
-//					System.out.println("Fehlerhafter Link: " + remoteLink);
-//					e.printStackTrace();
-//				}
-                // find authors and add them to a list
-
-                Elements authorElements = doc.select("#main > p> a");// elmnt.parent().parent().children().select("span").select("a");
-                for (Element authorEl : authorElements) {
-                    Person author = runWithDuplicateAvoidance
-                            ? Person.findOrCreateDbOrList(null, authorEl.text(), createdPersons)
-                            : new Person();
-                    if (runWithDuplicateAvoidance) {
-                        createdPersons.add(author);
-                    }
-
-                    // because acl2018 seems to not employ prefixes (e.g. Prof. Dr.), we do not need
-                    // to scan them
-                    author.setFullName(authorEl.text());
-                    // set paper - author relation
-                    paper.addAuthor(author);
-                    // set author - paper relation
-                    author.addPaper(paper);
-                }
-                paperList.add(paper);
-                papers.put(paper.getTitle(), paper);
-                // }
-            }
-        }
-        logger.info("Done scraping!");
-        return paperList;
-    }
-
-
     public ArrayList<Conference> getPaperAuthorEvent() throws IOException {
         //TODO sachen schon vorher einspeichern und in vier teile splitten
         ArrayList<Paper> paperList = new ArrayList<Paper>();
@@ -558,7 +228,6 @@ class ACLWebCrawler extends AbstractCrawler {
             Conference conference = Conference.findOrCreate(conferenceTitle);
             conference.setName(conferenceTitle);
             for (int y = 0; y < eventsPerConference.get(x).size(); y++) {
-                Event event = new Event();//über eventsPerConference.get(x) scrapen
                 Document eventDocument = null;
                 try {
                     eventDocument = Jsoup.connect(eventsPerConference.get(x).get(y)).get();
@@ -569,8 +238,7 @@ class ACLWebCrawler extends AbstractCrawler {
                 Elements titel = eventDocument.select("#title");
                 String titleString = titel.get(0).text();//splitRawTitle[1];
                 String date = "2018-01-01";
-                event.setBegin("2018-01-01");
-                event.setEnd("2018-01-01");
+
 //    			try {
 //                String monthString = id.get(1).text();//splitRawTitle[1];
 //                String yearString = id.get(2).text();//splitRawTitle[1];
@@ -601,7 +269,9 @@ class ACLWebCrawler extends AbstractCrawler {
                 //String idString = id.get(0).text();//splitRawTitle[1];
                 //String cityString = id.get(3).text();//splitRawTitle[1];
                 //event.setId(idString);
-                event.setTitle(titleString);
+                Event event = Event.findOrCreate(titleString);
+                event.setBegin("2018-01-01");
+                event.setEnd("2018-01-01");
                 EventCategory category = getWorkshopType(titleString);
                 if (category != null) {
                     event.setCategory(category);
@@ -630,11 +300,7 @@ class ACLWebCrawler extends AbstractCrawler {
                         String paperTitle = titleElement.get(0).text();//doc.title();// splitRawTitle[1];
                         String anthology = paperInformationElements.get(0).text();// splitRawTitle[0].replace("[",
                         // "").replace("]", "");
-                        Paper paper = runWithDuplicateAvoidance ? Paper.findOrCreateDbOrList(null, paperTitle, createdPapers)
-                                : new Paper();
-                        if (runWithDuplicateAvoidance) {
-                            createdPapers.add(paper);
-                        }
+                        Paper paper = Paper.findOrCreate(null, paperTitle);
                         paper.setTitle(paperTitle);
                         paper.setAnthology(anthology);
                         String remoteLink = "http://aclweb.org/anthology/" + anthology;
@@ -657,12 +323,8 @@ class ACLWebCrawler extends AbstractCrawler {
                         // find authors and add them to a list
                         Elements authorElements = doc.select("#main > p> a");// elmnt.parent().parent().children().select("span").select("a");
                         for (Element authorEl : authorElements) {
-                            Person author = runWithDuplicateAvoidance
-                                    ? Person.findOrCreateDbOrList(null, authorEl.text(), createdPersons)
-                                    : new Person();
-                            if (runWithDuplicateAvoidance) {
-                                createdPersons.add(author);
-                            }
+                            Person author = Person.findOrCreate(null, authorEl.text());
+
                             // because acl2018 seems to not employ prefixes (e.g. Prof. Dr.), we do not need
                             // to scan them
                             String linkAuthor = authorEl.attr("abs:href");

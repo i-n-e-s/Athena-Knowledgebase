@@ -281,10 +281,10 @@ public class S2APIFunctions {
 
 			//Check if DB entry of person with matching S2ID exists
 			Person query = new Person();
-			query.setFullName(jsonAuthorInfo.getString("name"));
+			String name = jsonAuthorInfo.getString("name");
 			query.setSemanticScholarID(s2id);
 			logger.info("Query ID: {}", query.getPersonID());
-			Person currInfl = Person.findOrCreate( query );     //If no matching DB-entry is found, create new person
+			Person currInfl = Person.findOrCreate(s2id, name);     //If no matching DB-entry is found, create new person
 
 			//Set attributes:
 			if ( currInfl.getFullName() == null || overwrite ) {
@@ -407,10 +407,7 @@ public class S2APIFunctions {
 
 			//If not already connected, check if author is in DB
 			if ( authorObjToBeAdded == null ) {
-				Person query = new Person();
-				query.setSemanticScholarID(s2id);
-				query.setFullName(name);
-				authorObjToBeAdded = Person.findOrCreate(query);
+				authorObjToBeAdded = Person.findOrCreate(s2id, name);
 			}
 
 			if( overwrite || authorObjToBeAdded.getFullName() == null ) { authorObjToBeAdded.setFullName(name); }

@@ -31,6 +31,16 @@ public class InstitutionJPAAccess implements CommonAccess<Institution> {
 	}
 
 	@Override
+	public boolean alreadyExists(String identifier){
+		String query = "SELECT i FROM institution i WHERE i.name = '"+identifier.replace("'","''") + "'";
+		EntityManager entityManager = PersistenceManager.getEntityManager();
+		//Execute query
+		List<Institution> matches = entityManager.createQuery(query).getResultList();
+		//If results are found, return true.
+		return (matches.size() > 0) ? true : false;
+	}
+
+	@Override
 	public void commitChanges(Institution data){
 		EntityManager entityManager = PersistenceManager.getEntityManager();
 		EntityTransaction trans = entityManager.getTransaction();

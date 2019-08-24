@@ -48,6 +48,16 @@ public class EventPartJPAAccess implements CommonAccess<EventPart> {
 	}
 
 	@Override
+	public boolean alreadyExists(String identifier){
+		String query = "SELECT p FROM eventpart p WHERE p.title = '"+identifier.replace("'","''") + "'";
+		EntityManager entityManager = PersistenceManager.getEntityManager();
+		//Execute query
+		List<EventPart> matches = entityManager.createQuery(query).getResultList();
+		//If results are found, return true.
+		return (matches.size() > 0) ? true : false;
+	}
+
+	@Override
 	public List<EventPart> get() {
 		EntityManager entityManager = PersistenceManager.getEntityManager();
 		List<EventPart> result = entityManager.createQuery("FROM EventPart").getResultList();

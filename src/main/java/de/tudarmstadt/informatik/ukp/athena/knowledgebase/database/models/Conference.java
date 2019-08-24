@@ -11,6 +11,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.jpa.ConferenceJPAAccess;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.jpa.EventJPAAccess;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.jpa.PersistenceManager;
 import org.hibernate.annotations.GenericGenerator;
 
@@ -45,23 +46,26 @@ public class Conference extends Model{
 	@Hierarchy(entityName="event")
 
 	@JsonIgnore
-	@OneToMany(orphanRemoval=true, fetch=FetchType.EAGER,cascade = {CascadeType.ALL}) //unidirectional relationship which
+	@OneToMany(orphanRemoval=true, fetch=FetchType.LAZY) //unidirectional relationship which
 	@JoinColumn(name="conferenceID")					  //is saved in the Event table
 	private Set<Event> events = new HashSet<>();
 	/*The workshops*/
 	@Hierarchy(entityName="workshop")
 	@JsonIgnore
-	@OneToMany(orphanRemoval=true, fetch=FetchType.EAGER,cascade = {CascadeType.ALL}) //unidirectional relationship which
+	@OneToMany(orphanRemoval=true, fetch=FetchType.LAZY) //unidirectional relationship which
 	@JoinColumn(name="conferenceID")					  //is saved in the Workshop table
 	private Set<Workshop> workshops = new HashSet<>();
 
 
 	public static Conference findOrCreate(String name){
+		System.out.println("Konferenz: " + name);
 		ConferenceJPAAccess conferenceFiler = new ConferenceJPAAccess();
 		if(name != null){
+			System.out.println("schon drin");
 			Conference c = conferenceFiler.getByName(name);
 			if(c != null) return c;
 		}
+		System.out.println("neu");
 		Conference c = new Conference();
 		c.setName(name); //Achtung kann hier null werden
 		conferenceFiler.add(c);
@@ -200,6 +204,10 @@ public class Conference extends Model{
 	 * @param event The event to add
 	 */
 	public void addEvent(Event event) {
+		EventJPAAccess eventFiler = new EventJPAAccess();
+		if(eventFiler.alreadyExists(event.getTitle())){
+			return; //Event already in Database
+		}
 		events.add(event);
 	}
 
@@ -210,6 +218,7 @@ public class Conference extends Model{
 	public Set<Workshop> getWorkshops(){
 		return workshops;
 	}
+
 
 	/**
 	 * Sets the workshop in this conference's schedule
