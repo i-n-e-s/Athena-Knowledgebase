@@ -6,14 +6,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.ManyToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 import org.hibernate.annotations.GenericGenerator;
 
@@ -31,7 +24,6 @@ public class Paper extends Model {
 	@GenericGenerator(name="increment", strategy="increment")
 	@Column(name = "paperID", updatable = false, nullable = false)
 	private Long paperID;
-
 	/*Title of the paper*/
 	@Column(name = "title", columnDefinition = "varchar(1023)") //fixes titles that are too Long for being storable in the column
 	private String title;
@@ -44,6 +36,10 @@ public class Paper extends Model {
 	@ManyToMany(cascade = { CascadeType.ALL }, mappedBy = "papers", fetch = FetchType.EAGER)
 	private Set<Person> persons = new HashSet<>();
 
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "event_paper")
+	private Event event;
+
 	/*Release date*/
 	@Column(name = "releaseDate")
 	private String releaseDate;
@@ -53,23 +49,22 @@ public class Paper extends Model {
 	private String remoteLink;
 	@Column(name = "localLink")
 	private String localLink;
-
 	/*PDF filesize in Bytes*/
 	@Column(name = "pdfFileSize")
 	private Integer pdfFileSize;
 	/*anthology of paper as String*/
 	@Column (name = "anthology")
 	private String anthology;
-
 	/*Semantic Scholar's PaperId as String*/
 	@Column(name = "semanticScholarID")
 	private String semanticScholarID;
+
 	/*Abstract of paper as String*/
-	@Column(name = "paperAbstract", columnDefinition="LongTEXT")
+	@Column(name = "paperAbstract", columnDefinition="LONGTEXT")
 	private String paperAbstract;
 	@Column(name = "amountOfCitations")
-	private Long amountOfCitations = (long) -1;    //-1 if not known yet
-	@Column(name= "plainText", columnDefinition = "LongTEXT")
+	private Long amountOfCitations = (long)-1;    //-1 if not known yet
+	@Column(name= "plainText", columnDefinition = "LONGTEXT")
 	private String paperPlainText;
 
 
@@ -330,6 +325,8 @@ public class Paper extends Model {
 		Paper tmpQuery = new Paper();
 		tmpQuery.setTitle(title);
 		tmpQuery.setSemanticScholarID(s2id);
+		PaperJPAAccess paperFiler = new PaperJPAAccess();
+		paperFiler.add(tmpQuery);
 		return findOrCreate(tmpQuery);
 	}
 
@@ -350,7 +347,6 @@ public class Paper extends Model {
 		//Result now contains only persons with either matching SemanticScholarID or matching name
 		return result.size() > 0 ? result.get(0) : findOrCreate(s2id, title);
 	}
-
 
 	/**
 	 * Creates a String representation of this paper object.

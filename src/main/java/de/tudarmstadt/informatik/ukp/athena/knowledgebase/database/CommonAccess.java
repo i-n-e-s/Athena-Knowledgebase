@@ -17,6 +17,9 @@ public interface CommonAccess<T> {
 	 */
 	public void add(T data);
 
+
+	public void commitChanges(T data);
+
 	/**
 	 * Delete data from database.
 	 * @param data Object of model T to be removed

@@ -56,14 +56,7 @@ public class Event extends Model implements ScheduleEntry {
 	private String place;
 
 	/* Associated papers */
-	@Hierarchy(entityName="paper")
-	@JsonIgnore
-	@OneToMany(orphanRemoval = true, fetch = FetchType.EAGER, cascade = { CascadeType.ALL })
-	@JoinTable(
-			name = "event_papers",
-			joinColumns = { @JoinColumn(name = "eventID") },
-			inverseJoinColumns = { @JoinColumn(name = "paperID") }
-			)
+	@OneToMany(mappedBy = "event")
 	private Set<Paper> papers = new HashSet<>();
 
 	/* Papers, if any */

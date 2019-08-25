@@ -2,21 +2,16 @@ package de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models;
 
 import java.time.LocalDate;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.jpa.ConferenceJPAAccess;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.jpa.PersistenceManager;
 import org.hibernate.annotations.GenericGenerator;
 
 @Entity
@@ -60,6 +55,18 @@ public class Conference extends Model{
 	@JoinColumn(name="conferenceID")					  //is saved in the Workshop table
 	private Set<Workshop> workshops = new HashSet<>();
 
+
+	public static Conference findOrCreate(String name){
+		ConferenceJPAAccess conferenceFiler = new ConferenceJPAAccess();
+		if(name != null){
+			Conference c = conferenceFiler.getByName(name);
+			if(c != null) return c;
+		}
+		Conference c = new Conference();
+		c.setName(name); //Achtung kann hier null werden
+		conferenceFiler.add(c);
+		return c;
+	}
 	/**
 	 * Gets the unique id of this conference
 	 * @return The unique id of this conference
@@ -219,4 +226,6 @@ public class Conference extends Model{
 	public void addWorkshop(Workshop workshop) {
 		workshops.add(workshop);
 	}
+
 }
+
