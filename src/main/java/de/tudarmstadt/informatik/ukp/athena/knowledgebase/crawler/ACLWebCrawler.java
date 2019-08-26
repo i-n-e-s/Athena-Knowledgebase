@@ -61,7 +61,7 @@ class ACLWebCrawler extends AbstractCrawler {
     private String schedulePage = "https://acl2018.org/programme/schedule/";
     private String aboutPage = "https://acl2018.org/";
     private String[] conferences;
-    private Map<String, Paper> papers = new HashMap<>(); // title, corresponding paper
+    private Map<String, Paper> papers = new HashMap<>();
     private int beginYear = 0;
     private int endYear = 0;
 
@@ -201,7 +201,7 @@ class ACLWebCrawler extends AbstractCrawler {
             i++;
             eventsPerConference.add(get_links(s).stream()
                     .filter(p -> p.contains("volumes") && !p.contains(".bib")).collect(Collectors.toCollection(ArrayList::new)));
-            if(i > 5) break;
+//            if(i > 5) break;
             System.out.println("#Events " + i);
         }
         System.out.println(eventsPerConference.size());
@@ -228,6 +228,7 @@ class ACLWebCrawler extends AbstractCrawler {
             Conference conference = Conference.findOrCreate(conferenceTitle);
             conference.setName(conferenceTitle);
             for (int y = 0; y < eventsPerConference.get(x).size(); y++) {
+                Event event = new Event();//über eventsPerConference.get(x) scrapen
                 Document eventDocument = null;
                 try {
                     eventDocument = Jsoup.connect(eventsPerConference.get(x).get(y)).get();
@@ -238,7 +239,8 @@ class ACLWebCrawler extends AbstractCrawler {
                 Elements titel = eventDocument.select("#title");
                 String titleString = titel.get(0).text();//splitRawTitle[1];
                 String date = "2018-01-01";
-
+                event.setBegin("2018-01-01");
+                event.setEnd("2018-01-01");
 //    			try {
 //                String monthString = id.get(1).text();//splitRawTitle[1];
 //                String yearString = id.get(2).text();//splitRawTitle[1];
@@ -269,9 +271,7 @@ class ACLWebCrawler extends AbstractCrawler {
                 //String idString = id.get(0).text();//splitRawTitle[1];
                 //String cityString = id.get(3).text();//splitRawTitle[1];
                 //event.setId(idString);
-                Event event = Event.findOrCreate(titleString);
-                event.setBegin("2018-01-01");
-                event.setEnd("2018-01-01");
+                event.setTitle(titleString);
                 EventCategory category = getWorkshopType(titleString);
                 if (category != null) {
                     event.setCategory(category);
@@ -305,7 +305,8 @@ class ACLWebCrawler extends AbstractCrawler {
                         paper.setAnthology(anthology);
                         String remoteLink = "http://aclweb.org/anthology/" + anthology;
                         paper.setRemoteLink(remoteLink); // wow that was easy
-                        paper.setReleaseDate(extractPaperRelease(doc));
+        				paper.setReleaseDate(null);
+//        				paper.setReleaseDate(extractPaperRelease(doc));
                         /**try {
                          ExtractedMetadata meDa = scienceParse(parser, new URL(remoteLink));
                          if(meDa == null) continue;
@@ -389,12 +390,8 @@ class ACLWebCrawler extends AbstractCrawler {
                 return 12;
             default:
                 return 0;
-
-
         }
-
     }
-
 
     private EventCategory getWorkshopType(String workshopTitle) {
         if (workshopTitle.toLowerCase().contains("BREAK")) {
