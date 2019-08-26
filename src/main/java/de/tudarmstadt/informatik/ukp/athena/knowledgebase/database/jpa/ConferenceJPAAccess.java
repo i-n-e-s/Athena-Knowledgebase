@@ -74,7 +74,9 @@ public class ConferenceJPAAccess implements CommonAccess<Conference> {
 
 	public Conference getByName( String name ) {
 		//Build query string
+
 		String query = "SELECT c FROM Conference c WHERE c.name = '"+name.replace("'","''") + "'";
+		System.out.println(query);
 		EntityManager entityManager = PersistenceManager.getEntityManager();
 
 		//Execute query

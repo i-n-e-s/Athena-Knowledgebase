@@ -44,11 +44,11 @@ public class Person extends Model {
 	private String fullName;
 	
 	/*First Name*/
-//	@Column(name = "firstName")
+	@Column(name = "firstName")
 	private String firstName;
 	
 	/*Full Name*/
-//	@Column(name = "lastName")
+	@Column(name = "lastName")
 	private String lastName;
 	
 	
@@ -68,9 +68,7 @@ public class Person extends Model {
 	private Institution institution;
 
 	/*Written papers*/
-	@Hierarchy(entityName="paper")
-	@JsonIgnore //fixes infinite recursion
-	@ManyToMany(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER)
+	@ManyToMany(cascade = { CascadeType.ALL })
 	@JoinTable(
 			name = "author_paper",
 			joinColumns = { @JoinColumn(name = "authorID") },

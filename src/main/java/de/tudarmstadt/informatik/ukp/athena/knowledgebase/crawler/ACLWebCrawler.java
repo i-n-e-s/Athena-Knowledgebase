@@ -186,7 +186,6 @@ class ACLWebCrawler extends AbstractCrawler {
      */
     public ArrayList<Conference> getPaperAuthorEvent() throws IOException {
         //TODO sachen schon vorher einspeichern und in vier teile splitten
-        ArrayList<Paper> paperList = new ArrayList<Paper>();
         Set<String> uniqueURL = get_links("https://aclweb.org/anthology/events/");
         System.out.println("Projekt läuft!");
         HashSet<String> uniqueConverenceURLs = uniqueURL.stream()
@@ -201,7 +200,6 @@ class ACLWebCrawler extends AbstractCrawler {
             i++;
             eventsPerConference.add(get_links(s).stream()
                     .filter(p -> p.contains("volumes") && !p.contains(".bib")).collect(Collectors.toCollection(ArrayList::new)));
-//            if(i > 5) break;
             System.out.println("#Events " + i);
         }
         System.out.println(eventsPerConference.size());
@@ -228,7 +226,6 @@ class ACLWebCrawler extends AbstractCrawler {
             Conference conference = Conference.findOrCreate(conferenceTitle);
             conference.setName(conferenceTitle);
             for (int y = 0; y < eventsPerConference.get(x).size(); y++) {
-                Event event = new Event();//über eventsPerConference.get(x) scrapen
                 Document eventDocument = null;
                 try {
                     eventDocument = Jsoup.connect(eventsPerConference.get(x).get(y)).get();
@@ -239,8 +236,7 @@ class ACLWebCrawler extends AbstractCrawler {
                 Elements titel = eventDocument.select("#title");
                 String titleString = titel.get(0).text();//splitRawTitle[1];
                 String date = "2018-01-01";
-                event.setBegin("2018-01-01");
-                event.setEnd("2018-01-01");
+
 //    			try {
 //                String monthString = id.get(1).text();//splitRawTitle[1];
 //                String yearString = id.get(2).text();//splitRawTitle[1];
@@ -271,7 +267,9 @@ class ACLWebCrawler extends AbstractCrawler {
                 //String idString = id.get(0).text();//splitRawTitle[1];
                 //String cityString = id.get(3).text();//splitRawTitle[1];
                 //event.setId(idString);
-                event.setTitle(titleString);
+                Event event = Event.findOrCreate(titleString);
+                event.setBegin("2018-01-01");
+                event.setEnd("2018-01-01");
                 EventCategory category = getWorkshopType(titleString);
                 if (category != null) {
                     event.setCategory(category);
@@ -329,7 +327,6 @@ class ACLWebCrawler extends AbstractCrawler {
                             // because acl2018 seems to not employ prefixes (e.g. Prof. Dr.), we do not need
                             // to scan them
                             String linkAuthor = authorEl.attr("abs:href");
-
                             Document docAuthor = null;
                             try {
                                 docAuthor = Jsoup.connect(linkAuthor).get();
@@ -344,6 +341,7 @@ class ACLWebCrawler extends AbstractCrawler {
                             author.setLastName(lastName);
                             author.setFullName(authorEl.text());
                             // set paper - author relation
+                            System.out.println("Set paper author relationship");
                             paper.addAuthor(author);
                             // set author - paper relation
                             author.addPaper(paper);
@@ -351,10 +349,12 @@ class ACLWebCrawler extends AbstractCrawler {
                             //paperList.add(paper);
                         }
                         event.addPaper(paper);
+                        System.out.println("Event Paper added");
                     }
                 }
 
                 conference.addEvent(event);
+                System.out.println("Events added to conference");
             }
             conferencesList.add(conference);
         }
