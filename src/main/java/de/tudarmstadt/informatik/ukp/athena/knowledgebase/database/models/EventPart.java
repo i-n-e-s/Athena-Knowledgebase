@@ -23,7 +23,7 @@ public class EventPart extends Model{
 	@Column(name = "title")
 	private String title;
 	/* Brief Description */
-	@Column(name = "description", columnDefinition = "VARCHAR(1000)") //fixes titles that are too long for being storable in the column
+	@Column(name = "description", columnDefinition = "VARCHAR(3000)") //fixes titles that are too long for being storable in the column
 	private String description;
 
 	/*Start time*/
@@ -37,11 +37,11 @@ public class EventPart extends Model{
 	@Column(name = "place")
 	private String place;
 	
-	@Column(name = "speaker")
-	private Person speaker;
-	
-	@Column(name = "paper")
-	private Paper paper;
+//	@Column(name = "speaker")
+//	private Person speaker;
+//	
+	//@Column(name = "paper")
+	//private Paper paper;
 	
 	
 	/**
@@ -95,36 +95,36 @@ public class EventPart extends Model{
 	/**
 	 * Gets the speaker of a EventPart (the first listed person in the corresponding paper)
 	 * @return speaker of tutorial
-	 */
-	public Person getSpeaker() {
-		return speaker;
-	}
-
-	/**
-	 * Sets the speaker of a EventPart (the first listed person in the corresponding paper)
-	 * @param speaker of tutorial
-	 */
-	public void setSpeaker(Person speaker) {
-		this.speaker = speaker;
-	}
-	
-	
+//	 */
+//	public Person getSpeaker() {
+//		return speaker;
+//	}
+//
+//	/**
+//	 * Sets the speaker of a EventPart (the first listed person in the corresponding paper)
+//	 * @param speaker of tutorial
+//	 */
+//	public void setSpeaker(Person speaker) {
+//		this.speaker = speaker;
+//	}
+//	
+//	
 	/**
 	 * Gets the corresponding paper
 	 * @return speaker of tutorial
 	 */
-	public Paper getPaper() {
-		return paper;
-	}
-
-	/**
-	 * Sets the the corresponding paper
-	 * @param speaker of tutorial
-	 */
-	public void setPaper(Paper paper) {
-		this.paper= paper;
-	}
-	
+//	public Paper getPaper() {
+//		return paper;
+//	}
+//
+//	/**
+//	 * Sets the the corresponding paper
+//	 * @param speaker of tutorial
+//	 */
+//	public void setPaper(Paper paper) {
+//		this.paper= paper;
+//	}
+//	
 	
 	/**
 	 * Gets the time this event part ends

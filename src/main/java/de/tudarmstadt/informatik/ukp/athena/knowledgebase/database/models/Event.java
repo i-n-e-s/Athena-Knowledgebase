@@ -14,6 +14,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.GenericGenerator;
@@ -31,7 +32,7 @@ public class Event extends Model implements ScheduleEntry {
 	@Column(name = "title")
 	private String title;
 	/* Brief Description */
-	@Column(name = "description")
+	@Column(name = "description",length = 3000)
 	private String description;
 	/* Category */
 	@Column(name = "category")
@@ -52,7 +53,7 @@ public class Event extends Model implements ScheduleEntry {
 	private String place;
 
 	/* Associated papers */
-	@Hierarchy(entityName="paper")
+		@Hierarchy(entityName="paper")
 	@OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER)
 	@JoinTable(
 			name = "event_papers",
@@ -62,8 +63,8 @@ public class Event extends Model implements ScheduleEntry {
 	private Set<Paper> papers = new HashSet<>();
 
 	/* Papers, if any */
-	//	@Column(name = "papers")
-	//	private Set<Paper> papers;
+//	@Column(name = "papers")
+//	private Set<Paper> papers;
 	/* Event parts, if any */
 	@Hierarchy(entityName="eventpart")
 	@OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER)
@@ -76,8 +77,9 @@ public class Event extends Model implements ScheduleEntry {
 
 	
 	
-	//@Column(name = "speaker")
-//	private Person speaker;
+	//@OneToOne(fetch = FetchType.LAZY)
+    //@JoinColumn(name = "speaker")
+	//private Person speaker;
 	@Column(name = "link")
 	private String link;
 	/*Date*/
@@ -266,25 +268,25 @@ public class Event extends Model implements ScheduleEntry {
 	 * Gets this event's papers (if any)
 	 * * @return This event's papers
 	 */
-	public Set<Paper> getPapers() {
-		return papers;
-	}
-
-	/**
-	 * Sets this event's papers (if any)
-	 * @param papers This event's new papers
-	 */
-	public void setPapers(Set<Paper> papers) {
-		this.papers = papers;
-	}
-
-	/**
-	 * Adds a paper to this event's paper list
-	 * @param p The paper to add
-	 */
-	public void addPaper(Paper p) {
-		papers.add(p);
-	}
+//	public Set<Paper> getPapers() {
+//		return papers;
+//	}
+//
+//	/**
+//	 * Sets this event's papers (if any)
+//	 * @param papers This event's new papers
+//	 */
+//	public void setPapers(Set<Paper> papers) {
+//		this.papers = papers;
+//	}
+//
+//	/**
+//	 * Adds a paper to this event's paper list
+//	 * @param p The paper to add
+//	 */
+//	public void addPaper(Paper p) {
+//		papers.add(p);
+//	}
 
 	/**
 	 * Gets this event's event parts (if any)

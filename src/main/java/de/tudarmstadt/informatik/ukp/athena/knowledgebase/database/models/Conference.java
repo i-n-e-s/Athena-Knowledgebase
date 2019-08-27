@@ -55,7 +55,7 @@ public class Conference extends Model{
 	private Set<Workshop> workshops = new HashSet<>();
 
 	
-	@Column(name="description")
+	@Column(name="description",length = 3000)
 	private String description;
 	@Column(name="submissionDeadlineLongPaper")
 	private String submissionDeadlineLongPaper;

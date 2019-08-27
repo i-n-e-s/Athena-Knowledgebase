@@ -506,276 +506,660 @@ class ACLWebCrawler extends AbstractCrawler {
 	
 	public ArrayList<Conference> getPaperAuthorEvent() throws IOException {
 
-		ArrayList<Paper> paperList=new ArrayList<Paper>();
-
-
-        Set<String> uniqueURL=get_links("https://aclweb.org/anthology/events/");
-        System.out.println("Projekt läuft!");
-        HashSet<String> uniqueConverenceURLs = uniqueURL.stream()
-        	    .filter(p -> p.contains("https://aclweb.org/anthology/events/")).collect(Collectors.toCollection(HashSet::new));
-
-        ArrayList<String> converenceURLs= selector(uniqueConverenceURLs,this.conferences,this.beginYear,this.endYear).stream().collect(Collectors.toCollection(ArrayList::new));;
-        String[] array = converenceURLs.stream().toArray(n -> new String[n]);
-        System.out.println(array.length);
-        System.out.println(Arrays.toString(array));
-
-        ArrayList<ArrayList<String>> eventsPerConference=new ArrayList<ArrayList<String>>();
-
-        int i=0;
-        for(String s : array) {
-        	i++;
-        eventsPerConference.add(get_links(s).stream()
-        	    .filter(p -> p.contains("volumes")&&!p.contains(".bib")).collect(Collectors.toCollection(ArrayList::new)));
-
-        if(i==1000) {
-        break;
-        }}
-
-    	System.out.println(eventsPerConference.size());
-
-
-        ArrayList<ArrayList<HashSet<String>>> paperPerEventPerConference=new ArrayList<ArrayList<HashSet<String>>>();
-
-
-        for(ArrayList<String> events :eventsPerConference) {
-
-
-        	ArrayList<HashSet<String>> urlsPerEvent  =new ArrayList<HashSet<String>>();
-        	for(String l: events) {
-
-
-        		urlsPerEvent.add(get_links(l).stream().filter(p -> p.contains("https://aclweb.org/anthology/papers/")&& !p.contains(".bib")).collect(Collectors.toCollection(HashSet::new)));
-        	System.out.println("UrlsPerEvent:"+urlsPerEvent.size());
-        	}
-
-
-        	paperPerEventPerConference.add(urlsPerEvent);
-
-
-        }
-
-
-    	System.out.println(paperPerEventPerConference.size());
-    	
-    	ArrayList<Conference> conferencesList=new ArrayList<Conference>();
-    	
-
-    	for(int x=0;x<converenceURLs.size();x++ ) {
-    		Conference conference=new Conference();
-
-        	Document conferenceSite=Jsoup.connect(converenceURLs.get(x)).get();
-
-
-    		Elements confernceTitleElement= conferenceSite.select("#title");
-
-			String conferenceTitle = confernceTitleElement.get(0).text();//splitRawTitle[1];
-
-
-    		conference.setName(conferenceTitle);
-
-    		for(int y=0; y<eventsPerConference.get(x).size();y++) {
-    			Event event=new Event();//über eventsPerConference.get(x) scrapen
-
-    			Document eventDocument=Jsoup.connect(eventsPerConference.get(x).get(y)).get();
-
-    			Elements id= eventDocument.select("#main > div.row.acl-paper-details > div.col.col-lg-10.order-2 > dl > dd");
-
-
-
-        		Elements titel= eventDocument.select("#title");
-
-    			String titleString = titel.get(0).text();//splitRawTitle[1];
-
-    			String monthString = id.get(1).text();//splitRawTitle[1];
-
-    			String yearString = id.get(2).text();//splitRawTitle[1];
-
-    			LocalDate date= null;
-
-    			try {
-
-    			int monthInt =monthToInt(monthString);
-    			int yearInt=Integer.parseInt(yearString);
-
-    			if(monthInt!=0) {
-    				date = LocalDate.of(yearInt, monthInt, 1);
-    				event.setBegin(date.atStartOfDay());
-    				event.setEnd(date.atStartOfDay());
-    			}
-
-    			}catch(NumberFormatException e){
-    				System.out.println("yearString: "+yearString);
-
-    			}
-
-
-    			String locationString = id.get(3).text();//splitRawTitle[1];
-    			String[] locationArray=locationString.split(", ");
-
-
-
-    			if(y==0) {
-
-
-    			if(locationArray.length==2) {
-    			conference.setCity(locationArray[0]);
-    			conference.setCountry(locationArray[1]);
-    			}
-
-    			//conference.setId(id);
-
-    			if(date !=null) {
-    				conference.setBegin(date);
-    				conference.setEnd(date);
-
-    			}
-
-
-    			}
-
-
-
-
-
-    			//String idString = id.get(0).text();//splitRawTitle[1];
-    			//String cityString = id.get(3).text();//splitRawTitle[1];
-
-
-
-    			//event.setId(idString);
-    			event.setTitle(titleString);
-    			EventCategory category=getWorkshopType(titleString);
-    			if(category!=null) {
-    			event.setCategory(category);
-    			}
-
-    			//event.setConferenceName(conferenceTitel);
-
-
-
-    			for(String s: paperPerEventPerConference.get(x).get(y)) {
-
-    	        	try {
-    	        		System.out.println(s);
-
-						Document doc= Jsoup.connect(s).get();
-
-						Elements paperInformationElements = doc.select("#main > div > div.col.col-lg-10.order-2 > dl > dd");
-						if (!doc.title().contains("VOLUME")) {
-							// check is not earlier because the elmnt is needed
-							if (conferences.length != 0 && !shouldSavePaper(doc))
-								continue; // innerLoop; //label is not needed necessarily, but helps readability
-
-							// add paper info
-							// clean up the titles in the form of [C18-1017] Simple Neologism Based Domain
-							// Independe...
-							// C18-1017 would be the anthology - we remove [] because they convey no meaning
-							// String rawTitle = elmnt.text();
-							// String[] splitRawTitle = rawTitle.split(" ", 2);
-
-
-						    Elements titleElement=doc.select("#title > a");
-
-
-							String paperTitle = titleElement.get(0).text();//doc.title();// splitRawTitle[1];
-							String anthology = paperInformationElements.get(0).text();// splitRawTitle[0].replace("[",
-																						// "").replace("]", "");
-
-							Paper paper = runWithDuplicateAvoidance ? Paper.findOrCreateDbOrList(null, paperTitle, createdPapers)
-									: new Paper();
-							if (runWithDuplicateAvoidance) {
-								createdPapers.add(paper);
-							}
-
-							paper.setTitle(paperTitle);
-							paper.setAnthology(anthology);
-							String remoteLink = "http://aclweb.org/anthology/" + anthology;
-							paper.setRemoteLink(remoteLink); // wow that was easy
-							paper.setReleaseDate(extractPaperRelease(doc));
-							/**try {
-								ExtractedMetadata meDa = scienceParse(parser, new URL(remoteLink));
-								if(meDa == null) continue;
-								String plaintext = "";
-								for (org.allenai.scienceparse.Section sec : meDa.sections) {
-									plaintext = plaintext + sec.text;
-								}
-								paper.setPaperPlainText(plaintext);
-								paper.setPaperAbstract(meDa.abstractText);
-								//im allenai parser zwischenergebnisse abfangen und pdfs schließen
-								//treffen Mittwoch 10:00
-							} catch (MalformedURLException e) {
-								System.out.println("Parser abgestuerzt. Leere PDF-File? ");
-								System.out.println("Fehlerhafter Link: " + remoteLink);
-								e.printStackTrace();
-							}**/
-							// find authors and add them to a list
-
-							Elements authorElements = doc.select("#main > p> a");// elmnt.parent().parent().children().select("span").select("a");
-							for (Element authorEl : authorElements) {
-								Person author = runWithDuplicateAvoidance
-										? Person.findOrCreateDbOrList(null, authorEl.text(), createdPersons)
-										: new Person();
-								if (runWithDuplicateAvoidance) {
-									createdPersons.add(author);
-								}
-
-								// because acl2018 seems to not employ prefixes (e.g. Prof. Dr.), we do not need
-								// to scan them
-
-								String linkAuthor=authorEl.attr("abs:href");
-
-								try {
-								Document docAuthor= Jsoup.connect(linkAuthor).get();
-
-								Elements authorFirstNameElement = docAuthor.select("#title > span.font-weight-normal");
-								Elements authorLastNameElement = docAuthor.select("#title > span.font-weight-bold");
-
-								String firstName= authorFirstNameElement.text();
-								String lastName= authorLastNameElement.text();
-
-								author.setFirstName(firstName);
-								author.setLastName(lastName);
-
-								}catch(IOException e) {
-
-
-								}
-
-								author.setFullName(authorEl.text());
-								// set paper - author relation
-								paper.addAuthor(author);
-								// set author - paper relation
-								author.addPaper(paper);
-								event.addPaper(paper);
-			    	        	//event.addPaper(paper);
-			    	        	paperList.add(paper);
-
-							}
-
-							// }
-						}
-
-
-
-
-
-
-
-    	        	} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
+		ArrayList<Conference> conferencesList = new ArrayList<Conference>();
+
+		ArrayList<Person> addedPersons=new ArrayList<>();
+		ArrayList<Paper> addedPapers=new ArrayList<>();
+			
+		Conference conference = new Conference();
+		
+		String description = "The 56th Annual Meeting of the Association for Computational Linguistics was held in Melbourne, Australia at the Melbourne Convention and Exhibition Centre from July 15th to 20th, 2018.";
+		
+		LocalDate begin = LocalDate.parse("2018-07-15"); // date: 15-20 July 2018
+		LocalDate end = LocalDate.parse("2018-07-20");
+		
+		String long_sub_deadline = LocalDate.parse("2018-02-22").toString();
+		String short_sub_deadline = LocalDate.parse("2018-02-22").toString();
+		LocalDate review_notification = LocalDate.parse("2018-04-20"); // April 20th, 2018
+		
+		conference.setDescription(description);
+		conference.setBegin(begin);
+		conference.setBegin(end);
+		conference.setSubmissionDeadlineLongPaper(long_sub_deadline);
+		conference.setSubmissionDeadlineShortPaper(short_sub_deadline);
+		conference.setReviewNotification(review_notification);
+		
+		
+		// TUTORIAL
+
+		Document tutorialPage = Jsoup.connect("https://acl2018.org/tutorials/").get();
+
+		Elements tutorialInfos = tutorialPage.select("body > main > div > article > div");
+
+		Elements authorInfos = tutorialPage.getElementsByClass("tutorial-presenters");
+		Elements titleInfos = tutorialPage.getElementsByClass("tute-title");
+		Elements timeInfos = tutorialPage.getElementsByClass("tutorial-time");
+		Elements placeInfos = tutorialPage.getElementsByClass("tutorial-location");
+
+		ArrayList<Event> tutorialsList = new ArrayList<Event>();
+		
+		for (int i = 0; i < authorInfos.size(); i++) {
+
+			Event tutorial = new Event();
+			
+			tutorial.setCategory(EventCategory.TUTORIAL);
+			
+			String title = titleInfos.get(i).text();
+			String abstr = titleInfos.get(i).select("h3").attr("title");
+			String place = placeInfos.get(i).text();
+			String time = timeInfos.get(i).text();
+			String[] timeArray =time.split(" – ");
+			LocalDateTime tutorilTimeStart=LocalDateTime.of(2018, 7, 15,Integer.parseInt(timeArray[0].split(":")[0]),Integer.parseInt(timeArray[0].split(":")[1]));
+			LocalDateTime tutorilTimeEnd=LocalDateTime.of(2018, 7, 15,Integer.parseInt(timeArray[1].split(":")[0]),Integer.parseInt(timeArray[1].split(":")[1]));
+
+
+			String author = authorInfos.get(i).text();
+			String speaker = author;
+			if (author.contains(",")) {
+				System.out.println("MULTIPLE AUTHORS");
+				speaker = author.substring(0, author.indexOf(","));
+			}
+			else if (author.contains(" and ")) {
+				System.out.println("MULTIPLE AUTHORS");
+				speaker = author.substring(0, author.indexOf("and"));
+			}
+			//Person authorObjekt=Person.findOrCreateDbOrList(null,speaker, addedPersons);
+			//addedPersons.add(authorObjekt);
+			
+			//tutorial.setSpeaker(authorObjekt);
+			tutorial.setTitle(title);
+			tutorial.setDescription(abstr); // oder hier eine extra Column "Abstract" in Event anlegen ???
+			tutorial.setPlace(place);
+			tutorial.setBegin(tutorilTimeStart);
+			tutorial.setEnd(tutorilTimeEnd);
+			tutorialsList.add(tutorial);
+		}
+		
+		// WORKSHOP
+
+		Document workshopPage = Jsoup.connect("https://acl2018.org/workshops/").get();
+		Elements workshopInfos = workshopPage.select("body > main > div > article > div > ul> li");
+		
+//		Elements workshopDates = workshopPage.select("body > main > div > article > div > h4");
+//		String date1 = workshopDates.get(0).attr("id");
+//		String date2 = workshopDates.get(1).attr("id");
+		LocalDate date1 = LocalDate.parse("2018-07-19"); // dates hardcoded for now...
+		LocalDate date2 = LocalDate.parse("2018-07-20");
+
+		ArrayList<Event> workshopsList = new ArrayList<Event>();
+
+		for (int i = 0; i < workshopInfos.size(); i++) {
+			
+			Event workshop = new Event();
+			workshop.setCategory(EventCategory.WORKSHOP);
+			
+			String name = workshopInfos.get(i).text().split(": ")[0];
+//			String place = workshopInfos.get(i).text().split(": ")[1];
+			
+			if (i < 8) {
+				workshop.setDate(date1);
+				workshop.setBegin(LocalDateTime.of(2018, 7,19,9,0));
+			} else {
+				workshop.setDate(date2);
+				workshop.setBegin(LocalDateTime.of(2018, 7,20,9,0));
+
+			}
+			
+			Elements linkInfos = workshopPage.select("body > main > div > article > div > ul >li >a");
+			String link = linkInfos.get(i).attr("href");
+			
+			workshop.setTitle(name);
+			workshop.setLink(link);
+
+			workshopsList.add(workshop);
+		}
+		
+		
+		
+		//SESSION
+	    
+	    Document programmePage = Jsoup.connect("https://acl2018.org/programme/schedule/").get();
+	    Elements sessionInfos= programmePage.select("tr.conc-session-indiv-row");//getElementsByClass("session-row session-name-row conc-session-indiv-row");
+	    Elements subSessionInfos=programmePage.select("tr.conc-session-details-row");//getElementsByClass("session-row session-name-row conc-session-indiv-row");
+
+	    ArrayList<Event> sessionList=new ArrayList<Event>();
+	    
+	   
+	    
+
+		for(int slotN=0;slotN<6;slotN++ ) {
+			
+			
+			//Time:	    	    
+		    String time = programmePage.select("td.conc-session-shared-name").get(slotN).select("div.session-times").text();
+			String[] timeArray =time.split("–");
+			LocalDateTime sessionTimeStart=LocalDateTime.of(2018, 7, 15,Integer.parseInt(timeArray[0].split(":")[0]),Integer.parseInt(timeArray[0].split(":")[1]));
+			LocalDateTime sessionTimeEnd=LocalDateTime.of(2018, 7, 15,Integer.parseInt(timeArray[1].split(":")[0]),Integer.parseInt(timeArray[1].split(":")[1]));
+
+			
+			
+			for(int sessionN=0;sessionN<5;sessionN++ ) {
+				
+				Event session=new Event();
+				session.setCategory(EventCategory.SESSION);
+				
+				
+				session.setBegin(sessionTimeStart);
+				session.setEnd(sessionTimeEnd);
+				
+				//Chair:
+			    String chairName=sessionInfos.get(slotN).select("div.speakers").get(sessionN).text();
+			    //Person chair=Person.findOrCreateDbOrList(null, chairName, addedPersons);
+			    //TODO: vielleicht ein extra Field chair?
+			    //session.setSpeaker(chair);
+			    //addedPersons.add(chair);
+			    
+			    //Title:
+			    session.setTitle(sessionInfos.get(slotN).select("div.conc-session-name").get(sessionN).text());
+			    //Place:
+			    session.setPlace(programmePage.select("tr.conc-session-loc-row").get(slotN).select("td.conc-session-location").get(sessionN).text());
+			    
+			   		
+				
+				for(int partN=0;partN<4;partN++) {
+					
+					EventPart subSession=new EventPart();
+					
+					 //Subsession-Title:
+					String title=subSessionInfos.get(slotN).select("td.talk-sessions").get(sessionN).select("div.talk").get(partN).select("div.talk-title").text(); 
+					
+					
+					
+					
+					subSession.setTitle(title);
+				    //Subsession-Time:
+					
+					int day=0;
+					int length=25;
+					switch(sessionN) {
+					case 0:
+						day= 16;
+					case 1:	
+						day=16;
+					case 2:
+						day=16;
+
+					case 3:	
+						day=17;
+
+					case 4:	
+						day=17;
+						length=15;
+
+					case 5:
+						day=17;
+
+					case 6:
+						day=18;
+
+					case 7:
+						day=18;
+						length=15;
 					}
+					
+					
+					
+					String[] subSessionTimeArray=subSessionInfos.get(slotN).select("td.talk-sessions").get(sessionN).select("div.talk").get(partN).select("div.times").text().split(":");
+					
+					
+					String eins=subSessionTimeArray[0];
+					String zwei=subSessionTimeArray[1];
+					int einsI=Integer.parseInt(eins);
+					int zweiI=Integer.parseInt(zwei);
 
-    			}
+					
+					LocalDateTime subSessionTimeStart=LocalDateTime.of(2018, 7, day,einsI,zweiI);
+					
 
+					subSession.setBegin(subSessionTimeStart);
+					subSession.setEnd(subSessionTimeStart.plusMinutes(length));
 
-    			conference.addEvent(event);
+					
+					String subSessionDescription;
+					
+				    if(subSessionInfos.get(slotN).select("td.talk-sessions").get(sessionN).select("div.talk").get(partN).attr("title").split("ABSTRACT: ").length>1){
+		   			//Subsession-Speaker:
+				    String speakerName =subSessionInfos.get(slotN).select("td.talk-sessions").get(sessionN).select("div.talk").get(partN).attr("title").split(";")[0];
+				    
+				    //Person speaker = Person.findOrCreateDbOrList(null, speakerName, addedPersons);
+				    //subSession.setSpeaker(speaker);
+				    //addedPersons.add(speaker);
+				    
+				    subSessionDescription=subSessionInfos.get(slotN).select("td.talk-sessions").get(sessionN).select("div.talk").get(partN).attr("title").split("ABSTRACT: ")[1];
+				    //Subsession-Abstract:
+		   			subSession.setDescription(subSessionDescription);
+		   			
+				    
+				    
+				    }else {
+				    	
+				    	
+				    	
+				    	String link=subSessionInfos.get(slotN).select("td.talk-sessions").get(sessionN).select("div.talk-title").get(partN).select("a").get(2).attr("href");
+				    	Document transacl = Jsoup.connect(link).get();
 
-    		}
+				    	
+				    	
+				       Elements partAuthor= transacl.select("#authorString");
+				       Elements partAbstract= transacl.select("#articleAbstract > div > p");
+				       System.out.println(partAuthor.get(0).text());
+				       
+				       subSessionDescription=partAbstract.text();
+				       subSession.setDescription(subSessionDescription);
+				      
+				       
+				    }
+				    session.addEventPart(subSession);
+				    			
+					sessionList.add(session);
+				}
+				
+			}
+			
+			
+			
+		}
+	  
+		//Postersession
+		
+		ArrayList<Event> posterSessionList=new ArrayList<Event>();
+		
+		for(int posterSessionN=2;posterSessionN<4;posterSessionN++) {
+			
+			System.out.println("************************");
+		 //Time:
+		       //nimmt die Elemente mit Unterpunkten
+		    String posterSessionTime=programmePage.select("tr.conc-session-name-row").get(3).select("div.session-times").text();
+		      
+		    
+		    int day=16;
+		    if(posterSessionN==3) {
+		    	day=17;
+		    	
+		    }
+		    if(posterSessionN==4) {
+		    	day=18;
+		    }
+		    
+		    String[] timeArray =posterSessionTime.split("–");
+		    LocalDateTime sessionTimeStart=LocalDateTime.of(2018, 7, day,Integer.parseInt(timeArray[0].split(":")[0]),Integer.parseInt(timeArray[0].split(":")[1]));
+		    LocalDateTime sessionTimeEnd=LocalDateTime.of(2018, 7, day,Integer.parseInt(timeArray[0].split(":")[0]),Integer.parseInt(timeArray[0].split(":")[1]));
+		    
+		       
+			
+			for(int subSessionN=0;subSessionN<7;subSessionN++) {
+				
+			Event posterSession =new Event();
+			posterSession.setCategory(EventCategory.POSTERSESSION);
+			
+			
+			posterSession.setBegin(sessionTimeStart);
+			posterSession.setEnd(sessionTimeEnd);
+				System.out.println("'*'*''*'*'*''*''*'");
+			//POSTER SESSION
+			       
+			       //Session Name:
+			       posterSession.setTitle(programmePage.select("tr.poster-session-row").get(posterSessionN).select("div.poster-sub-session").get(subSessionN).select("div.poster-session-name").text());
+			      
+				
+				
+				for(Element poster: programmePage.select("tr.poster-session-row").get(posterSessionN).select("div.poster-sub-session").get(subSessionN).select("span.poster-name")) {
+				 System.out.println("'''''''''''''''''''''''");
+				 		       
+			       
+				 String posterAbstract;
+				 
+				    if(poster.attr("title").split("ABSTRACT: ").length>1){
 
-    		conferencesList.add(conference);
-    		
-    	}
+			       
+			       //Author:
+				    	
+				   //String posterSpeakerName= 	poster.attr("title").split(";")[0];
+				   //Person posterSpeaker=Person.findOrCreateDbOrList(null, posterSpeakerName, addedPersons);
+				   
+			       //Abstract:
+			       
+			       posterAbstract=poster.attr("title").split("ABSTRACT: ")[1];
+				    }else {
+				    	
+
+				    	String link=poster.select("a").get(1).attr("href");
+				    	System.out.println(link);
+				    	Document transacl = Jsoup.connect(link).get();
+
+				    	
+				    	
+				       Elements partAuthor= transacl.select("#authorString");
+				       Elements partAbstract= transacl.select("#articleAbstract > div > p");
+				       posterAbstract=partAuthor.get(0).text();
+					    	
+				    }
+				    
+				    
+				  //Paper Name:
+			       	
+				       //Paper paper=Paper.findOrCreateDbOrList(null, poster.text(), addedPapers);
+				   //    if(paper.getPaperAbstract()==null) {
+				    	   
+				    	//   paper.setPaperAbstract(posterAbstract);
+				    	   
+				    //   }
+				       
+				   //    posterSession.addPaper(paper);
+				 
+				    }
+			    posterSessionList.add(posterSession);	
+
+				
+			}
+			
+			
+		}
+		
+		for(Event e:tutorialsList) {
+		 conference.addEvent(e);
+		}
+		
+		for(Event e:workshopsList) {
+			 conference.addEvent(e);
+			}
+		for(Event e:sessionList) {
+			 conference.addEvent(e);
+			}
+		for(Event e:posterSessionList) {
+			 conference.addEvent(e);
+			}
+		
+		conferencesList.add(conference);
+
+		
+		
+		
+//		 	ArrayList<Paper> paperList=new ArrayList<Paper>();
+	//
+	//
+		
+		
+//		ArrayList<Paper> paperList=new ArrayList<Paper>();
+//
+//
+//        Set<String> uniqueURL=get_links("https://aclweb.org/anthology/events/");
+//        System.out.println("Projekt läuft!");
+//        HashSet<String> uniqueConverenceURLs = uniqueURL.stream()
+//        	    .filter(p -> p.contains("https://aclweb.org/anthology/events/")).collect(Collectors.toCollection(HashSet::new));
+//
+//        ArrayList<String> converenceURLs= selector(uniqueConverenceURLs,this.conferences,this.beginYear,this.endYear).stream().collect(Collectors.toCollection(ArrayList::new));;
+//        String[] array = converenceURLs.stream().toArray(n -> new String[n]);
+//        System.out.println(array.length);
+//        System.out.println(Arrays.toString(array));
+//
+//        ArrayList<ArrayList<String>> eventsPerConference=new ArrayList<ArrayList<String>>();
+//
+//        int i=0;
+//        for(String s : array) {
+//        	i++;
+//        eventsPerConference.add(get_links(s).stream()
+//        	    .filter(p -> p.contains("volumes")&&!p.contains(".bib")).collect(Collectors.toCollection(ArrayList::new)));
+//
+//        if(i==1000) {
+//        break;
+//        }}
+//
+//    	System.out.println(eventsPerConference.size());
+//
+//
+//        ArrayList<ArrayList<HashSet<String>>> paperPerEventPerConference=new ArrayList<ArrayList<HashSet<String>>>();
+//
+//
+//        for(ArrayList<String> events :eventsPerConference) {
+//
+//
+//        	ArrayList<HashSet<String>> urlsPerEvent  =new ArrayList<HashSet<String>>();
+//        	for(String l: events) {
+//
+//
+//        		urlsPerEvent.add(get_links(l).stream().filter(p -> p.contains("https://aclweb.org/anthology/papers/")&& !p.contains(".bib")).collect(Collectors.toCollection(HashSet::new)));
+//        	System.out.println("UrlsPerEvent:"+urlsPerEvent.size());
+//        	}
+//
+//
+//        	paperPerEventPerConference.add(urlsPerEvent);
+//
+//
+//        }
+//
+//
+//    	System.out.println(paperPerEventPerConference.size());
+//    	
+//    	ArrayList<Conference> conferencesList=new ArrayList<Conference>();
+//    	
+//
+//    	for(int x=0;x<converenceURLs.size();x++ ) {
+//    		Conference conference=new Conference();
+//
+//        	Document conferenceSite=Jsoup.connect(converenceURLs.get(x)).get();
+//
+//
+//    		Elements confernceTitleElement= conferenceSite.select("#title");
+//
+//			String conferenceTitle = confernceTitleElement.get(0).text();//splitRawTitle[1];
+//
+//
+//    		conference.setName(conferenceTitle);
+//
+//    		for(int y=0; y<eventsPerConference.get(x).size();y++) {
+//    			Event event=new Event();//über eventsPerConference.get(x) scrapen
+//
+//    			Document eventDocument=Jsoup.connect(eventsPerConference.get(x).get(y)).get();
+//
+//    			Elements id= eventDocument.select("#main > div.row.acl-paper-details > div.col.col-lg-10.order-2 > dl > dd");
+//
+//
+//
+//        		Elements titel= eventDocument.select("#title");
+//
+//    			String titleString = titel.get(0).text();//splitRawTitle[1];
+//
+//    			String monthString = id.get(1).text();//splitRawTitle[1];
+//
+//    			String yearString = id.get(2).text();//splitRawTitle[1];
+//
+//    			LocalDate date= null;
+//
+//    			try {
+//
+//    			int monthInt =monthToInt(monthString);
+//    			int yearInt=Integer.parseInt(yearString);
+//
+//    			if(monthInt!=0) {
+//    				date = LocalDate.of(yearInt, monthInt, 1);
+//    				event.setBegin(date.atStartOfDay());
+//    				event.setEnd(date.atStartOfDay());
+//    			}
+//
+//    			}catch(NumberFormatException e){
+//    				System.out.println("yearString: "+yearString);
+//
+//    			}
+//
+//
+//    			String locationString = id.get(3).text();//splitRawTitle[1];
+//    			String[] locationArray=locationString.split(", ");
+//
+//
+//
+//    			if(y==0) {
+//
+//
+//    			if(locationArray.length==2) {
+//    			conference.setCity(locationArray[0]);
+//    			conference.setCountry(locationArray[1]);
+//    			}
+//
+//    			//conference.setId(id);
+//
+//    			if(date !=null) {
+//    				conference.setBegin(date);
+//    				conference.setEnd(date);
+//
+//    			}
+//
+//
+//    			}
+//
+//
+//
+//
+//
+//    			//String idString = id.get(0).text();//splitRawTitle[1];
+//    			//String cityString = id.get(3).text();//splitRawTitle[1];
+//
+//
+//
+//    			//event.setId(idString);
+//    			event.setTitle(titleString);
+//    			EventCategory category=getWorkshopType(titleString);
+//    			if(category!=null) {
+//    			event.setCategory(category);
+//    			}
+//
+//    			//event.setConferenceName(conferenceTitel);
+//
+//
+//
+//    			for(String s: paperPerEventPerConference.get(x).get(y)) {
+//
+//    	        	try {
+//    	        		System.out.println(s);
+//
+//						Document doc= Jsoup.connect(s).get();
+//
+//						Elements paperInformationElements = doc.select("#main > div > div.col.col-lg-10.order-2 > dl > dd");
+//						if (!doc.title().contains("VOLUME")) {
+//							// check is not earlier because the elmnt is needed
+//							if (conferences.length != 0 && !shouldSavePaper(doc))
+//								continue; // innerLoop; //label is not needed necessarily, but helps readability
+//
+//							// add paper info
+//							// clean up the titles in the form of [C18-1017] Simple Neologism Based Domain
+//							// Independe...
+//							// C18-1017 would be the anthology - we remove [] because they convey no meaning
+//							// String rawTitle = elmnt.text();
+//							// String[] splitRawTitle = rawTitle.split(" ", 2);
+//
+//
+//						    Elements titleElement=doc.select("#title > a");
+//
+//
+//							String paperTitle = titleElement.get(0).text();//doc.title();// splitRawTitle[1];
+//							String anthology = paperInformationElements.get(0).text();// splitRawTitle[0].replace("[",
+//																						// "").replace("]", "");
+//
+//							Paper paper = runWithDuplicateAvoidance ? Paper.findOrCreateDbOrList(null, paperTitle, createdPapers)
+//									: new Paper();
+//							if (runWithDuplicateAvoidance) {
+//								createdPapers.add(paper);
+//							}
+//
+//							paper.setTitle(paperTitle);
+//							paper.setAnthology(anthology);
+//							String remoteLink = "http://aclweb.org/anthology/" + anthology;
+//							paper.setRemoteLink(remoteLink); // wow that was easy
+//							paper.setReleaseDate(extractPaperRelease(doc));
+//							/**try {
+//								ExtractedMetadata meDa = scienceParse(parser, new URL(remoteLink));
+//								if(meDa == null) continue;
+//								String plaintext = "";
+//								for (org.allenai.scienceparse.Section sec : meDa.sections) {
+//									plaintext = plaintext + sec.text;
+//								}
+//								paper.setPaperPlainText(plaintext);
+//								paper.setPaperAbstract(meDa.abstractText);
+//								//im allenai parser zwischenergebnisse abfangen und pdfs schließen
+//								//treffen Mittwoch 10:00
+//							} catch (MalformedURLException e) {
+//								System.out.println("Parser abgestuerzt. Leere PDF-File? ");
+//								System.out.println("Fehlerhafter Link: " + remoteLink);
+//								e.printStackTrace();
+//							}**/
+//							// find authors and add them to a list
+//
+//							Elements authorElements = doc.select("#main > p> a");// elmnt.parent().parent().children().select("span").select("a");
+//							for (Element authorEl : authorElements) {
+//								Person author = runWithDuplicateAvoidance
+//										? Person.findOrCreateDbOrList(null, authorEl.text(), createdPersons)
+//										: new Person();
+//								if (runWithDuplicateAvoidance) {
+//									createdPersons.add(author);
+//								}
+//
+//								// because acl2018 seems to not employ prefixes (e.g. Prof. Dr.), we do not need
+//								// to scan them
+//
+//								String linkAuthor=authorEl.attr("abs:href");
+//
+//								try {
+//								Document docAuthor= Jsoup.connect(linkAuthor).get();
+//
+//								Elements authorFirstNameElement = docAuthor.select("#title > span.font-weight-normal");
+//								Elements authorLastNameElement = docAuthor.select("#title > span.font-weight-bold");
+//
+//								String firstName= authorFirstNameElement.text();
+//								String lastName= authorLastNameElement.text();
+//
+//								author.setFirstName(firstName);
+//								author.setLastName(lastName);
+//
+//								}catch(IOException e) {
+//
+//
+//								}
+//
+//								author.setFullName(authorEl.text());
+//								// set paper - author relation
+//								paper.addAuthor(author);
+//								// set author - paper relation
+//								author.addPaper(paper);
+//								event.addPaper(paper);
+//			    	        	//event.addPaper(paper);
+//			    	        	paperList.add(paper);
+//
+//							}
+//
+//							// }
+//						}
+//
+//
+//
+//
+//
+//
+//
+//    	        	} catch (IOException e) {
+//						// TODO Auto-generated catch block
+//						e.printStackTrace();
+//					}
+//
+//    			}
+//
+//
+//    			conference.addEvent(event);
+//
+//    		}
+//
+//    		conferencesList.add(conference);
+//    		
+//    	}
 		
 		return conferencesList;
 
@@ -1193,7 +1577,7 @@ class ACLWebCrawler extends AbstractCrawler {
 
 				// set the data
 				eventPart.setTitle(evTitle);
-				event.addPaper(papers.get(sessPaperTitle));
+				//event.addPaper(papers.get(sessPaperTitle));
 				eventPart.setBegin(sessStart);
 				eventPart.setEnd(sessEnd);
 				eventPart.setPlace(evPlace);
@@ -1220,7 +1604,7 @@ class ACLWebCrawler extends AbstractCrawler {
 			for (Element subEl : sessEl.select(".poster-name")) {
 				String paperTitle = subEl.select("a").get(1).text().trim(); // let's hope it's always the second :D
 
-				event.addPaper(papers.get(paperTitle));
+				//event.addPaper(papers.get(paperTitle));
 			}
 
 			// set the data
