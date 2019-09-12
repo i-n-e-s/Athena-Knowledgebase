@@ -30,10 +30,10 @@ public class Conference extends Model{
 
 	/*First day of conference, no need for the temporal annotation with java.time (indeed this would break it)*/
 	@Column (name="begin")
-	private String begin;
+	private LocalDate begin;
 	/*Last day of conference*/
 	@Column(name="end")
-	private String end;
+	private LocalDate end;
 
 	@Column(name="country")
 	private String country;
@@ -107,32 +107,32 @@ public class Conference extends Model{
 	 * Gets the date of the day this conference started
 	 * @return The date of the day this conference started
 	 */
-	public String getBegin() {
+	public LocalDate getBegin() {
 		return begin;
 	}
 
 	/**
 	 * Sets the date of the day this conference started
-	 * @param begin The new start date
+	 * @param localDate The new start date
 	 */
-	public void setBegin(String begin) {
-		this.begin = begin;
+	public void setBegin(LocalDate localDate) {
+		this.begin = localDate;
 	}
 
 	/**
 	 * Gets the date of the day this conference ended
 	 * @return The date of the day this conference ended
 	 */
-	public String getEnd() {
+	public LocalDate getEnd() {
 		return end;
 	}
 
 	/**
 	 * Sets the date of the day this conference ended
-	 * @param end The new end date
+	 * @param localDate The new end date
 	 */
-	public void setEnd(String end) {
-		this.end = end;
+	public void setEnd(LocalDate localDate) {
+		this.end = localDate;
 	}
 
 	/**

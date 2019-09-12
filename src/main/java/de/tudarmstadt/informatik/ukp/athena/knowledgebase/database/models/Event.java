@@ -57,6 +57,7 @@ public class Event extends Model implements ScheduleEntry {
 	private String place;
 
 	/* Associated papers */
+	@JsonIgnore
 	@OneToMany(mappedBy = "event")
 	private Set<Paper> papers = new HashSet<>();
 

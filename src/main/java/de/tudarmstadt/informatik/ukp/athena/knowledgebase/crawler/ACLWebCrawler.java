@@ -260,8 +260,8 @@ class ACLWebCrawler extends AbstractCrawler {
                     }
                     //conference.setId(id);
                     if (date != null) {
-                        conference.setBegin(date);
-                        conference.setEnd(date);
+                        conference.setBegin(LocalDate.parse(date));
+                        conference.setEnd(LocalDate.parse(date));
                     }
                 }
                 //String idString = id.get(0).text();//splitRawTitle[1];
@@ -298,6 +298,7 @@ class ACLWebCrawler extends AbstractCrawler {
                         String paperTitle = titleElement.get(0).text();//doc.title();// splitRawTitle[1];
                         String anthology = paperInformationElements.get(0).text();// splitRawTitle[0].replace("[",
                         // "").replace("]", "");
+                        if(paperTitle.contains("'")) paperTitle.replace("'", "X");
                         Paper paper = Paper.findOrCreate(null, paperTitle);
                         paper.setTitle(paperTitle);
                         paper.setAnthology(anthology);
@@ -541,8 +542,10 @@ class ACLWebCrawler extends AbstractCrawler {
         String cityCountryInformation = aboutPage.select("p:nth-child(1) a:nth-child(1)").text();
         String dateAndLocationString = aboutPage.select(".sub-title-extra").text();
 //		##############################################
-        String conferenceStartDate = CrawlerToolset.acl2018ConvertStringToDateRange(dateAndLocationString)[0];
-        String conferenceEndDate = CrawlerToolset.acl2018ConvertStringToDateRange(dateAndLocationString)[1];
+//        String conferenceStartDate = CrawlerToolset.acl2018ConvertStringToDateRange(dateAndLocationString)[0];
+//        String conferenceEndDate = CrawlerToolset.acl2018ConvertStringToDateRange(dateAndLocationString)[1];
+		LocalDate conferenceStartDate = LocalDate.parse("2018-01-01");
+		LocalDate conferenceEndDate = LocalDate.parse("2018-01-01");;
 //		LocalDate conferenceStartDate = CrawlerToolset.acl2018ConvertStringToDateRange(dateAndLocationString)[0];
 //		LocalDate conferenceEndDate = CrawlerToolset.acl2018ConvertStringToDateRange(dateAndLocationString)[1];
         // Maybe we need to look at a timezone api? Probably not feasible to keep it
