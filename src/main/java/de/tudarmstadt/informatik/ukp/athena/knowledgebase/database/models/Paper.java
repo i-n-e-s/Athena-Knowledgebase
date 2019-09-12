@@ -36,9 +36,21 @@ public class Paper extends Model {
 	private Set<Person> persons = new HashSet<>();
 
 	@JsonIgnore
+	/*Paper's tags*/
+	@ManyToMany(mappedBy = "papers")
+	private Set<Tag> tags = new HashSet<>();
+
+	@JsonIgnore
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "event_paper")
 	private Event event;
+	
+
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "eventpart_paper")
+	private EventPart eventpart;
+	
 
 	/*Release date*/
 	@Column(name = "releaseDate")
@@ -103,6 +115,34 @@ public class Paper extends Model {
 		}
 	}
 
+	
+	/**
+	 * Gets this paper's authors
+	 * @return A Set of this paper's authors
+	 */
+	public Set<Tag> getTags() {
+		return tags;
+	}
+
+	/**
+	 * Sets this paper's authors
+	 * @param authors The new authors of this paper
+	 */
+	public void setTags(Set<Tag> tags) {
+		this.tags = tags;
+	}
+
+	/**
+	 * Adds an author to this paper's author list
+	 * @param author The author to add
+	 */
+	public void addTag(Tag tag) {
+		tags.add(tag);
+		if(!tag.getPapers().contains(this)) {
+			tag.addPaper(this);
+		}
+	}
+	
 	/**
 	 * Gets this paper's release date
 	 * @return This paper's release date

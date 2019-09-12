@@ -41,19 +41,19 @@ public class CrawlerToolset {
 	 * @return an Array of LocalDates with two entries, the beginning and end of the date range or an empty array if
 	 * dateString was in the wrong format
 	 */
-	public static String[] acl2018ConvertStringToDateRange(String dateString){
+	public static LocalDate[] acl2018ConvertStringToDateRange(String dateString){
 //		##########################
-		String[] dateRange = {"a date start", "a date end"};
-//		LocalDate[] dateRange = new LocalDate[2];
+//		String[] dateRange = {"a date start", "a date end"};
+		LocalDate[] dateRange = new LocalDate[2];
 		try {
 			String[] daysMonthsYearAndLocation = dateString.split(" ");
 			String daysRange = daysMonthsYearAndLocation[0];
 			String[] startAndEndDay = daysRange.split("-", 2);
 //			#########################################
-//			dateRange[0] = stringToLocalDate(startAndEndDay[0],
-//					daysMonthsYearAndLocation[1], daysMonthsYearAndLocation[2]);
-//			dateRange[1] = stringToLocalDate(startAndEndDay[1],
-//					daysMonthsYearAndLocation[1], daysMonthsYearAndLocation[2]);
+			dateRange[0] = stringToLocalDate(startAndEndDay[0],
+					daysMonthsYearAndLocation[1], daysMonthsYearAndLocation[2]);
+			dateRange[1] = stringToLocalDate(startAndEndDay[1],
+					daysMonthsYearAndLocation[1], daysMonthsYearAndLocation[2]);
 			return dateRange;
 		}catch (IndexOutOfBoundsException e){
 			logger.error(String.format("invalid format. expected dateString to be 15-20 July 2018 and got: {}", dateString), e);

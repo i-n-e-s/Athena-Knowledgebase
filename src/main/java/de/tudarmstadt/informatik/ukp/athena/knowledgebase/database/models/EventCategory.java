@@ -5,6 +5,7 @@ public enum EventCategory { //TODO If you change anything here, change it in the
 	CEREMONY,
 	MEETING,
 	PRESENTATION,
+	POSTERSESSION,
 	RECRUITMENT,
 	SESSION,
 	SOCIAL,

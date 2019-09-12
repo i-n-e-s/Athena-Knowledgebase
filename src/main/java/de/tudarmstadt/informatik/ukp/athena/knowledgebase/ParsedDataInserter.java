@@ -135,8 +135,14 @@ public class ParsedDataInserter {
 		}
 		
 		if(argsList.contains("-scrape-acl18-info"))
-			parsedDataInserter.acl2018StoreConferenceInformation(); //automatically saves the schedule as well
-		else
+			try {
+			logger.info("Scraping ACL2018", beginYear, endYear);
+			parsedDataInserter.aclStoreConferenceACL2018(); //automatically saves the schedule as well
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			
+			else
 			logger.info("\"-scrape-acl18-info\" argument was not found, skipping ACL 2018 scraping");
 		Parser parse = new Parser();
 		if(argsList.contains("-parse-institutions"))
@@ -164,6 +170,22 @@ public class ParsedDataInserter {
 	private void aclStorePapersAndAuthorsAndEvents() throws IOException {
 		logger.info("Scraping papers and authors...");
 		ArrayList<Conference> conferences = acl18WebParser.getPaperAuthorEvent();
+		CommonAccess<Conference> conferenceFiler = new ConferenceJPAAccess();
+
+		logger.info("Inserting papers, authors and events into database...");
+
+		for(Conference conference : conferences) {
+            System.out.println("Conference added: " + conference.getName());
+			conferenceFiler.commitChanges(conference);
+		}
+		logger.info("Done inserting papers, authors and events!");
+	}
+	
+	
+	
+	private void aclStoreConferenceACL2018() throws IOException {
+		logger.info("Scraping papers and authors...");
+		ArrayList<Conference> conferences = acl18WebParser.getConferenceACL2018();
 		CommonAccess<Conference> conferenceFiler = new ConferenceJPAAccess();
 
 		logger.info("Inserting papers, authors and events into database...");

@@ -17,6 +17,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -51,6 +53,14 @@ public class Person extends Model {
 	@Column(name = "lastName")
 	private String lastName;
 	
+	//@OneToOne(mappedBy = "person")
+    //private Event event;
+	
+	@OneToMany(mappedBy = "person")
+	private Set<Event> events = new HashSet<>();
+	
+	@OneToMany(mappedBy = "person")
+	private Set<EventPart> eventparts = new HashSet<>();
 	
 	
 

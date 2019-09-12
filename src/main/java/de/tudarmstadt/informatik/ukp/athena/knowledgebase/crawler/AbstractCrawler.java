@@ -19,6 +19,10 @@ abstract class AbstractCrawler {
 
 	public abstract ArrayList<Conference> getPaperAuthorEvent() throws IOException;
 
+	public abstract ArrayList<Conference> getConferenceACL2018() throws IOException;
+
+	
+	
 	/**
 	 * A method which returns a conference instance with its name, location, and start and end date set.
 	 * Scrapes an about page for its information and employs string conversion found in CrawlerToolset
@@ -28,6 +32,8 @@ abstract class AbstractCrawler {
 	 */
 	public abstract Conference getConferenceInformation() throws IOException;
 
+		
+	
 	/**
 	 * Returns a list of schedule entries (can be events or workshops).
 	 * @return A list of schedule entries, an empty list when data not available

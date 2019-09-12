@@ -1,19 +1,9 @@
 package de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
-
-//import javax.persistence.CascadeType;
-//import javax.persistence.Column;
-//import javax.persistence.Entity;
-//import javax.persistence.FetchType;
-//import javax.persistence.GeneratedValue;
-//import javax.persistence.Id;
-//import javax.persistence.JoinColumn;
-//import javax.persistence.JoinTable;
-//import javax.persistence.OneToMany;
-//import javax.persistence.Table;
 
 import javax.persistence.*;
 
@@ -36,7 +26,7 @@ public class Event extends Model implements ScheduleEntry {
 	@Column(name = "title")
 	private String title;
 	/* Brief Description */
-	@Column(name = "description")
+	@Column(name = "description",length = 3000)
 	private String description;
 	/* Category */
 	@Column(name = "category")
@@ -44,15 +34,16 @@ public class Event extends Model implements ScheduleEntry {
 
 	/*Start time*/
 	@Column(name="begin")
-	private String begin;
+	private LocalDateTime begin;
 	/*End time*/
 	@Column(name="end")
-	private String end;
+	private LocalDateTime end;
 
 	/*Host*/
 	//	@Column(name = "host")
 	//	private Person host;
 	/* Place where this event happens, if empty look in eventparts */
+
 	@Column(name = "place")
 	private String place;
 
@@ -62,8 +53,8 @@ public class Event extends Model implements ScheduleEntry {
 	private Set<Paper> papers = new HashSet<>();
 
 	/* Papers, if any */
-	//	@Column(name = "papers")
-	//	private Set<Paper> papers;
+//	@Column(name = "papers")
+//	private Set<Paper> papers;
 	/* Event parts, if any */
 	@Hierarchy(entityName="eventpart")
 	@JsonIgnore
@@ -75,6 +66,79 @@ public class Event extends Model implements ScheduleEntry {
 			)
 	private Set<EventPart> eventparts = new HashSet<>(); //lowercase to make it work with the api
 
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "event_person")
+	private Person person;
+	
+	
+	
+	//@OneToOne(fetch = FetchType.LAZY)
+    //@JoinColumn(name = "person_eventID", referencedColumnName = "personID")
+	//private Person speaker;
+	
+	//@ManyToOne(fetch = FetchType.LAZY)
+	//@JoinColumn(name = "event_person")
+	//private Event event;
+	
+	
+	
+	@Column(name = "link")
+	private String link;
+	/*Date*/
+	@Column(name="date")
+	private LocalDate date;
+	
+	/**
+	 * Gets the date of this event
+	 * @return event's date
+	 */
+	public LocalDate getDate() {
+		return date;
+	}
+
+	/**
+	 * Sets the date of this event
+	 * @param event's date
+	 */
+	public void setDate(LocalDate date) {
+		this.date = date;
+	}
+	
+	/**
+	 * Gets the speaker of a tutorial (the first listed person in the corresponding paper)
+	 * @return speaker of tutorial
+	 */
+	//public Person getSpeaker() {
+		//return speaker;
+	//}
+
+	/**
+	 * Sets the speaker of a tutorial (the first listed person in the corresponding paper)
+	 * @param speaker of tutorial
+	 */
+	//public void setSpeaker(Person speaker) {
+	//	this.speaker = speaker;
+	//}
+	
+	/**
+	 * Gets the link of workshops to the corresponding workshop page
+	 * @return link to workshop page
+	 */
+	public String getLink() {
+		return link;
+	}
+
+	/**
+	 * Sets the link of workshops to the corresponding workshop page
+	 * @param link to workshop page
+	 */
+	public void setLink(String link) {
+		this.link = link;
+	}
+	
+	
+	
 	/**
 	 * Gets the unique id of this event
 	 * @return The unique id of this event
@@ -95,7 +159,7 @@ public class Event extends Model implements ScheduleEntry {
 	 * Gets the time this event begins
 	 * @return This event's begin time
 	 */
-	public String getBegin() {
+	public LocalDateTime getBegin() {
 		return begin;
 	}
 
@@ -103,7 +167,7 @@ public class Event extends Model implements ScheduleEntry {
 	 * Sets the time this event begins
 	 * @param yearString The time this event begins
 	 */
-	public void setBegin(String yearString) {
+	public void setBegin(LocalDateTime yearString) {
 		this.begin = yearString;
 	}
 
@@ -111,7 +175,7 @@ public class Event extends Model implements ScheduleEntry {
 	 * Gets the time this event ends
 	 * @return This event's new end time
 	 */
-	public String getEnd() {
+	public LocalDateTime getEnd() {
 		return end;
 	}
 
@@ -119,7 +183,7 @@ public class Event extends Model implements ScheduleEntry {
 	 * Sets the time this event ends
 	 * @param yearString The new time this event ends
 	 */
-	public void setEnd(String yearString) {
+	public void setEnd(LocalDateTime yearString) {
 		this.end = yearString;
 	}
 
@@ -216,6 +280,23 @@ public class Event extends Model implements ScheduleEntry {
 		this.category = category;
 	}
 
+	
+	/**
+	 * Gets this event's category
+	 * @return This event's category
+	 */
+	public Person getPerson() {
+		return person;
+	}
+
+	/**
+	 * Sets this event's category
+	 * @return This event's new category
+	 */
+	public void setPerson(Person person) {
+		this.person = person;
+	}
+	
 	/**
 	 * Gets this event's papers (if any)
 	 * * @return This event's papers

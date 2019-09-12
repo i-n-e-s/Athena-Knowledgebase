@@ -38,10 +38,10 @@ public class Workshop extends Model implements ScheduleEntry {
 
 	/*Start time*/
 	@Column(name="begin")
-	private String begin;
+	private LocalDateTime begin;
 	/*End time*/
 	@Column(name="end")
-	private String end;
+	private LocalDateTime end;
 
 	/* Place where this workshop happens */
 	@Column(name = "place")
@@ -77,32 +77,32 @@ public class Workshop extends Model implements ScheduleEntry {
 	 * Gets the time this workshop begins
 	 * @return This workshop's begin time
 	 */
-	public String getBegin() {
+	public LocalDateTime getBegin() {
 		return begin;
 	}
 
 	/**
 	 * Sets the time this workshop begins
-	 * @param begin The time this workshop begins
+	 * @param localDateTime The time this workshop begins
 	 */
-	public void setBegin(String begin) {
-		this.begin = begin;
+	public void setBegin(LocalDateTime localDateTime) {
+		this.begin = localDateTime;
 	}
 
 	/**
 	 * Gets the time this workshop ends
 	 * @return This workshop's new end time
 	 */
-	public String getEnd() {
+	public LocalDateTime getEnd() {
 		return end;
 	}
 
 	/**
 	 * Sets the time this workshop ends
-	 * @param string the new time this workshop ends
+	 * @param localDateTime the new time this workshop ends
 	 */
-	public void setEnd(String string) {
-		this.end = string;
+	public void setEnd(LocalDateTime localDateTime) {
+		this.end = localDateTime;
 	}
 
 	/**
