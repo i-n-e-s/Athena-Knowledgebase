@@ -5,18 +5,12 @@ import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.jpa.EventJPAAccess;
 import org.hibernate.annotations.GenericGenerator;
 
 @Entity
@@ -27,7 +21,7 @@ public class Event extends Model implements ScheduleEntry {
 	@GeneratedValue(generator="increment")
 	@GenericGenerator(name="increment", strategy="increment")
 	@Column(name="eventID")
-	private long eventID;
+	private Long eventID;
 	/* Title */
 	@Column(name = "title")
 	private String title;
@@ -49,17 +43,13 @@ public class Event extends Model implements ScheduleEntry {
 	//	@Column(name = "host")
 	//	private Person host;
 	/* Place where this event happens, if empty look in eventparts */
+
 	@Column(name = "place")
 	private String place;
 
 	/* Associated papers */
-		@Hierarchy(entityName="paper")
-	@OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER)
-	@JoinTable(
-			name = "event_papers",
-			joinColumns = { @JoinColumn(name = "eventID") },
-			inverseJoinColumns = { @JoinColumn(name = "paperID") }
-			)
+
+	@OneToMany(mappedBy = "event")
 	private Set<Paper> papers = new HashSet<>();
 
 	/* Papers, if any */
@@ -67,7 +57,8 @@ public class Event extends Model implements ScheduleEntry {
 //	private Set<Paper> papers;
 	/* Event parts, if any */
 	@Hierarchy(entityName="eventpart")
-	@OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER)
+	@JsonIgnore
+	@OneToMany(orphanRemoval = true, fetch = FetchType.LAZY)
 	@JoinTable(
 			name = "event_eventParts",
 			joinColumns = { @JoinColumn(name = "eventID") },
@@ -76,10 +67,22 @@ public class Event extends Model implements ScheduleEntry {
 	private Set<EventPart> eventparts = new HashSet<>(); //lowercase to make it work with the api
 
 	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "event_person")
+	private Person person;
+	
+	
 	
 	//@OneToOne(fetch = FetchType.LAZY)
-    //@JoinColumn(name = "speaker")
+    //@JoinColumn(name = "person_eventID", referencedColumnName = "personID")
 	//private Person speaker;
+	
+	//@ManyToOne(fetch = FetchType.LAZY)
+	//@JoinColumn(name = "event_person")
+	//private Event event;
+	
+	
+	
 	@Column(name = "link")
 	private String link;
 	/*Date*/
@@ -140,7 +143,7 @@ public class Event extends Model implements ScheduleEntry {
 	 * Gets the unique id of this event
 	 * @return The unique id of this event
 	 */
-	public long getId() {
+	public Long getId() {
 		return eventID;
 	}
 
@@ -148,7 +151,7 @@ public class Event extends Model implements ScheduleEntry {
 	 * Sets this event's id
 	 * @param id The new id
 	 */
-	public void setId(long id) {
+	public void setId(Long id) {
 		this.eventID = id;
 	}
 
@@ -162,10 +165,10 @@ public class Event extends Model implements ScheduleEntry {
 
 	/**
 	 * Sets the time this event begins
-	 * @param begin The time this event begins
+	 * @param yearString The time this event begins
 	 */
-	public void setBegin(LocalDateTime begin) {
-		this.begin = begin;
+	public void setBegin(LocalDateTime yearString) {
+		this.begin = yearString;
 	}
 
 	/**
@@ -178,10 +181,23 @@ public class Event extends Model implements ScheduleEntry {
 
 	/**
 	 * Sets the time this event ends
-	 * @param end The new time this event ends
+	 * @param yearString The new time this event ends
 	 */
-	public void setEnd(LocalDateTime end) {
-		this.end = end;
+	public void setEnd(LocalDateTime yearString) {
+		this.end = yearString;
+	}
+
+
+	public static Event findOrCreate(String name){
+		EventJPAAccess eventFiler = new EventJPAAccess();
+		if(name != null){
+			Event e = eventFiler.getByName(name);
+			if(e != null) return e;
+		}
+		Event e = new Event();
+		e.setTitle(name); //Achtung kann hier null werden
+		eventFiler.add(e);
+		return e;
 	}
 
 	//	/**
@@ -264,29 +280,46 @@ public class Event extends Model implements ScheduleEntry {
 		this.category = category;
 	}
 
+	
+	/**
+	 * Gets this event's category
+	 * @return This event's category
+	 */
+	public Person getPerson() {
+		return person;
+	}
+
+	/**
+	 * Sets this event's category
+	 * @return This event's new category
+	 */
+	public void setPerson(Person person) {
+		this.person = person;
+	}
+	
 	/**
 	 * Gets this event's papers (if any)
 	 * * @return This event's papers
 	 */
-//	public Set<Paper> getPapers() {
-//		return papers;
-//	}
-//
-//	/**
-//	 * Sets this event's papers (if any)
-//	 * @param papers This event's new papers
-//	 */
-//	public void setPapers(Set<Paper> papers) {
-//		this.papers = papers;
-//	}
-//
-//	/**
-//	 * Adds a paper to this event's paper list
-//	 * @param p The paper to add
-//	 */
-//	public void addPaper(Paper p) {
-//		papers.add(p);
-//	}
+	public Set<Paper> getPapers() {
+		return papers;
+	}
+
+	/**
+	 * Sets this event's papers (if any)
+	 * @param papers This event's new papers
+	 */
+	public void setPapers(Set<Paper> papers) {
+		this.papers = papers;
+	}
+
+	/**
+	 * Adds a paper to this event's paper list
+	 * @param p The paper to add
+	 */
+	public void addPaper(Paper p) {
+		papers.add(p);
+	}
 
 	/**
 	 * Gets this event's event parts (if any)

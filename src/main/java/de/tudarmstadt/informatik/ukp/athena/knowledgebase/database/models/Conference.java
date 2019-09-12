@@ -2,18 +2,17 @@ package de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models;
 
 import java.time.LocalDate;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.jpa.ConferenceJPAAccess;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.jpa.EventJPAAccess;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.jpa.PersistenceManager;
 import org.hibernate.annotations.GenericGenerator;
 
 @Entity
@@ -24,7 +23,7 @@ public class Conference extends Model{
 	@GeneratedValue(generator="increment")
 	@GenericGenerator(name="increment", strategy="increment")
 	@Column(name="conferenceID")
-	private long conferenceID;
+	private Long conferenceID;
 	/*Name of conference*/
 	@Column(name="name")
 	private String name;
@@ -45,12 +44,18 @@ public class Conference extends Model{
 
 	/*Basically the schedule*/
 	@Hierarchy(entityName="event")
-	@OneToMany(orphanRemoval=true, fetch=FetchType.EAGER,cascade = {CascadeType.ALL}) //unidirectional relationship which
+
+	@JsonIgnore
+	@OneToMany(orphanRemoval=true, fetch=FetchType.LAZY) //unidirectional relationship which
 	@JoinColumn(name="conferenceID")					  //is saved in the Event table
 	private Set<Event> events = new HashSet<>();
+	
+	
+	
 	/*The workshops*/
 	@Hierarchy(entityName="workshop")
-	@OneToMany(orphanRemoval=true, fetch=FetchType.EAGER,cascade = {CascadeType.ALL}) //unidirectional relationship which
+	@JsonIgnore
+	@OneToMany(orphanRemoval=true, fetch=FetchType.LAZY) //unidirectional relationship which
 	@JoinColumn(name="conferenceID")					  //is saved in the Workshop table
 	private Set<Workshop> workshops = new HashSet<>();
 
@@ -58,9 +63,9 @@ public class Conference extends Model{
 	@Column(name="description",length = 3000)
 	private String description;
 	@Column(name="submissionDeadlineLongPaper")
-	private String submissionDeadlineLongPaper;
+	private LocalDate submissionDeadlineLongPaper;
 	@Column(name="submissionDeadlineShortPaper")
-	private String submissionDeadlineShortPaper;
+	private LocalDate submissionDeadlineShortPaper;
 	@Column(name="reviewNotification")
 	private LocalDate review_notification;
 	
@@ -85,7 +90,7 @@ public class Conference extends Model{
 	 * Gets the submission deadline for long papers
 	 * @return submission deadline
 	 */
-	public String getSubmissionDeadlineLongPaper() {
+	public LocalDate getSubmissionDeadlineLongPaper() {
 		return submissionDeadlineLongPaper;
 	}
 	
@@ -93,7 +98,7 @@ public class Conference extends Model{
 	 * Sets the submission deadline for long papers
 	 * @param submission deadline
 	 */
-	public void setSubmissionDeadlineLongPaper(String deadline) {
+	public void setSubmissionDeadlineLongPaper(LocalDate deadline) {
 		this.submissionDeadlineLongPaper = deadline;
 	}
 	
@@ -101,7 +106,7 @@ public class Conference extends Model{
 	 * Gets the submission deadline for short papers
 	 * @return submission deadline
 	 */
-	public String getSubmissionDeadlineShortPaper() {
+	public LocalDate getSubmissionDeadlineShortPaper() {
 		return submissionDeadlineShortPaper;
 	}
 	
@@ -109,7 +114,7 @@ public class Conference extends Model{
 	 * Sets the submission deadline for short papers
 	 * @param submission deadline
 	 */
-	public void setSubmissionDeadlineShortPaper(String deadline) {
+	public void setSubmissionDeadlineShortPaper(LocalDate deadline) {
 		this.submissionDeadlineShortPaper = deadline;
 	}
 	
@@ -130,11 +135,27 @@ public class Conference extends Model{
 	}
 	
 	
+
+	public static Conference findOrCreate(String name){
+		System.out.println("Konferenz: " + name);
+		ConferenceJPAAccess conferenceFiler = new ConferenceJPAAccess();
+		if(name != null){
+			System.out.println("schon drin");
+			Conference c = conferenceFiler.getByName(name);
+			if(c != null) return c;
+		}
+		System.out.println("neu");
+		Conference c = new Conference();
+		c.setName(name); //Achtung kann hier null werden
+		conferenceFiler.add(c);
+		return c;
+	}
+
 	/**
 	 * Gets the unique id of this conference
 	 * @return The unique id of this conference
 	 */
-	public long getId() {
+	public Long getId() {
 		return conferenceID;
 	}
 
@@ -142,7 +163,7 @@ public class Conference extends Model{
 	 * Sets this conference's id
 	 * @param id The new id
 	 */
-	public void setId(long id) {
+	public void setId(Long id) {
 		this.conferenceID = id;
 	}
 
@@ -263,6 +284,10 @@ public class Conference extends Model{
 	 * @param event The event to add
 	 */
 	public void addEvent(Event event) {
+		EventJPAAccess eventFiler = new EventJPAAccess();
+		if(eventFiler.alreadyExists(event.getTitle())){
+			return; //Event already in Database
+		}
 		events.add(event);
 	}
 
@@ -273,6 +298,7 @@ public class Conference extends Model{
 	public Set<Workshop> getWorkshops(){
 		return workshops;
 	}
+
 
 	/**
 	 * Sets the workshop in this conference's schedule
@@ -289,4 +315,6 @@ public class Conference extends Model{
 	public void addWorkshop(Workshop workshop) {
 		workshops.add(workshop);
 	}
+
 }
+

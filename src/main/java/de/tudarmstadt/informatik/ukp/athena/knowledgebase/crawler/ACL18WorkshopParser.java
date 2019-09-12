@@ -49,8 +49,11 @@ public class ACL18WorkshopParser {
 				LocalDate date = LocalDate.of(2018, CrawlerToolset.getMonthIndex(dayMonth[1]), Integer.parseInt(dayMonth[0]));
 
 				// these for example
-				workshop.setBegin(LocalDateTime.of(date, LocalTime.of(9, 0)));
-				workshop.setEnd(LocalDateTime.of(date, LocalTime.of(17, 0))); //assume 5pm, because the schedule table is not 100% proportional
+//				#############################################
+				workshop.setBegin("some time");
+				workshop.setEnd("some time");
+//				workshop.setBegin(LocalDateTime.of(date, LocalTime.of(9, 0)));
+//				workshop.setEnd(LocalDateTime.of(date, LocalTime.of(17, 0))); //assume 5pm, because the schedule table is not 100% proportional
 				workshop.setTitle(titleAbbr[0].trim());
 				workshop.setPlace("Room" + complTitleRoom[1]);
 				workshop.setAbbreviation(titleAbbr[1].replace(")", "").trim());
@@ -96,13 +99,19 @@ public class ACL18WorkshopParser {
 				timeSplit[0] = timeSplit[0].replace("h", "");
 
 			time = LocalTime.of(Integer.parseInt(timeSplit[0]), Integer.parseInt(timeSplit[1]));
-			event.setBegin(LocalDateTime.of(workshop.getBegin().toLocalDate(), time));
+//			##################################
+			event.setBegin("some time...");
+//			event.setBegin(LocalDateTime.of(workshop.getBegin().toLocalDate(), time));
 
 			//i'm assuming that the closing event is the end of the workshop, thus it does not get added
 			if(previousEvent != null) {
-				previousEvent.setEnd(LocalDateTime.of(workshop.getEnd().toLocalDate(), time));
+//			##################################
+				previousEvent.setEnd("some time");
 				workshop.addEvent(previousEvent);
-				workshop.setEnd(previousEvent.getEnd());
+				workshop.setEnd("some time");
+//				previousEvent.setEnd(LocalDateTime.of(workshop.getEnd().toLocalDate(), time));
+//				workshop.addEvent(previousEvent);
+//				workshop.setEnd(previousEvent.getEnd());
 			}
 
 			if(el.hasClass("program_break")) {
@@ -182,8 +191,10 @@ public class ACL18WorkshopParser {
 				if(line.contains("|")) {
 					Event event = new Event();
 					String[] split = line.split("\\|"); //splitting by | only basically gets the char array as a string array
-
-					setEventBeginEnd(extractBeginEnd(split[0].trim().split("–")), workshop.getBegin().toLocalDate(), workshop.getEnd().toLocalDate(), event); //NOT A HYPHEN!!! IT'S AN 'EN DASH'
+//					########################################
+					String[] alist = {"time1", "time2"};
+					setEventBeginEnd(alist, workshop.getBegin(), workshop.getEnd(), event);
+//					setEventBeginEnd(extractBeginEnd(split[0].trim().split("–")), workshop.getBegin().toLocalDate(), workshop.getEnd().toLocalDate(), event); //NOT A HYPHEN!!! IT'S AN 'EN DASH'
 					event.setPlace(workshop.getPlace());
 					event.setTitle(split[1].trim());
 
@@ -282,7 +293,10 @@ public class ACL18WorkshopParser {
 			//this time extraction code is used often, but there is a lot of variation so no util method
 			String info = el.html().split("/strong>")[1];
 
-			setEventBeginEnd(extractBeginEnd(el.html().split("strong>")[1].split("<")[0].trim().split("--")), workshop.getBegin().toLocalDate(), workshop.getEnd().toLocalDate(), event);
+//			########################################
+			String[] alist = {"time1", "time2"};
+			setEventBeginEnd(alist, workshop.getBegin(), workshop.getEnd(), event);
+//			setEventBeginEnd(extractBeginEnd(el.html().split("strong>")[1].split("<")[0].trim().split("--")), workshop.getBegin().toLocalDate(), workshop.getEnd().toLocalDate(), event);
 			event.setPlace(workshop.getPlace());
 
 			if(info.contains(":") && !info.contains("Invited")) {
@@ -321,7 +335,10 @@ public class ACL18WorkshopParser {
 
 			if(event == null) {
 				event = new Event();
-				setEventBeginEnd(extractBeginEnd(el.html().split("–")), workshop.getBegin().toLocalDate(), workshop.getEnd().toLocalDate(), event); //NOT A HYPHEN!!! IT'S AN 'EN DASH'
+//				########################################
+				String[] alist = {"time1", "time2"};
+				setEventBeginEnd(alist, workshop.getBegin(), workshop.getEnd(), event);
+//				setEventBeginEnd(extractBeginEnd(el.html().split("–")), workshop.getBegin().toLocalDate(), workshop.getEnd().toLocalDate(), event); //NOT A HYPHEN!!! IT'S AN 'EN DASH'
 				event.setPlace(workshop.getPlace());
 			}
 			else {
@@ -381,7 +398,10 @@ public class ACL18WorkshopParser {
 
 			Event event = new Event();
 
-			setEventBeginEnd(extractBeginEnd(time), workshop.getBegin().toLocalDate(), workshop.getEnd().toLocalDate(), event);
+//			########################################
+			String[] alist = {"time1", "time2"};
+			setEventBeginEnd(alist, workshop.getBegin(), workshop.getEnd(), event);
+//			setEventBeginEnd(extractBeginEnd(time), workshop.getBegin().toLocalDate(), workshop.getEnd().toLocalDate(), event);
 			event.setPlace(workshop.getPlace());
 			event.setTitle(el.html().split("</strong>")[1].replace("<em>", "").replace("</em>", "").replace("&nbsp;", " "));
 
@@ -425,7 +445,10 @@ public class ACL18WorkshopParser {
 			if(td.get(0).hasText()) {
 				String[] timeTitle = td.get(0).html().split("<br>");
 
-				setEventBeginEnd(extractBeginEnd(timeTitle[0].split("-")), workshop.getBegin().toLocalDate(), workshop.getEnd().toLocalDate(), event);
+//				########################################
+				String[] alist = {"time1", "time2"};
+				setEventBeginEnd(alist, workshop.getBegin(), workshop.getEnd(), event);
+//				setEventBeginEnd(extractBeginEnd(timeTitle[0].split("-")), workshop.getBegin().toLocalDate(), workshop.getEnd().toLocalDate(), event);
 
 				if(timeTitle.length > 1)
 					event.setTitle(timeTitle[1]);
@@ -491,7 +514,10 @@ public class ACL18WorkshopParser {
 
 			time[0] = time[0].substring(0, 2) + ":" + time[0].substring(2);
 			time[1] = time[1].substring(0, 2) + ":" + time[1].substring(2, 4); //cut off excess whitespace and &nbsp;s
-			setEventBeginEnd(extractBeginEnd(time), workshop.getBegin().toLocalDate(), workshop.getEnd().toLocalDate(), event);
+//			########################################
+			String[] alist = {"time1", "time2"};
+			setEventBeginEnd(alist, workshop.getBegin(), workshop.getEnd(), event);
+//			setEventBeginEnd(extractBeginEnd(time), workshop.getBegin().toLocalDate(), workshop.getEnd().toLocalDate(), event);
 			event.setPlace(workshop.getPlace());
 			event.setTitle(el.html().split("<strong>")[1].split("</strong>")[0]);
 
@@ -546,12 +572,15 @@ public class ACL18WorkshopParser {
 	/**
 	 * Sets the given event's begin and end.
 	 * @param beginEnd A {@link LocalTime} array containing the begin (first index) and end (second index) times
-	 * @param beginDate The {@link LocalDate} to use as the begin date, usually the one of the workshop
-	 * @param endDate The {@link LocalDate} to use as the end date, usually the one of the workshop
+	 * @param string The {@link LocalDate} to use as the begin date, usually the one of the workshop
+	 * @param string2 The {@link LocalDate} to use as the end date, usually the one of the workshop
 	 * @param event The event to set the begin and end of
 	 */
-	public static final void setEventBeginEnd(LocalTime[] beginEnd, LocalDate beginDate, LocalDate endDate, Event event) {
-		event.setBegin(LocalDateTime.of(beginDate, beginEnd[0]));
-		event.setEnd(LocalDateTime.of(endDate, beginEnd[1]));
+	public static final void setEventBeginEnd(String[] beginEnd, String string, String string2, Event event) {
+//		################################
+		event.setBegin(string);
+		event.setEnd(string2);
+//		event.setBegin(LocalDateTime.of(string, beginEnd[0]));
+//		event.setEnd(LocalDateTime.of(string2, beginEnd[1]));
 	}
 }

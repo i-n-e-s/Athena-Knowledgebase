@@ -1,6 +1,5 @@
 package de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -18,9 +17,12 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.jpa.PersonJPAAccess;
 
@@ -33,43 +35,50 @@ public class Person extends Model {
 	/*Unique id*/
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	@Column(name = "personID", updatable = false, nullable = false)
-	private long personID;
+	@Column(name = "personID", updatable = false)
+	private Long personID;
 
 	/*Prefixes like academic titles*/
 	@Column(name = "prefix")
 	private String prefix;
 	/*Full Name*/
-	@Column(name = "fullName", nullable = false)
+	@Column(name = "fullName")
 	private String fullName;
 	
 	/*First Name*/
-	@Column(name = "firstName", nullable = false)
+	@Column(name = "firstName")
 	private String firstName;
 	
 	/*Full Name*/
-	@Column(name = "lastName", nullable = false)
+	@Column(name = "lastName")
 	private String lastName;
 	
+	//@OneToOne(mappedBy = "person")
+    //private Event event;
+	
+	@OneToMany(mappedBy = "person")
+	private Set<Event> events = new HashSet<>();
+	
+	@OneToMany(mappedBy = "person")
+	private Set<EventPart> eventparts = new HashSet<>();
 	
 	
 
 	/*Birthday and day of death*/
 	@Column(name = "birth")
-	private LocalDate birth;
+	private String birth;
 	@Column(name = "obit")
-	private LocalDate obit;
+	private String obit;
 
 	/*The person's institution, eg. an university or a company*/
 	//@Column(name = "institution")
+	@JsonIgnore
 	@ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
 	@JoinColumn(name = "institutionID")
 	private Institution institution;
 
 	/*Written papers*/
-	@Hierarchy(entityName="paper")
-	@JsonIgnore //fixes infinite recursion
-	@ManyToMany(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER)
+	@ManyToMany(cascade = { CascadeType.ALL })
 	@JoinTable(
 			name = "author_paper",
 			joinColumns = { @JoinColumn(name = "authorID") },
@@ -118,7 +127,7 @@ public class Person extends Model {
 	 * Gets the unique id of this person.
 	 * @return The unique id of this person
 	 */
-	public long getPersonID() {
+	public Long getPersonID() {
 		return personID;
 	}
 
@@ -126,7 +135,7 @@ public class Person extends Model {
 	 * Sets this person's id
 	 * @param id The new id
 	 */
-	public void setPersonID(long id) {
+	public void setPersonID(Long id) {
 		this.personID = id;
 	}
 
@@ -199,7 +208,7 @@ public class Person extends Model {
 	 * Gets this person's birthday.
 	 * @return This person's birthday
 	 */
-	public LocalDate getBirth() {
+	public String getBirth() {
 		return birth;
 	}
 
@@ -207,7 +216,7 @@ public class Person extends Model {
 	 * Sets this person's birthday
 	 * @param birth This person's birthday
 	 */
-	public void setBirth(LocalDate birth) {
+	public void setBirth(String birth) {
 		this.birth = birth;
 	}
 
@@ -215,7 +224,7 @@ public class Person extends Model {
 	 * Gets this person's day of death.
 	 * @return This person's day of death
 	 */
-	public LocalDate getObit() {
+	public String getObit() {
 		return obit;
 	}
 
@@ -223,7 +232,7 @@ public class Person extends Model {
 	 * Sets this person's day of death.
 	 * @param obit This person's day of death
 	 */
-	public void setObit(LocalDate obit) {
+	public void setObit(String obit) {
 		this.obit = obit;
 	}
 
@@ -444,20 +453,6 @@ public class Person extends Model {
 	 * @param toFind The person object containing the query data
 	 * @return A matching person from the DB or a new person
 	 */
-	public static Person findOrCreate(Person toFind) {
-
-		//Check if person with same S2ID exists in DB
-		PersonJPAAccess filer = new PersonJPAAccess();
-		List<Person> searchResults = filer.getByKnownAttributes(toFind);
-
-		if(searchResults == null || searchResults.size() < 1) { //No matching person could be found in the DB
-			return new Person();
-		}
-		else { 		//Choose first result
-			return searchResults.get(0);
-		}
-
-	}
 
 	/**
 	 * Looks for persons with defined title or SemanticScholarID and returns matching DB Entry
@@ -469,35 +464,20 @@ public class Person extends Model {
 	public static Person findOrCreate(String s2id, String fullName) {
 		PersonJPAAccess filer = new PersonJPAAccess();
 		Person searchResult = null;
-		if ( s2id == null && fullName == null ) { return new Person(); }
-		else if ( s2id != null && fullName != null ) {
-			Person query = new Person();
-			query.setFullName(fullName);
-			query.setSemanticScholarID(s2id);
-			return findOrCreate(query);
+		if ( s2id == null && fullName == null ) {
+			System.out.println("ID and Full Name null");
+			return null;
 		}
-		else if ( fullName == null ) { searchResult = filer.getBySemanticScholarID(s2id); }
-		else if ( s2id == null ) { searchResult = filer.getByFullName(fullName); }
-
-		return searchResult != null ? searchResult : new Person();
-	}
-
-
-	/**
-	 * Same as {@link Person#findOrCreate(String, String)}, but also searches in given list
-	 * @param s2id Semantic Scholar of of the person to seach
-	 * @param fullName Full name of the person to seach
-	 * @param list List to be searched
-	 * @return A matching person from the List or the DB, or a new person
-	 */
-	public static Person findOrCreateDbOrList(String s2id, String fullName, List<Person> list) {
-		//Filter out any person who does not have either a matching SemanticScholarID or matching name
-		List<Person> result = list.stream().filter( currPers -> (
-				( currPers.getSemanticScholarID() != null && currPers.getSemanticScholarID().equals(s2id)) ||
-				( currPers.getFullName() != null && currPers.getFullName().equals(fullName)))).collect(Collectors.toList());
-
-		//Result now contains only persons with either matching SemanticScholarID or matching name
-		return result.size() > 0 ? result.get(0) : findOrCreate(s2id, fullName);
+		else if ( fullName == null ) searchResult = filer.getBySemanticScholarID(s2id);
+		else searchResult = filer.getByFullName(fullName);
+		if(searchResult != null) return searchResult;
+		else{
+			Person p = new Person();
+			p.setFullName(fullName);
+			p.setSemanticScholarID(s2id); //Achtung kann null sein
+			filer.add(p);
+			return p;
+		}
 	}
 
 }

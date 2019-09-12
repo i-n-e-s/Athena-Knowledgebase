@@ -1,28 +1,38 @@
 package de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.GenericGenerator;
 
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.jpa.EventJPAAccess;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.jpa.EventPartJPAAccess;
+
 @Entity
-@Table(name="eventPart")
+@Table(name="eventpart")
 public class EventPart extends Model{
 	/*Unique id*/
 	@Id
 	@GeneratedValue(generator="increment")
 	@GenericGenerator(name="increment", strategy="increment")
 	@Column(name="eventPartID")
-	private long eventPartID;
+	private Long eventPartID;
 	/* Title */
 	@Column(name = "title")
 	private String title;
 	/* Brief Description */
+
 	@Column(name = "description", columnDefinition = "VARCHAR(3000)") //fixes titles that are too long for being storable in the column
 	private String description;
 
@@ -37,6 +47,18 @@ public class EventPart extends Model{
 	@Column(name = "place")
 	private String place;
 	
+	
+	/* Associated papers */
+
+
+	@OneToMany(mappedBy = "eventpart")
+	private Set<Paper> papers = new HashSet<>();
+
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "eventpart_person")
+	private Person person;
+	
 //	@Column(name = "speaker")
 //	private Person speaker;
 //	
@@ -48,7 +70,7 @@ public class EventPart extends Model{
 	 * Gets the unique id of this event part
 	 * @return The unique id of this event part
 	 */
-	public long getId() {
+	public Long getId() {
 		return eventPartID;
 	}
 
@@ -56,7 +78,7 @@ public class EventPart extends Model{
 	 * Sets this event part's id
 	 * @param id The new id
 	 */
-	public void setId(long id) {
+	public void setId(Long id) {
 		this.eventPartID = id;
 	}
 
@@ -86,12 +108,39 @@ public class EventPart extends Model{
 
 	/**
 	 * Sets the time this event part begins
-	 * @param begin The time this event part begins
+	 * @param sessStart The time this event part begins
 	 */
 	public void setBegin(LocalDateTime begin) {
 		this.begin = begin;
 	}
 
+	
+	/**
+	 * Gets this event's papers (if any)
+	 * * @return This event's papers
+	 */
+	public Set<Paper> getPapers() {
+		return papers;
+	}
+
+	/**
+	 * Sets this event's papers (if any)
+	 * @param papers This event's new papers
+	 */
+	public void setPapers(Set<Paper> papers) {
+		this.papers = papers;
+	}
+
+	/**
+	 * Adds a paper to this event's paper list
+	 * @param p The paper to add
+	 */
+	public void addPaper(Paper p) {
+		papers.add(p);
+	}
+
+	
+	
 	/**
 	 * Gets the speaker of a EventPart (the first listed person in the corresponding paper)
 	 * @return speaker of tutorial
@@ -136,10 +185,10 @@ public class EventPart extends Model{
 
 	/**
 	 * Sets the time this event part ends
-	 * @param end the new time this event part ends
+	 * @param sessEnd the new time this event part ends
 	 */
-	public void setEnd(LocalDateTime end) {
-		this.end = end;
+	public void setEnd(LocalDateTime sessEnd) {
+		this.end = sessEnd;
 	}
 
 	/**
@@ -173,4 +222,34 @@ public class EventPart extends Model{
 	public void setDescription(String description) {
 		this.description = description;
 	}
+	
+	/**
+	 * Gets this event's category
+	 * @return This event's category
+	 */
+	public Person getPerson() {
+		return person;
+	}
+
+	/**
+	 * Sets this event's category
+	 * @return This event's new category
+	 */
+	public void setPerson(Person person) {
+		this.person = person;
+	}
+	
+	
+	public static EventPart findOrCreate(String name){
+		EventPartJPAAccess eventPartFiler = new EventPartJPAAccess();
+		if(name != null){
+			EventPart e = eventPartFiler.getByName(name);
+			if(e != null) return e;
+		}
+		EventPart e = new EventPart();
+		e.setTitle(name); //Achtung kann hier null werden
+		eventPartFiler.add(e);
+		return e;
+	}
+	
 }

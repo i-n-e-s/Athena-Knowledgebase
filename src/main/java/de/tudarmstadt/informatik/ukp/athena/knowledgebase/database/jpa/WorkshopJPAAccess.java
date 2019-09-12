@@ -1,13 +1,12 @@
 package de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.jpa;
 
 import java.util.List;
-
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
+import javax.persistence.EntityTransaction;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.CommonAccess;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Workshop;
 
@@ -23,24 +22,35 @@ public class WorkshopJPAAccess implements CommonAccess<Workshop> {
 	@Override
 	public void add(Workshop data) {
 		EntityManager entityManager = PersistenceManager.getEntityManager();
-
-		entityManager.getTransaction().begin();
+		EntityTransaction trans = entityManager.getTransaction();
+		if(!trans.isActive()) entityManager.getTransaction().begin();
 		try {
 			entityManager.persist(data);
 		}catch(EntityExistsException e) {  //branch not tested because exception shouldn't be thrown again just so junit can test for it
 			logger.warn("{} already exists in the database. Maybe try update", data.getID());
 		}
-		entityManager.getTransaction().commit();
 	}
 
+	@Override
+	public boolean alreadyExists(String name){
+		return false;
+	}
+
+	@Override
+	public void commitChanges(Workshop data){
+		EntityManager entityManager = PersistenceManager.getEntityManager();
+		EntityTransaction trans = entityManager.getTransaction();
+		if(!trans.isActive()) entityManager.getTransaction().begin();
+		entityManager.getTransaction().commit();
+	}
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
 	public void delete(Workshop data) {
 		EntityManager entityManager = PersistenceManager.getEntityManager();
-
-		entityManager.getTransaction().begin();
+		EntityTransaction trans = entityManager.getTransaction();
+		if(!trans.isActive()) entityManager.getTransaction().begin();
 		entityManager.remove(data);
 		entityManager.getTransaction().commit();
 		//entityManager.close();

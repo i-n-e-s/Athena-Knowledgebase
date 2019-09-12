@@ -111,9 +111,13 @@ public class S2APIFunctions {
 				currPaper.setRemoteLink(cSR.getString("url"));
 			}
 			if (cSR.getString("year") != null && !cSR.getString("year").equals("null")) {
-				currPaper.setReleaseDate(LocalDate.of(Integer.parseInt(cSR.getString("year")), 1, 1));
+//				###############################################
+				currPaper.setReleaseDate(cSR.getString("year"));
+//				currPaper.setReleaseDate(LocalDate.of(Integer.parseInt(cSR.getString("year")), 1, 1));
 			} else {
-				currPaper.setReleaseDate(LocalDate.of(0, 1, 1));
+//				###############################################
+				currPaper.setReleaseDate("0");
+//				currPaper.setReleaseDate(LocalDate.of(0, 1, 1));
 			}
 			paperList.add(currPaper);
 		}
@@ -281,10 +285,10 @@ public class S2APIFunctions {
 
 			//Check if DB entry of person with matching S2ID exists
 			Person query = new Person();
-			query.setFullName(jsonAuthorInfo.getString("name"));
+			String name = jsonAuthorInfo.getString("name");
 			query.setSemanticScholarID(s2id);
 			logger.info("Query ID: {}", query.getPersonID());
-			Person currInfl = Person.findOrCreate( query );     //If no matching DB-entry is found, create new person
+			Person currInfl = Person.findOrCreate(s2id, name);     //If no matching DB-entry is found, create new person
 
 			//Set attributes:
 			if ( currInfl.getFullName() == null || overwrite ) {
@@ -331,7 +335,7 @@ public class S2APIFunctions {
 		//citations
 		if (overwrite || dest.getAmountOfCitations() == null) {
 			try {
-				long foundCitations = Long.parseLong(paperJSON.getJSONObject("citationStats").getString("numCitations"));
+				Long foundCitations = Long.parseLong(paperJSON.getJSONObject("citationStats").getString("numCitations"));
 				dest.setAmountOfCitations(foundCitations);
 			} catch (JSONException e) {
 			}
@@ -361,7 +365,9 @@ public class S2APIFunctions {
 				try {
 					int releaseYear = Integer.parseInt(releaseYearString);
 					if (releaseYear > 1000 && releaseYear < 2100) {
-						dest.setReleaseDate(LocalDate.of(releaseYear, 1, 1));
+//						##################################################
+						dest.setReleaseDate(releaseYearString);
+//						dest.setReleaseDate(LocalDate.of(releaseYear, 1, 1));
 					}
 				} catch (NumberFormatException e) {
 				}
@@ -407,10 +413,7 @@ public class S2APIFunctions {
 
 			//If not already connected, check if author is in DB
 			if ( authorObjToBeAdded == null ) {
-				Person query = new Person();
-				query.setSemanticScholarID(s2id);
-				query.setFullName(name);
-				authorObjToBeAdded = Person.findOrCreate(query);
+				authorObjToBeAdded = Person.findOrCreate(s2id, name);
 			}
 
 			if( overwrite || authorObjToBeAdded.getFullName() == null ) { authorObjToBeAdded.setFullName(name); }

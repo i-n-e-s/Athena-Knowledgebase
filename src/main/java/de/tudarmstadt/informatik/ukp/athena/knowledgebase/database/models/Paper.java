@@ -6,18 +6,12 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.ManyToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 import org.hibernate.annotations.GenericGenerator;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.jpa.PaperJPAAccess;
 
@@ -29,45 +23,58 @@ public class Paper extends Model {
 	@GeneratedValue(generator="increment")
 	@GenericGenerator(name="increment", strategy="increment")
 	@Column(name = "paperID", updatable = false, nullable = false)
-	private long paperID;
-
+	private Long paperID;
 	/*Title of the paper*/
-	@Column(name = "title", columnDefinition = "varchar(1023)") //fixes titles that are too long for being storable in the column
+	@Column(name = "title", columnDefinition = "varchar(1023)") //fixes titles that are too Long for being storable in the column
 	private String title;
 	/*Topic of the paper*/
 	@Column(name = "topic")
 	private String topic;
 	/*Paper's authors*/
-	@Hierarchy(entityName="person")
-	@JsonIgnore //fixes infinite recursion
-	@ManyToMany(cascade = { CascadeType.ALL }, mappedBy = "papers", fetch = FetchType.EAGER)
+	@ManyToMany(mappedBy = "papers")
 	private Set<Person> persons = new HashSet<>();
+
+	/*Paper's tags*/
+	@ManyToMany(mappedBy = "papers")
+	private Set<Tag> tags = new HashSet<>();
+
+	
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "event_paper")
+	private Event event;
+	
+
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "eventpart_paper")
+	private EventPart eventpart;
+	
 
 	/*Release date*/
 	@Column(name = "releaseDate")
-	private LocalDate releaseDate;
+	private String releaseDate;
 
 	/*URL to PDF*/
 	@Column(name = "remoteLink")
 	private String remoteLink;
 	@Column(name = "localLink")
 	private String localLink;
-
 	/*PDF filesize in Bytes*/
 	@Column(name = "pdfFileSize")
 	private Integer pdfFileSize;
 	/*anthology of paper as String*/
 	@Column (name = "anthology")
 	private String anthology;
-
 	/*Semantic Scholar's PaperId as String*/
 	@Column(name = "semanticScholarID")
 	private String semanticScholarID;
+
 	/*Abstract of paper as String*/
 	@Column(name = "paperAbstract", columnDefinition="LONGTEXT")
 	private String paperAbstract;
 	@Column(name = "amountOfCitations")
-	private long amountOfCitations = -1;    //-1 if not known yet
+	private Long amountOfCitations = (long)-1;    //-1 if not known yet
 	@Column(name= "plainText", columnDefinition = "LONGTEXT")
 	private String paperPlainText;
 
@@ -76,7 +83,7 @@ public class Paper extends Model {
 	 * Get this paper's ID
 	 * @return This paper's ID
 	 */
-	public long getPaperID(){
+	public Long getPaperID(){
 		return paperID;
 	}
 
@@ -107,11 +114,39 @@ public class Paper extends Model {
 		}
 	}
 
+	
+	/**
+	 * Gets this paper's authors
+	 * @return A Set of this paper's authors
+	 */
+	public Set<Tag> getTags() {
+		return tags;
+	}
+
+	/**
+	 * Sets this paper's authors
+	 * @param authors The new authors of this paper
+	 */
+	public void setTags(Set<Tag> tags) {
+		this.tags = tags;
+	}
+
+	/**
+	 * Adds an author to this paper's author list
+	 * @param author The author to add
+	 */
+	public void addTag(Tag tag) {
+		tags.add(tag);
+		if(!tag.getPapers().contains(this)) {
+			tag.addPaper(this);
+		}
+	}
+	
 	/**
 	 * Gets this paper's release date
 	 * @return This paper's release date
 	 */
-	public LocalDate getReleaseDate() {
+	public String getReleaseDate() {
 		return releaseDate;
 	}
 
@@ -119,7 +154,7 @@ public class Paper extends Model {
 	 * Sets this paper's release date
 	 * @param releaseDate The new release date of this paper
 	 */
-	public void setReleaseDate(LocalDate releaseDate) {
+	public void setReleaseDate(String releaseDate) {
 		this.releaseDate = releaseDate;
 	}
 
@@ -302,54 +337,24 @@ public class Paper extends Model {
 	 * Looks for papers with equal attributes in the DB and returns found entities
 	 * If no matching DB entry was found, create and return a new paper object
 	 * Read more about the search here {@link PaperJPAAccess#getByKnownAttributes(Paper)}
-	 * @param toFind The paper object containing the query data
+	 * @param name The paper title
+	 * @param id the paper id, if unknown null
 	 * @return A matching paper from the DB or a new paper
 	 */
-	public static Paper findOrCreate(Paper toFind) {
+	public static Paper findOrCreate(String id, String name) {
 		//Check if paper with same S2ID exists in DB
 		PaperJPAAccess filer = new PaperJPAAccess();
-		List<Paper> searchResults = filer.getByKnownAttributes(toFind);
+		Paper searchResults = filer.getByKnownAttributes(id, name);
 
-		if(searchResults == null || searchResults.size() < 1) { //No matching paper could be found in the DB
-			return new Paper();
+		if(searchResults == null){
+			Paper p = new Paper();
+			p.setTitle(name);
+			p.setSemanticScholarID(id);
+			filer.add(p);
+			return p;
 		}
-		else { 		//Choose first result
-			return searchResults.get(0);
-		}
+		return searchResults;
 	}
-
-	/**
-	 * Looks for papers with defined title or Semantic Scholar ID and returns matching DB entry
-	 * If no match was found, create and return a new paper object
-	 * @param s2id Semantic Scholar ID of the searched paper or null if unknown
-	 * @param title The title of the searched paper or null if unknown
-	 * @return matching DB entry or new paper
-	 */
-	public static Paper findOrCreate(String s2id, String title) {
-		Paper tmpQuery = new Paper();
-		tmpQuery.setTitle(title);
-		tmpQuery.setSemanticScholarID(s2id);
-		return findOrCreate(tmpQuery);
-	}
-
-
-	/**
-	 * Same as {@link Paper#findOrCreate(String, String)}, but also searches in given list
-	 * @param s2id Semantic Scholar id of the paper to search
-	 * @param title Title of the paper to seach
-	 * @param list List to be searched
-	 * @return A matching paper from the list or the DB, or a new paper
-	 */
-	public static Paper findOrCreateDbOrList(String s2id, String title, List<Paper> list) {
-		//Filter out any paper who does not have either a matching SemanticScholarID or matching title
-		List<Paper> result = list.stream().filter( currPaper -> (
-				( currPaper.getSemanticScholarID() != null && currPaper.getSemanticScholarID().equals(s2id)) ||
-				( currPaper.getTitle() != null && currPaper.getTitle().equals(title) ))).collect(Collectors.toList());
-
-		//Result now contains only persons with either matching SemanticScholarID or matching name
-		return result.size() > 0 ? result.get(0) : findOrCreate(s2id, title);
-	}
-
 
 	/**
 	 * Creates a String representation of this paper object.

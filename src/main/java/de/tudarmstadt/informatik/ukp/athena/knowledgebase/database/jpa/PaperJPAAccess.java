@@ -4,12 +4,15 @@ import java.util.List;
 
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
+import javax.persistence.EntityTransaction;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.CommonAccess;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Paper;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
 
 public class PaperJPAAccess implements CommonAccess<Paper> {
 	private static Logger logger = LogManager.getLogger(PaperJPAAccess.class);
@@ -20,15 +23,23 @@ public class PaperJPAAccess implements CommonAccess<Paper> {
 	@Override
 	public void add(Paper data) {
 		EntityManager entityManager = PersistenceManager.getEntityManager();
-
-		entityManager.getTransaction().begin();
+		EntityTransaction trans = entityManager.getTransaction();
+		if(!trans.isActive()) entityManager.getTransaction().begin();
 		try {
 			entityManager.persist(data);
 		}catch(EntityExistsException e) { //branch not tested because exception shouldn't be thrown again just so junit can test for it
 			logger.warn("{} already exists in the database. Maybe try update", data.getID());
 		}
+	}
+
+	@Override
+	public void commitChanges(Paper data){
+		EntityManager entityManager = PersistenceManager.getEntityManager();
+		EntityTransaction trans = entityManager.getTransaction();
+		if(!trans.isActive()) entityManager.getTransaction().begin();
 		entityManager.getTransaction().commit();
 	}
+
 
 	/**
 	 * {@inheritDoc}
@@ -36,10 +47,17 @@ public class PaperJPAAccess implements CommonAccess<Paper> {
 	@Override
 	public void delete(Paper data) {
 		EntityManager entityManager = PersistenceManager.getEntityManager();
-
-		entityManager.getTransaction().begin();
+		EntityTransaction trans = entityManager.getTransaction();
+		if(!trans.isActive()) entityManager.getTransaction().begin();
 		entityManager.remove(data);
 		entityManager.getTransaction().commit();
+	}
+
+	public void merge (Paper data){
+		EntityManager entityManager = PersistenceManager.getEntityManager();
+
+		entityManager.getTransaction().begin();
+
 	}
 
 	/**
@@ -61,45 +79,19 @@ public class PaperJPAAccess implements CommonAccess<Paper> {
 	 * @param toFind Paper object to get the search constraints from
 	 * @return An object from the DB with matching attributes, null if no object found or no search constraint set
 	 */
-	public List<Paper> getByKnownAttributes(Paper toFind) {
+	public Paper getByKnownAttributes(String id, String name) {
 		//1. Build JPQL query for combined search
-		String query = "SELECT c FROM Paper c WHERE ";
-		boolean addedConstraint = false;
-		if( toFind.getSemanticScholarID() != null ) {
-			System.out.println("Got parameter s2id");
-			query = query + "c.semanticScholarID LIKE '"+toFind.getSemanticScholarID() + "'";
-			addedConstraint = true;
-		}
-		if ( toFind.getTitle() != null && toFind.getTitle() != "" ) {
-			System.out.println("Got parameter title");
-			if (addedConstraint) { query = query + " AND "; }
-			query = query + "c.title = '"+toFind.getTitle().replace("'", "''") + "'";
-			addedConstraint = true;
-		}
-
-		if ( !addedConstraint ) { return null; }
-		logger.info(query);
-
-		//2. Execute query
 		EntityManager entityManager = PersistenceManager.getEntityManager();
+		String query = "SELECT c FROM Paper c WHERE ";
+		if( id != null )
+			query = query + "c.semanticScholarID LIKE '"+id + "'";
+		else if ( name != null) query = query + "c.title LIKE '" +name+ "'";
+		else {
+			System.out.println("No title and no ID given");//no title and no id given
+			return null;
+		}
 		List<Paper> result = entityManager.createQuery(query).getResultList();
-		System.out.println("Got "+ result.size()+ " results");
-
-		if( result.size() > 0 ) { return result; }
-
-		//3. If nothing found, try searching for Attributes separately
-		if( toFind.getSemanticScholarID() != null ) {
-			query = "SELECT c FROM Paper c WHERE c.semanticScholarID LIKE '"+toFind.getSemanticScholarID() + "'";
-			result = entityManager.createQuery(query).getResultList();
-			if( result.size() > 0 ) { return result; }
-		}
-		if ( toFind.getTitle() != null && toFind.getTitle() != "" ) {
-			query = "SELECT c FROM Paper c WHERE c.title = '"+toFind.getTitle().replace("'", "''") + "'";
-			result = entityManager.createQuery(query).getResultList();
-			if( result.size() > 0 ) { return result; }
-		}
-
-		//4. If still nothing found, return null
+		if( result.size() > 0 ) { return result.get(0); }
 		return null;
 	}
 
@@ -115,10 +107,20 @@ public class PaperJPAAccess implements CommonAccess<Paper> {
 		if( semanticScholarID != null ) {
 			Paper query = new Paper();
 			query.setSemanticScholarID(semanticScholarID);
-			List<Paper> results = getByKnownAttributes(query);
-			return (results != null && results.size() > 0) ? results.get(0) : null;
+			Paper result = getByKnownAttributes(semanticScholarID, null);
+			return result;
 		}
 		return null;
+	}
+
+	@Override
+	public boolean alreadyExists(String identifier){
+		String query = "SELECT p FROM paper p WHERE p.title = '"+identifier.replace("'","''") + "'";
+		EntityManager entityManager = PersistenceManager.getEntityManager();
+		//Execute query
+		List<Paper> matches = entityManager.createQuery(query).getResultList();
+		//If results are found, return true.
+		return (matches.size() > 0) ? true : false;
 	}
 
 	/**

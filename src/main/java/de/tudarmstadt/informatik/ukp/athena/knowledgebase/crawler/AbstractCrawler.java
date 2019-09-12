@@ -16,34 +16,12 @@ import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Schedu
  *
  */
 abstract class AbstractCrawler {
-	/**
-	 * Returns all authors who published in the year range given to the crawler facade
-	 *
-	 * @return A list of all authors, an empty list when data not available
-	 * @throws IOException if Jsoup.connect fails
-	 */
-	public abstract ArrayList<Person> getAuthors() throws IOException;
 
-	/**
-	 * Returns all papers which were published n the year range given to the crawler facade
-	 *
-	 * @return A list of all papers, an empty list when data not available
-	 * @throws IOException if Jsoup.connect fails
-	 */
-	public abstract ArrayList<Paper> getPapers() throws IOException;
-
-	/**
-	 * Returns a list of papers. Each object contains the paper's title and its authors
-	 *
-	 * @return A list of papers and their associated authors, an empty list when data not available
-	 * @throws IOException if Jsoup.connect fails
-	 */
-	public abstract ArrayList<Paper> getPaperAuthor() throws IOException;
-
-	
-	
 	public abstract ArrayList<Conference> getPaperAuthorEvent() throws IOException;
 
+	public abstract ArrayList<Conference> getConferenceACL2018() throws IOException;
+
+	
 	
 	/**
 	 * A method which returns a conference instance with its name, location, and start and end date set.
@@ -54,6 +32,8 @@ abstract class AbstractCrawler {
 	 */
 	public abstract Conference getConferenceInformation() throws IOException;
 
+		
+	
 	/**
 	 * Returns a list of schedule entries (can be events or workshops).
 	 * @return A list of schedule entries, an empty list when data not available

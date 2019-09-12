@@ -83,12 +83,15 @@ public class ParsedDataInserter {
 		String[] conferences = null;
 
 		for(String arg : args) {
-			if(arg.startsWith("-beginYear="))
+			if(arg.contains("-beginYear=")) {
 				beginYear = Integer.parseInt(arg.split("=")[1]); //parse to make sure that it's a number
-			else if(arg.startsWith("-endYear="))
+			}
+			if(arg.contains("-endYear=")) {
 				endYear = Integer.parseInt(arg.split("=")[1]); //parse to make sure that it's a number
-			else if(arg.startsWith("-conferences="))
+			}
+			if(arg.contains("-conferences=")) {
 				conferences = arg.replace("-conferences=", "").split(",");
+			}
 		}
 
 		if(beginYear > endYear) {
@@ -132,8 +135,14 @@ public class ParsedDataInserter {
 		}
 		
 		if(argsList.contains("-scrape-acl18-info"))
-			parsedDataInserter.acl2018StoreConferenceInformation(); //automatically saves the schedule as well
-		else
+			try {
+			logger.info("Scraping ACL2018", beginYear, endYear);
+			parsedDataInserter.aclStoreConferenceACL2018(); //automatically saves the schedule as well
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			
+			else
 			logger.info("\"-scrape-acl18-info\" argument was not found, skipping ACL 2018 scraping");
 		Parser parse = new Parser();
 		if(argsList.contains("-parse-institutions"))
@@ -163,14 +172,29 @@ public class ParsedDataInserter {
 		ArrayList<Conference> conferences = acl18WebParser.getPaperAuthorEvent();
 		CommonAccess<Conference> conferenceFiler = new ConferenceJPAAccess();
 
-		logger.info("Inserting papers and authors into database...");
+		logger.info("Inserting papers, authors and events into database...");
 
 		for(Conference conference : conferences) {
-            System.out.println("Paper added: " + conference.getName());
-			conferenceFiler.add(conference);
+            System.out.println("Conference added: " + conference.getName());
+			conferenceFiler.commitChanges(conference);
 		}
+		logger.info("Done inserting papers, authors and events!");
+	}
+	
+	
+	
+	private void aclStoreConferenceACL2018() throws IOException {
+		logger.info("Scraping papers and authors...");
+		ArrayList<Conference> conferences = acl18WebParser.getConferenceACL2018();
+		CommonAccess<Conference> conferenceFiler = new ConferenceJPAAccess();
 
-		logger.info("Done inserting papers and authors!");		
+		logger.info("Inserting papers, authors and events into database...");
+
+		for(Conference conference : conferences) {
+            System.out.println("Conference added: " + conference.getName());
+			conferenceFiler.commitChanges(conference);
+		}
+		logger.info("Done inserting papers, authors and events!");
 	}
 
 	/**
@@ -181,20 +205,9 @@ public class ParsedDataInserter {
 	 * @author Julian Steitz, Daniel Lehmann
 	 */
 	private void aclStorePapersAndAuthors() throws IOException {
-		logger.info("Scraping papers and authors...");
-		ArrayList<Paper> papers = acl18WebParser.getPaperAuthor();
-		CommonAccess<Paper> paperFiler = new PaperJPAAccess();
-
-		logger.info("Inserting papers and authors into database...");
-
-		for(Paper paper : papers) {
-			paperFiler.add(paper);
-		}
-
-		logger.info("Done inserting papers and authors!");
 	}
 
-	/**
+		/**
 	 * Stores the ACL 2018 conference including the schedule into the database
 	 * Since events contain papers, this should be run after having executed {@link ParsedDataInserter#aclStorePapersAndAuthors()}
 	 */
@@ -262,14 +275,11 @@ public class ParsedDataInserter {
 		PersonJPAAccess personfiler = new PersonJPAAccess();
 		List<Person> authors = personfiler.get();
 		EntityManager entityManager = PersistenceManager.getEntityManager();
-
-
 		//Go through every author in the db
 		long failedAuthors = 0;
 		long totalAuthors = 0;
 		for ( Person currPerson : authors ) {
 			if( totalAuthors++ == n ) { break; }
-
 			//1. Update information about the author
 			entityManager.getTransaction().begin();
 			try { S2APIFunctions.completeAuthorInformationByAuthorSearch(currPerson, false); }
