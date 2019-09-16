@@ -16,7 +16,6 @@ import org.apache.logging.log4j.Logger;
  */
 public class CrawlerToolset {
 	private static Logger logger = LogManager.getLogger(CrawlerToolset.class);
-
 	/**
 	 * Converts a time in String format to a LocalDate instance
 	 * @param timeString time in String format (e.g. 9:00 or 09:00)

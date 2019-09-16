@@ -18,23 +18,6 @@ import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Schedu
 abstract class AbstractCrawler {
 
 	public abstract ArrayList<Conference> getPaperAuthorEvent() throws IOException;
-
-	/**
-	 * A method which returns a conference instance with its name, location, and start and end date set.
-	 * Scrapes an about page for its information and employs string conversion found in CrawlerToolset
-	 * @return A conference instance with its name, location, and start and end date set, null when data not available, an empty Conference instance if an IOException occurs
-	 * @throws IOException if Jsoup.connect fails
-	 * @author Julian Steitz
-	 */
-	public abstract Conference getConferenceInformation() throws IOException;
-
-	/**
-	 * Returns a list of schedule entries (can be events or workshops).
-	 * @return A list of schedule entries, an empty list when data not available
-	 * @throws IOException if Jsoup.connect fails
-	 */
-	public abstract ArrayList<ScheduleEntry> getSchedule() throws IOException;
-
 	/**
 	 * Can be used to remove any unneeded data after the crawler is done
 	 */
