@@ -17,6 +17,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -51,6 +53,14 @@ public class Person extends Model {
 	@Column(name = "lastName")
 	private String lastName;
 	
+	//@OneToOne(mappedBy = "person")
+    //private Event event;
+	
+	@OneToMany(mappedBy = "person")
+	private Set<Event> events = new HashSet<>();
+	
+	@OneToMany(mappedBy = "person")
+	private Set<EventPart> eventparts = new HashSet<>();
 	
 	
 
@@ -68,6 +78,7 @@ public class Person extends Model {
 	private Institution institution;
 
 	/*Written papers*/
+	@JsonIgnore
 	@ManyToMany(cascade = { CascadeType.ALL })
 	@JoinTable(
 			name = "author_paper",
@@ -80,34 +91,44 @@ public class Person extends Model {
 	@Column(name = "semanticScholarID")
 	private String semanticScholarID = null;
 
+	@JsonIgnore
 	@ManyToOne(cascade={ CascadeType.ALL}, fetch = FetchType.LAZY)
 	@JoinColumn(name="influencedBy1")
 	private Person top1influencedBy = null;    //Authors that influenced this one
+	@JsonIgnore
 	@ManyToOne(cascade={ CascadeType.ALL}, fetch = FetchType.LAZY)
 	@JoinColumn(name="influencedBy2" )
 	private Person top2influencedBy = null;    //Authors that influenced this one
+	@JsonIgnore
 	@ManyToOne(cascade={ CascadeType.ALL}, fetch = FetchType.LAZY)
 	@JoinColumn(name="influencedBy3" )
 	private Person top3influencedBy = null;    //Authors that influenced this one
+	@JsonIgnore
 	@ManyToOne(cascade={ CascadeType.ALL}, fetch = FetchType.LAZY)
 	@JoinColumn(name="influencedBy4" )
 	private Person top4influencedBy = null;    //Authors that influenced this one
+	@JsonIgnore
 	@ManyToOne(cascade={ CascadeType.ALL}, fetch = FetchType.LAZY)
 	@JoinColumn(name="influencedBy5" )
 	private Person top5influencedBy = null;    //Authors that influenced this one
 
+	@JsonIgnore
 	@ManyToOne(cascade={ CascadeType.ALL}, fetch = FetchType.LAZY)
 	@JoinColumn(name="influenced1" )
 	private Person top1influenced = null;    //Authors that this one influenced
+	@JsonIgnore
 	@ManyToOne(cascade={ CascadeType.ALL}, fetch = FetchType.LAZY)
 	@JoinColumn(name="influenced2" )
 	private Person top2influenced = null;    //Authors that this one influenced
+	@JsonIgnore
 	@ManyToOne(cascade={ CascadeType.ALL}, fetch = FetchType.LAZY)
 	@JoinColumn(name="influenced3" )
 	private Person top3influenced = null;    //Authors that this one influenced
+	@JsonIgnore
 	@ManyToOne(cascade={ CascadeType.ALL}, fetch = FetchType.LAZY)
 	@JoinColumn(name="influenced4" )
 	private Person top4influenced = null;    //Authors that this one influenced
+	@JsonIgnore
 	@ManyToOne(cascade={ CascadeType.ALL}, fetch = FetchType.LAZY)
 	@JoinColumn(name="influenced5" )
 	private Person top5influenced = null;    //Authors that this one influenced

@@ -30,10 +30,10 @@ public class Conference extends Model{
 
 	/*First day of conference, no need for the temporal annotation with java.time (indeed this would break it)*/
 	@Column (name="begin")
-	private String begin;
+	private LocalDate begin;
 	/*Last day of conference*/
 	@Column(name="end")
-	private String end;
+	private LocalDate end;
 
 	@Column(name="country")
 	private String country;
@@ -49,6 +49,9 @@ public class Conference extends Model{
 	@OneToMany(orphanRemoval=true, fetch=FetchType.LAZY) //unidirectional relationship which
 	@JoinColumn(name="conferenceID")					  //is saved in the Event table
 	private Set<Event> events = new HashSet<>();
+	
+	
+	
 	/*The workshops*/
 	@Hierarchy(entityName="workshop")
 	@JsonIgnore
@@ -56,6 +59,82 @@ public class Conference extends Model{
 	@JoinColumn(name="conferenceID")					  //is saved in the Workshop table
 	private Set<Workshop> workshops = new HashSet<>();
 
+	
+	@Column(name="description",length = 3000)
+	private String description;
+	@Column(name="submissionDeadlineLongPaper")
+	private LocalDate submissionDeadlineLongPaper;
+	@Column(name="submissionDeadlineShortPaper")
+	private LocalDate submissionDeadlineShortPaper;
+	@Column(name="reviewNotification")
+	private LocalDate review_notification;
+	
+	
+	/**
+	 * Gets a description of the given conference
+	 * @return description of the conference
+	 */
+	public String getDescription() {
+		return description;
+	}
+	
+	/**
+	 * Sets a description of the given conference
+	 * @param description of the conference
+	 */
+	public void setDescription(String description) {
+		this.description = description;		
+	}
+	
+	/**
+	 * Gets the submission deadline for long papers
+	 * @return submission deadline
+	 */
+	public LocalDate getSubmissionDeadlineLongPaper() {
+		return submissionDeadlineLongPaper;
+	}
+	
+	/**
+	 * Sets the submission deadline for long papers
+	 * @param submission deadline
+	 */
+	public void setSubmissionDeadlineLongPaper(LocalDate deadline) {
+		this.submissionDeadlineLongPaper = deadline;
+	}
+	
+	/**
+	 * Gets the submission deadline for short papers
+	 * @return submission deadline
+	 */
+	public LocalDate getSubmissionDeadlineShortPaper() {
+		return submissionDeadlineShortPaper;
+	}
+	
+	/**
+	 * Sets the submission deadline for short papers
+	 * @param submission deadline
+	 */
+	public void setSubmissionDeadlineShortPaper(LocalDate deadline) {
+		this.submissionDeadlineShortPaper = deadline;
+	}
+	
+	/**
+	 * Gets the notification of acceptance date for papers
+	 * @return date for notification of acceptance
+	 */
+	public LocalDate getReviewNotification() {
+		return review_notification;
+	}
+	
+	/**
+	 * Sets the notification of acceptance date for papers
+	 * @param date for notification of acceptance
+	 */
+	public void setReviewNotification(LocalDate review_notification) {
+		this.review_notification = review_notification;
+	}
+	
+	
 
 	public static Conference findOrCreate(String name){
 		System.out.println("Konferenz: " + name);
@@ -71,6 +150,7 @@ public class Conference extends Model{
 		conferenceFiler.add(c);
 		return c;
 	}
+
 	/**
 	 * Gets the unique id of this conference
 	 * @return The unique id of this conference
@@ -107,15 +187,15 @@ public class Conference extends Model{
 	 * Gets the date of the day this conference started
 	 * @return The date of the day this conference started
 	 */
-	public String getBegin() {
+	public LocalDate getBegin() {
 		return begin;
 	}
 
 	/**
 	 * Sets the date of the day this conference started
-	 * @param begin The new start date
+	 * @param localDate The new start date
 	 */
-	public void setBegin(String begin) {
+	public void setBegin(LocalDate begin) {
 		this.begin = begin;
 	}
 
@@ -123,15 +203,15 @@ public class Conference extends Model{
 	 * Gets the date of the day this conference ended
 	 * @return The date of the day this conference ended
 	 */
-	public String getEnd() {
+	public LocalDate getEnd() {
 		return end;
 	}
 
 	/**
 	 * Sets the date of the day this conference ended
-	 * @param end The new end date
+	 * @param localDate The new end date
 	 */
-	public void setEnd(String end) {
+	public void setEnd(LocalDate end) {
 		this.end = end;
 	}
 

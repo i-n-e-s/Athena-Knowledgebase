@@ -60,11 +60,11 @@ public class APIController {
 			
 			if (ret.isEmpty()) {
 				// search nearest neighbor only if it is no nested query
-				//if (queryList.contains("and")) {
+				if (queryList.contains("and")) {
 				ret = searchDBwild(queryList, jpqlVars, tree, verifier);
-				//} else {
-				//	ret = searchNearsetNeighbor(queryList, jpqlVars, tree, verifier);
-				//}
+				} else {
+					ret = searchNearsetNeighbor(queryList, jpqlVars, tree, verifier);
+				}
 			}
 			return ret;
 		}

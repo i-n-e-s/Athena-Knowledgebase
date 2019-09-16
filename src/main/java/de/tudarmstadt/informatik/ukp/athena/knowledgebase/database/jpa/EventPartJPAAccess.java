@@ -10,6 +10,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.CommonAccess;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Event;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.EventPart;
 
 /**
@@ -49,7 +50,7 @@ public class EventPartJPAAccess implements CommonAccess<EventPart> {
 
 	@Override
 	public boolean alreadyExists(String identifier){
-		String query = "SELECT p FROM eventpart p WHERE p.title = '"+identifier.replace("'","''") + "'";
+		String query = "SELECT p FROM EventPart p WHERE p.title = '"+identifier.replace("'","''") + "'";
 		EntityManager entityManager = PersistenceManager.getEntityManager();
 		//Execute query
 		List<EventPart> matches = entityManager.createQuery(query).getResultList();
@@ -63,4 +64,15 @@ public class EventPartJPAAccess implements CommonAccess<EventPart> {
 		List<EventPart> result = entityManager.createQuery("FROM EventPart").getResultList();
 		return result;
 	}
+	public EventPart getByName(String identifier){
+		String query = "SELECT e FROM EventPart e WHERE e.title = '"+identifier.replace("'","''") + "'";
+		EntityManager entityManager = PersistenceManager.getEntityManager();
+
+		//Execute query
+		List<EventPart> matches = entityManager.createQuery(query).getResultList();
+
+		//If results are found, return the first. Otherwise return null
+		return (matches.size() > 0) ? matches.get(0) : null;
+	}
+	
 }

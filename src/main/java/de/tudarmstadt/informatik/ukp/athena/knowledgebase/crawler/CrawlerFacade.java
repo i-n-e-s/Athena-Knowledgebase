@@ -42,6 +42,36 @@ public class CrawlerFacade extends AbstractCrawler{
 		return crawler.getPaperAuthorEvent();
 	}
 
+<<<<<<< HEAD
+=======
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public ArrayList<Conference> getConferenceACL2018() throws IOException{
+		return crawler.getConferenceACL2018();
+	}
+
+	
+	
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Conference getConferenceInformation() throws IOException {
+		return crawler.getConferenceInformation();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public ArrayList<ScheduleEntry> getSchedule() throws IOException {
+		return crawler.getSchedule();
+	}
+>>>>>>> 414a39be1a36609675435381741be3d4d6246bc8
 
 	/**
 	 * {@inheritDoc}
