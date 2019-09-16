@@ -42,9 +42,7 @@ public class CrawlerFacade extends AbstractCrawler{
 		return crawler.getPaperAuthorEvent();
 	}
 
-<<<<<<< HEAD
-=======
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -71,7 +69,6 @@ public class CrawlerFacade extends AbstractCrawler{
 	public ArrayList<ScheduleEntry> getSchedule() throws IOException {
 		return crawler.getSchedule();
 	}
->>>>>>> 414a39be1a36609675435381741be3d4d6246bc8
 
 	/**
 	 * {@inheritDoc}

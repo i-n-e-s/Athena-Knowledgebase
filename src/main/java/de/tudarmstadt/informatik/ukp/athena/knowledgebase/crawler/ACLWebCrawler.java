@@ -447,8 +447,6 @@ class ACLWebCrawler extends AbstractCrawler {
         return null;
     }
 
-<<<<<<< HEAD
-=======
     /**
      * Checks with the given {@link conferences} whether or not to save this paper
      * into the database
@@ -1417,7 +1415,6 @@ class ACLWebCrawler extends AbstractCrawler {
         }
     }
 
->>>>>>> 414a39be1a36609675435381741be3d4d6246bc8
     @Override
     public void close() {
         papers.clear();
