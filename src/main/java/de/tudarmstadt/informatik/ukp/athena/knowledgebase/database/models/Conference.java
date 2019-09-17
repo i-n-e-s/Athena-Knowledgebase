@@ -60,7 +60,7 @@ public class Conference extends Model{
 	private Set<Workshop> workshops = new HashSet<>();
 
 	
-	@Column(name="description",length = 3000)
+	@Column(name="description",columnDefinition = "VARCHAR(3000)")
 	private String description;
 	@Column(name="submissionDeadlineLongPaper")
 	private LocalDate submissionDeadlineLongPaper;

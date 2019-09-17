@@ -31,15 +31,16 @@ public class Paper extends Model {
 	@Column(name = "topic")
 	private String topic;
 	/*Paper's authors*/
+	@JsonIgnore
 	@ManyToMany(mappedBy = "papers")
 	private Set<Person> persons = new HashSet<>();
 
+	@JsonIgnore
 	/*Paper's tags*/
 	@ManyToMany(mappedBy = "papers")
 	private Set<Tag> tags = new HashSet<>();
 
-	
-	
+	@JsonIgnore
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "event_paper")
 	private Event event;

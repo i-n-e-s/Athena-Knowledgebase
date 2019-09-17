@@ -11,6 +11,8 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 @Table(name="institution")
 public class Institution extends Model {
@@ -23,7 +25,8 @@ public class Institution extends Model {
 
 	@Column(name = "name", nullable = false)
 	private String name;
-
+	
+	@JsonIgnore
 	@OneToMany(mappedBy = "institution")
 	private Set<Person> persons = new HashSet<>();
 

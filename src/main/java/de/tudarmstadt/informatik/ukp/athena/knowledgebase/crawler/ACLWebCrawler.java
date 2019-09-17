@@ -1068,8 +1068,7 @@ class ACLWebCrawler extends AbstractCrawler {
 	            Paper paper =Paper.findById(paperID);
 	            
 	            if(paper==null) {
-	            paper=new Paper();	
-	            paper.setTitle("Not fount: "+paperID);
+	            continue;
 	            	
 	            }
 	            
