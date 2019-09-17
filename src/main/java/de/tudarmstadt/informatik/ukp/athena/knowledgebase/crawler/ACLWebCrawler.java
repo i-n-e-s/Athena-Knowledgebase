@@ -27,6 +27,8 @@ import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.jpa.Conferenc
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.jpa.EventJPAAccess;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.jpa.PaperJPAAccess;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.jpa.PersonJPAAccess;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.jpa.TagJPAAccess;
+
 import org.allenai.scienceparse.ExtractedMetadata;
 import org.allenai.scienceparse.Parser;
 import org.apache.logging.log4j.LogManager;
@@ -531,66 +533,6 @@ class ACLWebCrawler extends AbstractCrawler {
     @Override
     public ArrayList<Conference> getConferenceACL2018() throws IOException {
     	
-    	if(false) {
-    		
-    			    ArrayList<JSONObject> json=new ArrayList<JSONObject>();
-    			    JSONObject obj;
-    			    // The name of the file to open.
-    			    String fileName = "C:\\Users\\Ich\\Desktop\\Uni\\NLP Projekt\\Gemeinsam\\src\\main\\resources\\myTestFilesProcessed.json";
-    			     
-    			    // This will reference one line at a time
-    			    String line = null;
-
-    			    try {
-    			        // FileReader reads text files in the default encoding.
-    			        FileReader fileReader = new FileReader(fileName);
-
-    			        // Always wrap FileReader in BufferedReader.
-    			        BufferedReader bufferedReader = new BufferedReader(fileReader);
-
-    			        while((line = bufferedReader.readLine()) != null) {
-    			            obj = (JSONObject) new JSONParser().parse(line);
-    			            json.add(obj);
-    			            
-    			            JSONArray taskList = (JSONArray) obj.get("generic");
-    			            System.out.println("Nächste Line!");
-    			            Iterator<JSONArray> iterator = taskList.iterator();
-    			            while (iterator.hasNext()) {
-    			                Iterator<String> iterator2 =iterator.next().iterator();
-    			                System.out.println("Nächstes generic!");
-        			            while (iterator2.hasNext()) {
-        			            System.out.println(iterator2.next());
-        			            }
-    			                
-    			            }
-    			            
-    			            
-    			        }
-    			        // Always close files.
-    			        bufferedReader.close();  
-    			        
-    			    }
-    			    catch(FileNotFoundException ex) {
-    			        System.out.println("Unable to open file '" + fileName + "'");                
-    			    }
-    			    catch(IOException ex) {
-    			        System.out.println("Error reading file '" + fileName + "'");                  
-    			        // Or we could just do this: 
-    			        // ex.printStackTrace();
-    			    } catch (ParseException e) {
-    			        // TODO Auto-generated catch block
-    			        e.printStackTrace();
-    			    }
-    			        
-    			        
-    		
-    	return new ArrayList<Conference>();		    
-    			    
-    	}else {
-    		
-    		
-    		
-
     	ArrayList<Conference> conferencesList = new ArrayList<Conference>();
 
     	ArrayList<Person> addedPersons=new ArrayList<>();
@@ -867,7 +809,7 @@ class ACLWebCrawler extends AbstractCrawler {
     			    System.out.println(speakerName);
     			    
     			    
-    			    title=title.replace("'","X");
+    			    title=title.replace("'","''");
     			    System.out.println("Title: "+title);
     			    Paper paper=Paper.findOrCreate(null, title);
     			    
@@ -1016,7 +958,7 @@ class ACLWebCrawler extends AbstractCrawler {
     			    
     			    
     			    
-    			    String title=poster.text().replace("'","X" );
+    			    String title=poster.text().replace("'","''" );
  			       Paper paper=Paper.findOrCreate(null, title);
  			      
     			    
@@ -1085,14 +1027,218 @@ class ACLWebCrawler extends AbstractCrawler {
     	
     	return conferencesList;
     	
-    	
-    	
     	}
     	
+    
+    
+    
+    @Override
+    public ArrayList<Paper> getTags() throws IOException {
+    	
+    	
+		TagJPAAccess tagFiler = new TagJPAAccess();
+
+    	ArrayList<Paper> paperList=new ArrayList<Paper>();
+
+	    ArrayList<JSONObject> json=new ArrayList<JSONObject>();
+	    JSONObject obj;
+	    // The name of the file to open.
+	    String fileName = "C:\\Users\\Ich\\Desktop\\Uni\\NLP Projekt\\Gemeinsam\\src\\main\\resources\\myTestFilesProcessed.json";
+	     
+	    // This will reference one line at a time
+	    String line = null;
+
+	    try {
+	        // FileReader reads text files in the default encoding.
+	        FileReader fileReader = new FileReader(fileName);
+
+	        // Always wrap FileReader in BufferedReader.
+	        BufferedReader bufferedReader = new BufferedReader(fileReader);
+
+	        while((line = bufferedReader.readLine()) != null) {
+	           
+	            System.out.println("Nächste Line!");
+
+	        	obj = (JSONObject) new JSONParser().parse(line);
+	            json.add(obj);
+	            
+	           
+	            String paperID=(String) obj.get("doc_key");
+	            
+	            Paper paper =Paper.findById(paperID);
+	            
+	            if(paper==null) {
+	            paper=new Paper();	
+	            paper.setTitle("Not fount: "+paperID);
+	            	
+	            }
+	            
+	            
+	            
+	            
+	            
+System.out.println("generic");
+	            
+	           JSONArray taskList = (JSONArray) obj.get("generic");
+	            Iterator<JSONArray> iterator = taskList.iterator();
+	            
+	            while (iterator.hasNext()) {
+		            String name="";
+
+	                Iterator<String> iterator2 =iterator.next().iterator();
+		            while (iterator2.hasNext()) {
+		            name=name+iterator2.next();
+		            }
+		            
+		            System.out.println(name);
+		            Tag tag =Tag.findOrCreate(name);
+		            tag.setCategory(TagCategory.GENERIC);
+		    		tagFiler.add(tag);
+
+		            
+		            paper.addTag(tag);
+	                
+	            }
+	            
+	            System.out.println("task");
+	            
+		            taskList = (JSONArray) obj.get("task");
+		            iterator = taskList.iterator();
+		            
+		            while (iterator.hasNext()) {
+			            String name="";
+
+		                Iterator<String> iterator2 =iterator.next().iterator();
+			            while (iterator2.hasNext()) {
+			            name=name+iterator2.next();
+			            }
+			            
+			            System.out.println(name);
+			            Tag tag =Tag.findOrCreate(name);
+			            tag.setCategory(TagCategory.TASK);
+			    		tagFiler.add(tag);
+
+			            
+			            paper.addTag(tag);
+		                
+		            }
+	            
+		            System.out.println("metric");
+		            
+		            taskList = (JSONArray) obj.get("metric");
+		            iterator = taskList.iterator();
+		            
+		            while (iterator.hasNext()) {
+			            String name="";
+
+		                Iterator<String> iterator2 =iterator.next().iterator();
+			            while (iterator2.hasNext()) {
+			            name=name+iterator2.next();
+			            }
+			            
+			            System.out.println(name);
+			            Tag tag =Tag.findOrCreate(name);
+			            tag.setCategory(TagCategory.METRIC);
+			    		tagFiler.add(tag);
+
+			            
+			            paper.addTag(tag);
+		                
+		            }
+		            
+		            System.out.println("material");
+		            
+		            taskList = (JSONArray) obj.get("material");
+		            iterator = taskList.iterator();
+		            
+		            while (iterator.hasNext()) {
+			            String name="";
+
+		                Iterator<String> iterator2 =iterator.next().iterator();
+			            while (iterator2.hasNext()) {
+			            name=name+iterator2.next();
+			            }
+			            
+			            System.out.println(name);
+			            Tag tag =Tag.findOrCreate(name);
+			            tag.setCategory(TagCategory.MATERIAL);
+			    		tagFiler.add(tag);
+
+			            
+			            paper.addTag(tag);
+		                
+		            }
+		            
+		            System.out.println("otherscientificterm");
+		            
+		            taskList = (JSONArray) obj.get("otherscientificterm");
+		            iterator = taskList.iterator();
+		            
+		            while (iterator.hasNext()) {
+			            String name="";
+
+		                Iterator<String> iterator2 =iterator.next().iterator();
+			            while (iterator2.hasNext()) {
+			            name=name+iterator2.next();
+			            }
+			            
+			            System.out.println(name);
+			            Tag tag =Tag.findOrCreate(name);
+			            tag.setCategory(TagCategory.OTHERSCIENTIFICTERM);
+			    		tagFiler.add(tag);
+
+			            
+			            paper.addTag(tag);
+		                
+		            }
+		            
+System.out.println("method");
+		            
+		            taskList = (JSONArray) obj.get("method");
+		            iterator = taskList.iterator();
+		            
+		            while (iterator.hasNext()) {
+			            String name="";
+
+		                Iterator<String> iterator2 =iterator.next().iterator();
+			            while (iterator2.hasNext()) {
+			            name=name+iterator2.next();
+			            }
+			            
+			            System.out.println(name);
+			            Tag tag =Tag.findOrCreate(name);
+			            tag.setCategory(TagCategory.METHOD);
+			    		tagFiler.add(tag);
+
+			            
+			            paper.addTag(tag);
+		                
+		            }
+	            
+	        paperList.add(paper);    
+	            
+	        }
+	        // Always close files.
+	        bufferedReader.close();  
+	        
+	    }
+	    catch(FileNotFoundException ex) {
+	        System.out.println("Unable to open file '" + fileName + "'");                
+	    }
+	    catch(IOException ex) {
+	        System.out.println("Error reading file '" + fileName + "'");                  
+	        // Or we could just do this: 
+	        // ex.printStackTrace();
+	    } catch (ParseException e) {
+	        // TODO Auto-generated catch block
+	        e.printStackTrace();
+	    }
+	        
+	        
+
+return paperList;	
+    	
     }
-    
-    
-    
     
     
     

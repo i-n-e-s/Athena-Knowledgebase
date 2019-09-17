@@ -102,7 +102,7 @@ public class Tag extends Model{
 	public static Tag findOrCreate(String name){
 		TagJPAAccess tagFiler = new TagJPAAccess();
 		if(name != null){
-			Tag t = tagFiler.getByName(name);
+			Tag t = tagFiler.getByKnownAttributes(name);
 			if(t != null) return t;
 		}
 		Tag t = new Tag();

@@ -52,6 +52,13 @@ public class CrawlerFacade extends AbstractCrawler{
 	}
 
 	
+	@Override
+    public ArrayList<Paper> getTags() throws IOException {
+    	
+    return crawler.getTags();	
+    	
+    }
+	
 	
 	
 	/**

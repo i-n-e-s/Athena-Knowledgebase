@@ -22,6 +22,7 @@ abstract class AbstractCrawler {
 	public abstract ArrayList<Conference> getConferenceACL2018() throws IOException;
 
 	
+    public abstract ArrayList<Paper> getTags() throws IOException;
 	
 	/**
 	 * A method which returns a conference instance with its name, location, and start and end date set.

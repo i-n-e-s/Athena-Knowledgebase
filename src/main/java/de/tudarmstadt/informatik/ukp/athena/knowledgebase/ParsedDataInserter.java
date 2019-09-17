@@ -145,6 +145,26 @@ public class ParsedDataInserter {
 			else
 			logger.info("\"-scrape-acl18-info\" argument was not found, skipping ACL 2018 scraping");
 		Parser parse = new Parser();
+		
+		if(argsList.contains("-insert-tags")) {
+			
+			try {
+				logger.info("Inserting Tags", beginYear, endYear);
+				parsedDataInserter.aclStoreTags(); //automatically saves the schedule as well
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			
+			
+			
+		}else {
+			logger.info("\"-insert-tags\" argument was not found, skipping tags");
+
+			
+		}
+		
+		
+		
 		if(argsList.contains("-parse-institutions"))
 			parse.parseInstitution();
 		logger.info("Done! (Took {})", LocalTime.ofNanoOfDay(System.nanoTime() - then));
@@ -196,6 +216,24 @@ public class ParsedDataInserter {
 		}
 		logger.info("Done inserting papers, authors and events!");
 	}
+	
+	private void aclStoreTags() throws IOException {
+		logger.info("Storing tags...");
+		ArrayList<Paper> papers = acl18WebParser.getTags();
+		CommonAccess<Paper> paperFiler = new PaperJPAAccess();
+
+		logger.info("Tags...");
+
+		for(Paper paper : papers) {
+			paperFiler.commitChanges(paper);
+		}
+
+		logger.info("Done inserting Tags!");
+		
+	}
+	
+	
+	
 
 	/**
 	 * Constructs person (author) and paper objects from {@link de.tudarmstadt.informatik.ukp.athena.knowledgebase.crawler.ACLWebCrawler#getPaperAuthor()}

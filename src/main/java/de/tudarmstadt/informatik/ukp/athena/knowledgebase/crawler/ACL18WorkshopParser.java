@@ -100,13 +100,13 @@ public class ACL18WorkshopParser {
 
 			time = LocalTime.of(Integer.parseInt(timeSplit[0]), Integer.parseInt(timeSplit[1]));
 //			##################################
-			event.setBegin("some time...");
+			//event.setBegin("some time...");
 //			event.setBegin(LocalDateTime.of(workshop.getBegin().toLocalDate(), time));
 
 			//i'm assuming that the closing event is the end of the workshop, thus it does not get added
 			if(previousEvent != null) {
 //			##################################
-				previousEvent.setEnd("some time");
+				//previousEvent.setEnd("some time");
 				workshop.addEvent(previousEvent);
 				workshop.setEnd("some time");
 //				previousEvent.setEnd(LocalDateTime.of(workshop.getEnd().toLocalDate(), time));
@@ -238,7 +238,7 @@ public class ACL18WorkshopParser {
 					}
 
 					workshop.addEvent(previousEvent);
-					workshop.setEnd(previousEvent.getEnd());
+					//workshop.setEnd(previousEvent.getEnd());
 				}
 			}
 		}
@@ -283,7 +283,7 @@ public class ACL18WorkshopParser {
 					previousEvent.setCategory(EventCategory.SESSION);
 
 				workshop.addEvent(previousEvent);
-				workshop.setEnd(previousEvent.getEnd());
+				//workshop.setEnd(previousEvent.getEnd());
 
 				if(skip)
 					continue;
@@ -366,7 +366,7 @@ public class ACL18WorkshopParser {
 				}
 
 				workshop.addEvent(event);
-				workshop.setEnd(event.getEnd());
+				//workshop.setEnd(event.getEnd());
 				event = null;
 			}
 		}
@@ -417,7 +417,7 @@ public class ACL18WorkshopParser {
 				event.setCategory(EventCategory.TALK);
 
 			workshop.addEvent(event);
-			workshop.setEnd(event.getEnd());
+			//workshop.setEnd(event.getEnd());
 		}
 	}
 
@@ -491,7 +491,7 @@ public class ACL18WorkshopParser {
 				event.setCategory(EventCategory.BREAK);
 
 			workshop.addEvent(event);
-			workshop.setEnd(event.getEnd());
+			//workshop.setEnd(event.getEnd());
 		}
 	}
 
@@ -549,7 +549,7 @@ public class ACL18WorkshopParser {
 				event.setCategory(EventCategory.BREAK);
 
 			workshop.addEvent(event);
-			workshop.setEnd(event.getEnd());
+			//workshop.setEnd(event.getEnd());
 			event = new Event();
 		}
 	}
@@ -578,8 +578,8 @@ public class ACL18WorkshopParser {
 	 */
 	public static final void setEventBeginEnd(String[] beginEnd, String string, String string2, Event event) {
 //		################################
-		event.setBegin(string);
-		event.setEnd(string2);
+		//event.setBegin(string);
+		//event.setEnd(string2);
 //		event.setBegin(LocalDateTime.of(string, beginEnd[0]));
 //		event.setEnd(LocalDateTime.of(string2, beginEnd[1]));
 	}

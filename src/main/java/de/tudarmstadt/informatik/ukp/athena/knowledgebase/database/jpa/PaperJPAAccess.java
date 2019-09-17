@@ -85,7 +85,8 @@ public class PaperJPAAccess implements CommonAccess<Paper> {
 		String query = "SELECT c FROM Paper c WHERE ";
 		if( id != null )
 			query = query + "c.semanticScholarID LIKE '"+id + "'";
-		else if ( name != null) query = query + "c.title LIKE '" +name+ "'";
+		else if ( name != null) query = query +"c.title LIKE '" +name+ "'";
+		
 		else {
 			System.out.println("No title and no ID given");//no title and no id given
 			return null;
@@ -95,6 +96,22 @@ public class PaperJPAAccess implements CommonAccess<Paper> {
 		return null;
 	}
 
+	
+	public Paper getByPaperId(String id) {
+		//1. Build JPQL query for combined search
+		EntityManager entityManager = PersistenceManager.getEntityManager();
+		String query = "SELECT c FROM Paper c WHERE ";
+		if ( id != null) query = query + "c.paperID LIKE '" +id+ "'";//"c.title LIKE '" +name+ "'";
+		
+		else {
+			System.out.println("No title and no ID given");//no title and no id given
+			return null;
+		}
+		List<Paper> result = entityManager.createQuery(query).getResultList();
+		if( result.size() > 0 ) { return result.get(0); }
+		return null;
+	}
+	
 	/**
 	 * Looks for DB entries with matching Semantic Scholar ID
 	 *

@@ -355,6 +355,14 @@ public class Paper extends Model {
 		}
 		return searchResults;
 	}
+	
+	public static Paper findById(String id) {
+		//Check if paper with same S2ID exists in DB
+				PaperJPAAccess filer = new PaperJPAAccess();
+				Paper searchResult = filer.getByPaperId(id);
+				return searchResult;
+		
+	}
 
 	/**
 	 * Creates a String representation of this paper object.
