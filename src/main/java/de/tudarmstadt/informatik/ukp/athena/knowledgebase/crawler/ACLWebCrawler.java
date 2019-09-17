@@ -31,6 +31,7 @@ import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.jpa.TagJPAAcc
 
 import org.allenai.scienceparse.ExtractedMetadata;
 import org.allenai.scienceparse.Parser;
+import org.allenai.scienceparse.Section;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.pdfbox.text.PDFTextStripper;
@@ -207,6 +208,17 @@ class ACLWebCrawler extends AbstractCrawler {
         //TODO sachen schon vorher einspeichern und in vier teile splitten
         Set<String> uniqueURL = get_links("https://aclweb.org/anthology/events/");
         System.out.println("Projekt läuft!");
+        // PARSER
+        org.allenai.scienceparse.Parser parser = null;
+        PDFTextStripper stripper = null;
+        de.tudarmstadt.informatik.ukp.athena.knowledgebase.PDFParser.Parser myparse = new de.tudarmstadt.informatik.ukp.athena.knowledgebase.PDFParser.Parser();
+
+        try {
+            parser = Parser.getInstance();
+            stripper = new PDFTextStripper();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         HashSet<String> uniqueConverenceURLs = uniqueURL.stream()
                 .filter(p -> p.contains("https://aclweb.org/anthology/events/")).collect(Collectors.toCollection(HashSet::new));
         ArrayList<String> converenceURLs = selector(uniqueConverenceURLs, this.conferences, this.beginYear, this.endYear).stream().collect(Collectors.toCollection(ArrayList::new));;
@@ -305,7 +317,7 @@ class ACLWebCrawler extends AbstractCrawler {
                     Elements paperInformationElements = doc.select("#main > div > div.col.col-lg-10.order-2 > dl > dd");
                     if (!doc.title().contains("VOLUME")) {
                         // check is not earlier because the elmnt is needed
-                        if (conferences.length != 0 && !shouldSavePaper(doc))
+                        if (conferences.length != 0) //
                             continue; // innerLoop; //label is not needed necessarily, but helps readability
                         // add paper info
                         // clean up the titles in the form of [C18-1017] Simple Neologism Based Domain
@@ -324,20 +336,32 @@ class ACLWebCrawler extends AbstractCrawler {
                         paper.setRemoteLink(remoteLink); // wow that was easy
         				paper.setReleaseDate(null);
 //        				paper.setReleaseDate(extractPaperRelease(doc));
-                        /**try {
-                         ExtractedMetadata meDa = scienceParse(parser, new URL(remoteLink));
-                         if(meDa == null) continue;
-                         String plaintext = "";
-                         for (org.allenai.scienceparse.Section sec : meDa.sections) {
-                         plaintext = plaintext + sec.text;
-                         }
-                         paper.setPaperPlainText(plaintext);
-                         paper.setPaperAbstract(meDa.abstractText);
-                         } catch (MalformedURLException e) {
-                         System.out.println("Parser abgestuerzt. Leere PDF-File? ");
-                         System.out.println("Fehlerhafter Link: " + remoteLink);
-                         e.printStackTrace();
-                         }**/
+        				ExtractedMetadata meDa = null;
+                        try {
+                            URL urli = new URL(remoteLink);
+                            meDa = myparse.scienceParse(parser, urli);
+                            String plainText = myparse.plainParse(stripper, urli);
+                            paper.setPaperPlainText(plainText);
+
+                        } catch (MalformedURLException e) {
+                            System.out.println("Parser abgestuerzt. Leere PDF-File? ");
+                            System.out.println("Fehlerhafter Link: " + remoteLink);
+                            e.printStackTrace();
+                        }
+
+                        if(meDa == null || meDa.getSections() == null)continue;
+                        paper.setPaperAbstract(meDa.abstractText);
+                        List<Section> sections = meDa.getSections();
+                        for(Section sec : sections) {
+                            if (sec == null || sec.getHeading() == null) continue;
+                            String h = sec.getHeading().trim().toLowerCase();
+                            if (h.contains("introduction")) paper.setIntroduction(sec.getText());
+                            else if (h.contains("related work")) paper.setRelatedWork(sec.getText());
+                            else if (h.contains("results")) paper.setResult(sec.getText());
+                            else if (h.contains("discussion")) paper.setDiscussion(sec.getText());
+                            else if (h.contains("conclusion")) paper.setConclusion(sec.getText());
+                            else if (h.contains("datasets")) paper.setDataset(sec.getText());
+                        }
                         // find authors and add them to a list
                         Elements authorElements = doc.select("#main > p> a");// elmnt.parent().parent().children().select("span").select("a");
                         for (Element authorEl : authorElements) {
@@ -1280,8 +1304,8 @@ return paperList;
         String cityCountryInformation = aboutPage.select("p:nth-child(1) a:nth-child(1)").text();
         String dateAndLocationString = aboutPage.select(".sub-title-extra").text();
 //		##############################################
-        String conferenceStartDate = CrawlerToolset.acl2018ConvertStringToDateRange(dateAndLocationString)[0];
-        String conferenceEndDate = CrawlerToolset.acl2018ConvertStringToDateRange(dateAndLocationString)[1];
+        LocalDate conferenceStartDate = CrawlerToolset.acl2018ConvertStringToDateRange(dateAndLocationString)[0];
+        LocalDate conferenceEndDate = CrawlerToolset.acl2018ConvertStringToDateRange(dateAndLocationString)[1];
 //		LocalDate conferenceStartDate = CrawlerToolset.acl2018ConvertStringToDateRange(dateAndLocationString)[0];
 //		LocalDate conferenceEndDate = CrawlerToolset.acl2018ConvertStringToDateRange(dateAndLocationString)[1];
         // Maybe we need to look at a timezone api? Probably not feasible to keep it
