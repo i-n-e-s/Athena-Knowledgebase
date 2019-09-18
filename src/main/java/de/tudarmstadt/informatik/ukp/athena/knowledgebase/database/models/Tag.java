@@ -35,7 +35,10 @@ public class Tag extends Model{
 	
 	/*Taged papers*/
 	@JsonIgnore
+<<<<<<< HEAD
 	@Hierarchy(entityName="paper")
+=======
+>>>>>>> 3923a09294ee96bd66aee944899384f61211f207
 	@ManyToMany(cascade = { CascadeType.ALL })
 	@JoinTable(
 			name = "tag_paper",
