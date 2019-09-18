@@ -1280,8 +1280,8 @@ return paperList;
         String cityCountryInformation = aboutPage.select("p:nth-child(1) a:nth-child(1)").text();
         String dateAndLocationString = aboutPage.select(".sub-title-extra").text();
 //		##############################################
-        String conferenceStartDate = CrawlerToolset.acl2018ConvertStringToDateRange(dateAndLocationString)[0];
-        String conferenceEndDate = CrawlerToolset.acl2018ConvertStringToDateRange(dateAndLocationString)[1];
+        //String conferenceStartDate = CrawlerToolset.acl2018ConvertStringToDateRange(dateAndLocationString)[0];
+        //String conferenceEndDate = CrawlerToolset.acl2018ConvertStringToDateRange(dateAndLocationString)[1];
 //		LocalDate conferenceStartDate = CrawlerToolset.acl2018ConvertStringToDateRange(dateAndLocationString)[0];
 //		LocalDate conferenceEndDate = CrawlerToolset.acl2018ConvertStringToDateRange(dateAndLocationString)[1];
         // Maybe we need to look at a timezone api? Probably not feasible to keep it

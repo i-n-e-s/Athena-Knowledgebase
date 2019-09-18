@@ -50,11 +50,11 @@ public class EventPart extends Model{
 	
 	/* Associated papers */
 
-
+	@Hierarchy(entityName="paper")
 	@OneToMany(mappedBy = "eventpart")
 	private Set<Paper> papers = new HashSet<>();
 
-	
+	@Hierarchy(entityName="person")
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "eventpart_person")
 	private Person person;

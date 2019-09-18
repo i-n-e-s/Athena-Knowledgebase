@@ -44,7 +44,6 @@ public class Conference extends Model{
 
 	/*Basically the schedule*/
 	@Hierarchy(entityName="event")
-
 	@JsonIgnore
 	@OneToMany(orphanRemoval=true, fetch=FetchType.LAZY) //unidirectional relationship which
 	@JoinColumn(name="conferenceID")					  //is saved in the Event table

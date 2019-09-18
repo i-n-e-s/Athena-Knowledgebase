@@ -22,6 +22,7 @@ import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Hierar
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Institution;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Paper;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Person;
+import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Tag;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Workshop;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.exception.VerificationFailedException;
 
@@ -42,7 +43,8 @@ public class RequestVerifier {
 				Institution.class,
 				Paper.class,
 				Person.class,
-				Workshop.class
+				Workshop.class,
+				Tag.class
 		};
 
 		for(Class<?> clazz : models) {
@@ -66,7 +68,7 @@ public class RequestVerifier {
 						numberAttributeMap.put(field.getName(), 5);
 					else if(fieldTypeName.equals(java.time.LocalDate.class.getName()))
 						numberAttributeMap.put(field.getName(), 3);
-					else if(fieldTypeName.equals(de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.EventCategory.class.getName()) || fieldTypeName.equals("long"))
+					else if(fieldTypeName.equals(de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.EventCategory.class.getName())|| fieldTypeName.equals(de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.TagCategory.class.getName())|| fieldTypeName.equals("long"))
 						numberAttributeMap.put(field.getName(), 1);
 				}
 				//custom annotation to manage hierarchy between entities and collections

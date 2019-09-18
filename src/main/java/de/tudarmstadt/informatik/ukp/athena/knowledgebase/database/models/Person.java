@@ -55,10 +55,13 @@ public class Person extends Model {
 	
 	//@OneToOne(mappedBy = "person")
     //private Event event;
-	
+	@JsonIgnore
+	@Hierarchy(entityName="event")
 	@OneToMany(mappedBy = "person")
 	private Set<Event> events = new HashSet<>();
 	
+	@JsonIgnore
+	@Hierarchy(entityName="eventpart")
 	@OneToMany(mappedBy = "person")
 	private Set<EventPart> eventparts = new HashSet<>();
 	
@@ -79,6 +82,7 @@ public class Person extends Model {
 
 	/*Written papers*/
 	@JsonIgnore
+	@Hierarchy(entityName="paper")
 	@ManyToMany(cascade = { CascadeType.ALL })
 	@JoinTable(
 			name = "author_paper",

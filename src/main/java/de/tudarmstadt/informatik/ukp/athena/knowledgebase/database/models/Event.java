@@ -48,6 +48,7 @@ public class Event extends Model implements ScheduleEntry {
 	private String place;
 
 	/* Associated papers */
+	@Hierarchy(entityName="paper")
 	@JsonIgnore
 	@OneToMany(mappedBy = "event")
 	private Set<Paper> papers = new HashSet<>();
@@ -56,6 +57,7 @@ public class Event extends Model implements ScheduleEntry {
 //	@Column(name = "papers")
 //	private Set<Paper> papers;
 	/* Event parts, if any */
+
 	@Hierarchy(entityName="eventpart")
 	@JsonIgnore
 	@OneToMany(orphanRemoval = true, fetch = FetchType.LAZY)
@@ -66,7 +68,7 @@ public class Event extends Model implements ScheduleEntry {
 			)
 	private Set<EventPart> eventparts = new HashSet<>(); //lowercase to make it work with the api
 
-	
+	@Hierarchy(entityName="person")
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "event_person")
 	private Person person;

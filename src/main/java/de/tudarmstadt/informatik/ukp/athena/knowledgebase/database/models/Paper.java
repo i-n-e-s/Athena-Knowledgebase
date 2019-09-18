@@ -31,16 +31,20 @@ public class Paper extends Model {
 	@Column(name = "topic")
 	private String topic;
 	/*Paper's authors*/
+	@Hierarchy(entityName="person")
 	@JsonIgnore
 	@ManyToMany(mappedBy = "papers")
 	private Set<Person> persons = new HashSet<>();
-
+	
+	
 	@JsonIgnore
 	/*Paper's tags*/
+	@Hierarchy(entityName="tag")
 	@ManyToMany(mappedBy = "papers")
 	private Set<Tag> tags = new HashSet<>();
 
 	@JsonIgnore
+	@Hierarchy(entityName="event")
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "event_paper")
 	private Event event;
@@ -48,6 +52,7 @@ public class Paper extends Model {
 
 	
 	@ManyToOne(fetch = FetchType.LAZY)
+	@Hierarchy(entityName="eventpart")
 	@JoinColumn(name = "eventpart_paper")
 	private EventPart eventpart;
 	
