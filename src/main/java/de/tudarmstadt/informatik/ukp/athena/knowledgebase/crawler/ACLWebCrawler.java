@@ -58,7 +58,7 @@ class ACLWebCrawler extends AbstractCrawler {
     private String[] conferences; //conferences to be scraped from aclanthology.org
     private int beginYear = 0; //begin year of conferences to be scraped from aclanthology.org
     private int endYear = 0; //end year of conferences to be scraped from aclanthology.org
-
+    private boolean parsePdf=false;
     /**
      * Only parses in the given year range. If only one year is needed, use the same
      * input for both
@@ -69,7 +69,7 @@ class ACLWebCrawler extends AbstractCrawler {
      *                    of the conferences to scrape papers/authors from. null to
      *                    scrape all. Does not work when only scraping authors
      */
-    public ACLWebCrawler(int beginYear, int endYear, String... conferences) {
+    public ACLWebCrawler(int beginYear, int endYear,boolean parsePdf, String... conferences) {
         
         if (beginYear != 0) {
             this.beginYear = beginYear;
@@ -78,6 +78,7 @@ class ACLWebCrawler extends AbstractCrawler {
             this.endYear = endYear;
         }
 
+        this.parsePdf=parsePdf;
         if (conferences != null)
             this.conferences = conferences;
         else
@@ -200,11 +201,13 @@ class ACLWebCrawler extends AbstractCrawler {
         PDFTextStripper stripper = null;
         de.tudarmstadt.informatik.ukp.athena.knowledgebase.PDFParser.Parser myparse = new de.tudarmstadt.informatik.ukp.athena.knowledgebase.PDFParser.Parser();
 
+        if(parsePdf) {
         try {
             parser = Parser.getInstance();
             stripper = new PDFTextStripper();
         } catch (Exception e) {
             e.printStackTrace();
+        }
         }
         
         //select only valied conference urls 
@@ -326,7 +329,9 @@ class ACLWebCrawler extends AbstractCrawler {
         				//TODO: Dates!!!!!!
 //        				paper.setReleaseDate(extractPaperRelease(doc));
         				
+        
         				//Pdf Parser
+        				if(parsePdf) {
         				ExtractedMetadata meDa = null;
                         try {
                             URL urli = new URL(remoteLink);
@@ -353,6 +358,7 @@ class ACLWebCrawler extends AbstractCrawler {
                             else if (h.contains("conclusion")) paper.setConclusion(sec.getText());
                             else if (h.contains("datasets")) paper.setDataset(sec.getText());
                         }
+        				}
                         // find authors and add them to a list
                         Elements authorElements = doc.select("#main > p> a");// elmnt.parent().parent().children().select("span").select("a");
                         for (Element authorEl : authorElements) {
@@ -996,8 +1002,8 @@ class ACLWebCrawler extends AbstractCrawler {
 	    JSONObject obj;
 	    //TODO: adjust
 	    // The name of the file to open.
-	    String fileName = "C:\\Users\\Ich\\Desktop\\Uni\\NLP Projekt\\Gemeinsam\\src\\main\\resources\\myTestFilesProcessed.json";
-	     
+	   
+	    String fileName = "..\\main\\resources\\outputProcessed.json\\";
 	    // This will reference one line at a time
 	    String line = null;
 

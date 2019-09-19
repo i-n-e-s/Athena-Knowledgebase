@@ -59,8 +59,8 @@ public class ParsedDataInserter {
 	 * @param endYear The last year to get data from
 	 * @param conferences The abbreviations (see {@link https://aclanthology.info/}) of the conferences to scrape papers/authors from. null to scrape all.
 	 */
-	public ParsedDataInserter(int beginYear, int endYear, String... conferences) {
-		acl18WebParser = new CrawlerFacade(SupportedConferences.ACL, beginYear, endYear, conferences);
+	public ParsedDataInserter(int beginYear, int endYear,boolean parsePdf, String... conferences) {
+		acl18WebParser = new CrawlerFacade(SupportedConferences.ACL, beginYear, endYear,parsePdf, conferences);
 	}
 
 
@@ -81,6 +81,7 @@ public class ParsedDataInserter {
 		List<String> argsList = Arrays.asList(args); //for .contains
 		int beginYear = 2018, endYear = 2018;
 		String[] conferences = null;
+		boolean parsePdf=false;
 
 		for(String arg : args) {
 			if(arg.contains("-beginYear=")) {
@@ -92,6 +93,10 @@ public class ParsedDataInserter {
 			if(arg.contains("-conferences=")) {
 				conferences = arg.replace("-conferences=", "").split(",");
 			}
+			if(arg.contains("-parsePdf")) {
+				parsePdf=true;
+			}
+			
 		}
 
 		if(beginYear > endYear) {
@@ -107,7 +112,7 @@ public class ParsedDataInserter {
 		else
 			logger.info("Specific conferences given, will scrape papers and authors from the following: {}", Arrays.toString(conferences));
 
-		parsedDataInserter = new ParsedDataInserter(beginYear, endYear, conferences);
+		parsedDataInserter = new ParsedDataInserter(beginYear, endYear,parsePdf, conferences);
 		
 		//only scrape if respective argument was found
 		if(argsList.contains("-scrape-paper-author-event")) {
