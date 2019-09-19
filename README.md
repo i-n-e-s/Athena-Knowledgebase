@@ -15,7 +15,7 @@ The following sections intend to outline features/facts of this program
 - Largely database agnostic
 
 ### Wiki
-- Found at https://github.com/bl4ckscor3/BP-Athena/wiki
+- Found at https://github.com/i-n-e-s/Athena-Knowledgebase/wiki
 - Well documented, containing explanations of all functionality, including the API
 - Database schematic
 
