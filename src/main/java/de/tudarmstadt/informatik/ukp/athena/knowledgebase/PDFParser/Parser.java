@@ -6,6 +6,7 @@ import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Instit
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Paper;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Person;
 import org.allenai.scienceparse.ExtractedMetadata;
+import org.allenai.scienceparse.Section;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
 
@@ -18,6 +19,16 @@ import java.util.*;
 
 public class Parser {
 
+	
+	/**
+	 * Uses the allenAI parser to parse a pdf file of a paper given by a url to an
+	 * ExtractedMetadata Object which contains the sections of the paper as plain text. 
+	 * e.g. List<Section> sections = ExMe.getSections();
+	 * section.getText();
+	 * @param parser an allenAI parser (parser = Parser.getInstance();)
+	 * @param url the url of the paper pdf
+	 * @return an ExtractedMetadata Object containing the papers sections
+	 */
     public ExtractedMetadata scienceParse(org.allenai.scienceparse.Parser parser, URL url) {
         ExtractedMetadata em = null;
         try {
@@ -29,7 +40,16 @@ public class Parser {
         }
         return em;
     }
-    //parsing of plain text
+    
+    
+    
+    /**
+	 * Uses the pdfBox to parse a pdf file of a paper given by a url to 
+	 * a plain text.
+	 * @param stripper Instance of the PDFTextStripper (PDFTextStripper stripper= new PDFTextStripper();)
+	 * @param urli the url of the paper pdf
+	 * @return The paper plain text as string
+	 */
     public String plainParse(PDFTextStripper stripper, URL urli){
         String doc = null;
         try {
@@ -42,6 +62,13 @@ public class Parser {
         }
     return doc;
     }
+
+    
+    /**
+	 * Creates a connection to the specified url
+	 * @param url the url the connection is established to 
+	 * @return an HttpURLConnection object that can be transformed to an input stream by .getInputSream()
+	 */
 
     public static HttpURLConnection getConnectionFromURL(URL url) throws IOException {
         HttpURLConnection con = (HttpURLConnection) url.openConnection();
@@ -59,6 +86,7 @@ public class Parser {
         return con;
     }
 
+    
     public static void parseInstitution(){
         PaperJPAAccess paperAccess = new PaperJPAAccess();
         InstitutionJPAAccess instAccess = new InstitutionJPAAccess();

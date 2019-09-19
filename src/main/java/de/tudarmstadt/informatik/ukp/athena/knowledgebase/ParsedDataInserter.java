@@ -57,7 +57,7 @@ public class ParsedDataInserter {
 	/**
 	 * @param beginYear The first year to get data from
 	 * @param endYear The last year to get data from
-	 * @param conferences The abbreviations (see {@link https://aclanthology.info/}) of the conferences to scrape papers/authors from. null to scrape all. Does not work when only scraping authors
+	 * @param conferences The abbreviations (see {@link https://aclanthology.info/}) of the conferences to scrape papers/authors from. null to scrape all.
 	 */
 	public ParsedDataInserter(int beginYear, int endYear, String... conferences) {
 		acl18WebParser = new CrawlerFacade(SupportedConferences.ACL, beginYear, endYear, conferences);
@@ -108,7 +108,8 @@ public class ParsedDataInserter {
 			logger.info("Specific conferences given, will scrape papers and authors from the following: {}", Arrays.toString(conferences));
 
 		parsedDataInserter = new ParsedDataInserter(beginYear, endYear, conferences);
-
+		
+		//only scrape if respective argument was found
 		if(argsList.contains("-scrape-paper-author-event")) {
 			try {
 				logger.info("Scraping years {} through {} - this can take a couple of minutes...", beginYear, endYear);
@@ -119,20 +120,6 @@ public class ParsedDataInserter {
 			
 		}else {
 		logger.info("\"-scrape-paper-author-event\" argument was not found, skipping event scraping");
-
-		//only scrape if respective argument was found
-		if(argsList.contains("-scrape-paper-author")) {
-			try {
-				logger.info("Scraping years {} through {} - this can take a couple of minutes...", beginYear, endYear);
-				parsedDataInserter.aclStorePapersAndAuthors();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
-		else
-			logger.info("\"-scrape-paper-author\" argument was not found, skipping paper author scraping");
-
-		}
 		
 		if(argsList.contains("-scrape-acl18-info"))
 			try {
@@ -144,6 +131,8 @@ public class ParsedDataInserter {
 			
 			else
 			logger.info("\"-scrape-acl18-info\" argument was not found, skipping ACL 2018 scraping");
+		
+		}
 		Parser parse = new Parser();
 		
 		if(argsList.contains("-insert-tags")) {
@@ -158,32 +147,17 @@ public class ParsedDataInserter {
 			
 			
 		}else {
-			logger.info("\"-insert-tags\" argument was not found, skipping tags");
+			logger.info("\"-insert-tags\" argument was not found, skipping tag generation");
 
 			
 		}
 		
 		
-		
+		//retrieves the institution the papers are published from by their plain text and writes it to the institution field of the authors
 		if(argsList.contains("-parse-institutions"))
 			parse.parseInstitution();
 		logger.info("Done! (Took {})", LocalTime.ofNanoOfDay(System.nanoTime() - then));
 
-		// test API
-//		APIController apic = new APIController();		
-//		String request = "/paper:title=Emoji+Prediction"; // paper:title=wrror+rate+estimation"; //tako+kudo/paper:paperID=1/person";// 
-//		// Multimodal+Frame+Identification+with+Multilingual+Evaluation 
-//		apic.apiConnector(request);
-
-
-//		// testing my code
-//		PersonJPAAccess personfiler = new PersonJPAAccess();
-//		Person testperson = new Person();
-//		testperson.setFullName("irina gure");
-////		List<Person> result = personfiler.getByKnownAttributes(testperson);
-//		Person result = personfiler.getByFullName(testperson.getFullName());
-//		System.out.println(result);
-		
 		parsedDataInserter.acl18WebParser.close();
 	}
 
@@ -232,74 +206,6 @@ public class ParsedDataInserter {
 		
 	}
 	
-	
-	
-
-	/**
-	 * Constructs person (author) and paper objects from {@link de.tudarmstadt.informatik.ukp.athena.knowledgebase.crawler.ACLWebCrawler#getPaperAuthor()}
-	 * and adds them to the database. See its documentation for its makeup
-	 *
-	 * @throws IOException if jsoup was interrupted in the scraping process (during getPaperAuthor())
-	 * @author Julian Steitz, Daniel Lehmann
-	 */
-	private void aclStorePapersAndAuthors() throws IOException {
-	}
-
-		/**
-	 * Stores the ACL 2018 conference including the schedule into the database
-	 * Since events contain papers, this should be run after having executed {@link ParsedDataInserter#aclStorePapersAndAuthors()}
-	 */
-	private void acl2018StoreConferenceInformation() {
-		CommonAccess<Conference> conferenceCommonAccess = new ConferenceJPAAccess();
-
-		try {
-			Conference acl2018 = acl18WebParser.getConferenceInformation();
-			List<ScheduleEntry> entries = acl2018StoreSchedule();
-
-			for(ScheduleEntry entry : entries) {
-				if(entry instanceof Event)
-					acl2018.addEvent((Event)entry);
-				else if(entry instanceof Workshop)
-					acl2018.addWorkshop((Workshop)entry);
-			}
-
-			logger.info("Inserting conference into database...");
-			conferenceCommonAccess.add(acl2018);
-			logger.info("Done inserting!");
-		}
-		catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-
-	/**
-	 * Stores the acl2018 conference's schedule into the database
-	 * @return The scraped and stored events and workshops
-	 */
-	private List<ScheduleEntry> acl2018StoreSchedule() {
-		CommonAccess<Event> eventCommonAccess = new EventJPAAccess();
-		CommonAccess<Workshop> workshopCommonAccess = new WorkshopJPAAccess();
-		List<ScheduleEntry> entries = new ArrayList<>(); //initialize in case anything fails
-
-		try {
-			entries = acl18WebParser.getSchedule();
-
-			logger.info("Inserting schedule into database...");
-			//add to database
-			for(ScheduleEntry entry : entries) {
-				if(entry instanceof Event)
-					eventCommonAccess.add((Event)entry);
-				else if(entry instanceof Workshop)
-					workshopCommonAccess.add((Workshop)entry);
-			}
-			logger.info("Done inserting!");
-		}
-		catch(IOException e){
-			e.printStackTrace();
-		}
-
-		return entries;
-	}
 
 
 	/**

@@ -32,6 +32,9 @@ public class PaperJPAAccess implements CommonAccess<Paper> {
 		}
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void commitChanges(Paper data){
 		EntityManager entityManager = PersistenceManager.getEntityManager();
@@ -53,12 +56,7 @@ public class PaperJPAAccess implements CommonAccess<Paper> {
 		entityManager.getTransaction().commit();
 	}
 
-	public void merge (Paper data){
-		EntityManager entityManager = PersistenceManager.getEntityManager();
-
-		entityManager.getTransaction().begin();
-
-	}
+	
 
 	/**
 	 * {@inheritDoc}
@@ -96,7 +94,14 @@ public class PaperJPAAccess implements CommonAccess<Paper> {
 		return null;
 	}
 
-	
+	/**
+	 * Finds a matching DB entry by the paperID of a given paper object
+	 * If no attribute is specified, return null
+	 * If multiple occurrences are found in DB, return the first result
+	 *
+	 * @param paperID of paper to be found
+	 * @return An object from the DB with matching attributes, null if no object found or no search constraint set
+	 */	
 	public Paper getByPaperId(String id) {
 		//1. Build JPQL query for combined search
 		EntityManager entityManager = PersistenceManager.getEntityManager();
@@ -130,6 +135,10 @@ public class PaperJPAAccess implements CommonAccess<Paper> {
 		return null;
 	}
 
+	
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public boolean alreadyExists(String identifier){
 		String query = "SELECT p FROM paper p WHERE p.title = '"+identifier.replace("'","''") + "'";

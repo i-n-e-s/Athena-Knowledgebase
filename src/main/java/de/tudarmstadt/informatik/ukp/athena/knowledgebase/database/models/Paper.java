@@ -38,11 +38,12 @@ public class Paper extends Model {
 	
 	
 	@JsonIgnore
-	/*Paper's tags*/
+	/*Papers tags*/
 	@Hierarchy(entityName="tag")
 	@ManyToMany(mappedBy = "papers")
 	private Set<Tag> tags = new HashSet<>();
 
+	/*event the paper was published in*/
 	@JsonIgnore
 	@Hierarchy(entityName="event")
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -50,7 +51,7 @@ public class Paper extends Model {
 	private Event event;
 	
 
-
+	/*eventpart the paper was published in*/
 	@JsonIgnore
 	@ManyToOne(fetch = FetchType.LAZY)
 	@Hierarchy(entityName="eventpart")
@@ -77,24 +78,33 @@ public class Paper extends Model {
 	@Column(name = "semanticScholarID")
 	private String semanticScholarID;
 
-	/*Abstract of paper as String*/
-	@Column(name = "paperAbstract", columnDefinition="LONGTEXT")
-	private String paperAbstract;
+	/*amount of  Citations set by the SemanticScholar API*/
 	@Column(name = "amountOfCitations")
 	private Long amountOfCitations = (long)-1;    //-1 if not known yet
+	/*Whole text of the paper by pdf parsing*/
+
+	/*Abstract of paper as String either from pdf parsing or from aclanthology.info*/
+	@Column(name = "paperAbstract", columnDefinition="LONGTEXT")
+	private String paperAbstract;
+	
 	@Column(name= "plainText", columnDefinition = "LONGTEXT")
 	private String paperPlainText;
-
+	/*introduction of the paper from pdf parsing */
 	@Column(name= "introduction", columnDefinition = "LONGTEXT")
 	private String introduction;
+	/* the related work section of the paper from pdf parsing */
 	@Column(name= "relatedWork", columnDefinition = "LONGTEXT")
 	private String relatedWork;
+	/*result of the paper from pdf parsing */
 	@Column(name= "result", columnDefinition = "LONGTEXT")
 	private String result;
+	/*discussion of the paper from pdf parsing */
 	@Column(name= "discussion", columnDefinition = "LONGTEXT")
 	private String discussion;
+	/*conclusion of the paper from pdf parsing */
 	@Column(name= "conclusion", columnDefinition = "LONGTEXT")
 	private String conclusion;
+	
 	@Column(name= "dataset", columnDefinition = "LONGTEXT")
 	private String dataset;
 	@Column(name= "sectionNames")
@@ -338,38 +348,41 @@ public class Paper extends Model {
 	}
 
 	/**
-	 * Gets the parsed plaintext of the paper
+	 * Gets the parsed introduction of the paper
+	 * @return parsed introduction
 	 */
 	public String getIntroduction() {
 		return introduction;
 	}
 
 	/**
-	 * Sets this paper's plain text
+	 * Sets this paper's introduction
 	 *
-	 * @param paperPlainText this paper's abstract
+	 * @param paperPlainText this paper's introduction
 	 */
 	public void setIntroduction(String introduction) { this.introduction = introduction;
 	}
 
 	/**
-	 * Gets the parsed plaintext of the paper
+	 * Gets the parsed discussion of the paper
+	 * @return paper discussion
 	 */
 	public String getDiscussion() {
 		return discussion;
 	}
 
 	/**
-	 * Sets this paper's plain text
+	 * Sets this paper's discussion
 	 *
-	 * @param paperPlainText this paper's abstract
+	 * @param discussion this paper's discussion
 	 */
 	public void setDiscussion(String discussion) {
 		this.discussion = discussion;
 	}
 
 	/**
-	 * Gets the parsed plaintext of the paper
+	 * Gets the parsed result section of the paper
+	 * @return paper result section
 	 */
 	public String getResult() {
 		return result;
@@ -385,14 +398,14 @@ public class Paper extends Model {
 	}
 
 	/**
-	 * Gets the parsed plaintext of the paper
+	 * Gets the parsed related work section of the paper
 	 */
 	public String getRelatedWork() {
 		return relatedWork;
 	}
 
 	/**
-	 * Sets this paper's plain text
+	 * Sets this paper's related work section
 	 *
 	 * @param paperPlainText this paper's abstract
 	 */
@@ -401,30 +414,31 @@ public class Paper extends Model {
 	}
 
 	/**
-	 * Gets the parsed plaintext of the paper
+	 * Gets the parsed conclusion of the paper
+	 * @return paper conclusion
 	 */
 	public String getConclusion() {
 		return conclusion;
 	}
 
 	/**
-	 * Sets this paper's plain text
+	 * Sets this paper's conclusion
 	 *
-	 * @param paperPlainText this paper's abstract
+	 * @param paperPlainText this paper's conclusion
 	 */
 	public void setConclusion(String conclusion) {
 		this.conclusion = conclusion;
 	}
 
 	/**
-	 * Gets the parsed plaintext of the paper
+	 * Gets the parsed dataset section of the paper
 	 */
 	public String getDataset() {
 		return dataset;
 	}
 
 	/**
-	 * Sets this paper's plain text
+	 * Sets this paper's dataset section
 	 *
 	 * @param paperPlainText this paper's abstract
 	 */
@@ -433,14 +447,14 @@ public class Paper extends Model {
 	}
 
 	/**
-	 * Gets the parsed plaintext of the paper
+	 *  Gets the section Names of the paper as one string
 	 */
 	public String getSectionNames() {
 		return sectionNames;
 	}
 
 	/**
-	 * Sets this paper's plain text
+	 * Sets this paper's section names as one string
 	 *
 	 * @param paperPlainText this paper's abstract
 	 */
@@ -488,6 +502,14 @@ public class Paper extends Model {
 		return searchResults;
 	}
 	
+	
+	/**
+	 * Looks for papers with equal paperID in the DB and returns found entities
+	 * If no matching DB entry was found, return null.
+	 * Read more about the search here {@link PaperJPAAccess#getByPaperId(Paper)}
+	 * @param id the paperID
+	 * @return A matching paper from the DB or null
+	 */
 	public static Paper findById(String id) {
 		//Check if paper with same S2ID exists in DB
 				PaperJPAAccess filer = new PaperJPAAccess();

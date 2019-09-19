@@ -61,6 +61,8 @@ public class Conference extends Model{
 	
 	@Column(name="description",columnDefinition = "VARCHAR(3000)")
 	private String description;
+	
+	
 	@Column(name="submissionDeadlineLongPaper")
 	private LocalDate submissionDeadlineLongPaper;
 	@Column(name="submissionDeadlineShortPaper")
@@ -134,22 +136,7 @@ public class Conference extends Model{
 	}
 	
 	
-
-	public static Conference findOrCreate(String name){
-		System.out.println("Konferenz: " + name);
-		ConferenceJPAAccess conferenceFiler = new ConferenceJPAAccess();
-		if(name != null){
-			System.out.println("schon drin");
-			Conference c = conferenceFiler.getByName(name);
-			if(c != null) return c;
-		}
-		System.out.println("neu");
-		Conference c = new Conference();
-		c.setName(name); //Achtung kann hier null werden
-		conferenceFiler.add(c);
-		return c;
-	}
-
+	
 	/**
 	 * Gets the unique id of this conference
 	 * @return The unique id of this conference
@@ -315,5 +302,25 @@ public class Conference extends Model{
 		workshops.add(workshop);
 	}
 
+	/**
+	 * Looks through the database if a conference of this name exists and returns it
+	 * or creates a new conference of the same name.
+	 * @return A conference of this name either from the database or freshly created
+	 */
+	public static Conference findOrCreate(String name){
+		System.out.println("Konferenz: " + name);
+		ConferenceJPAAccess conferenceFiler = new ConferenceJPAAccess();
+		if(name != null){
+			System.out.println("schon drin");
+			Conference c = conferenceFiler.getByName(name);
+			if(c != null) return c;
+		}
+		System.out.println("neu");
+		Conference c = new Conference();
+		c.setName(name); //Achtung kann hier null werden
+		conferenceFiler.add(c);
+		return c;
+	}
+	
 }
 

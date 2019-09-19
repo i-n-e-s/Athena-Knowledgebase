@@ -30,6 +30,11 @@ public class ConferenceJPAAccess implements CommonAccess<Conference> {
 		}
 	}
 
+	
+	
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void commitChanges(Conference data){
 		EntityManager entityManager = PersistenceManager.getEntityManager();
@@ -50,6 +55,12 @@ public class ConferenceJPAAccess implements CommonAccess<Conference> {
 		entityManager.getTransaction().commit();
 	}
 
+	
+	/**
+	 * Checks if conference with same name already exists in database 
+	 * @param name of the conference
+	 * @return true if already exists
+	 */
 	@Override
 	public boolean alreadyExists(String identifier){
 		String query = "SELECT c FROM Conference c WHERE c.name = '"+identifier.replace("'","''") + "'";
@@ -72,6 +83,12 @@ public class ConferenceJPAAccess implements CommonAccess<Conference> {
 		return result;
 	}
 
+	
+	/**
+	 * Returns conference by name.
+	 * @param name of the conference
+	 * @return The conference or null if not found 
+	 */
 	public Conference getByName( String name ) {
 		//Build query string
 

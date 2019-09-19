@@ -52,14 +52,14 @@ public class Person extends Model {
 	/*Full Name*/
 	@Column(name = "lastName")
 	private String lastName;
-	
-	//@OneToOne(mappedBy = "person")
-    //private Event event;
+
+	/*Events the person is associated with usually as a speaker*/
 	@JsonIgnore
 	@Hierarchy(entityName="event")
 	@OneToMany(mappedBy = "person")
 	private Set<Event> events = new HashSet<>();
-	
+
+	/*eventpart the person is associated with usually as a speaker*/
 	@JsonIgnore
 	@Hierarchy(entityName="eventpart")
 	@OneToMany(mappedBy = "person")
@@ -461,13 +461,6 @@ public class Person extends Model {
 		return ret;
 	}
 
-	/**
-	 * Looks for persons with equal attributes in the DB and returns found entities
-	 * If no matching DB entry was found, create and return a new person object
-	 * Read more about the search here {@link PersonJPAAccess#getByKnownAttributes(Person)}
-	 * @param toFind The person object containing the query data
-	 * @return A matching person from the DB or a new person
-	 */
 
 	/**
 	 * Looks for persons with defined title or SemanticScholarID and returns matching DB Entry
@@ -489,7 +482,7 @@ public class Person extends Model {
 		else{
 			Person p = new Person();
 			p.setFullName(fullName);
-			p.setSemanticScholarID(s2id); //Achtung kann null sein
+			p.setSemanticScholarID(s2id); //caution! can be null
 			filer.add(p);
 			return p;
 		}

@@ -68,6 +68,7 @@ public class RequestVerifier {
 						numberAttributeMap.put(field.getName(), 5);
 					else if(fieldTypeName.equals(java.time.LocalDate.class.getName()))
 						numberAttributeMap.put(field.getName(), 3);
+					//extend this line to support new enums
 					else if(fieldTypeName.equals(de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.EventCategory.class.getName())|| fieldTypeName.equals(de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.TagCategory.class.getName())|| fieldTypeName.equals("long"))
 						numberAttributeMap.put(field.getName(), 1);
 				}

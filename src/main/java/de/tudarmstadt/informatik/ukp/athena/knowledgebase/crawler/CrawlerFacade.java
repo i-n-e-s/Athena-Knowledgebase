@@ -60,22 +60,6 @@ public class CrawlerFacade extends AbstractCrawler{
     }
 	
 	
-	
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public Conference getConferenceInformation() throws IOException {
-		return crawler.getConferenceInformation();
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public ArrayList<ScheduleEntry> getSchedule() throws IOException {
-		return crawler.getSchedule();
-	}
 
 	/**
 	 * {@inheritDoc}

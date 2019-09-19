@@ -24,7 +24,8 @@ public class Tag extends Model{
 	@GenericGenerator(name="increment", strategy="increment")
 	@Column(name="tagID")
 	private Long tagID;
-	/* Title */
+	
+	/* name of the associated content */
 	@Column(name = "name")
 	private String name;
 
@@ -45,22 +46,16 @@ public class Tag extends Model{
 	private Set<Paper> papers = new HashSet<>();
 
 	
-	
-	
-	
-	
-	
-	
 	/**
-	 * Gets the unique id of this event
-	 * @return The unique id of this event
+	 * Gets the unique id of this tag
+	 * @return The unique id of this tag
 	 */
 	public Long getId() {
 		return tagID;
 	}
 
 	/**
-	 * Sets this event's id
+	 * Sets this tag's id
 	 * @param id The new id
 	 */
 	public void setId(Long id) {
@@ -68,16 +63,16 @@ public class Tag extends Model{
 	}
 
 	/**
-	 * Gets the title of this event
-	 * @return The title of this event
+	 * Gets the name of this tag
+	 * @return The name of this tag
 	 */
 	public String getName() {
 		return name;
 	}
 
 	/**
-	 * Sets the title of this event
-	 * @param title The new title of this event
+	 * Sets the name of this tag
+	 * @param title The new name of this tag
 	 */
 	public void setName(String name) {
 		this.name = name;
@@ -100,11 +95,45 @@ public class Tag extends Model{
 		this.category = category;
 	}
 	
+	/**
+	 * Gets the papers this tag is associated to
+	 * @return The papers this author has written
+	 */
+	public Set<Paper> getPapers() {
+		return papers;
+	}
+
+	/**
+	 * Sets this tag's papers
+	 * @param papers The new papers of this tag
+	 */
+	public void setPapers(Set<Paper> papers) {
+		this.papers = papers;
+	}
+
+	/**
+	 * Adds a paper to this tag's paper list
+	 * @param p The paper to add
+	 */
+	public void addPaper(Paper p) {
+		papers.add(p);
+		if(!p.getTags().contains(this)) {
+			p.addTag(this);
+		}
+	}
+	
+	
+	/**
+	 * Looks through the database if a tag of this name exists and returns it
+	 * or creates a new tag of the same name.
+	 * @return A tag of this name either from the database or freshly created
+	 */
+
 	
 	public static Tag findOrCreate(String name){
 		TagJPAAccess tagFiler = new TagJPAAccess();
 		if(name != null){
-			Tag t = tagFiler.getByKnownAttributes(name);
+			Tag t = tagFiler.getByName(name);
 			if(t != null) return t;
 		}
 		Tag t = new Tag();
@@ -114,31 +143,5 @@ public class Tag extends Model{
 	}
 	
 	
-	/**
-	 * Gets the papers this author has written
-	 * @return The papers this author has written
-	 */
-	public Set<Paper> getPapers() {
-		return papers;
-	}
-
-	/**
-	 * Sets this author's papers
-	 * @param papers The new papers of this author
-	 */
-	public void setPapers(Set<Paper> papers) {
-		this.papers = papers;
-	}
-
-	/**
-	 * Adds a paper to this author's paper list
-	 * @param p The paper to add
-	 */
-	public void addPaper(Paper p) {
-		papers.add(p);
-		if(!p.getTags().contains(this)) {
-			p.addTag(this);
-		}
-	}
 	
 }
