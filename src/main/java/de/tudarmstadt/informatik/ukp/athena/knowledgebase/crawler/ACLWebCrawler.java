@@ -8,10 +8,8 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -260,22 +258,25 @@ class ACLWebCrawler extends AbstractCrawler {
                 Elements id = eventDocument.select("#main > div.row.acl-paper-details > div.col.col-lg-10.order-2 > dl > dd");
                 Elements titel = eventDocument.select("#title");
                 String titleString = titel.get(0).text();//splitRawTitle[1];
-                String date = "2018-01-01";
-//TODO: Dates regeln!!!!!!!!!!
-//    			try {
-//                String monthString = id.get(1).text();//splitRawTitle[1];
-//                String yearString = id.get(2).text();//splitRawTitle[1];
-//                String date = null;
-//    			int monthInt =monthToInt(monthString);
-//    			int yearInt=Integer.parseInt(yearString);
-//    			if(monthInt!=0) {
-//    				date = LocalDate.of(yearInt, monthInt, 1);
-//    				event.setBegin(date.atStartOfDay());
-//    				event.setEnd(date.atStartOfDay());
-//    			}
-//    			}catch(NumberFormatException e){
-//    				System.out.println("yearString: "+yearString);
-//    			}
+
+                Event event = Event.findOrCreate(titleString);
+
+                String yearString =null;
+                LocalDate date = null;
+
+                try {
+                String monthString = id.get(1).text();//splitRawTitle[1];
+                yearString = id.get(2).text();//splitRawTitle[1];
+    			int monthInt =monthToInt(monthString);
+    			int yearInt=Integer.parseInt(yearString);
+    			if(monthInt!=0) {
+    				date = LocalDate.of(yearInt, monthInt, 1);
+    				event.setBegin(date.atStartOfDay());
+    				event.setEnd(date.atStartOfDay());
+    			}
+    			}catch(NumberFormatException e){
+    				System.out.println("yearString: "+yearString);
+    			}
                 String locationString = id.get(3).text();//splitRawTitle[1];
                 String[] locationArray = locationString.split(", ");
                 if (y == 0) {
@@ -285,21 +286,18 @@ class ACLWebCrawler extends AbstractCrawler {
                     }
                     //conference.setId(id);
                     if (date != null) {
-              //          conference.setBegin(date);
-               //         conference.setEnd(date);
+                       conference.setBegin(date);
+                        conference.setEnd(date);
                     }
                 }
                 //String idString = id.get(0).text();//splitRawTitle[1];
-                //String cityString = id.get(3).text();//splitRawTitle[1];
+                String cityString = id.get(3).text();//splitRawTitle[1];
                 //event.setId(idString);
-                Event event = Event.findOrCreate(titleString);
-              //  event.setBegin("2018-01-01");
-              //  event.setEnd("2018-01-01");
+             
                 EventCategory category = getEventType(titleString);
                 if (category != null) {
                     event.setCategory(category);
                 }
-                //event.setConferenceName(conferenceTitel);
                 
                 //create paper objects and add them to the event
                 for (String s : paperPerEventPerConference.get(x).get(y)) {
@@ -327,7 +325,7 @@ class ACLWebCrawler extends AbstractCrawler {
                         paper.setRemoteLink(remoteLink); 
         				paper.setReleaseDate(null);
         				//TODO: Dates!!!!!!
-//        				paper.setReleaseDate(extractPaperRelease(doc));
+        				paper.setReleaseDate(extractPaperRelease(doc));
         				
         
         				//Pdf Parser
@@ -530,19 +528,18 @@ class ACLWebCrawler extends AbstractCrawler {
     	LocalDate begin = LocalDate.parse("2018-07-15"); // date: 15-20 July 2018
     	LocalDate end = LocalDate.parse("2018-07-20");
     	
-    	String long_sub_deadline = LocalDate.parse("2018-02-22").toString();
-    	String short_sub_deadline = LocalDate.parse("2018-02-22").toString();
+    	LocalDate long_sub_deadline = LocalDate.parse("2018-02-22");
+    	LocalDate short_sub_deadline = LocalDate.parse("2018-02-22");
     	LocalDate review_notification = LocalDate.parse("2018-04-20"); // April 20th, 2018
     	
     	conference.setDescription(description);
     	conference.setBegin(begin);
     	conference.setBegin(end);
     	
-    	//TODO: Dates!!!!!!
-    	//conference.setSubmissionDeadlineLongPaper(long_sub_deadline);
-    	//conference.setSubmissionDeadlineShortPaper(short_sub_deadline);
+    	conference.setSubmissionDeadlineLongPaper(long_sub_deadline);
+    	conference.setSubmissionDeadlineShortPaper(short_sub_deadline);
     	conference.setReviewNotification(review_notification);
-    	//conference.setName("ACL 2018");
+    	conference.setName("Annual Meeting of the Association for Computational Linguistics (2018)");
     	
     	
     	// Adding the tutorial events
@@ -602,9 +599,8 @@ class ACLWebCrawler extends AbstractCrawler {
     	Document workshopPage = Jsoup.connect("https://acl2018.org/workshops/").get();
     	Elements workshopInfos = workshopPage.select("body > main > div > article > div > ul> li");
     	
-    	//TODO: Dates!!
-//    	Elements workshopDates = workshopPage.select("body > main > div > article > div > h4");
-//    	String date1 = workshopDates.get(0).attr("id");
+ //   	Elements workshopDates = workshopPage.select("body > main > div > article > div > h4");
+ //   	String date1 = workshopDates.get(0).attr("id");
 //    	String date2 = workshopDates.get(1).attr("id");
     	LocalDate date1 = LocalDate.parse("2018-07-19"); // dates hardcoded for now...
     	LocalDate date2 = LocalDate.parse("2018-07-20");
@@ -881,14 +877,9 @@ class ACLWebCrawler extends AbstractCrawler {
     			    if(poster.attr("title").split("ABSTRACT: ").length>1){
 
     		       
-    		       //TODO: find out if this makes sense
     			    	
     			   authors= 	poster.attr("title").split(". ABSTRACT: ")[0].split(";");
     			   
-    			   posterSpeakerName=authors[0];
-    			   
-    			   Person posterSpeaker=Person.findOrCreate(null, posterSpeakerName);
-    			   posterSession.setPerson(posterSpeaker);
     			   
     		       //Abstract:
     		       
@@ -931,16 +922,12 @@ class ACLWebCrawler extends AbstractCrawler {
     			    // fill new created paper with authors
     			    for(String speakerN: authors) {
     			    	
-        			    Person speaker = Person.findOrCreate(null, speakerN);
+        			    Person author = Person.findOrCreate(null, speakerN);
          			    
-        			    if(i==0) {
-        			    //TODO: macht das sinn?	
-        			    //first author is speaker	
-        			    posterSession.setPerson(speaker);
-        			    }
+        			    
         			    
         			    if(paper.getPaperAbstract()==null) {
-        			    paper.addAuthor(speaker);
+        			    paper.addAuthor(author);
         			    }
          			    i++;
         			    }

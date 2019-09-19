@@ -61,7 +61,7 @@ public class Paper extends Model {
 
 	/*Release date*/
 	@Column(name = "releaseDate")
-	private String releaseDate;
+	private LocalDate releaseDate;
 
 	/*URL to PDF*/
 	@Column(name = "remoteLink")
@@ -177,16 +177,16 @@ public class Paper extends Model {
 	 * Gets this paper's release date
 	 * @return This paper's release date
 	 */
-	public String getReleaseDate() {
+	public LocalDate getReleaseDate() {
 		return releaseDate;
 	}
 
 	/**
 	 * Sets this paper's release date
-	 * @param releaseDate The new release date of this paper
+	 * @param localDate The new release date of this paper
 	 */
-	public void setReleaseDate(String releaseDate) {
-		this.releaseDate = releaseDate;
+	public void setReleaseDate(LocalDate localDate) {
+		this.releaseDate = localDate;
 	}
 
 	/**
