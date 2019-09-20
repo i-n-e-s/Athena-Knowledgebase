@@ -324,7 +324,6 @@ class ACLWebCrawler extends AbstractCrawler {
                         String remoteLink = "http://aclweb.org/anthology/" + anthology;
                         paper.setRemoteLink(remoteLink); 
         				paper.setReleaseDate(null);
-        				//TODO: Dates!!!!!!
         				paper.setReleaseDate(extractPaperRelease(doc));
         				
         
@@ -356,6 +355,11 @@ class ACLWebCrawler extends AbstractCrawler {
                             else if (h.contains("conclusion")) paper.setConclusion(sec.getText());
                             else if (h.contains("datasets")) paper.setDataset(sec.getText());
                         }
+        				}else {
+        				    Element abstrac=doc.select("#main > div > div.col.col-lg-10.order-2 > div > div").get(0);
+
+                            paper.setPaperAbstract(abstrac.text().substring(8));
+
         				}
                         // find authors and add them to a list
                         Elements authorElements = doc.select("#main > p> a");// elmnt.parent().parent().children().select("span").select("a");

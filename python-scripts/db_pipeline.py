@@ -42,7 +42,7 @@ def preprocess(json_file, hdf5_file):
 	cursor.execute("SELECT paperID FROM paper")
 	ids = cursor.fetchall()
 	for i in ids:
-		cursor.execute("SELECT p.plainText FROM paper p WHERE paperID=%s", int(i[0]))
+		cursor.execute("SELECT p.paperAbstract FROM paper p WHERE paperID=%s", int(i[0]))
 		plaintext = cursor.fetchall()
 		if plaintext[0][0] is not None: # and i[0] <= 2000:
 			#print(str(i[0]) + " plaintext: " + str(plaintext[0][0]))
