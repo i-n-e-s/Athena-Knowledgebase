@@ -11,6 +11,7 @@ import org.junit.Test;
 import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Event;
 
 public class ACL18WorkshopParserTest {
+	/*
 	@Test
 	public void testExtractBeginEnd() {
 		String[] input = {"12:23", "15:07"};
@@ -21,7 +22,6 @@ public class ACL18WorkshopParserTest {
 
 		assertArrayEquals(output, ACL18WorkshopParser.extractBeginEnd(input));
 	}
-
 	@Test
 	public void testSetEventBeginEnd() {
 		LocalTime[] input = {
@@ -38,4 +38,6 @@ public class ACL18WorkshopParserTest {
 		assertEquals(input[0], event.getBegin().toLocalTime());
 		assertEquals(input[1], event.getEnd().toLocalTime());
 	}
+
+ */
 }

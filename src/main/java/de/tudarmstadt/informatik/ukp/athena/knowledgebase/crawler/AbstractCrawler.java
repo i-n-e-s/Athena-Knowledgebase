@@ -12,7 +12,7 @@ import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Schedu
  *
  * This is the abstract base of the crawler
  *
- * @author Jonas Hake, Daniel Lehmann
+ * @author Jonas Hake, Daniel Lehmann, Anke Unger
  *
  */
 abstract class AbstractCrawler {

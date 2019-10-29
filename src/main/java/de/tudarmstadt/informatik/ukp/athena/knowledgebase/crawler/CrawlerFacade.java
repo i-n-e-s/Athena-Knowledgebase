@@ -12,7 +12,7 @@ import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Schedu
  *
  * This is a facade class to hide the classes, which scrape the data from the specific websites
  *
- * @author Jonas Hake, Daniel Lehmann
+ * @author Jonas Hake, Daniel Lehmann, Tim Schmidt, Anke Unger
  *
  */
 public class CrawlerFacade extends AbstractCrawler{

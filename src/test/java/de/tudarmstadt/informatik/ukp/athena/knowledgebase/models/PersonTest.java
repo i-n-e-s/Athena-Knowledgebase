@@ -45,7 +45,7 @@ public class PersonTest {
 		Person query = new Person();
 		query.setFullName("Author 5");
 		assertEquals("0", String.valueOf(query.getPersonID()));
-		Person uut = Person.findOrCreate(query);
+		Person uut = null;//Person.findOrCreate(query);
 		assertEquals("Prefix" + (5 % 2), String.valueOf(uut.getPrefix()));
 		assertEquals("0", String.valueOf(query.getPersonID()));
 		assertEquals("Prefix" + (5 % 2), String.valueOf(uut.getPrefix()));
@@ -75,13 +75,13 @@ public class PersonTest {
 		testPerson.setSemanticScholarID("23");
 		testList.add(testPerson);
 
-		Person uut = Person.findOrCreateDbOrList(null, "Author 5", testList);
+		Person uut = null;//Person.findOrCreateDbOrList(null, "Author 5", testList);
 		assertEquals("37455290", uut.getSemanticScholarID());
 
-		uut = Person.findOrCreateDbOrList(null, "Lorem Ips", testList);
+        //uut = Person.findOrCreateDbOrList(null, "Lorem Ips", testList);
 		assertEquals("23", uut.getSemanticScholarID());
 
-		uut = Person.findOrCreateDbOrList(null, "Peter Pan", testList);
+		//uut = Person.findOrCreateDbOrList(null, "Peter Pan", testList);
 		assertNull(uut.getSemanticScholarID());
 	}
 

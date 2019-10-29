@@ -112,12 +112,12 @@ public class S2APIFunctions {
 			}
 			if (cSR.getString("year") != null && !cSR.getString("year").equals("null")) {
 //				###############################################
-				currPaper.setReleaseDate(cSR.getString("year"));
-//				currPaper.setReleaseDate(LocalDate.of(Integer.parseInt(cSR.getString("year")), 1, 1));
+//				currPaper.setReleaseDate(cSR.getString("year"));
+				currPaper.setReleaseDate(LocalDate.of(Integer.parseInt(cSR.getString("year")), 1, 1));
 			} else {
 //				###############################################
-				currPaper.setReleaseDate("0");
-//				currPaper.setReleaseDate(LocalDate.of(0, 1, 1));
+//				currPaper.setReleaseDate("0");
+				currPaper.setReleaseDate(LocalDate.of(0, 1, 1));
 			}
 			paperList.add(currPaper);
 		}
@@ -366,8 +366,8 @@ public class S2APIFunctions {
 					int releaseYear = Integer.parseInt(releaseYearString);
 					if (releaseYear > 1000 && releaseYear < 2100) {
 //						##################################################
-						dest.setReleaseDate(releaseYearString);
-//						dest.setReleaseDate(LocalDate.of(releaseYear, 1, 1));
+//						dest.setReleaseDate(releaseYearString);
+						dest.setReleaseDate(LocalDate.of(releaseYear, 1, 1));
 					}
 				} catch (NumberFormatException e) {
 				}

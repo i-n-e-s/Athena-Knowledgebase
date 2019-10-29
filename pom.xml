@@ -12,20 +12,18 @@
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>2.0.5.RELEASE</version>
     </parent>
-
     <dependencies>
         <dependency>
             <groupId>org.allenai</groupId>
             <artifactId>science-parse_2.11</artifactId>
             <version>2.0.3</version>
         </dependency>
-        
+        <!-- https://mvnrepository.com/artifact/com.googlecode.json-simple/json-simple -->
         <dependency>
-    	<groupId>com.googlecode.json-simple</groupId>
-    	<artifactId>json-simple</artifactId>
-    	<version>1.1.1</version>
-		</dependency>
-        
+            <groupId>com.googlecode.json-simple</groupId>
+            <artifactId>json-simple</artifactId>
+            <version>1.1.1</version>
+        </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-log4j12</artifactId>
@@ -122,6 +120,12 @@
             			<include>TestFail.java</include>
         			</includes>
         			<testFailureIgnore>true</testFailureIgnore>
+                    <excludes>
+                        <exclude>**/PersonTest.java</exclude>
+                        <exclude>**/ModelTest.java</exclude>
+
+                        <exclude>**/ACL18WorkshopParserTest.java</exclude>
+                    </excludes>
     			</configuration>
 			</plugin>
             <plugin>
