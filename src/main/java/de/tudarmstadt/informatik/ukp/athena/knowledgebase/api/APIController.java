@@ -119,20 +119,14 @@ public class APIController {
 		int threshold = 1; // decide for which distance the search result should be kept
 		int ratio1 = result1.length() / dist1;
 		int ratio2 = result2.length() / dist2;
-//		System.out.println(ratio1);
-//		System.out.println(ratio2);
-//		System.out.println(search.length()/dist1);
-//		System.out.println(search.length()/dist2);
 		if (ratio1 < threshold && ratio2 < threshold) { // if both distances are smaller than threshold: search with
 														// wildcards
 			return searchDBwild(originalQueryList, jpqlVars, tree, verifier);
 		}
 		if (dist1 > dist2)
 			return getResultObject(originalQueryList, result1, key, jpqlVars, tree, verifier);
-//			return geq; // geq -> result1 --> dist1
 		else
 			return getResultObject(originalQueryList, result2, key, jpqlVars, tree, verifier);
-//			return leq;
 	}
 	
 	private static ArrayList<?> getResultObject(List<String> queryList, String name, String searchAttr, 

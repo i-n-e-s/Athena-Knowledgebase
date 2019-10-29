@@ -44,14 +44,13 @@ public class Conference extends Model{
 
 	/*Basically the schedule*/
 	@Hierarchy(entityName="event")
-
 	@JsonIgnore
 	@OneToMany(orphanRemoval=true, fetch=FetchType.LAZY) //unidirectional relationship which
 	@JoinColumn(name="conferenceID")					  //is saved in the Event table
 	private Set<Event> events = new HashSet<>();
-	
-	
-	
+
+
+
 	/*The workshops*/
 	@Hierarchy(entityName="workshop")
 	@JsonIgnore
@@ -59,17 +58,19 @@ public class Conference extends Model{
 	@JoinColumn(name="conferenceID")					  //is saved in the Workshop table
 	private Set<Workshop> workshops = new HashSet<>();
 
-	
-	@Column(name="description",length = 3000)
+
+	@Column(name="description",columnDefinition = "VARCHAR(3000)")
 	private String description;
+
+
 	@Column(name="submissionDeadlineLongPaper")
 	private LocalDate submissionDeadlineLongPaper;
 	@Column(name="submissionDeadlineShortPaper")
 	private LocalDate submissionDeadlineShortPaper;
 	@Column(name="reviewNotification")
 	private LocalDate review_notification;
-	
-	
+
+
 	/**
 	 * Gets a description of the given conference
 	 * @return description of the conference
@@ -77,15 +78,15 @@ public class Conference extends Model{
 	public String getDescription() {
 		return description;
 	}
-	
+
 	/**
 	 * Sets a description of the given conference
 	 * @param description of the conference
 	 */
 	public void setDescription(String description) {
-		this.description = description;		
+		this.description = description;
 	}
-	
+
 	/**
 	 * Gets the submission deadline for long papers
 	 * @return submission deadline
@@ -93,7 +94,7 @@ public class Conference extends Model{
 	public LocalDate getSubmissionDeadlineLongPaper() {
 		return submissionDeadlineLongPaper;
 	}
-	
+
 	/**
 	 * Sets the submission deadline for long papers
 	 * @param submission deadline
@@ -101,7 +102,7 @@ public class Conference extends Model{
 	public void setSubmissionDeadlineLongPaper(LocalDate deadline) {
 		this.submissionDeadlineLongPaper = deadline;
 	}
-	
+
 	/**
 	 * Gets the submission deadline for short papers
 	 * @return submission deadline
@@ -109,7 +110,7 @@ public class Conference extends Model{
 	public LocalDate getSubmissionDeadlineShortPaper() {
 		return submissionDeadlineShortPaper;
 	}
-	
+
 	/**
 	 * Sets the submission deadline for short papers
 	 * @param submission deadline
@@ -117,7 +118,7 @@ public class Conference extends Model{
 	public void setSubmissionDeadlineShortPaper(LocalDate deadline) {
 		this.submissionDeadlineShortPaper = deadline;
 	}
-	
+
 	/**
 	 * Gets the notification of acceptance date for papers
 	 * @return date for notification of acceptance
@@ -125,7 +126,7 @@ public class Conference extends Model{
 	public LocalDate getReviewNotification() {
 		return review_notification;
 	}
-	
+
 	/**
 	 * Sets the notification of acceptance date for papers
 	 * @param date for notification of acceptance
@@ -133,23 +134,8 @@ public class Conference extends Model{
 	public void setReviewNotification(LocalDate review_notification) {
 		this.review_notification = review_notification;
 	}
-	
-	
 
-	public static Conference findOrCreate(String name){
-		System.out.println("Konferenz: " + name);
-		ConferenceJPAAccess conferenceFiler = new ConferenceJPAAccess();
-		if(name != null){
-			System.out.println("schon drin");
-			Conference c = conferenceFiler.getByName(name);
-			if(c != null) return c;
-		}
-		System.out.println("neu");
-		Conference c = new Conference();
-		c.setName(name); //Achtung kann hier null werden
-		conferenceFiler.add(c);
-		return c;
-	}
+
 
 	/**
 	 * Gets the unique id of this conference
@@ -193,7 +179,7 @@ public class Conference extends Model{
 
 	/**
 	 * Sets the date of the day this conference started
-	 * @param localDate The new start date
+	 * @param begin The new start date
 	 */
 	public void setBegin(LocalDate begin) {
 		this.begin = begin;
@@ -209,7 +195,7 @@ public class Conference extends Model{
 
 	/**
 	 * Sets the date of the day this conference ended
-	 * @param localDate The new end date
+	 * @param end The new end date
 	 */
 	public void setEnd(LocalDate end) {
 		this.end = end;
@@ -314,6 +300,26 @@ public class Conference extends Model{
 	 */
 	public void addWorkshop(Workshop workshop) {
 		workshops.add(workshop);
+	}
+
+	/**
+	 * Looks through the database if a conference of this name exists and returns it
+	 * or creates a new conference of the same name.
+	 * @return A conference of this name either from the database or freshly created
+	 */
+	public static Conference findOrCreate(String name){
+		System.out.println("Konferenz: " + name);
+		ConferenceJPAAccess conferenceFiler = new ConferenceJPAAccess();
+		if(name != null){
+			System.out.println("schon drin");
+			Conference c = conferenceFiler.getByName(name);
+			if(c != null) return c;
+		}
+		System.out.println("neu");
+		Conference c = new Conference();
+		c.setName(name); //Achtung kann hier null werden
+		conferenceFiler.add(c);
+		return c;
 	}
 
 }

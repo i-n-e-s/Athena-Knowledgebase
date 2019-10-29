@@ -32,6 +32,9 @@ public class PaperJPAAccess implements CommonAccess<Paper> {
 		}
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void commitChanges(Paper data){
 		EntityManager entityManager = PersistenceManager.getEntityManager();
@@ -53,12 +56,7 @@ public class PaperJPAAccess implements CommonAccess<Paper> {
 		entityManager.getTransaction().commit();
 	}
 
-	public void merge (Paper data){
-		EntityManager entityManager = PersistenceManager.getEntityManager();
-
-		entityManager.getTransaction().begin();
-
-	}
+	
 
 	/**
 	 * {@inheritDoc}
@@ -85,7 +83,8 @@ public class PaperJPAAccess implements CommonAccess<Paper> {
 		String query = "SELECT c FROM Paper c WHERE ";
 		if( id != null )
 			query = query + "c.semanticScholarID LIKE '"+id + "'";
-		else if ( name != null) query = query + "c.title LIKE '" +name+ "'";
+		else if ( name != null) query = query +"c.title LIKE '" +name+ "'";
+		
 		else {
 			System.out.println("No title and no ID given");//no title and no id given
 			return null;
@@ -95,6 +94,29 @@ public class PaperJPAAccess implements CommonAccess<Paper> {
 		return null;
 	}
 
+	/**
+	 * Finds a matching DB entry by the paperID of a given paper object
+	 * If no attribute is specified, return null
+	 * If multiple occurrences are found in DB, return the first result
+	 *
+	 * @param paperID of paper to be found
+	 * @return An object from the DB with matching attributes, null if no object found or no search constraint set
+	 */	
+	public Paper getByPaperId(String id) {
+		//1. Build JPQL query for combined search
+		EntityManager entityManager = PersistenceManager.getEntityManager();
+		String query = "SELECT c FROM Paper c WHERE ";
+		if ( id != null) query = query + "c.paperID LIKE '" +id+ "'";//"c.title LIKE '" +name+ "'";
+		
+		else {
+			System.out.println("No title and no ID given");//no title and no id given
+			return null;
+		}
+		List<Paper> result = entityManager.createQuery(query).getResultList();
+		if( result.size() > 0 ) { return result.get(0); }
+		return null;
+	}
+	
 	/**
 	 * Looks for DB entries with matching Semantic Scholar ID
 	 *
@@ -113,6 +135,10 @@ public class PaperJPAAccess implements CommonAccess<Paper> {
 		return null;
 	}
 
+	
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public boolean alreadyExists(String identifier){
 		String query = "SELECT p FROM paper p WHERE p.title = '"+identifier.replace("'","''") + "'";

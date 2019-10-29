@@ -30,6 +30,9 @@ public class InstitutionJPAAccess implements CommonAccess<Institution> {
 		}
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public boolean alreadyExists(String identifier){
 		String query = "SELECT i FROM institution i WHERE i.name = '"+identifier.replace("'","''") + "'";
@@ -40,6 +43,9 @@ public class InstitutionJPAAccess implements CommonAccess<Institution> {
 		return (matches.size() > 0) ? true : false;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void commitChanges(Institution data){
 		EntityManager entityManager = PersistenceManager.getEntityManager();

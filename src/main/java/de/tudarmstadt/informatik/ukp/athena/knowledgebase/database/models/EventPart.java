@@ -31,8 +31,8 @@ public class EventPart extends Model{
 	/* Title */
 	@Column(name = "title")
 	private String title;
-	/* Brief Description */
 
+	/* Brief Description */
 	@Column(name = "description", columnDefinition = "VARCHAR(3000)") //fixes titles that are too long for being storable in the column
 	private String description;
 
@@ -46,26 +46,21 @@ public class EventPart extends Model{
 	/* Place where this event happens */
 	@Column(name = "place")
 	private String place;
-	
-	
+
+
 	/* Associated papers */
-
-
+	@Hierarchy(entityName="paper")
 	@OneToMany(mappedBy = "eventpart")
 	private Set<Paper> papers = new HashSet<>();
 
-	
+
+	/*Speaker of the event. Usually the first author of the associated paper. */
+	@Hierarchy(entityName="person")
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "eventpart_person")
 	private Person person;
-	
-//	@Column(name = "speaker")
-//	private Person speaker;
-//	
-	//@Column(name = "paper")
-	//private Paper paper;
-	
-	
+
+
 	/**
 	 * Gets the unique id of this event part
 	 * @return The unique id of this event part
@@ -114,7 +109,7 @@ public class EventPart extends Model{
 		this.begin = begin;
 	}
 
-	
+
 	/**
 	 * Gets this event's papers (if any)
 	 * * @return This event's papers
@@ -139,42 +134,8 @@ public class EventPart extends Model{
 		papers.add(p);
 	}
 
-	
-	
-	/**
-	 * Gets the speaker of a EventPart (the first listed person in the corresponding paper)
-	 * @return speaker of tutorial
-//	 */
-//	public Person getSpeaker() {
-//		return speaker;
-//	}
-//
-//	/**
-//	 * Sets the speaker of a EventPart (the first listed person in the corresponding paper)
-//	 * @param speaker of tutorial
-//	 */
-//	public void setSpeaker(Person speaker) {
-//		this.speaker = speaker;
-//	}
-//	
-//	
-	/**
-	 * Gets the corresponding paper
-	 * @return speaker of tutorial
-	 */
-//	public Paper getPaper() {
-//		return paper;
-//	}
-//
-//	/**
-//	 * Sets the the corresponding paper
-//	 * @param speaker of tutorial
-//	 */
-//	public void setPaper(Paper paper) {
-//		this.paper= paper;
-//	}
-//	
-	
+
+
 	/**
 	 * Gets the time this event part ends
 	 * @return This event part's new end time
@@ -222,7 +183,7 @@ public class EventPart extends Model{
 	public void setDescription(String description) {
 		this.description = description;
 	}
-	
+
 	/**
 	 * Gets this event's category
 	 * @return This event's category
@@ -238,8 +199,14 @@ public class EventPart extends Model{
 	public void setPerson(Person person) {
 		this.person = person;
 	}
-	
-	
+
+
+
+	/**
+	 * Looks through the database if an eventpart of this name exists and returns it
+	 * or creates a new eventpart of the same name.
+	 * @return A eventpart of this name either from the database or freshly created
+	 */
 	public static EventPart findOrCreate(String name){
 		EventPartJPAAccess eventPartFiler = new EventPartJPAAccess();
 		if(name != null){
@@ -251,5 +218,5 @@ public class EventPart extends Model{
 		eventPartFiler.add(e);
 		return e;
 	}
-	
+
 }

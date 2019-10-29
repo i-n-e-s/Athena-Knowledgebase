@@ -16,6 +16,7 @@ import org.apache.logging.log4j.Logger;
  */
 public class CrawlerToolset {
 	private static Logger logger = LogManager.getLogger(CrawlerToolset.class);
+
 	/**
 	 * Converts a time in String format to a LocalDate instance
 	 * @param timeString time in String format (e.g. 9:00 or 09:00)
@@ -41,14 +42,11 @@ public class CrawlerToolset {
 	 * dateString was in the wrong format
 	 */
 	public static LocalDate[] acl2018ConvertStringToDateRange(String dateString){
-//		##########################
-//		String[] dateRange = {"a date start", "a date end"};
 		LocalDate[] dateRange = new LocalDate[2];
 		try {
 			String[] daysMonthsYearAndLocation = dateString.split(" ");
 			String daysRange = daysMonthsYearAndLocation[0];
 			String[] startAndEndDay = daysRange.split("-", 2);
-//			#########################################
 			dateRange[0] = stringToLocalDate(startAndEndDay[0],
 					daysMonthsYearAndLocation[1], daysMonthsYearAndLocation[2]);
 			dateRange[1] = stringToLocalDate(startAndEndDay[1],

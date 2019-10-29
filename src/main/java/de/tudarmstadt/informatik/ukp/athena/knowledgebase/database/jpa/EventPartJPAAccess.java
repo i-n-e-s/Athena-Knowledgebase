@@ -19,6 +19,9 @@ import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.EventP
 public class EventPartJPAAccess implements CommonAccess<EventPart> {
 	private static Logger logger = LogManager.getLogger(EventPartJPAAccess.class);
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void add(EventPart data) {
 		EntityManager entityManager = PersistenceManager.getEntityManager();
@@ -31,6 +34,10 @@ public class EventPartJPAAccess implements CommonAccess<EventPart> {
 		}
 	}
 
+	
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void commitChanges(EventPart data){
 		EntityManager entityManager = PersistenceManager.getEntityManager();
@@ -39,6 +46,9 @@ public class EventPartJPAAccess implements CommonAccess<EventPart> {
 		entityManager.getTransaction().commit();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void delete(EventPart data) {
 		EntityManager entityManager = PersistenceManager.getEntityManager();
@@ -48,6 +58,9 @@ public class EventPartJPAAccess implements CommonAccess<EventPart> {
 		entityManager.getTransaction().commit();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public boolean alreadyExists(String identifier){
 		String query = "SELECT p FROM EventPart p WHERE p.title = '"+identifier.replace("'","''") + "'";
@@ -58,12 +71,22 @@ public class EventPartJPAAccess implements CommonAccess<EventPart> {
 		return (matches.size() > 0) ? true : false;
 	}
 
+	
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public List<EventPart> get() {
 		EntityManager entityManager = PersistenceManager.getEntityManager();
 		List<EventPart> result = entityManager.createQuery("FROM EventPart").getResultList();
 		return result;
 	}
+	
+	/**
+	 * Returns event by name.
+	 * @param name of the event
+	 * @return The event or null if not found 
+	 */
 	public EventPart getByName(String identifier){
 		String query = "SELECT e FROM EventPart e WHERE e.title = '"+identifier.replace("'","''") + "'";
 		EntityManager entityManager = PersistenceManager.getEntityManager();

@@ -39,23 +39,16 @@ public class Event extends Model implements ScheduleEntry {
 	@Column(name="end")
 	private LocalDateTime end;
 
-	/*Host*/
-	//	@Column(name = "host")
-	//	private Person host;
-	/* Place where this event happens, if empty look in eventparts */
 
 	@Column(name = "place")
 	private String place;
 
 	/* Associated papers */
+	@Hierarchy(entityName="paper")
 	@JsonIgnore
 	@OneToMany(mappedBy = "event")
 	private Set<Paper> papers = new HashSet<>();
 
-	/* Papers, if any */
-//	@Column(name = "papers")
-//	private Set<Paper> papers;
-	/* Event parts, if any */
 	@Hierarchy(entityName="eventpart")
 	@JsonIgnore
 	@OneToMany(orphanRemoval = true, fetch = FetchType.LAZY)
@@ -67,22 +60,13 @@ public class Event extends Model implements ScheduleEntry {
 	private Set<EventPart> eventparts = new HashSet<>(); //lowercase to make it work with the api
 
 	
+	/*Speaker of the event. Usually the first author of the associated paper. */
+	@Hierarchy(entityName="person")
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "event_person")
 	private Person person;
 	
-	
-	
-	//@OneToOne(fetch = FetchType.LAZY)
-    //@JoinColumn(name = "person_eventID", referencedColumnName = "personID")
-	//private Person speaker;
-	
-	//@ManyToOne(fetch = FetchType.LAZY)
-	//@JoinColumn(name = "event_person")
-	//private Event event;
-	
-	
-	
+	/*Link to the aclanthology.info or acl2018.org entry. Currently not set. */	
 	@Column(name = "link")
 	private String link;
 	/*Date*/
@@ -105,21 +89,7 @@ public class Event extends Model implements ScheduleEntry {
 		this.date = date;
 	}
 	
-	/**
-	 * Gets the speaker of a tutorial (the first listed person in the corresponding paper)
-	 * @return speaker of tutorial
-	 */
-	//public Person getSpeaker() {
-		//return speaker;
-	//}
-
-	/**
-	 * Sets the speaker of a tutorial (the first listed person in the corresponding paper)
-	 * @param speaker of tutorial
-	 */
-	//public void setSpeaker(Person speaker) {
-	//	this.speaker = speaker;
-	//}
+	
 	
 	/**
 	 * Gets the link of workshops to the corresponding workshop page
@@ -187,34 +157,7 @@ public class Event extends Model implements ScheduleEntry {
 		this.end = yearString;
 	}
 
-
-	public static Event findOrCreate(String name){
-		EventJPAAccess eventFiler = new EventJPAAccess();
-		if(name != null){
-			Event e = eventFiler.getByName(name);
-			if(e != null) return e;
-		}
-		Event e = new Event();
-		e.setTitle(name); //Achtung kann hier null werden
-		eventFiler.add(e);
-		return e;
-	}
-
-	//	/**
-	//	 * Gets the person who manages this event
-	//	 * @return This event's manager
-	//	 */
-	//	public Person getHost() {
-	//		return host;
-	//	}
-	//
-	//	/**
-	//	 * Sets the person who manages this event
-	//	 * @param This event's new manager
-	//	 */
-	//	public void setHost(Person host) {
-	//		this.host = host;
-	//	}
+	
 
 	/**
 	 * Gets the place where this event happens
@@ -343,5 +286,22 @@ public class Event extends Model implements ScheduleEntry {
 	 */
 	public void addEventPart(EventPart e) {
 		eventparts.add(e);
+	}
+	
+	/**
+	 * Looks through the database if an event of this name exists and returns it
+	 * or creates a new event of the same name.
+	 * @return A event of this name either from the database or freshly created
+	 */
+	public static Event findOrCreate(String name){
+		EventJPAAccess eventFiler = new EventJPAAccess();
+		if(name != null){
+			Event e = eventFiler.getByName(name);
+			if(e != null) return e;
+		}
+		Event e = new Event();
+		e.setTitle(name); //Achtung kann hier null werden
+		eventFiler.add(e);
+		return e;
 	}
 }

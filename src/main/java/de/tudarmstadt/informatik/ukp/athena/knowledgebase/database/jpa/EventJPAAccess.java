@@ -18,6 +18,10 @@ import de.tudarmstadt.informatik.ukp.athena.knowledgebase.database.models.Event;
 public class EventJPAAccess implements CommonAccess<Event> {
 	private static Logger logger = LogManager.getLogger(EventJPAAccess.class);
 
+	
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void add(Event data) {
 		EntityManager entityManager = PersistenceManager.getEntityManager();
@@ -29,7 +33,10 @@ public class EventJPAAccess implements CommonAccess<Event> {
 			logger.warn("{} already exists in the database. Maybe try update", data.getID());
 		}
 	}
-
+	
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void commitChanges(Event data){
 		EntityManager entityManager = PersistenceManager.getEntityManager();
@@ -38,6 +45,10 @@ public class EventJPAAccess implements CommonAccess<Event> {
 		entityManager.getTransaction().commit();
 	}
 
+	
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public boolean alreadyExists(String identifier){
 		String query = "SELECT e FROM Event e WHERE e.title = '"+identifier.replace("'","''") + "'";
@@ -50,6 +61,12 @@ public class EventJPAAccess implements CommonAccess<Event> {
 		return (matches.size() > 0) ? true : false;
 	}
 
+	
+	/**
+	 * Returns event by name.
+	 * @param name of the event
+	 * @return The event or null if not found 
+	 */
 	public Event getByName(String identifier){
 		String query = "SELECT e FROM Event e WHERE e.title = '"+identifier.replace("'","''") + "'";
 		EntityManager entityManager = PersistenceManager.getEntityManager();
@@ -62,6 +79,10 @@ public class EventJPAAccess implements CommonAccess<Event> {
 	}
 
 
+	
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void delete(Event data) {
 		EntityManager entityManager = PersistenceManager.getEntityManager();
@@ -71,6 +92,10 @@ public class EventJPAAccess implements CommonAccess<Event> {
 		entityManager.getTransaction().commit();
 	}
 
+	
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public List<Event> get() {
 		EntityManager entityManager = PersistenceManager.getEntityManager();
