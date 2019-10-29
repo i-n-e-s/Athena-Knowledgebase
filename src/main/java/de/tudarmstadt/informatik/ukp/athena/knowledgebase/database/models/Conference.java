@@ -61,8 +61,8 @@ public class Conference extends Model{
 	
 	@Column(name="description",columnDefinition = "VARCHAR(3000)")
 	private String description;
-	
-	
+
+
 	@Column(name="submissionDeadlineLongPaper")
 	private LocalDate submissionDeadlineLongPaper;
 	@Column(name="submissionDeadlineShortPaper")
@@ -134,9 +134,9 @@ public class Conference extends Model{
 	public void setReviewNotification(LocalDate review_notification) {
 		this.review_notification = review_notification;
 	}
-	
-	
-	
+
+
+
 	/**
 	 * Gets the unique id of this conference
 	 * @return The unique id of this conference
@@ -179,7 +179,7 @@ public class Conference extends Model{
 
 	/**
 	 * Sets the date of the day this conference started
-	 * @param begin The new start date
+	 * @param localDate The new start date
 	 */
 	public void setBegin(LocalDate begin) {
 		this.begin = begin;
@@ -195,7 +195,7 @@ public class Conference extends Model{
 
 	/**
 	 * Sets the date of the day this conference ended
-	 * @param end The new end date
+	 * @param localDate The new end date
 	 */
 	public void setEnd(LocalDate end) {
 		this.end = end;
