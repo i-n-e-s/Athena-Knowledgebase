@@ -63,7 +63,7 @@ public class PersonJPAAccessTest {
 		testInstitution.setName("TestInstitution");
 		testValue.setInstitution(testInstitution);
 
-		testValue.setBirth(LocalDate.of(123, 12,3));
+		//testValue.setBirth(LocalDate.of(123, 12,3));
 	}
 
 	@Test

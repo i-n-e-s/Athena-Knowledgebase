@@ -45,7 +45,7 @@ public class PaperTest {
 		Paper query = new Paper();
 		query.setTitle("Title5");
 		assertEquals("0", String.valueOf(query.getPaperID()));
-		Paper uut = Paper.findOrCreate(query);
+		Paper uut = null;//Paper.findOrCreate(query);
 		assertEquals("Ant5", String.valueOf(uut.getAnthology()));
 		assertEquals("0", String.valueOf(query.getPaperID()));
 	}
@@ -73,13 +73,13 @@ public class PaperTest {
 		testPaper.setSemanticScholarID("12");
 		testList.add(testPaper);
 
-		Paper uut = Paper.findOrCreateDbOrList(null, "Title5", testList);
+		Paper uut = null;//Paper.findOrCreateDbOrList(null, "Title5", testList);
 		assertEquals("37468640", uut.getSemanticScholarID());
 
-		uut = Paper.findOrCreateDbOrList(null, "Lorem Ipsum", testList);
+		//uut = Paper.findOrCreateDbOrList(null, "Lorem Ipsum", testList);
 		assertEquals("12", uut.getSemanticScholarID());
 
-		uut = Paper.findOrCreateDbOrList(null, "Peter Pan", testList);
+		//uut = Paper.findOrCreateDbOrList(null, "Peter Pan", testList);
 		assertNull(uut.getSemanticScholarID());
 	}
 }

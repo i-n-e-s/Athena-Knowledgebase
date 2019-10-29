@@ -198,7 +198,7 @@ class ACLWebCrawler extends AbstractCrawler {
 
         //select only valied conference urls
         HashSet<String> uniqueConverenceURLs = uniqueURL.stream()
-                .filter(p -> p.contains("https://aclweb.org/anthology/events/")).collect(Collectors.toCollection(HashSet::new));
+                .filter(p -> p.contains("https://www.aclweb.org/anthology/events/")).collect(Collectors.toCollection(HashSet::new));
         //select only the conference urls of the specified years and conferences
         ArrayList<String> converenceURLs = selector(uniqueConverenceURLs, this.conferences, this.beginYear, this.endYear).stream().collect(Collectors.toCollection(ArrayList::new));
         String[] array = converenceURLs.stream().toArray(n -> new String[n]);
@@ -215,7 +215,7 @@ class ACLWebCrawler extends AbstractCrawler {
         for (ArrayList<String> events : eventsPerConference) {
             ArrayList<HashSet<String>> urlsPerEvent = new ArrayList<HashSet<String>>();
             for (String l : events) {
-                urlsPerEvent.add(get_links(l).stream().filter(p -> p.contains("https://aclweb.org/anthology/papers/") && !p.contains(".bib")).collect(Collectors.toCollection(HashSet::new)));
+                urlsPerEvent.add(get_links(l).stream().filter(p -> p.contains("https://www.aclweb.org/anthology/W") && !p.contains(".bib") && !p.contains(".pdf")).collect(Collectors.toCollection(HashSet::new)));
                 System.out.println("UrlsPerEvent:" + urlsPerEvent.size());
             }
             paperPerEventPerConference.add(urlsPerEvent);
@@ -297,7 +297,7 @@ class ACLWebCrawler extends AbstractCrawler {
                     }
                     Elements paperInformationElements = doc.select("#main > div > div.col.col-lg-10.order-2 > dl > dd");
                     if (!doc.title().contains("VOLUME")) {
-                        // check is not earlier because the elmnt is needed
+                        // check is not earlier because the elment is needed
                         if (conferences.length != 0) //
                             continue; // innerLoop; //label is not needed necessarily, but helps readability
 
@@ -309,7 +309,7 @@ class ACLWebCrawler extends AbstractCrawler {
                         Paper paper = Paper.findOrCreate(null, paperTitle);
                         paper.setTitle(paperTitle);
                         paper.setAnthology(anthology);
-                        String remoteLink = "http://aclweb.org/anthology/" + anthology;
+                        String remoteLink = "http://www.aclweb.org/anthology/" + anthology;
                         paper.setRemoteLink(remoteLink);
         				paper.setReleaseDate(null);
         				paper.setReleaseDate(extractPaperRelease(doc));
@@ -344,10 +344,8 @@ class ACLWebCrawler extends AbstractCrawler {
                             else if (h.contains("datasets")) paper.setDataset(sec.getText());
                         }
         				}else {
-        				    Element abstrac=doc.select("#main > div > div.col.col-lg-10.order-2 > div > div").get(0);
-
-                            paper.setPaperAbstract(abstrac.text().substring(8));
-
+        				    Elements abstracts = doc.select("#main > div > div.col.col-lg-10.order-2 > div > div");
+        				    if(abstracts.size() > 0) paper.setPaperAbstract(abstracts.get(0).text().substring(8));
         				}
                         // find authors and add them to a list
                         Elements authorElements = doc.select("#main > p> a");// elmnt.parent().parent().children().select("span").select("a");
@@ -476,37 +474,28 @@ class ACLWebCrawler extends AbstractCrawler {
      * @return The paper's release date, null if the extraction failed
      */
     private LocalDate extractPaperRelease(Document doc) {// Element paper) {
-
         String year = "0";
         String month = "0";
-
         Elements paperInformationElements = doc.select("#main > div > div.col.col-lg-10.order-2 > dl > dd");
-
         month = paperInformationElements.get(2).text();
-
         if (month.contains("-")) // some papers have a release month of e.g. "October-November", assume the first
             // month as the release month
             month = month.split("-")[0];
-
         month = "" + CrawlerToolset.getMonthIndex(month);
-
         if (month.equals("-1"))
             month = "1"; // resort to january if no month is found
-
         try {
             year = paperInformationElements.get(3).text().substring(0, 4); //hope that every year is given in 1234 format
-
         } catch (NumberFormatException n) {
             year = Integer.toString(0);
-
         }
-        LocalDate date = LocalDate.of(1880, 1, 1);
+        LocalDate paperDate = LocalDate.of(1880, 1, 1);
         try{
-            date = LocalDate.of(Integer.parseInt(year), Integer.parseInt(month), 1);
+            paperDate = LocalDate.of(Integer.parseInt(year), Integer.parseInt(month), 1);
         }catch(NumberFormatException e){
-            System.out.println("Could not format paper date. Link might not point to a paper" + doc.location());
+            System.out.println("Could not format paper date. Link might not point to a paper: " + doc.location());
         }
-        return date;
+        return paperDate;
     }
 
     /*
@@ -1174,6 +1163,5 @@ return paperList;
 
     @Override
     public void close() {
-        papers.clear();
     }
 }

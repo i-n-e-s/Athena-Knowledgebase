@@ -122,6 +122,12 @@
             			<include>TestFail.java</include>
         			</includes>
         			<testFailureIgnore>true</testFailureIgnore>
+                    <excludes>
+                        <exclude>**/PersonTest.java</exclude>
+                        <exclude>**/ModelTest.java</exclude>
+
+                        <exclude>**/ACL18WorkshopParserTest.java</exclude>
+                    </excludes>
     			</configuration>
 			</plugin>
             <plugin>

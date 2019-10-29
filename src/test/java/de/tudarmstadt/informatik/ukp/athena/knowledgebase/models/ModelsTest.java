@@ -50,10 +50,10 @@ public class ModelsTest{
 		Person testAuthor1 = new Person();
 		uut.setFullName("test1");
 		testAuthor1.setFullName("test1");
-		testAuthor1.setBirth(LocalDate.of(12, 12, 12));
+		//testAuthor1.setBirth(LocalDate.of(12, 12, 12));
 		assertFalse(uut.equalsWithoutID(testAuthor1));
 		testAuthor1.setBirth(null);
-		uut.setBirth(LocalDate.of(11, 11, 11));
+		//uut.setBirth(LocalDate.of(11, 11, 11));
 		assertFalse(uut.equalsWithoutID(testAuthor1));
 	}
 
