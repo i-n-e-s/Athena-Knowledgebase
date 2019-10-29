@@ -231,7 +231,6 @@ class ACLWebCrawler extends AbstractCrawler {
                 System.out.println("UrlsPerEvent:" + urlsPerEvent.size());
             }
             paperPerEventPerConference.add(urlsPerEvent);
-            System.out.println(urlsPerEvent.toString());
         }
         
         //create and fill a conference object for each conference url
@@ -320,7 +319,7 @@ class ACLWebCrawler extends AbstractCrawler {
                         Paper paper = Paper.findOrCreate(null, paperTitle);
                         paper.setTitle(paperTitle);
                         paper.setAnthology(anthology);
-                        String remoteLink = "http://aclweb.org/anthology/" + anthology;
+                        String remoteLink = "http://www.aclweb.org/anthology/" + anthology;
                         paper.setRemoteLink(remoteLink); 
         				paper.setReleaseDate(null);
         				paper.setReleaseDate(extractPaperRelease(doc));
@@ -382,10 +381,6 @@ class ACLWebCrawler extends AbstractCrawler {
                             
                         }
                         event.addPaper(paper);
-                        String e = event.getTitle();
-                        for(Paper p : event.getPapers()){
-                            System.out.println("EVENT " + e + " MIT PAPER: " +  p.getTitle());
-                        }
                     }
                 }
                 conference.addEvent(event);
